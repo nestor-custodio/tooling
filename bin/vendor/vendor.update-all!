@@ -1,0 +1,71 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Checks for newer releases and updates all vendor tooling as needed.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --checks-only             Only run the version checks; no downloads.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	checks_only=''
+
+	# ---
+	# ---
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help,checks,checks-only'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+			(--checks|--checks-only)
+				checks_only='1'
+				;;
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+/bin/ls -1 --literal "${HOME}/bin/vendor"/*.repo | while read repo_file; do
+	superbase "$repo_file" | store-as tool_name
+
+	vendor.latest? "$tool_name" | store-as update_report
+	if [ -n "$update_report" ]; then
+		echo "${tool_name}: ${update_report}"
+		[ -z "$checks_only" ]  && vendor.update! "$tool_name"
+	fi
+done

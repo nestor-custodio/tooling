@@ -1,0 +1,213 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) INSTANCE_NAME [OPTIONS]
+
+		Creates a new GCP dev VM instance with the given name.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --dev                     Name of local store to clone into "~/dev".
+		  --repo                    URL for hosted repo to clone into "~/dev".
+		  --disk-size               Size of boot disk. (Default is 12GB.)
+		  --machine-type            Compute Instance machine type.
+		  --list-machine-types      List available Compute Instance machine types.
+
+		  --help                    Show this help text.
+
+		Repository URLs
+		  Values to --repo may be a repo URL (e.g. "https://github.com/user/repo") or a
+		  clone source ("https://github.com/user/repo.git", "git@github.com:user/repo.git").
+
+		  The following prefixes are expanded to their respective user repo stores:
+		  - "nlc:" => "git@github.com:nestor-custodio"
+		  - "tps:" => "git@github.com:tulsaschoolsdata"
+		  - "fabricut:" => "https://github.com/fabricut"
+
+		  e.g. Using the above, a --repo may be given as "--repo='nlc:env_parser'".
+
+		Disk Sizes
+		  Per GCP restrictions, this has a minimum value of 12GB (given as "12GB").
+
+		Machine Types
+		  The default machine type (if none is given) is an "e2-medium" instance.
+
+		  See '$( script-name ) --list-machine-types' for a list of available types.
+		  Pricing is available at: https://cloud.google.com/compute/vm-instance-pricing
+
+		  A machine type family can also be given as a simple option, and likewise for the
+		  machine type suffix: "--e2 --small" is equivalent to "--machine-type='e2-small'".
+		  When only a machine type family is given (e.g. "--e2"), the suffix is assumed to
+		  be "medium" for E2 instances and "standard-2" for all others (note this does not
+		  always yield valid machine types); when only a suffix is given, "e2" is assumed.
+
+		  Note these shortcut options are a convenience and not all machine type families
+		  and suffixes are available for use as simple options.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	dev_dir=''
+	git_repo=''
+	disk_size='12GB'
+	machine_type_family='e2'
+	machine_type_suffix=''
+
+	# ---
+	# ---
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help,dev:,git:,repo:,git-repo:,disk-size:,disk:,hdd:,machine-type:,machine:,list-machine-types,machine-types'
+	LONG_OPTS="${LONG_OPTS},e2,f1,g1,n1,n2,n2d"
+	LONG_OPTS="${LONG_OPTS},micro,small,medium"
+	LONG_OPTS="${LONG_OPTS},standard-1,standard-2,standard-4,standard-8,standard-16"
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--dev)
+				dev_dir="$1" && shift
+				;;
+
+			(--git|--repo|--git-repo)
+				git_repo="$1" && shift
+
+				# Substitute account shortcuts.
+				#
+				case "$git_repo" in
+					(nlc:*) git_repo="${git_repo/#nlc:/git@github.com:nestor-custodio/}.git" ;;
+					(tps:*) git_repo="${git_repo/#tps:/git@github.com:tulsaschoolsdata/}.git" ;;
+					(fabricut:*) git_repo="${git_repo/#fabricut:/https://github.com/fabricut/}.git" ;;
+				esac
+
+				# Make sure we haven't duplicated the ".git" extension.
+				#
+				git_repo="${git_repo/%.git.git/.git}"
+				;;
+
+			(--disk-size|--disk|--hdd)
+				disk_size="$1" && shift
+				;;
+
+			(--machine-type|--machine)
+				machine_type="$1" && shift
+				machine_type_family="${machine_type%%-*}"
+				machine_type_suffix="${machine_type#*-}"
+				;;
+
+			(--list-machine-types|--machine-types)
+				gcloud compute machine-types list | store-as machine_types
+				machine-type-columns() { cut --characters='1-18,46-' ; }
+				head -n1 <<< "$machine_types" | machine-type-columns
+				fgrep "$( vm-zone )" <<< "$machine_types" | sort --field-separator='-' --key='1,1' --key='2,2' --key='3,3n' | machine-type-columns
+				exit-out
+				;;
+
+			(--e2|--f1|--g1|--n1|--n2|--n2d)
+				machine_type_family="${option#--}"
+				;;
+
+			(--micro|--small|--medium) ;&
+			(--standard-1|--standard-2|--standard-4|--standard-8|--standard-16)
+				machine_type_suffix="${option#--}"
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	instance_name="$1" && shift
+	[ -n "$instance_name" ] || error-out 1 'no INSTANCE_NAME given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# We can't replace the current instance.
+#
+[ "$instance_name" == "$( vm-name )" ] && error-out 1 'invalid INSTANCE_NAME given'
+
+
+# --dev and --repo are mutually exclusive.
+#
+[ -n "$dev_dir" ] && [ -n "$git_repo" ] && error-out 1 '--dev and --repo are mutually exclusive'
+
+
+# ---
+
+
+# Remove old instance (if any).
+#
+gcp destroy "$instance_name" &> /dev/null
+
+
+# ---
+
+
+# Set the default machine type suffix, if necessary.
+#
+[ -z "$machine_type_suffix" ] && case "$machine_type_family" in
+                                   e2) machine_type_suffix='medium' ;;
+                                   * ) machine_type_suffix='standard-2' ;;
+                                 esac
+
+
+# Note we're not specifying a boot image by name -- we're giving only the "project" and "family".
+# See `gcloud compute images list` for a complete list of all available images.
+#
+image_project='ubuntu-os-cloud'
+
+image_filter='(licenses[] ~ "/ubuntu-os-cloud/") AND (family !~ "minimal") AND (family !~ "arm64")'
+gcloud compute images list --filter="$image_filter" --format='value(family)' | sort | tail -n1 | store-as image_family
+
+
+# Startup script.
+#
+startup_script_file="$( script-real ):init"
+
+
+# Create the Instance VM.
+#
+gcloud compute instances create "$instance_name"                                           \
+       --project="$( vm-project )" --zone="$( vm-zone )"                                   \
+                                                                                           \
+       --machine-type="${machine_type_family}-${machine_type_suffix}"                      \
+       --boot-disk-type=pd-standard --boot-disk-size="$disk_size"                          \
+       --image-project="$image_project" --image-family="$image_family"                     \
+                                                                                           \
+       --tags=http-server,https-server                                                     \
+       --metadata="created-at=${SCRIPT_TIMESTAMP},dev-dir=${dev_dir},git-repo=${git_repo}" \
+       --metadata-from-file "startup-script=${startup_script_file}"                        \
+                                                                                           \
+       --scopes=cloud-platform                                                             \
+       --network-tier=STANDARD                                                             \
+       --maintenance-policy=MIGRATE                                                        \
+                                                                                           \
+       --verbosity=error

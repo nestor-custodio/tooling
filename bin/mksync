@@ -1,0 +1,112 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+# Due to the Sync stores being temporarily unavailable,
+# it's important that this runs from a local temp location.
+# Ideally, this should happen before any parameter processing.
+#
+# Note this is an issue with `mksync` only and not `mkdev`/`mkdb`.
+
+if [ "$( script-path )" != '/tmp' ]; then
+	cp "$( script-file )" "$( script-file ):init" /tmp/
+	exec "/tmp/$( script-name )" "$@"
+fi
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Replaces the existing GCP sync VM instance.
+		BE SURE TO TAKE A SYNC STORAGE VOLUME SNAPSHOT FOR SAFETY!
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# This can't run ON the sync instance.
+#
+[ "$( vm-name )" == "sync" ] && error-out 1 'cannot replace current instance'
+
+
+# ---
+
+
+# Remove old instance (if any).
+#
+vm-exists sync && {
+	gcp run sync 'sudo service nfs stop' &> /dev/null
+	gcp destroy sync &> /dev/null
+}
+
+
+# ---
+
+
+# Note we're not specifying a boot image by name -- we're giving only the "project" and "family".
+# See `gcloud compute images list` for a complete list of all available images.
+#
+image_project='ubuntu-os-cloud'
+image_family='ubuntu-2204-lts'
+
+
+# Startup script.
+#
+startup_script_file="$( script-real ):init"
+
+
+# Create the Sync VM.
+#
+gcloud compute instances create 'sync'                                 \
+       --project="$( vm-project )" --zone="$( vm-zone )"               \
+                                                                       \
+       --machine-type=e2-micro                                         \
+       --boot-disk-type=pd-standard --boot-disk-size=10GB              \
+       --image-project="$image_project" --image-family="$image_family" \
+                                                                       \
+       --metadata="created-at=${SCRIPT_TIMESTAMP}"                     \
+       --metadata-from-file "startup-script=${startup_script_file}"    \
+                                                                       \
+       --scopes=cloud-platform                                         \
+       --network-tier=STANDARD                                         \
+       --maintenance-policy=MIGRATE                                    \
+                                                                       \
+       --verbosity=error

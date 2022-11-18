@@ -1,0 +1,29 @@
+
+# Caddyfile basics:
+#
+# - Structure :  https://caddyserver.com/docs/caddyfile/concepts
+# - Directives:  https://caddyserver.com/docs/caddyfile/directives
+
+
+{
+  log {
+    output file "/var/log/https-status-log"
+  }
+}
+
+
+"{$HOSTNAME}.custodio.app" {
+
+  @not_me not remote_ip #CLIENT_IP#
+  abort @not_me
+
+
+  respond "/ping" "pong"
+  reverse_proxy "{$BINDING}"
+
+  log {
+    format json
+    output file "/var/log/https-access-log::{$BINDING}"
+  }
+
+}

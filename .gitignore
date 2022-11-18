@@ -1,0 +1,49 @@
+# Rules for global usage across all repos.
+
+**/:*
+**/*.local
+**/node_modules/
+
+# NFS temp storage creates ".nfs[0-9]+" files.
+#
+**/.nfs*
+
+# Allow Ruby/Rails overrides.
+#
+**/*.local.rb
+
+# Allow per-repo S3 tooling.
+#
+**/s3/
+**/s3?
+
+
+# Rules for use in the "tooling" repo specifically.
+
+# dotdirs
+#
+/.aws/
+/.bundle/
+/.cache/
+/.drive/
+/.gdfuse/
+/.gem/
+/.nodes/
+/.rubies/
+/.ssh/
+
+# dotfiles
+#
+/.gitconfig
+/.my.cnf
+/.netrc
+/.pgpass
+/.redis-viewer.yml
+
+# Support Files.
+#
+/links/
+/hostfiles/
+!/hostfiles/.keep
+/vm-scripts/
+!/vm-scripts/.keep

@@ -1,0 +1,273 @@
+
+# Default Mappings: https://docs.helix-editor.com/master/keymap.html
+# Re-Mapping Guide: https://docs.helix-editor.com/master/remapping.html
+#
+# To map multiple commands: `"key" = ["command_1", "command_2", ...]`
+# To create subcommand groups: `"key_1" = { "key_2" = "key_2_command", "key_3" = "key_3_command", ... }`
+
+
+theme = "custom"
+
+
+
+
+[editor]
+
+auto-pairs  = false
+color-modes = true
+cursorline  = true
+gutters     = ["line-numbers", "spacer", "diagnostics"]
+mouse       = false
+scrolloff   = 2
+true-color  = true
+
+
+
+
+[editor.statusline]
+
+left   = ["spinner", "spacer", "mode", "spacer", "file-name"]
+center = []
+right  = ["diagnostics", "position", "file-type", "spacer"]
+
+# These are pending the next release:
+# mode.normal = "NORMAL"
+# mode.insert = "INSERT"
+# mode.select = "SELECT"
+
+
+
+
+[editor.cursor-shape]
+
+normal = "block"
+insert = "block"
+select = "block"
+
+
+
+
+[editor.indent-guides]
+
+render    = true
+character = "│"
+
+
+
+
+[editor.whitespace.render]
+
+space   = "all"
+tab     = "all"
+newline = "none"
+
+
+[editor.whitespace.characters]
+
+space   = "⸱"
+newline = "↲"
+
+
+
+
+# ---
+# ---
+
+
+
+
+[keys.normal]
+
+
+# Unused And Problematic
+
+"f" = "no_op"
+"p" = "no_op"
+"s" = "no_op"
+"." = "no_op"
+
+
+# Application Control
+
+":"       = "command_mode"
+"P"       = "command_palette"
+
+"ret"     = "insert_mode"
+";"       = "select_mode"
+
+
+# File Operations
+
+"C-s"     = ":write"
+"S"       = ":write"
+"C-n"     = ":new"
+
+
+# Document Navigation
+
+"i"       = "move_line_up"
+"k"       = "move_line_down"
+"j"       = "move_char_left"
+"l"       = "move_char_right"
+
+"["       = "goto_file_start"
+"I"       = "page_up"
+"K"       = "page_down"
+"]"       = "goto_file_end"
+
+"h"       = "goto_line_start"
+"C-h"     = "goto_first_nonwhitespace"
+"J"       = ["move_prev_word_start", "collapse_selection"]
+"L"       = ["move_next_word_end", "collapse_selection"]
+"'"       = "goto_line_end"
+
+"g"       = "goto_line"
+"/"       = "search"
+"E"       = "goto_prev_diag"
+"e"       = "goto_next_diag"
+
+
+# Tab/Pane Management
+
+"w"       = { "ret" = ":buffer-close", "!" = ":buffer-close!" }
+"q"       = { "ret" = ":quit", "!" = ":quit!" }
+
+"u"       = "goto_previous_buffer"
+"o"       = "goto_next_buffer"
+"p"       = "buffer_picker"
+
+
+# Selection Management
+
+"|"       = ["keep_primary_selection", "collapse_selection"]
+"?"       = "select_regex"
+
+
+# Editing
+
+  # Clipboard
+
+  "c"         = "yank"
+  "v"         = "paste_before"
+  "x"         = "delete_selection"
+
+  "C"         = ":pipe clip --pass"
+  "V"         = ":insert-output clip --out"
+
+
+  # Modification
+
+  "A"         = "add_newline_above"
+  "a"         = "open_above"
+  "b"         = "open_below"
+  "B"         = "add_newline_below"
+
+  "H"         = ["goto_first_nonwhitespace", "insert_mode"]
+  '"'         = "append_to_line"
+
+  "r"         = ["delete_selection_noyank", "insert_mode"]
+  "R"         = "replace"
+
+  "z"         = "undo"
+  "y"         = "redo"
+
+  "C-k"       = ["extend_to_line_bounds", "delete_selection_noyank"]
+  "C-d"       = ["extend_to_line_bounds", "yank", "paste_after", "move_char_right"]
+
+  "d"         = "delete_selection_noyank"
+  "del"       = "delete_selection_noyank"
+  "D"         = "delete_char_backward"
+  "backspace" = "delete_char_backward"
+
+  "tab"       = "indent"
+  "S-tab"     = "unindent"
+
+  "#"         = "toggle_comments"
+
+
+# ---
+# ---
+
+
+[keys.select]
+
+
+# Unused And Problematic
+
+"f" = "no_op"
+"o" = "no_op"
+"p" = "no_op"
+"s" = "no_op"
+"u" = "no_op"
+
+
+# Application Control
+
+":"       = "command_mode"
+"P"       = "command_palette"
+
+"ret"     = "insert_mode"
+
+
+# Selection Management
+
+"space"   = ["extend_to_line_bounds", "normal_mode"]
+"a"       = ["select_all", "normal_mode"]
+"w"       = ["move_prev_word_start", "collapse_selection", "extend_next_word_end"]
+"|"       = ["keep_primary_selection", "collapse_selection"]
+"?"       = "select_regex"
+
+
+# Document Navigation
+
+"i"       = "extend_line_up"
+"k"       = "extend_line_down"
+"j"       = "extend_char_left"
+"l"       = "extend_char_right"
+
+"["       = "goto_file_start"
+"I"       = "page_up"
+"K"       = "page_down"
+"]"       = "goto_file_end"
+
+"h"       = "goto_line_start"
+"C-h"     = "goto_first_nonwhitespace"
+"J"       = "extend_prev_word_start"
+"L"       = "extend_next_word_end"
+"'"       = "goto_line_end"
+
+"g"       = "goto_line"
+
+
+# Editing
+
+  # Clipboard
+
+  "c"         = ["yank", "normal_mode"]
+  "v"         = ["replace_with_yanked", "normal_mode"]
+  "x"         = ["delete_selection", "normal_mode"]
+
+  "C"         = [":pipe clip --pass", "normal_mode"]
+  "V"         = [":insert-output clip --out", "normal_mode"]
+
+
+  # Modification
+  
+  "d"         = ["delete_selection_noyank", "normal_mode"]
+  "r"         = ["delete_selection_noyank", "insert_mode"]
+  "R"         = ["replace", "normal_mode"]
+
+
+# ---
+# ---
+
+
+[keys.insert]
+
+
+# Editing
+
+  # Modification
+  
+  "tab"       = "indent"
+  "S-tab"     = "unindent"

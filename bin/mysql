@@ -1,0 +1,56 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) DATABASE_NAME [-- MYCLI_OPTIONS]
+
+		Wrapper for connecting to MySQL instances on DB VM using 'mycli'.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if 'mycli' executable not found.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	database_name="$1" && shift
+	[ -n "$database_name" ] || error-out 1 'no DATABASE_NAME given'
+
+}
+
+# ---
+# ---
+
+
+mycli_exec="$( command -v mycli )"
+[ -n "$mycli_exec" ] || error-out 2 'mycli executable not found'
+
+"$mycli_exec" --myclirc="~/.config/mycli/config" "mysql://nestor@mysql/${database_name}" "$@"

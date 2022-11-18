@@ -1,0 +1,321 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) { vms | list-vms } [-- OPTIONS]
+
+		       $( script-name ) { scp | cp } [-- OPTIONS] SOURCE TARGET
+
+		       $( script-name ) { ssh | shell | connect } [USER@]INSTANCE_NAME
+		       $( script-name ) { run | exec } [USER@]INSTANCE_NAME REMOTE_COMMAND
+
+
+		       $( script-name ) { start | boot
+		       $( name-blanks )   | restart | reboot
+		       $( name-blanks )   | stop | shutdown | kill
+		       $( name-blanks )   | suspend | sleep | resume | wake } INSTANCE_NAME
+
+
+		       $( script-name ) rename INSTANCE_NAME NEW_INSTANCE_NAME
+
+		       $( script-name ) scale INSTANCE_NAME { --machine-type=MACHINE_TYPE | --micro
+		       $( name-blanks )                                                   | --small
+		       $( name-blanks )                                                   | --medium
+		       $( name-blanks )                                                   | --standard }
+
+		       $( script-name ) { destroy | delete | trash } INSTANCE_NAME
+
+
+		Convenience wrapper for various Google Cloud Platform client commands.
+		Acts as an alias for 'glcoud compute' when not used as above.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		  --machine-type            Compute Instance machine type.
+		    --micro                 Shortcut for "--machine-type=e2-micro".
+		    --small                 Shortcut for "--machine-type=e2-small".
+		    --medium                Shortcut for "--machine-type=e2-medium".
+		    --standard              Shortcut for "--machine-type=e2-standard-2".
+
+		Machine Types
+		  See https://cloud.google.com/compute/vm-instance-pricing for a list of types.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if invalid request,
+		  3  if other internal error.
+	EOF
+
+}
+
+# ---
+
+{ # -- Utility Functions -- #
+
+	is_localhost() {
+		local instance_name="$1" && shift
+		[ -n "$instance_name" ] || error-out 3 'no instance name given'
+
+		[ "$instance_name" == "$( vm-name )" ]
+	}
+
+	instance_state() {
+		local instance_name="$1" && shift
+		[ -n "$instance_name" ] || error-out 3 'no instance name given'
+
+		gcloud compute instances list --filter="(name:'${instance_name}')" --format='value(status)'
+	}
+
+	# ---
+
+	instance_is_running() { [ "$( instance_state "$@" )" == "RUNNING"    ] ; }
+	instance_is_stopped() { [ "$( instance_state "$@" )" == "TERMINATED" ] ; }
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	machine_type=''
+
+	# --
+	# --
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help,machine-type:,micro,small,medium,standard'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--machine-type)
+				machine_type="$1" && shift
+				;;
+
+			(--micro)
+				machine_type='e2-micro'
+				;;
+
+			(--small)
+				machine_type='e2-small'
+				;;
+
+			(--medium)
+				machine_type='e2-medium'
+				;;
+
+			(--standard)
+				machine_type='e2-standard-2'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" -gt 0 ] || error-out 1 'no command given'
+
+
+	command="$1" && shift
+	case "$command" in
+
+		(vms|list-vms)
+			gcloud compute instances list "$@"
+			;;
+
+		# ---
+		# ---
+
+		(scp|cp)
+			gcloud compute scp "$@"
+			;;
+
+		# ---
+		# ---
+
+		(ssh|shell|connect)
+			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			instance_name="$1" && shift
+
+			# Run sanity checks.
+
+				# Check for current-instance request.
+				#
+				is_localhost "$instance_name" && error-out 2 'cannot remote into localhost'
+
+
+			gcloud compute ssh "$instance_name"
+			;;
+
+		(run|exec)
+			[ "$#" -eq 0 ] && error-out 1 'no instance name given'
+			[ "$#" -eq 1 ] && error-out 1 'no remote command given'
+			[ "$#" -gt 2 ] && error-out 1 'too many parameters'
+
+			instance_name="$1" && shift
+			remote_command="$1" && shift
+
+
+			gcloud compute ssh "$instance_name" --command="$remote_command"
+			;;
+
+		# ---
+		# ---
+
+		(start|boot)
+			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			instance_name="$1" && shift
+
+
+			gcloud compute instances start "$instance_name"
+			;;
+
+		(restart|reboot)
+			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			instance_name="$1" && shift
+
+
+			gcloud compute instances reset "$instance_name"
+			;;
+
+		(stop|shutdown|kill)
+			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			instance_name="$1" && shift
+
+
+			gcloud compute instances stop "$instance_name"
+			;;
+
+		# ---
+
+		(suspend|sleep)
+			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			instance_name="$1" && shift
+
+
+			gcloud compute instances suspend "$instance_name"
+			;;
+
+		(resume|wake)
+			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			instance_name="$1" && shift
+
+
+			gcloud compute instances resume "$instance_name"
+
+			gcloud compute instances list --filter="(name:'${instance_name}')" --format='yaml'       \
+			| yaml '.networkInterfaces[].accessConfigs[] | select(.name == "external-nat") | .natIP' \
+			| store-as instance_ip
+
+			[ -n "$instance_ip" ] && dns set "$instance_ip" --for="$instance_name"
+			;;
+
+		# ---
+		# ---
+
+		(rename)
+			[ "$#" -eq 0 ] && error-out 1 'no instance name given'
+			[ "$#" -eq 1 ] && error-out 1 'no new instance name given'
+			[ "$#" -gt 2 ] && error-out 1 'too many parameters'
+
+			old_instance_name="$1" && shift
+			new_instance_name="$1" && shift
+
+
+			# Run sanity checks.
+
+				# Check for current-instance request.
+				#
+				is_localhost "$old_instance_name" && error-out 2 'cannot rename localhost'
+
+				# Check that instance in question is currently *stopped*.
+				#
+				instance_is_stopped "$old_instance_name" || error-out 2 'cannot rename a running instance'
+
+
+			gcloud beta compute instances set-name "$old_instance_name" --new-name="$new_instance_name" \
+			&& dns del --for="$old_instance_name" &> /dev/null
+			;;
+
+		(scale)
+			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			instance_name="$1" && shift
+
+			[ -n "$machine_type" ] || error-out 1 'no machine type given'
+
+
+			# Run sanity checks.
+
+				# Verify given machine type exists in the active zone.
+				#
+				gcloud compute machine-types list --zones="$( vm-zone )" \
+				                                  --format='value(name)' \
+				| hasline "$machine_type" &> /dev/null || error-out 1 'invalid machine type'
+
+				# This is a noop if the requested machine type is already set.
+				#
+				[ "$machine_type" == "$( instance machine-type --short )" ] && exit 0
+
+				# Check for current-instance request.
+				#
+				is_localhost "$instance_name" && error-out 2 'cannot set scaling for localhost'
+
+				# Check that instance in question is currently *stopped*.
+				#
+				instance_is_stopped "$instance_name" || error-out 2 'cannot set scaling on a running instance'
+
+
+			gcloud compute instances set-machine-type "$instance_name" --machine-type="$machine_type"
+			;;
+
+		# ---
+
+		(destroy|delete|trash)
+			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			instance_name="$1" && shift
+
+
+			# Note the actual VM deletion is triggered *last* to allow for destroy requests from within the target instance.
+			# (Otherwise the VM deletion would occur before script completion, leaving some work undone.)
+
+
+			# Remove DNS 'A' record.
+			#
+			dns delete --for="$instance_name" &> /dev/null
+
+			# Delete the Instance VM.
+			#
+			yes | gcloud compute instances delete "$instance_name" --quiet
+			;;
+
+		# ---
+		# ---
+
+		*)
+			gcloud compute "$command" "$@"
+			;;
+
+	esac
+
+}
+
+# ---
+# ---
+
+
+noop  # Positional parameter processing has already taken care of everything.

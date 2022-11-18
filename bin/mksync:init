@@ -1,0 +1,230 @@
+#! /bin/bash
+shopt -s lastpipe
+
+# ---
+# ---
+
+
+PATH=".:/home/nestor/bin:/home/nestor/bin/vendor:/snap/bin:$PATH"
+
+init_log='/var/log/init'
+startup_log='/var/log/startup'
+
+
+# ---
+# ---
+
+
+# -- INIT -- #
+[ -e "$init_log" ] || {
+
+	timestamp() { date '+%s.%N' ; }
+	SCRIPT_TIMESTAMP="$( timestamp )"
+
+	report() {
+		local report="$1" && shift
+
+		local now="$( timestamp )"
+		local delta="$( bc <<< "(${now} - ${SCRIPT_TIMESTAMP}) / 1" )"
+
+		echo -e "\n\n------------------------------------------------------------------------\n@ ${delta}s: ${report}\n"
+	}
+
+	# ---
+
+	metadata() {
+		local metadata_key="$1" && shift
+
+		# Set the GCP Metadata API's base URI.
+		# (https://cloud.google.com/compute/docs/storing-retrieving-metadata)
+		#
+		local gcp_metadata_api='http://metadata.google.internal/computeMetadata/v1'
+
+
+		# We're tacking on an `echo` because the metadata response is "too clean" (i.e. has no "\n").
+		#
+		curl "${gcp_metadata_api}/${metadata_key}" --silent --header 'Metadata-Flavor: Google' --fail && echo
+	}
+
+	project() {
+		local metadata_key="$1" && shift
+		metadata "project/${metadata_key}"
+	}
+
+	instance() {
+		local metadata_key="$1" && shift
+		metadata "instance/${metadata_key}"
+	}
+
+	# ---
+	# ---
+
+	{ # -- Global PRE Config -- #
+
+		# Add user account.
+		report 'adding user account'
+
+			adduser nestor                    \
+			        --disabled-password       \
+			        --gecos='Nestor Custodio'
+
+
+		# Set system behaviours.
+		report 'setting system behaviours'
+
+			# Set timezone ...
+			timedatectl set-timezone 'America/Chicago'
+
+			# Silence all MOTD text ...
+			chmod a-x /etc/update-motd.d/*
+
+			# Set sudo password appearance ...
+			echo 'Defaults pwfeedback' >> /etc/sudoers
+
+			# Increase inotify watcher count ...
+			echo 'fs.inotify.max_user_watches=524288' >> /etc/sysctl.conf && sysctl -p
+
+			# Facilitate future Docker usage (avoid socket access error)...
+			addgroup --quiet        docker
+			adduser  --quiet nestor docker
+
+			# Set "/etc/hosts" ownership so we can use `hostctl` without `sudo` ...
+			chown nestor:nestor /etc/hosts
+
+			# Prevent apt-get from hanging on "unable to initialize front" errors ...
+			debconf-set-selections <<< 'debconf debconf/frontend select noninteractive'
+
+
+		# Install global packages.
+		report 'installing global packages'
+
+			apt-get -qq update
+			apt-get -qqy install asciinema         \
+			                     build-essential   \
+			                     byobu             \
+			                     curl              \
+			                     git               \
+			                     nfs-common        \
+			                     qrencode          \
+			                     tree              \
+			                     wget              \
+			                     zip unzip
+
+			snap install --devmode dotdrop 2> /dev/null
+
+	}
+
+	# ---
+	# ---
+
+	{ # -- NFS Config -- #
+
+		sync_data_root='/export'
+
+
+		# Set up the persisted Sync storage.
+		report 'setting up the persisted Sync storage'
+
+			# Attach the volume.
+			report '... attaching volume'
+
+			vm_name="$( instance name )"
+			zone="$( instance zone | sed -e 's#.*/##' )"
+			gcloud compute instances attach-disk "$vm_name" --disk='sync-storage' --mode='rw' --zone="$zone"
+
+
+			# Prep the nfs-kernel-server mounts.
+			report '... prepping the nfs-kernel-server mounts'
+
+			mkdir -p "$sync_data_root"
+			chmod 777 "$sync_data_root" && chown nobody:nogroup "$sync_data_root"
+			echo "/dev/sdb1 ${sync_data_root} ext4 defaults 0 0" >> /etc/fstab && mount "$sync_data_root"
+
+
+		# Set the firewall rules.
+		report 'setting the firewall rules'
+
+			ufw allow from any to any port ssh
+			ufw allow from 10.128.0.0/20 to any port nfs
+			ufw --force enable
+
+
+		# Set up the NFS Server service.
+		report 'setting up the NFS Server service'
+
+			apt-get -qqy install nfs-kernel-server
+
+			echo "${sync_data_root} 10.0.0.0/8(fsid=0,rw,sync,no_subtree_check)" >> /etc/exports && exportfs -a
+			service nfs-kernel-server start
+
+	}
+
+	# ---
+
+	{ # -- NFS Mounts -- #
+
+		# Set up NFS mount for "docs" and "links".
+		report 'setting up NFS mount for "docs" and "links"'
+
+			cat <<-'EOF' >> /etc/fstab
+				/export/dev   /home/nestor/dev   none bind,auto,fg 0 0
+				/export/docs  /home/nestor/docs  none bind,auto,fg 0 0
+				/export/links /home/nestor/links none bind,auto,fg 0 0
+			EOF
+
+			sudo --user='nestor' mkdir /home/nestor/dev /home/nestor/docs /home/nestor/links && mount -a
+			sudo --user='nestor' dotdrop --cfg='/home/nestor/links/dotdrop-config.yaml' --profile='global' install --force
+
+	}
+
+	# ---
+	# ---
+
+	{ # -- Global POST Config -- #
+
+		# Install additional dependencies.
+		report 'installing additional dependencies'
+
+			global_installers="/home/nestor/bin/installers"
+			ls "$global_installers"/*.deb &> /dev/null && apt install "$global_installers"/*.deb > /dev/null
+
+			vm_specific_installers="/home/nestor/vm-scripts/$( instance name )/installers"
+			ls "$vm_specific_installers"/*.deb &> /dev/null && apt install "$vm_specific_installers"/*.deb > /dev/null
+
+			apt-get -qqy install -f  # Resolve possible dependency issues.
+
+
+		# Notify of init completion.
+		report 'notifying of init completion'
+
+			cat <<-EOF | read -r -d '' notification
+				Hostname: $( hostname )
+				External: $( wan-ip )
+				Disk Use: $( df -h / --output='pcent,size,avail'                         \
+				             | sed -r -e '1 d'                                           \
+				                      -e 's# +#:#g'                                      \
+				                      -e 's#^:?(.*):(.*):(.*)$#\1 of \2 (\3 Available)#' )
+
+				Ready In: $( elapsed --since="@$( instance attributes/created-at )" )
+			EOF
+			notify gcp "VM Ready: $( instance name )" "$notification"
+
+
+	  echo -e "\n\n... Init complete in $( puptime )."
+
+	}
+
+} > "$init_log" 2>&1
+
+
+# ---
+# ---
+
+
+{ # -- STARTUP -- #
+
+	# Create relevant DNS entries.
+
+		expose-vm
+
+} > "$startup_log" 2>&1

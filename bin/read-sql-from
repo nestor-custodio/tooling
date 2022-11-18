@@ -1,0 +1,91 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) POSTGRES_URL
+		       $( name-blanks ) --heroku-app=NAME [--config-var=VARIABLE]
+
+		Dumps the entirety of the given Postgres database to STDOUT as SQL.
+		Any options given after the '--' delimiter will be passed through as-is
+		to the underlying 'pg_dump' call.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --heroku-app              Heroku app name to query for a Postgres URL.
+		  --config-var              App config variable holding the Postgres URL.
+		                            (Default is "DATABASE_URL".)
+
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if no source system given.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	postgres_url=''
+
+	heroku_app_name=''
+	heroku_config_var='DATABASE_URL'
+
+	# ---
+	# ---
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help,heroku-app:,app:,config-var:,var:'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--heroku-app|--app)
+				heroku_app_name="$1" && shift
+				[ -n "$heroku_app_name" ] || error-out 1 'invalid Heroku app NAME'
+				;;
+
+			(--config-var|--var)
+				heroku_config_var="$1" && shift
+				[ -n "$heroku_config_var" ] || error-out 1 'invalid Heroku config VARIABLE'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	# Set $postgres_url from either the explicit parameter or the Heroku option set.
+	#
+	if [ "$#" == 1 ]; then postgres_url="$1" && shift
+	else
+		[ -n "$heroku_app_name" ] && [ -n "$heroku_config_var" ] \
+		&& postgres_url="$( heroku config:get "$heroku_config_var" --app="$heroku_app_name" 2> /dev/null )"
+	fi
+	[ -n "$postgres_url" ] || error-out 2 'no source system given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+pg_dump "$postgres_url" --format=plain --no-acl --no-owner "$@"

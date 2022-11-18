@@ -1,0 +1,71 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Reports on the status of a Redis Memorystore instance named 'redis'.
+		If instance exists, its metadata is also given via STDOUT.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --any-status              Show instance even if not "RUNNING".
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if instance exists,
+		  1  if instance does not exist.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	any_status=''
+
+	# ---
+	# ---
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help,any-status'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--any-status|--any-state|--any)
+				any_status='1'
+				;;
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+filter='(name ~ "/instances/redis$")'
+[ -z "$any_status" ] && filter="${filter} AND (state:'READY')"
+
+gcloud redis instances list --filter="$filter" --format='json' 2> /dev/null | json '.[0]' | store-as instance_data
+[ -n "$instance_data" ] || exit 1
+
+echo "$instance_data"

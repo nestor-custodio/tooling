@@ -1,0 +1,197 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) get [record|ip|ttl] [--for=NAME]
+		       $( script-name ) set IP              [--for=NAME]
+		       $( script-name ) del                 [--for=NAME]
+
+		Convenience handler for managing GCP-related DNS 'A' records.
+		NAME may be a hostname ('sync') or a full dotted domain name.
+		When no NAME is given, one is constructed for the current host.
+		DNS records are given as JSON; IPs and TTLs are given in plain text.
+
+		A "get" with no "record"/"ip"/"ttl" will return a record by default.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if no record to get/delete,
+		  3  if DNS transaction aborted.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	name="$( vm-name )"
+
+	# --
+	# --
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help,for:,name:'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--for|--name)
+				name="$1" && shift
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] && error-out 1 'insufficient parameters'
+
+
+	# ---
+
+	dns_zone='vm-names'
+	dns_domain='.custodio.app'
+
+	domain_name="${name%.}"
+	# shellcheck disable=2295
+	domain_name="${domain_name%$dns_domain}"
+	domain_name="${domain_name}${dns_domain}."
+
+	{ # -- Lookup Helpers -- #
+
+		dns_lookup() {
+			local domain_name="$1" && shift
+			echo "(name:'${domain_name}') AND (type:'A')"
+		}
+
+		dns_record() {
+			local domain_name="$1" && shift
+			gcloud dns record-sets list --zone="$dns_zone" --filter="$( dns_lookup "$domain_name" )"  --format='json' | json '.[0]'
+		}
+
+	}
+
+	{ # -- Transaction Helpers -- #
+
+		dns_transaction() { gcloud --format='none' --verbosity='error' dns record-sets transaction "$@" --zone="$dns_zone" &> /dev/null ; }
+
+		catch_transaction_errors() { set -e && trap 'dns_transaction abort ; error-out 3 "transaction error"' ERR ; }
+		ignore_transaction_errors() { trap - ERR && set +e ; }
+
+	}
+
+	# ---
+
+	directive="$1" && shift
+	case "$directive" in
+
+		(get)
+
+			response_type='record'
+
+			[ "$#" == 1 ] && response_type="$1" && shift
+			[ "$#" == 0 ] || error-out 1 'too many parameters'
+
+
+			record="$( dns_record "$domain_name" )"
+			[ -n "$record" ] || error-out 2 'no DNS record found'
+
+			case "$response_type" in
+				(record) json "$record" '.'           ;;
+				(ip    ) json "$record" '.rrdatas[0]' ;;
+				(ttl   ) json "$record" '.ttl'        ;;
+			esac
+			;;
+
+
+		(set|update)
+
+			[ "$#" -lt 1 ] && error-out 1 'no new IP given'
+			[ "$#" -gt 1 ] && error-out 1 'too many parameters'
+
+			new_ip="$1" && shift
+			new_ttl='60'
+
+
+			old_record="$( dns_record "$domain_name" )"
+			if [ -n "$old_record" ]; then
+				json "$old_record" '.rrdatas[0]' | store-as old_ip
+				json "$old_record" '.ttl'        | store-as old_ttl
+
+				# No work needed if the existing DNS record matches what we want.
+				#
+				[ "$old_ip" == "$new_ip" ] && [ "$old_ttl" == "$new_ttl" ] && exit 0
+			fi
+
+
+			if (dns_transaction start); then
+				catch_transaction_errors
+
+					[ -n "$old_record" ] && dns_transaction remove  --name="$domain_name" --type='A' --ttl="$old_ttl" "$old_ip"
+
+					                        dns_transaction add     --name="$domain_name" --type='A' --ttl="$new_ttl" "$new_ip"
+					                        dns_transaction execute
+
+				ignore_transaction_errors
+			else
+				error-out 3 'transaction error'
+			fi
+			;;
+
+
+		(del|delete)
+
+			[ "$#" == 0 ] || error-out 1 'too many parameters'
+
+
+			record="$( dns_record "$domain_name" )"
+			[ -n "$record" ] || error-out 2 'no DNS record found'
+
+			json "$record" '.rrdatas[0]' | store-as record_ip
+			json "$record" '.ttl'        | store-as record_ttl
+
+
+			if (dns_transaction start); then
+				catch_transaction_errors
+
+					dns_transaction remove  --name="$domain_name" --type='A' --ttl="$record_ttl" "$record_ip"
+					dns_transaction execute
+
+				ignore_transaction_errors
+			else
+				error-out 3 'transaction error'
+			fi
+			;;
+
+
+		*)
+			error-out 1 'invalid option(s)'
+			;;
+
+	esac
+
+}
+
+# ---
+# ---
+
+
+noop  # Positional parameter processing has already taken care of everything.

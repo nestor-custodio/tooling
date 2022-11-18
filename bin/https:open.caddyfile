@@ -1,0 +1,31 @@
+
+# Caddyfile basics:
+#
+# - Structure :  https://caddyserver.com/docs/caddyfile/concepts
+# - Directives:  https://caddyserver.com/docs/caddyfile/directives
+
+
+{
+  log {
+    output file "/var/log/https-status-log"
+  }
+}
+
+
+"{$HOSTNAME}.custodio.app" {
+
+  @blacklisted_remotes {
+    #BLACKLIST#
+  }
+  abort @blacklisted_remotes
+
+
+  respond "/ping" "pong"
+  reverse_proxy "{$BINDING}"
+
+  log {
+    format json
+    output file "/var/log/https-access-log::{$BINDING}"
+  }
+
+}

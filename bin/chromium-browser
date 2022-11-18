@@ -1,0 +1,3 @@
+#! /bin/env bash
+# This is intended to mask the Chromium snap's `/usr/bin/chromium-browser` stub.
+{ snap list chromium &> /dev/null || sudo snap install chromium ; } && exec /snap/bin/chromium --headless --disable-gpu "$@"

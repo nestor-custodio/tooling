@@ -1,0 +1,59 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [DATABASE_NAME] [-- PGCLI_OPTIONS]
+
+		Wrapper for connecting to CloudSQL 'postgres' instance using 'pgcli'.
+		When no DATABASE_NAME is given, the hostname given per the current ENV
+		and Rails config, if available.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if 'pgcli' executable not found.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	database_name="$1" && shift
+	[ -n "$database_name" ] || yaml ".${RAILS_ENV}.database" < "${HOME}/dev/config/database.yml" | store-as database_name
+	[ -n "$database_name" ] || error-out 1 'no DATABASE_NAME given or available via Rails config'
+
+}
+
+# ---
+# ---
+
+
+pgcli_exec="$( command -v pgcli )"
+[ -n "$pgcli_exec" ] || error-out 2 'pgcli executable not found'
+
+"$pgcli_exec" --pgclirc="~/.config/pgcli/config" "postgres://nestor@postgres/${database_name}" "$@"

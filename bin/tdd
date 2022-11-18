@@ -1,0 +1,83 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [RUNNER_OPTIONS]
+
+		Run all relevant TDD tooling for the project:
+		- Supports Ruby RSpec and Minitest suites, along with Selenium tests.
+		- Supports Javascript suites triggered via a "test" action.
+
+		Any options given are passed through to the actual "runner" subtooling.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+# ---
+# ---
+
+
+# Ruby Testing
+
+
+	# Set flags ...
+
+		# Check for RSpec usage.
+
+		bundle list --name-only | has rspec && rspec='1'
+
+
+		# Check for Minitest files.
+
+		rg --quiet minitest test/ &> /dev/null && minitest='1'
+
+
+	# Run the tests ...
+
+		[ -n "$rspec"    ] && tdd.rspec    "$@"
+		[ -n "$minitest" ] && tdd.minitest "$@"
+
+
+# ---
+
+
+# Javascript Testing
+
+
+	# Set flags ...
+
+		[ -r 'package.json' ] && cat package.json | json '.scripts.test' | store-as javascript
+
+
+	# Run the tests ...
+
+		[ -n "$javascript" ] && tdd.javascript "$@"

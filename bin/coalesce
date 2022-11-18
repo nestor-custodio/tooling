@@ -1,0 +1,49 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) STRING [...]
+
+		Outputs the first non-empty string given.
+
+		NOTE: To prevent breaking expected behaviour,
+		      the strings '-h' and '--help' will output this help text via STDERR
+		      *in addition to* producing the expected non-empty output via STDOUT.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK
+		  1  if no strings given (empty or not).
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] && error-out 1 'no string(s) given'
+
+
+	while [ "$#" -gt 0 ]; do
+		string="$1" && shift
+		[ -n "$string" ] || continue
+
+		{ [ "$string" == '-h' ] || [ "$string" == '--help' ] ; } && echo "$usage" >&2
+		echo "$string"
+		break
+	done
+
+}
+
+# ---
+# ---
+
+
+noop  # Positional parameter processing has already taken care of everything.

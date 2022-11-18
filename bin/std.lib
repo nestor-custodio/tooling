@@ -1,0 +1,134 @@
+#! /bin/env bash
+shopt -s lastpipe expand_aliases
+
+# ---
+
+{ # -- Misc Helpers -- #
+
+	SCRIPT_TIMESTAMP="$( date '+%s.%N' )"
+
+
+	alias store-as="read -r -d ''"
+
+	script-file() { echo     "$0" ; }
+	script-path() { dirname  "$0" ; }
+	script-real() { realpath "$0" ; }
+	script-name() { basename "$0" ; }
+
+	file-blanks() { script-file | sed -e 's#.# #g' ; }
+	path-blanks() { script-path | sed -e 's#.# #g' ; }
+	real-blanks() { script-real | sed -e 's#.# #g' ; }
+	name-blanks() { script-name | sed -e 's#.# #g' ; }
+
+
+	STARTUP_DIR="$( pwd )"
+	reset_to_startup_dir() { cd "$STARTUP_DIR" || exit 99 ; }
+
+	cd_to_script  () { cd "$(             script-path    )" ; }
+	cd_to_realpath() { cd "$( dirname "$( script-real )" )" ; }
+
+}
+
+# ---
+
+{ # -- Error Helpers -- #
+
+	exit-out() {
+		# Prints a "clean" message (as given) to STDOUT, then exits.
+		# Good for output that's part of a non-0 exit but not an "error".
+
+		local exit_code='0'
+		local exit_message=''
+
+		case "$#" in
+			0)
+				;;
+
+			1)
+				local single_param="$1" && shift
+				if [ -z "${single_param//[0-9]/}" ]
+					then exit_code="$single_param"
+					else exit_message="$single_param"
+				fi
+				;;
+
+			2)
+				exit_code="$1" && shift
+				exit_message="$1" && shift
+				;;
+
+			*)
+				error-out 'improper use of "exit-out"'
+				;;
+		esac
+
+
+		[ -n "$exit_message" ] && echo "$exit_message"
+		exit "$exit_code"
+	}
+
+
+	error-out() {
+		# Prints an "error" message (with additional formatting) to STDERR, then exits.
+
+		local exit_code='1'
+		local error_message='unspecified error'
+
+		case "$#" in
+			0)
+				;;
+
+			1)
+				local single_param="$1" && shift
+				if [ -z "${single_param//[0-9]/}" ]
+					then exit_code="$single_param"
+					else error_message="$single_param"
+				fi
+				;;
+
+			2)
+				exit_code="$1" && shift
+				error_message="$1" && shift
+				;;
+
+			*)
+				error_message='improperly reported error'
+				;;
+		esac
+
+
+		cat <<-EOF >& 2
+			$( script-name ): ${error_message}
+			Try '$( script-name ) --help' for more information.
+		EOF
+
+		exit "$exit_code"
+	}
+
+}
+
+# ---
+
+# shellcheck disable=SC2142
+{ # -- Parameter Pre-Processing -- #
+
+	alias set-params='{
+
+		# (https://stackoverflow.com/a/29754866/4905941)
+
+		# This param preprocessing code expects that both
+		# CHAR_OPTS and LONG_OPTS have already been set, per the above.
+
+		# Guard against incompatible `getopt`.
+		getopt --test > /dev/null; [ "$?" == 4 ] || error-out "incompatible tooling"
+
+		# Parse and prep options and params for processing.
+		PARSED="$( getopt -o "$CHAR_OPTS" -l "$LONG_OPTS" -- "$@" 2> /dev/null )" || error-out "invalid option(s)"
+		eval set -- "$PARSED"
+
+
+		true
+
+	}'
+
+}

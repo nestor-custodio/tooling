@@ -1,0 +1,24 @@
+# From my own notes in the Byobu "status" file:
+# ---------------------------------------------
+
+# Formatting is available via "#[...]" tags.
+#
+# To set foreground color, use attribute "fg=..."; background
+# color is set via "bg=...". Multiple attributes within a single
+# formatting tag are given as a comma-separated list.
+#
+# - Available colors are:
+#   - black           - red            - green
+#   - yellow          - blue           - magenta
+#   - cyan            - white          - black
+#   - brightblack     - brightred      - brightgreen
+#   - brightyellow    - brightblue     - brightmagenta
+#   - brightcyan      - brightwhite    - (24-bit hex, as "#abcdef")
+#
+# - Availabler non-color attributes are:
+#   - dim         - underscore    - bold      - reverse
+#   - standout    - blink         - hidden    - italics
+#   - default
+#
+# Formatting is cleared via a "#[default]", and this should be
+# issued before the status line (or custom status script) is closed.

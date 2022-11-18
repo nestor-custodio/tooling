@@ -1,0 +1,201 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) TOOL_NAME
+
+		Makes a best-effort attempt to update the corresponding binary.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if fetch-related error.
+	EOF
+
+}
+
+# ---
+
+{ # -- Constants -- #
+
+	TEMPFILE_TEMPLATE='vendor-bin-updater.XXX'
+
+}
+
+# ---
+
+{ # -- Utility Functions -- #
+
+	_executable=''
+	executable() {
+		[ -n "$_executable" ] && { echo "$_executable"; return ; }
+	
+		echo "/home/nestor/bin/vendor/${tool_name}" | store-as _executable
+		echo "$_executable"
+	}
+
+	_github_repo=''
+	github-repo() {
+		[ -n "$_github_repo" ] && { echo "$_github_repo"; return ; }
+	
+		cat "$( executable ).repo" | store-as _github_repo
+		echo "$_github_repo"
+	}
+
+	# ---
+	
+	update-tooling() {
+
+		# Arguments/options passed into this will be passed through to the
+		# underlying `eget` call. Most useful for `--asset`, `--source`, etc.
+
+		# ---
+
+		eget --quiet "$( github-repo )" "$@" --to="$( executable )" || error-out 2
+		chmod 755 "$( executable )"
+
+	}
+
+	# ---
+
+	update-deb-tooling() {
+
+		[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+		# ---
+
+		mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
+		eget --quiet "$( github-repo )" --asset='.deb' --to='/dev/stdout' | dpkg --extract '/dev/stdin' "$extract_dir"
+		mv "${extract_dir}/usr/bin/${tool_name}" "$( executable )" &> /dev/null || error-out 2 'unable to fetch/find binary'
+		chmod 755 "$( executable )"
+		rm -rf "$extract_dir"
+
+	}
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	tool_name="$1" && shift
+	[ -n "$tool_name" ] || error-out 1 'no TOOL_NAME given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+case "$tool_name" in
+
+
+	# Snap packages.
+
+	(dotdrop)
+		sudo snap refresh --devmode dotdrop &> /dev/null || error-out 2
+		;;
+
+
+	# Straight-forward `eget` pulls.
+
+	(bat              ) update-tooling --asset='gnu'                     ;;
+	(btop             ) update-tooling                                   ;;
+	(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig' ;;
+	(circleci         ) update-tooling                                   ;;
+	(delta            ) update-tooling --asset='gnu'                     ;;
+	(eget             ) update-tooling                                   ;;
+	(fd               ) update-tooling --asset='gnu'                     ;;
+	(fzf              ) update-tooling                                   ;;
+	(hx               ) update-tooling                                   ;;
+	(jq               ) update-tooling                                   ;;
+	(lazydocker       ) update-tooling                                   ;;
+	(lazygit          ) update-tooling                                   ;;
+	(n                ) update-tooling --source                          ;;
+	(redis-viewer     ) update-tooling                                   ;;
+	(rg               ) update-tooling                                   ;;
+	(shellcheck       ) update-tooling                                   ;;
+	(static-web-server) update-tooling --asset='gnu'                     ;;
+	(unison           ) update-tooling --asset='static'                  ;;
+	(usql             ) update-tooling --asset='^static'                 ;;
+	(yq               ) update-tooling --asset='^.tar.gz'                ;;
+
+
+	# Items available as a DEB package.
+
+	(hostctl          ) update-deb-tooling ;;
+	(gh               ) update-deb-tooling ;;
+
+
+	# Items requiring special handling.
+
+	(aws)
+		target="${HOME}/bin/vendor/aws-runtime"
+		mkdir -p "$target" && rm -rf "$target"/*
+
+		mktemp --tmpdir "$TEMPFILE_TEMPLATE" | store-as zip_file
+		mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
+		curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' --silent --location > "$zip_file"
+		unzip -q "$zip_file" -d "$extract_dir" || error-out 2 'unable to download/extract latest release'
+		mv "${extract_dir}/aws/dist"/* "${target}/"
+		rm -rf "$zip_file" "$extract_dir"
+		;;
+
+	(chruby)
+		mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
+		eget --quiet "$( github-repo )" --source --file='chruby.*' --all --to="$extract_dir"
+		mv "${extract_dir}/chruby.sh" "${HOME}/bin/vendor/chruby-source"
+		mv "${extract_dir}/auto.sh"   "${HOME}/bin/vendor/chruby-source.auto"
+		chmod 644 "${HOME}/bin/vendor/chruby-source*"
+		rm -rf "$extract_dir"
+		;;
+
+	(heroku)
+		target="${HOME}/bin/vendor/heroku-runtime"
+		mkdir -p "$target" && rm -rf "$target"/*
+
+		curl 'https://cli-assets.heroku.com/heroku-linux-x64.tar.gz' --silent --location \
+		| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to download/extract latest release'
+		;;
+
+	(ruby-install)
+		target="${HOME}/bin/vendor/ruby-install-runtime"
+		mkdir -p "$target" && rm -rf "$target"/*
+
+		eget --quiet "$( github-repo )" --download-only --source --to='/dev/stdout' \
+		| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to download/extract latest release'
+		;;
+
+
+	# Unknown tooling.
+
+	*)
+		error-out 1 "unknown tool '${tool_name}'"
+		;;
+esac

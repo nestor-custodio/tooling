@@ -1,0 +1,98 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) SERVICE_CODE [SUBJECT] MESSAGE
+
+		Sends a message to PushOver user "sakimorix@gmail.com"
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		SERVICE_CODE
+		  Identifies the registered PushOver service to use for message delivery.
+		  Only available value right now is "gcp".
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  on invalid SERVICE_CODE,
+		  3  if message failed to send correctly.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	service=''
+	subject=''
+	message=''
+
+	case "$#" in
+
+		2)
+			service="$1" && shift
+			message="$1" && shift
+			;;
+
+		3)
+			service="$1" && shift
+			subject="$1" && shift
+			message="$1" && shift
+			;;
+
+		*) error-out 1 'invalid option(s)' ;;
+	esac
+
+}
+
+# ---
+# ---
+
+
+# Set the PushOver keys.
+
+user_key="$( project attributes/pushover-user-key )"
+service_keys="$( project attributes/pushover-service-keys )"
+
+case "$service" in
+
+	(gcp)
+		service_key="$( json "$service_keys" .gcp )"
+		;;
+
+	*) error-out 2 "unknown SERVICE_CODE (${service})" ;;
+esac
+
+
+# Send the message.
+#
+curl -s --form-string 'priority=0'                 \
+				--form-string "user=${user_key}"           \
+				--form-string "token=${service_key}"       \
+				--form-string "title=${subject}"           \
+				--form-string "message=${message}"         \
+				'https://api.pushover.net/1/messages.json' \
+| json '.status' | hasline 1 &> /dev/null

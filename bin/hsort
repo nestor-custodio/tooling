@@ -1,0 +1,58 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) HEADER_LINE_COUNT [-- SORT_OPTIONS]
+
+		Wrapper for GNU sort that lets you specify a number of "header" lines to
+		keep at the top of the file, before sorting begins.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Any SORT_OPTIONS given are passed through to the underlying *sort* call.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid header line count,
+		  2  if option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	header_line_count="$1" && shift
+	[ -n "$header_line_count" ] || error-out 1 'no header line count given'
+	[ "$header_line_count" -eq "$header_line_count" ] || error-out 1 'non-numeric header line count given'
+
+}
+
+# ---
+# ---
+
+
+sed --unbuffered -e "${header_line_count}q" < /dev/stdin
+sort "$@" < /dev/stdin

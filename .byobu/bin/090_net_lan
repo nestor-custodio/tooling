@@ -1,0 +1,14 @@
+#! /bin/bash
+shopt -s lastpipe
+
+# ---
+
+source "$( dirname "$0" )/status_helpers"
+
+# ---
+# ---
+
+
+lan-ip | read -r -d '' lan_ips
+
+left_piped " 🏠 %s" "$lan_ips"

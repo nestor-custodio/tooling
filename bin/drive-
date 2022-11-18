@@ -1,0 +1,8 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+
+drive_mount="${HOME}/drive"
+'drive?' && sync "$drive_mount" && umount "$drive_mount" && rmdir "$drive_mount"

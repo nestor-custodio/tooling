@@ -1,0 +1,159 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) --from=DATE_1 --to=DATE_2
+		       $( name-blanks ) --since=DATE
+
+		Returns a pretty-printed description of the time elapsed between
+		two dates (--from and --to), or between a date and now (--since).
+		Output is formatted as "#y #w #d #h #m #s", with 0-valued fragments
+		being omitted entirely.
+
+		e.g. A time range of 7 days and 3 minutes will show as "1w 3m", with no
+		day ("d"), hour ("h"), or second ("s") component.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		  -y|--year                 Sets the output granularity to years.
+		  -w|--week                 Sets the output granularity to weeks.
+		  -d|--day                  Sets the output granularity to days.
+		  -h|--hour                 Sets the output granularity to hours.
+		  -m|--minute               Sets the output granularity to minutes.
+		  -s|--second               Sets the output granularity to seconds.
+
+		All dates must be given in a coreutils-parseable format.
+		For additional info on the GNU coreutils date parser, see command:
+		  info '(coreutils) date invocation'
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if invalid from/to/since date.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	date_1='now'
+	date_2='now'
+	precision='s'
+
+	# ---
+	# ---
+
+	CHAR_OPTS='h,y,w,d,h,m,s'
+	LONG_OPTS='help,from:,to:,til:,until:,since:'
+	LONG_OPTS="${LONG_OPTS},year,years,week,weeks,day,days,hour,hours,min,mins,minute,minutes,sec,secs,second,seconds"
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--from)
+				date_1="$1" && shift
+				;;
+
+			(--to|--til|--until)
+				date_2="$1" && shift
+				;;
+
+
+			(--since)
+				date_1="$1" && shift
+				date_2='now'
+				;;
+
+
+			(-y|--year|--years)
+				precision='y'
+				;;
+
+			(-w|--week|--weeks)
+				precision='w'
+				;;
+
+			(-d|--day|--days)
+				precision='d'
+				;;
+
+			(-h|--hour|--hours)
+				precision='h'
+				;;
+
+			(-m|--min|--mins|--minute|--minutes)
+				precision='m'
+				;;
+
+			(-s|--sec|--secs|--second|--seconds)
+				precision='s'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+sec_per_y='31536000'
+sec_per_w='  604800'
+sec_per_d='   86400'
+sec_per_h='    3600'
+sec_per_m='      60'
+sec_per_s='       1'
+
+
+timestamp "$date_1" 2> /dev/null | store-as date_1_timestamp
+timestamp "$date_2" 2> /dev/null | store-as date_2_timestamp
+
+[ -n "$date_1_timestamp" ] || error-out 2 'invalid date(s)'
+[ -n "$date_2_timestamp" ] || error-out 2 'invalid date(s)'
+
+calc "truncate(abs( ${date_2_timestamp} - ${date_1_timestamp} ))" | store-as delta
+
+
+calc "floor(     ${delta}                / ${sec_per_y} )" | store-as y
+calc "floor( mod(${delta}, ${sec_per_y}) / ${sec_per_w} )" | store-as w
+calc "floor( mod(${delta}, ${sec_per_w}) / ${sec_per_d} )" | store-as d
+calc "floor( mod(${delta}, ${sec_per_d}) / ${sec_per_h} )" | store-as h
+calc "floor( mod(${delta}, ${sec_per_h}) / ${sec_per_m} )" | store-as m
+calc "floor( mod(${delta}, ${sec_per_m}) / ${sec_per_s} )" | store-as s
+
+
+output=''
+(( "$y" > 0 )) && [[ "$precision" =~ y|w|d|h|m|s ]] && output="${output} ${y}y"
+(( "$w" > 0 )) && [[ "$precision" =~   w|d|h|m|s ]] && output="${output} ${w}w"
+(( "$d" > 0 )) && [[ "$precision" =~     d|h|m|s ]] && output="${output} ${d}d"
+(( "$h" > 0 )) && [[ "$precision" =~       h|m|s ]] && output="${output} ${h}h"
+(( "$m" > 0 )) && [[ "$precision" =~         m|s ]] && output="${output} ${m}m"
+(( "$s" > 0 )) && [[ "$precision" =~           s ]] && output="${output} ${s}s"
+
+
+output="${output/ }"
+[ -n "$output" ] || output="0${precision}"
+
+
+echo "$output"

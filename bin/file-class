@@ -1,0 +1,91 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) FILE
+
+		Categorizes the type of file given, as reported by 'stat'.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --follow                  Follow links and report on *that* file.
+		  --help                    Show this help text.
+
+		Output values:
+		  'd' -> directory
+		  'r' -> regular file
+		  'l' -> symbolic link
+		  'p' -> pipe/fifo
+		  's' -> socket
+		  'b' -> block special file (i.e. "/dev/loop0")
+		  'c' -> character special file (i.e. "/dev/zero")
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option
+		  2  if unknown file class.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	follow=''
+
+	# ---
+	# ---
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help,follow'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--follow)
+				follow='1'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	filename="$1" && shift
+	[ -n "$filename" ] || error-out 1 'no FILE given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+[ -n "$follow" ] && realpath "$filename" | store-as filename
+case "$( stat --format='%F' "$filename" )" in
+	'directory'             ) echo 'd' ;;
+	'regular file'          ) echo 'r' ;;
+	'regular empty file'    ) echo 'r' ;;
+	'symbolic link'         ) echo 'l' ;;
+	'fifo'                  ) echo 'p' ;;
+	'socket'                ) echo 's' ;;
+	'block special file'    ) echo 'b' ;;
+	'character special file') echo 'c' ;;
+
+	*) exit-out 2 ;;
+esac

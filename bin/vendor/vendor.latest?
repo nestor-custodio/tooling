@@ -1,0 +1,206 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) TOOL_NAME
+
+		Asserts whether the corresponding binary is indeed the latest release.
+		When this is not the case, both version numbers are reported via STDOUT.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if mismatched version numbers.
+	EOF
+
+}
+
+# ---
+
+{ # -- Utility Functions -- #
+
+	_executable=''
+	executable() {
+		[ -n "$_executable" ] && { echo "$_executable"; return ; }
+	
+		echo "/home/nestor/bin/vendor/${tool_name}" | store-as _executable
+		echo "$_executable"
+	}
+
+	_github_repo=''
+	github-repo() {
+		[ -n "$_github_repo" ] && { echo "$_github_repo"; return ; }
+	
+		cat "$( executable ).repo" | store-as _github_repo
+		echo "$_github_repo"
+	}
+
+	# ---
+	
+	check-version() {
+
+		# --cmd            The option/command that causes the tool to report its version.
+		#                  (default: '--version')
+		#
+		# --puller         The regex that pulls an actual version number out of the tool's
+		#                  version output.
+		#                  (default: '.*')
+		#
+		# --local-version  The tool's current version number. When given, the executable is
+		#                  never queried as that's unnecessary.
+		#                  (default: '')
+
+		# ---
+
+		{ # -- Parameter Processing: Options -- #
+
+			# Set defaults.
+
+			cmd='--version'
+			puller='.*'
+			local_version=''
+
+			# ---
+			# ---
+
+			CHAR_OPTS=''
+			LONG_OPTS='cmd:,puller:,local-version:'
+
+			set-params
+			while true; do
+				option="$1" && shift
+				case "$option" in
+					(--) break ;;  # No more options.
+
+
+					(--cmd)
+						cmd="$1" && shift
+						;;
+
+					(--puller)
+						puller="$1" && shift
+						;;
+
+					(--local-version)
+						local_version="$1" && shift
+						;;
+
+				esac
+			done
+
+		}
+
+		{ # -- Parameter Processing: Positionals -- #
+
+			[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+		}
+
+		# ---
+		# ---
+
+
+		[ -z "$local_version" ] && "$( executable )" "$cmd" 2> /dev/null | grep -P --only-matching "$puller" | store-as local_version
+		gh:release-version "$( github-repo )" | store-as release_version
+
+		[ "$local_version" == "$release_version" ] || exit-out 2 "${local_version} ➜ ${release_version}"
+
+	}
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	tool_name="$1" && shift
+	[ -n "$tool_name" ] || error-out 1 'no TOOL_NAME given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+case "$tool_name" in
+
+
+	# Straight-forward `eget` pulls.
+
+	(aws              ) check-version                  --puller='(?<=aws-cli/).*?(?= )'        ;;
+	(bat              ) check-version                  --puller='(?<=bat ).*?(?= )'            ;;
+	(btop             ) check-version                  --puller='(?<=btop version: ).*'        ;;
+	(caddy            ) check-version --cmd='version'  --puller='(?<=v).*?(?= )'               ;;
+	(circleci         ) check-version --cmd='version'  --puller='.*?(?=\+)'                    ;;
+	(delta            ) check-version                  --puller='(?<=delta ).*'                ;;
+	(eget             ) check-version                  --puller='(?<=eget version ).*'         ;;
+	(fd               ) check-version                  --puller='(?<=fd ).*'                   ;;
+	(fzf              ) check-version                  --puller='.*(?= )'                      ;;
+	(gh               ) check-version                  --puller='(?<=gh version ).*?(?= )'     ;;
+	(heroku           ) check-version                  --puller='(?<=heroku/).*?(?= )'         ;;
+	(hostctl          ) check-version                  --puller='(?<=hostctl version ).*'      ;;
+	(hx               ) check-version                  --puller='(?<=helix ).*?(?= )'          ;;
+	(jq               ) check-version                                                          ;;
+	(lazydocker       ) check-version                  --puller='(?<=Version: ).*'             ;;
+	(lazygit          ) check-version                  --puller='(?<=version=).*?(?=,)'        ;;
+	(n                ) check-version                  --puller='(?<=v).*'                     ;;
+	(rg               ) check-version                  --puller='(?<=ripgrep ).*?(?= )'        ;;
+	(ruby-install     ) check-version                  --puller='(?<=ruby-install: ).*'        ;;
+	(shellcheck       ) check-version                  --puller='(?<=version: ).*'             ;;
+	(static-web-server) check-version                  --puller='(?<=static-web-server ).*'    ;;
+	(unison           ) check-version --cmd='-version' --puller='(?<=unison version ).*?(?= )' ;;
+	(usql             ) check-version                  --puller='(?<=usql ).*'                 ;;
+	(yq               ) check-version                  --puller='(?<=version ).*'              ;;
+
+
+	# Items requiring special handling.
+
+	(chruby)
+		eval "$( head -n1 '/home/nestor/bin/vendor/chruby-source' )"
+		check-version --local-version="$CHRUBY_VERSION"
+		;;
+
+	(dotdrop)
+		check-version 2> /dev/null
+		;;
+
+	(redis-viewer)
+		# There's no way to *check* this, so 🤷.
+		# I've requested adding a `--version` option via:
+		# https://github.com/saltfishpr/redis-viewer/issues/7
+		noop
+		;;
+
+
+	# Unknown tooling.
+
+	*)
+		error-out 1 "unknown tool '${tool_name}'"
+		;;
+esac

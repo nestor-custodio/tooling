@@ -1,0 +1,16 @@
+#! /bin/bash
+#
+# NO SHOPT FOR lastpipe,
+# AS THIS IS INTENDED TO BE SOURCED.
+#
+# NOTE FOR PURPOSES OF SPACING: BYOBU ADDS A SPACE *AFTER*
+#                               ANY OUTPUT WE GENERATE HERE.
+
+# ---
+# ---
+
+unpiped() { echo -e "#[default]$( printf "$@" )#[default]"; }
+
+left_piped()  { echo -e "#[default]❘$( printf "$@" )#[default]"; }
+right_piped() { echo -e "#[default]$( printf "$@" )|#[default]"; }
+double_piped() { echo -e "#[default]|$( printf "$@" )|#[default]"; }

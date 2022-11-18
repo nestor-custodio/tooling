@@ -1,0 +1,12 @@
+NOTE: Byobu custom binaries are named as "N_NAME",
+      where "N" is how often the script should run (in seconds)
+      and "NAME" is a descriptive name for the user's own sake.
+
+Importantly, script output is ordered on the status bar via an ALPHA sorting,
+so if you want a script that runs less often (say, every 60s) to show before
+a script that runs more often (say, every 30s), you can name the first "0060"
+and the second "030"; this puts the 60s script before the 30s script without
+unnecessarily running the operation every 29s or so.
+
+To verify the order in which custom binaries will run, try:
+/bin/ls -1 | /bin/sort | /bin/grep -P '^[0-9]'

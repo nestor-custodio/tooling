@@ -1,0 +1,62 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) DATABASE_NAME
+
+		Routes SQL from STDIN to our Cloud SQL instance under the given DB name.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if no DATABASE_NAME given.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	database_name="$1" && shift
+	[ -n "$database_name" ] || error-out 2 'no DATABASE_NAME given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+dropdb "$database_name" --if-exists --force
+createdb "$database_name"
+
+cat /dev/stdin \
+| sed -r \
+      -e 's#^((CREATE EXTENSION|COMMENT ON EXTENSION) .*\bplpgsql\b)#-- \1#g' \
+| psql --dbname="postgres://nestor@postgres/${database_name}"

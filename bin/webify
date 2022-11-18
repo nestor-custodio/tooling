@@ -1,0 +1,90 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [WEBROOT]
+
+		Exposes the given WEBROOT ("./" by default) as an HTTPS service.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option
+		  2  if webroot not found.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	# Set defaults.
+
+	webroot="$( pwd )"
+
+	# ---
+	# ---
+
+	case "$#" in
+
+		0)
+			# Parameters set via defaults above.
+			;;
+
+		1)
+			webroot="$1" && shift
+			;;
+
+		*)
+			error-out 1 'too many arguments'
+			;;
+
+	esac
+
+}
+
+# ---
+# ---
+
+
+webroot="$( realpath "$webroot" )"
+[ -e "$webroot" ] || error-out 2 'path not found'
+
+
+port="$( shuf -n1 --input-range='3000-3999' )"
+webroot_url="https://$( hostname ).custodio.app/"
+
+echo
+echo "Serving \"${webroot}\" on:"
+echo "${webroot_url} ..."
+echo
+qr "$webroot_url"
+
+
+https all "$port" &> /dev/null
+static-web-server --root="$webroot" --port="$port" --compression='true' --directory-listing='true' --directory-listing-order='0'
+https stop
+echo

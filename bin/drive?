@@ -1,0 +1,8 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+
+drive_mount="${HOME}/drive"
+findmnt --types=fuse.google-drive-ocamlfuse "$drive_mount" &> /dev/null

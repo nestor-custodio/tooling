@@ -1,0 +1,9 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+# ---
+
+
+runtime_bin="$( script-path )/heroku-runtime/bin"
+exec "${runtime_bin}/node" "${runtime_bin}/run" "$@"

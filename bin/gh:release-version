@@ -1,0 +1,61 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) REPO_ID
+
+		Gives the version number of the latest release on the given Github repo.
+		If Github has no "latest" *release*, the name of the latest tag is used.
+
+		The REPO_ID value is given as "username/repo_name".
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	repo_id="$1" && shift
+	[ -n "$repo_id" ] || error-out 1 'no REPO_ID given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+gh --repo="$repo_id" release view --json='tagName' 2> /dev/null | json .tagName | store-as version_number
+[ -z "$version_number" ] && curl --silent "https://api.github.com/repos/${repo_id}/tags" | json '.[0].name' | store-as version_number
+
+sed -r -e 's#^v##' <<< "$version_number"

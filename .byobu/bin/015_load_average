@@ -1,0 +1,22 @@
+#! /bin/bash
+shopt -s lastpipe
+
+# ---
+
+source "$( dirname "$0" )/status_helpers"
+
+# ---
+# ---
+
+
+cat /proc/loadavg | cut --field=1 --delim=' ' | read -r -d '' unweighted_load_average
+calc "${unweighted_load_average} / $( nproc ) * 100" | read -r -d '' load_percentage
+
+
+### (( "$( calc "${load_percentage} >=  80.0" )" )) && SET ALERT
+
+
+# ---
+# ---
+
+left_piped " 📶 %04.1f%%%%" "$load_percentage"

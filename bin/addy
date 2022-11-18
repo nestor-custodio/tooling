@@ -1,0 +1,62 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) HOSTNAME
+
+		Outputs the IP4 address of an A record for the given HOSTNAME.
+		For names that resolve to multiple A records, a random one is selected.
+		Unqualified hostnames are assumed to be in the current instance's domain.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	hostname="$1" && shift
+	[ -n "$hostname" ] || error-out 1 'no HOSTNAME given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Append the current host's domain, if necessary.
+#
+fgrep --quiet '.' <<< "$hostname" || hostname="${hostname}.$( hostname --domain )"
+
+
+dig +short -4 "$hostname" A | grep -P '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$' | shuf --head-count=1

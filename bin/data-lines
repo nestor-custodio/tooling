@@ -1,0 +1,66 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [FILE]
+
+		Gives the number of (non-empty) lines in the given FILE (or STDIN).
+		
+		This is a workaround for the fact that 'wc -l' reports "1" for empty
+		input, which makes it an unreliable way to get an actual line count.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit status:
+		 0  if OK,
+		 1  if invalid option.
+	EOF
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	case "$#" in
+
+		0)
+			filename=''
+			;;
+
+		1)
+			filename="$1" && shift
+			;;
+
+		*)
+			error-out 1 'invalid option(s)'
+			;;
+
+	esac
+}
+
+# ---
+# ---
+
+
+/bin/grep -c '.' < "${filename:-/dev/stdin}"

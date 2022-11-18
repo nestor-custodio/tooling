@@ -1,0 +1,75 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [DATE]
+
+		Outputs a Unix timestamp, with sub-second precision.
+
+		The DATE defaults to 'now' and is parsed by the coreutils parser.
+		For additional info on the GNU coreutils date parser, see command:
+		  info '(coreutils) date invocation'
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+		  -s | --seconds            Use second precision (no decimal component).
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if invalid DATE value.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	format_template='+%s.%N'
+
+	# ---
+	# ---
+
+	CHAR_OPTS='hs'
+	LONG_OPTS='help,second,seconds'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(-s|--second|--seconds)
+				format_template='+%s'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	target_date='now'
+	(( "$#" >= 1 )) && target_date="$1" && shift
+	[ -n "$target_date" ] || error-out 1 'invalid options(s)'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+date --date="$target_date" "$format_template" 2> /dev/null || error-out 2 'invalid date'

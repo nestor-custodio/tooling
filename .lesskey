@@ -1,0 +1,53 @@
+
+#command
+#-------
+
+i        back-line
+k        forw-line
+j        left-scroll
+l        right-scroll
+
+[        goto-line
+I        back-screen
+K        forw-screen
+]        goto-end
+
+g        goto-line
+/        forw-search
+n        repeat-search
+N        reverse-search
+\e       undo-hilite
+
+fgrep\   filter
+tail\r   forw-forever
+\        forw-screen
+\b       back-screen
+
+0        digit
+1        digit
+2        digit
+3        digit
+4        digit
+5        digit
+6        digit
+7        digit
+8        digit
+9        digit
+
+?        help
+q        quit
+w        quit
+
+#----
+#stop
+
+
+
+
+#line-edit
+#---------
+
+# We're not defining any editing commands.
+
+#----
+#stop

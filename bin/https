@@ -1,0 +1,149 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [ me  | safe ] [BINDING]
+		       $( script-name ) { all | open } [BINDING]
+		       $( script-name ) { off | stop }
+
+		Starts/stops an auto-certing HTTP(S) reverse-proxy that shuttles traffic
+		intended for "$( vm-name ).custodio.app" to the given BINDING. A BINDING
+		may be of the form "HOST:PORT", or simply "PORT".
+
+		The default HOST is "localhost" and default PORT is "3000", yielding a
+		default BINDING of "localhost:3000" if nothing is given.
+
+		If invoked via the "me"/"safe" command, only requests issued by the ssh-
+		connected client are served. When invoked via "all"/"open", all requests
+		will be served (subject to a blacklist of known scanners).
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	# Set defaults.
+
+	command='safe'
+	binding='localhost:3000'
+
+	# ---
+	# ---
+
+	case "$#" in
+
+		0)
+			# Parameters set via defaults above.
+			;;
+
+		1)
+			if grep -P --quiet -x '(?:.*:)?[0-9]{1,5}' <<< "$1"; then
+				binding="$1" && shift
+			else
+				command="$1" && shift
+			fi
+			;;
+
+		2)
+			command="$1" && shift
+			binding="$1" && shift
+			;;
+
+		*)
+			error-out 1 'too many arguments'
+			;;
+
+	esac
+
+	# ---
+
+	# Ensure defaults.
+
+	if has ':' <<< "$binding"; then
+		# Binding is in "HOST:PORT" form.
+		noop
+	else
+		if [ -z "${binding//[0-9.]/}" ]; then
+			# Binding is a PORT.
+			binding="localhost:${binding}"
+		else
+			error-out 1 "unrecognizable binding: '${binding}'"
+		fi
+	fi
+
+}
+
+# ---
+# ---
+
+
+caddy_bin="$( command -v caddy )"
+"$caddy_bin" stop &> /dev/null
+
+case "$command" in
+
+	(me|safe)
+		caddyfile_template="${HOME}/bin/https:safe.caddyfile"
+		caddyfile_generated="$( mktemp --dry-run -t 'https:safe.XXXXX' )"
+
+		sed -e "s|#CLIENT_IP#|$( client-ip )|" < "$caddyfile_template" > "$caddyfile_generated"
+
+		sudo BINDING="$binding" "$caddy_bin" start --config="$caddyfile_generated" --adapter='caddyfile' "$@" 2> /dev/null
+		rm "$caddyfile_generated"
+		;;
+
+	(all|open)
+		cidr_blacklist="${caddy_bin}.blacklist"
+
+		caddyfile_template="${HOME}/bin/https:open.caddyfile"
+		caddyfile_generated="$( mktemp --dry-run -t 'https:open.XXXXX' )"
+
+		sed -z -e "s|#BLACKLIST#.*||" < "$caddyfile_template" > "$caddyfile_generated"
+		sed -e "s|^|remote_ip |" < "$cidr_blacklist" >> "$caddyfile_generated"
+		sed -z -e "s|.*#BLACKLIST#||" < "$caddyfile_template" >> "$caddyfile_generated"
+
+		sudo BINDING="$binding" "$caddy_bin" start --config="$caddyfile_generated" --adapter='caddyfile' "$@" 2> /dev/null
+		rm "$caddyfile_generated"
+
+		echo
+		qr "https://$( hostname ).custodio.app/"
+		;;
+
+	(off|stop)
+		# Already handled above, since we always `caddy stop` before moving on.
+		;;
+
+	*)
+		error-out 1 "unknown command \"${command}\""
+		;;
+
+esac

@@ -1,0 +1,20 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+# ---
+
+
+export RUBY_ENV='test'
+export RAILS_ENV='test'
+export RACK_ENV='test'
+export NODE_ENV='test'
+
+
+# If one or more files are given, run just those.
+# If no files are given, recursively run everything under "./test/".
+
+if [ -n "$*" ]
+  then ruby "$@"
+  else fd --glob '*.rb' ./test/ 2> /dev/null | xargs -rl ruby
+fi

@@ -1,0 +1,14 @@
+#! /bin/bash
+shopt -s lastpipe
+
+# ---
+
+source "$( dirname "$0" )/status_helpers"
+
+# ---
+# ---
+
+
+wan-ip | read -r -d '' wan_ip
+
+left_piped " 🌐 ${wan_ip:-(NO WAN IP)}"

@@ -1,0 +1,9 @@
+# Language support configuration.
+# See the languages documentation: https://docs.helix-editor.com/master/languages.html
+
+[[language]]
+name = "ruby"
+indent = { tab-width = 2, unit = "  " }
+config = { solargraph = { diagnostics = true, formatting = true } }
+formatter = { command = "bundle", args = ["exec", "rubocop", "--stdin", "...", "--fix", "--stderr", "--fail-level", "fatal"] }
+auto-format = true

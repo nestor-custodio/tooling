@@ -1,0 +1,39 @@
+# Runtimes.
+#
+/aws-runtime/
+/heroku-runtime/
+/ruby-install-runtime/
+
+# Binaries.
+#
+/aws
+/bat
+/broot
+/btop
+/caddy
+/chruby-source
+/chruby-source.auto
+/circleci
+/delta
+/dotdrop
+/eget
+/fd
+/fzf
+/gh
+/hostctl
+/hx
+/jq
+/lazydocker
+/lazygit
+/n
+/redis-viewer
+/rg
+/shellcheck
+/static-web-server
+/unison
+/usql
+/yq
+
+# Support Files.
+#
+/caddy.blacklist

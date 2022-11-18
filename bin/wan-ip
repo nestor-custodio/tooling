@@ -1,0 +1,65 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Reports the external IP (per ipify.org) for the current instance.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if unable to determine IP.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Note that ipify.org will sometimes drop requests,
+# so we need to keep trying until `curl` sees output.
+# We *are* limiting this to 5 requests to avoid infinite looping,
+# but note this is different from *1* request with a 5-sec timeout!
+#
+# Note we're tacking on an extra `echo` because the ipify.org response
+# is "too clean for GNU-compatible tooling" (i.e. does not end on a "\n").
+
+for i in {1..5}; do
+  curl 'https://api.ipify.org/' --silent --max-time 1
+  [ "$?" == 0 ] && { echo; exit; }
+done
+
+error-out 2 'no response from ipify.org'

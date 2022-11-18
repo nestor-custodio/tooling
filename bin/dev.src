@@ -1,0 +1,68 @@
+#! /bin/env bash
+shopt -s lastpipe expand_aliases
+
+# ---
+
+dev() {
+  # Fuzzy-find-based dev location utility.
+  # - If no search term is given, `cd` into the dev root.
+  # - If a single match is found, `cd` into it or open it into the editor, as applicable.
+  # - If multiple matches are found, allow interactive selection and then process as above.
+
+  local search="$1" && shift
+  local dev_root="${DEV_ROOT:-${HOME}/dev}"
+
+
+  # We want to be at $dev_root before the editor runs
+  # so file searches, etc are project-wide by default.
+  #
+  cd "$dev_root"
+
+
+  # Simpleton case: no params given.
+  #
+  [ "$search" == '' ] && return 0
+
+
+  # Compile list of all *possible* entries.
+  #
+  local directories_only list
+  [ "${search: -1}" == '/' ] && directories_only="--type=d"
+  list="$( fd "$directories_only" --hidden --exclude='.git/' --color='always' )"
+
+  # Find *matching* entries, asking interactively if necessary.
+  #
+  readarray -t matches < <( fzf --query="'${search} " --multi --select-1 --preview-window='default' <<< "$list" )
+
+
+  # Process matches...
+  #
+  case "${#matches[*]}" in
+    0)
+      return 1
+      ;;
+
+    1)
+      local match="${matches[0]}"
+      case "$( file-class --follow "$match" )" in
+        d) cd "./${match%/}" ;;
+        r) "$EDITOR" -- "$match" ;;
+        
+        *)
+          echo 'unexpected file class'
+          return 1
+          ;;
+      esac
+      ;;
+
+    *)
+      for (( i=0; i < "${#matches[*]}"; i++ )); do
+        [ "$( file-class --follow "${matches[$i]}" )" == 'r' ] || return 1
+      done
+
+      "$EDITOR" -- "${matches[@]}"
+      ;;
+  esac
+}
+
+alias ::='dev'

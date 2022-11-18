@@ -1,0 +1,75 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [--short] METADATA_KEY
+
+		Queries the GCP *project* metadata store for the given key.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+		  --short                   Return the last segment (after the final "/")
+		                            for metadata values that look like a relative
+		                            URL (see values for "machine-type" or "zone").
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	short=''
+
+	# --
+	# --
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help,short'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--short)
+				short='1'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	metadata_key="$1" && shift
+	[ -n "$metadata_key" ] || error-out 1 'no METADATA_KEY given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+if [ -z "$short" ]; then
+	metadata "project/${metadata_key}"
+else
+	metadata --short "project/${metadata_key}"
+fi

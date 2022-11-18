@@ -1,0 +1,122 @@
+## NLC (2020-09-03): Based largely on "/etc/nanorc".
+
+
+## When soft line wrapping is enabled, make it wrap lines at blanks
+## (tabs and spaces) instead of always at the edge of the screen.
+set atblanks
+
+## Automatically indent a newly created line to the same number of
+## tabs and/or spaces as the preceding line -- or as the next line
+## if the preceding line is the beginning of a paragraph.
+set autoindent
+
+## Constantly display the cursor position in the status bar.  Note that
+## this overrides "quickblank".
+set constantshow
+
+## Do not use the line below the title bar, leaving it entirely blank.
+set emptyline
+
+## Remember the used search/replace strings for the next session.
+set historylog
+
+## Don't show line numbers to the left of the text. This makes it easier
+## for us to copy stuff out of Nano unencumbered by stuff that makes it
+## hard to paste into command-line or, say, a rails console.
+unset linenumbers
+
+## Disable vim-style lock-files.
+unset locking
+
+## Switch on multiple file buffers (inserting a file will put it into
+## a separate buffer).
+set multibuffer
+
+## Don't display the helpful shortcut lists at the bottom of the screen.
+set nohelp
+
+## Remember the cursor position in each file for the next editing session.
+set positionlog
+
+## Do regular-expression searches by default.
+## Regular expressions are of the extended type (ERE).
+set regexp
+
+## Make the Home key smarter.  When Home is pressed anywhere but at the
+## very beginning of non-whitespace characters on a line, the cursor
+## will jump to that beginning (either forwards or backwards).  If the
+## cursor is already at that position, it will jump to the true
+## beginning of the line.
+set smarthome
+
+## Don't allow nano to be suspended.
+unset suspend
+
+## Use this tab size instead of the default; it must be greater than 0.
+set tabsize 2
+
+## Don't save automatically on exit; prompt when needed.
+unset tempfile
+
+## Snip whitespace at the end of lines when justifying or hard-wrapping.
+set trimblanks
+
+## Let an unmodified Backspace or Delete erase the marked region (instead
+## of a single character, and without affecting the cutbuffer).
+set zap
+
+
+## Paint the interface elements of nano.
+set titlecolor brightwhite,blue
+set statuscolor white
+set errorcolor brightwhite,red
+set selectedcolor brightwhite,magenta
+set stripecolor ,yellow
+set numbercolor white
+set keycolor red
+set functioncolor green
+
+
+## <Tab> should always produce two spaces when editing a Ruby file,
+## independent of the settings of 'tabsize' and 'tabstospaces':
+extendsyntax ruby tabgives "  "
+
+
+## Key bindings.
+
+unbind ^G all
+unbind ^K main
+unbind ^U all
+unbind ^N main
+unbind ^Y all
+unbind M-J main
+unbind M-T main
+unbind ^T main
+
+bind M-] prevbuf main
+bind M-\ nextbuf main
+bind ^O insert main
+bind ^S savefile main
+bind ^A writeout main
+bind ^W exit all
+bind ^Q exit all
+
+bind ^F whereis all
+bind ^N findnext all
+bind ^P findprevious all
+bind ^R replace all
+
+bind ^C copy main
+bind ^V paste all
+bind ^X cut all
+bind ^K zap all
+
+bind ^Z undo main
+bind ^Y redo main
+
+bind M-H nohelp all
+bind ^G gotoline main
+bind ^_ comment main  # Ctrl+/ is seen as a Ctrl-_
+bind ^\ browser insert
+bind ^\ browser writeout
+bind ^G gotodir browser

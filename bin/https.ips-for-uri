@@ -1,0 +1,2 @@
+#! /bin/env bash
+cat "/var/log/https-access-log::"* | fgrep --no-filename "$1" | jq -sr '.[].request.remote_ip' | sort | uniq

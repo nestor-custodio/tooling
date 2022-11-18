@@ -1,0 +1,73 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Reports the IP of the connected client.
+		If user is local, reports the host WAN IP.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if unable to determine IP.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Refresh the SSH_CONNECTION variable.
+#
+# NOTE: When a shell is loaded into a `tmux` pane, it is passed a correct,
+#       *current* SSH_CONNECTION value from `tmux`. If a disconnection and
+#       reconnect happens, however, the SS_CONNECTION value already loaded
+#       into the shell is not updated/refreshed. To do this, we ask `tmux`
+#       for its *current* value and update the local variable before use.
+#
+#       Also note despite the "export" call below, this update does not
+#       actually bubble out to the calling shell, as this script is not
+#       being *sourced*. The outer SSH_CONNECTION will continue to hold
+#       an incorrect value.
+#
+export "$( tmux show-environment SSH_CONNECTION )"
+
+
+CLIENT_IP="${SSH_CONNECTION%% *}"
+[ -n "$CLIENT_IP" ] || CLIENT_IP="$( wan-ip 2> /dev/null )"
+[ -n "$CLIENT_IP" ] || error-out 2 'unable to determine client ip'
+
+echo "$CLIENT_IP"

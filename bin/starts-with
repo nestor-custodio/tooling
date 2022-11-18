@@ -1,0 +1,53 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) LOOKUP_STRING
+
+		Convenience tool for determining whether the text provided
+		via STDIN begins with the given LOOKUP_STRING (as a literal).
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	lookup_string="$*" && shift
+	[ -n "$lookup_string" ] || error-out 1 'no lOOKUP_STRING given'
+
+}
+
+# ---
+# ---
+
+
+[ "$lookup_string" == "$( head --bytes="${#lookup_string}" < /dev/stdin )" ]

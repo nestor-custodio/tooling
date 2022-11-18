@@ -1,0 +1,81 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) FILE_1 FILE_2
+
+		Makes a best-effort attempt to swap FILE_1 and FILE_2 'atomically'.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if file not found,
+		  3  if write access denied,
+		  4  if swap not allowed (file in use?).
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	file_1="$1" && shift
+	[ -n "$file_1" ] || error-out 1 '2 files required'
+
+	file_2="$1" && shift
+	[ -n "$file_2" ] || error-out 1 '2 files required'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Make sure the files exist.
+
+[ -e "$file_1" ] || error-out 2 "file not found: '${file_1}'"
+[ -e "$file_2" ] || error-out 2 "file not found: '${file_2}'"
+
+
+# Make sure file locations are writable.
+
+mktemp --quiet --tmpdir="$( dirname "$file_1" )" swap.XXX | store-as temp_1
+mktemp --quiet --tmpdir="$( dirname "$file_2" )" swap.XXX | store-as temp_2
+rm -f "$temp_1" "$temp_2"
+
+{ [ -n "$temp_1" ] && [ -n "$temp_2" ]; } || error-out 3 'write access denied'
+
+
+# Swap the files.
+
+mv "$file_1" "$temp_1" || {                                                 error-out 4 'swap not allowed'; }
+mv "$file_2" "$temp_2" || { mv "$temp_1" "$file_1";                         error-out 4 'swap not allowed'; }
+mv "$temp_1" "$file_2" || { mv "$temp_1" "$file_1"; mv "$temp_2" "$file_2"; error-out 4 'swap not allowed'; }
+mv "$temp_2" "$file_1" || { mv "$file_2" "$file_1"; mv "$temp_2" "$file_2"; error-out 4 'swap not allowed'; }

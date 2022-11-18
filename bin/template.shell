@@ -1,0 +1,77 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) ...
+		       $( name-blanks ) ...
+
+		Brief description.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	option_a=''
+	option_b=''
+
+	# ---
+	# ---
+
+	CHAR_OPTS='hab'
+	LONG_OPTS='help,option_a,option_b:'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(-a|--option_a)
+				option_a='1'
+				;;
+
+			(-b|--option_b)
+				option_b="$1" && shift
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	non_option_var_1="$1" && shift
+	[ -n "$non_option_var_1" ] || error-out 1 '...'
+
+	non_option_var_2="$1" && shift
+	[ -n "$non_option_var_2" ] || error-out 1 '...'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+my-command

@@ -1,0 +1,80 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [JSON_STRING] SELECTOR
+
+		Runs a jq query for SELECTOR against the given JSON_STRING (or STDIN).
+		Strings are outputed "raw" (no quotes). If the given query yields a null
+		or false, the output is an empty string.
+		
+		If neither a JSON_STRING nor a SELECTOR is given, input is assumed to be
+		STDIN and the SELECTOR is assumed to be ".". This means the no-param use
+		makes this a filter that pretty-prints the JSON given via STDIN.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit status:
+		 0  if OK,
+		 1  if invalid option.
+	EOF
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS='h'
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(-h|--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	case "$#" in
+
+		0)
+			input=''
+			selector='.'
+			;;
+
+		1)
+			input=''
+			selector="$1" && shift
+			;;
+
+		2)
+			input="$1" && shift
+			selector="$1" && shift
+			;;
+
+		*)
+			error-out 1 'invalid option(s)'
+			;;
+
+	esac
+}
+
+# ---
+# ---
+
+
+if [ -n "$input" ]; then
+	jq -r "${selector} // \"\"" <<< "$input"
+else
+	jq -r "${selector} // \"\"" < /dev/stdin
+fi

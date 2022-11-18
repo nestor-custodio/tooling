@@ -1,0 +1,12 @@
+#! /bin/bash
+shopt -s lastpipe
+
+# ---
+
+source "$( dirname "$0" )/status_helpers"
+
+# ---
+# ---
+
+
+unpiped " ⚡ $( puptime )"
