@@ -28,14 +28,14 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Options -- #
 
-	CHAR_OPTS='h'
+	CHAR_OPTS=''
 	LONG_OPTS='help'
 
 	set-params
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(-h|--help) exit-out "$usage" ;;
+			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
 		esac
 	done

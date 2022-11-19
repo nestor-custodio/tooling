@@ -33,14 +33,14 @@ source '/home/nestor/bin/std.lib'
 	# ---
 	# ---
 
-	CHAR_OPTS='h'
+	CHAR_OPTS=''
 	LONG_OPTS='help,any-status'
 
 	set-params
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(-h|--help) exit-out "$usage" ;;
+			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
 
 

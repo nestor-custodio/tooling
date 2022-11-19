@@ -37,14 +37,14 @@ source '/home/nestor/bin/std.lib'
 	# ---
 	# ---
 
-	CHAR_OPTS='hs'
+	CHAR_OPTS='s'
 	LONG_OPTS='help,second,seconds'
 
 	set-params
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(-h|--help) exit-out "$usage" ;;
+			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
 
 

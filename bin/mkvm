@@ -55,7 +55,7 @@ source '/home/nestor/bin/std.lib'
 	# ---
 	# ---
 
-	CHAR_OPTS='h'
+	CHAR_OPTS=''
 	LONG_OPTS='help,disk-size:,disk:,hdd:,machine-type:,machine:,list-machine-types,machine-types'
 	LONG_OPTS="${LONG_OPTS},e2,f1,g1,n1,n2,n2d"
 	LONG_OPTS="${LONG_OPTS},micro,small,medium"
@@ -65,7 +65,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(-h|--help) exit-out "$usage" ;;
+			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
 
 
