@@ -338,9 +338,8 @@ alias %='break_out_of_links'
   rails-tasks() { [ -e 'Gemfile' ] && bundle exec rails --tasks "$1"; }  # rt for "Rails Tasks"
   alias rt='rails-tasks'
 
-  alias pubocop='bundle exec rubocop'
-  alias rubocop='bundle exec rubocop --format=fuubar --color --parallel'
-  rubowatch() { watch --interval="${1:-10}" bundle exec rubocop --format=fuubar --color --parallel; }
+  alias brubocop='bundle exec rubocop --format=fuubar --color --parallel'
+  brubowatch() { watch --interval="${1:-10}" bundle exec rubocop --format=fuubar --color --parallel; }
 
   # Executable management.
   source "${HOME}/bin/vendor/chruby-source"

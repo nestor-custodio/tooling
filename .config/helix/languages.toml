@@ -5,5 +5,5 @@
 name = "ruby"
 indent = { tab-width = 2, unit = "  " }
 config = { solargraph = { diagnostics = true, formatting = true } }
-formatter = { command = "bundle", args = ["exec", "rubocop", "--stdin", "...", "--fix", "--stderr", "--fail-level", "fatal"] }
+formatter = { command = "hx.linter", args = ["ruby"] }
 auto-format = true

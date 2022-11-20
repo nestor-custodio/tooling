@@ -1,0 +1,74 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) LANGUAGE
+
+		Runs a specialized linting process for the given LANGUAGE.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	language="$1" && shift
+	[ -n "$language" ] || error-out 1 'no LANGUAGE given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+case "$language" in
+
+	(ruby)
+			# Since Helix can't give us a `pwd`,
+			# we have to assume "~/dev" for sanity's sake.
+			#
+			cd "${HOME}/dev" &> /dev/null
+
+			bundle info rubocop &> /dev/null && runner='bundle exec'
+			eval "${runner} rubocop --stdin source_file --stderr --auto-correct --fail-level='fatal'" < /dev/stdin
+
+			# Once `rubocop` is upgraded across projects, we'll be able to use
+			# the `--server` flag, which should speed things up signifidcantly.
+			#
+			# bundle info rubocop &> /dev/null && runner='bundle exec'
+			# eval "${runner} rubocop --server --stdin source_file --stderr --autocorrect --fail-level='fatal'" < /dev/stdin
+		;;
+
+	*) error-out 1 'unexpected LANGUAGE' ;;
+esac
