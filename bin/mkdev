@@ -34,7 +34,7 @@ source '/home/nestor/bin/std.lib'
 		  Per GCP restrictions, this has a minimum value of 12GB (given as "12GB").
 
 		Machine Types
-		  The default machine type (if none is given) is an "e2-medium" instance.
+		  The default machine type (if none is given) is an "n2d-standard-2".
 
 		  See '$( script-name ) --list-machine-types' for a list of available types.
 		  Pricing is available at: https://cloud.google.com/compute/vm-instance-pricing
@@ -43,7 +43,7 @@ source '/home/nestor/bin/std.lib'
 		  machine type suffix: "--e2 --small" is equivalent to "--machine-type='e2-small'".
 		  When only a machine type family is given (e.g. "--e2"), the suffix is assumed to
 		  be "medium" for E2 instances and "standard-2" for all others (note this does not
-		  always yield valid machine types); when only a suffix is given, "e2" is assumed.
+		  always yield valid machine types); when only a suffix is given, "n2d" is assumed.
 
 		  Note these shortcut options are a convenience and not all machine type families
 		  and suffixes are available for use as simple options.
@@ -64,7 +64,7 @@ source '/home/nestor/bin/std.lib'
 	dev_dir=''
 	git_repo=''
 	disk_size='12GB'
-	machine_type_family='e2'
+	machine_type_family='n2d'
 	machine_type_suffix=''
 
 	# ---
