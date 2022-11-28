@@ -61,13 +61,7 @@ case "$language" in
 			cd "${HOME}/dev" &> /dev/null
 
 			bundle info rubocop &> /dev/null && runner='bundle exec'
-			eval "${runner} rubocop --stdin source_file --stderr --auto-correct --fail-level='fatal'" < /dev/stdin
-
-			# Once `rubocop` is upgraded across projects, we'll be able to use
-			# the `--server` flag, which should speed things up signifidcantly.
-			#
-			# bundle info rubocop &> /dev/null && runner='bundle exec'
-			# eval "${runner} rubocop --server --stdin source_file --stderr --autocorrect --fail-level='fatal'" < /dev/stdin
+			eval "${runner} rubocop --server --stdin source_file --stderr --autocorrect --fail-level='fatal'" < /dev/stdin
 		;;
 
 	*) error-out 1 'unexpected LANGUAGE' ;;

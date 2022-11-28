@@ -5,7 +5,7 @@
 name = "ruby"
 indent = { tab-width = 2, unit = "  " }
 config = { solargraph = { diagnostics = true, formatting = true } }
-formatter = { command = "hx.linter", args = ["ruby"] }
+formatter = { command = "hx.formatter", args = ["ruby"] }
 auto-format = true
 
 [[language]]
