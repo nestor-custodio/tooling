@@ -2,15 +2,15 @@
 # See the languages documentation: https://docs.helix-editor.com/master/languages.html
 
 [[language]]
-name = "ruby"
-indent = { tab-width = 2, unit = "  " }
-config = { solargraph = { diagnostics = true, formatting = true } }
-formatter = { command = "hx.formatter", args = ["ruby"] }
-auto-format = true
-
-[[language]]
 name = "json"
 auto-format = false
+file-types = ["json", "pjson"]
+
+[[language]]
+name = "ruby"
+auto-format = true
+config = { solargraph = { diagnostics = true, formatting = true } }
+formatter = { command = "hx.formatter", args = ["ruby"] }
 
 [[language]]
 name = "yaml"
