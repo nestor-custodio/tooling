@@ -7,7 +7,7 @@ source '/home/nestor/bin/std.lib'
 # it's important that this runs from a local temp location.
 # Ideally, this should happen before any parameter processing.
 #
-# Note this is an issue with `mksync` only and not `mkdev`/`mkdb`.
+# Note this is an issue with `mksync` only and not `mkdev`/`mkvm`.
 
 if [ "$( script-path )" != '/tmp' ]; then
 	cp "$( script-file )" "$( script-file ):init" /tmp/
@@ -29,7 +29,8 @@ fi
 
 		Exit status:
 		  0  if OK,
-		  1  if invalid option.
+		  1  if invalid option,
+		  2  if invalid conditions.
 	EOF
 
 }
@@ -64,18 +65,23 @@ fi
 
 # This can't run ON the sync instance.
 #
-[ "$( vm-name )" == "sync" ] && error-out 1 'cannot replace current instance'
+[ "$( vm-name )" == 'sync' ] && error-out 2 'cannot replace current instance'
 
 
 # ---
 
 
-# Remove old instance (if any).
+# Tooling isn't available once the "sync" instance is killed,
+# so we have to store a few values now.
 #
-vm-exists sync && {
-	gcp run sync 'sudo service nfs stop' &> /dev/null
-	gcp destroy sync &> /dev/null
-}
+vm-project | store-as vm_project
+vm-zone    | store-as vm_zone
+
+
+# Remove old instance (if any) *without calling `gcp`*.
+#
+ssh sync 'sudo service nfs stop ; sync' &> /dev/null
+yes | gcloud compute instances delete 'sync' --quiet
 
 
 # ---
@@ -96,7 +102,7 @@ startup_script_file="$( script-real ):init"
 # Create the Sync VM.
 #
 gcloud compute instances create 'sync'                                 \
-       --project="$( vm-project )" --zone="$( vm-zone )"               \
+       --project="$vm_project" --zone="$vm_zone"                       \
                                                                        \
        --machine-type=e2-micro                                         \
        --boot-disk-type=pd-standard --boot-disk-size=10GB              \

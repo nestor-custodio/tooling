@@ -128,9 +128,8 @@ startup_log='/var/log/startup'
 			# Attach the volume.
 			report '... attaching volume'
 
-			vm_name="$( instance name )"
 			zone="$( instance zone | sed -e 's#.*/##' )"
-			gcloud compute instances attach-disk "$vm_name" --disk='sync-storage' --mode='rw' --zone="$zone"
+			gcloud compute instances attach-disk 'sync' --disk='sync-storage' --mode='rw' --zone="$zone"
 
 
 			# Prep the nfs-kernel-server mounts.
@@ -167,12 +166,11 @@ startup_log='/var/log/startup'
 		report 'setting up NFS mount for "docs" and "links"'
 
 			cat <<-'EOF' >> /etc/fstab
-				/export/dev   /home/nestor/dev   none bind,auto,fg 0 0
 				/export/docs  /home/nestor/docs  none bind,auto,fg 0 0
 				/export/links /home/nestor/links none bind,auto,fg 0 0
 			EOF
 
-			sudo --user='nestor' mkdir /home/nestor/dev /home/nestor/docs /home/nestor/links && mount -a
+			sudo --user='nestor' mkdir /home/nestor/docs /home/nestor/links && mount -a
 			sudo --user='nestor' dotdrop --cfg='/home/nestor/links/dotdrop-config.yaml' --profile='global' install --force
 
 	}
