@@ -13,5 +13,9 @@ config = { solargraph = { diagnostics = true, formatting = true } }
 formatter = { command = "hx.formatter", args = ["ruby"] }
 
 [[language]]
+name = "sql"
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
 name = "yaml"
 auto-format = false
