@@ -115,8 +115,8 @@ newline = "↲"
 "K"       = "page_down"
 "]"       = "goto_file_end"
 
-"h"       = "goto_line_start"
-"C-h"     = "goto_first_nonwhitespace"
+"C-h"     = "goto_line_start"
+"h"       = "goto_first_nonwhitespace"
 "J"       = ["move_prev_word_start", "collapse_selection"]
 "L"       = ["move_next_word_end", "collapse_selection"]
 "'"       = "goto_line_end"
@@ -230,8 +230,8 @@ newline = "↲"
 "K"       = "page_down"
 "]"       = "goto_file_end"
 
-"h"       = "goto_line_start"
-"C-h"     = "goto_first_nonwhitespace"
+"C-h"     = "goto_line_start"
+"h"       = "goto_first_nonwhitespace"
 "J"       = "extend_prev_word_start"
 "L"       = "extend_next_word_end"
 "'"       = "goto_line_end"
