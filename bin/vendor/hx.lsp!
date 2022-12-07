@@ -49,6 +49,9 @@ source '/home/nestor/bin/std.lib'
 
 
 hx --grammar fetch
+hx --grammar build
+
+gem install solargraph
 
 sudo snap install bash-language-server
 sudo snap install typescript-language-server

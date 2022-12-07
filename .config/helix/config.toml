@@ -16,8 +16,8 @@ theme = "custom"
 auto-pairs  = false
 color-modes = true
 cursorline  = true
-gutters     = ["line-numbers", "spacer", "diagnostics"]
-mouse       = false
+gutters     = ["line-numbers", "spacer", "diff", "diagnostics"]
+mouse       = true
 scrolloff   = 2
 true-color  = true
 
@@ -30,10 +30,9 @@ left   = ["spinner", "spacer", "mode", "spacer", "file-name"]
 center = []
 right  = ["diagnostics", "position", "file-type", "spacer"]
 
-# These are pending the next release:
-# mode.normal = "NORMAL"
-# mode.insert = "INSERT"
-# mode.select = "SELECT"
+mode.normal = "NORMAL"
+mode.insert = "INSERT"
+mode.select = "SELECT"
 
 
 
@@ -98,8 +97,8 @@ newline = "↲"
 
 # File Operations
 
-"C-s"     = ":write"
-"S"       = ":write"
+"C-s"     = ":update"
+"S"       = ":update"
 "C-n"     = ":new"
 
 
@@ -147,9 +146,9 @@ newline = "↲"
 
   # Clipboard
 
-  "c"         = "yank"
-  "v"         = "paste_before"
-  "x"         = "delete_selection"
+  "c"         = ":clipboard-yank"
+  "v"         = ":clipboard-paste-before"
+  "x"         = [":clipboard-yank", "delete_selection_noyank"]
 
   "C"         = ":pipe clip --pass"
   "V"         = ":insert-output clip --out"
@@ -163,7 +162,7 @@ newline = "↲"
   "B"         = "add_newline_below"
 
   "H"         = ["goto_first_nonwhitespace", "insert_mode"]
-  '"'         = "append_to_line"
+  '"'         = "insert_at_line_end"
 
   "r"         = ["delete_selection_noyank", "insert_mode"]
   "R"         = "replace"
@@ -213,7 +212,7 @@ newline = "↲"
 
 "space"   = ["extend_to_line_bounds", "normal_mode"]
 "a"       = ["select_all", "normal_mode"]
-"w"       = ["move_prev_word_start", "collapse_selection", "extend_next_word_end"]
+"w"       = ["move_char_right", "move_prev_word_start", "collapse_selection", "extend_next_word_end"]
 "|"       = ["keep_primary_selection", "collapse_selection"]
 "?"       = "select_regex"
 
@@ -243,9 +242,9 @@ newline = "↲"
 
   # Clipboard
 
-  "c"         = ["yank", "normal_mode"]
-  "v"         = ["replace_with_yanked", "normal_mode"]
-  "x"         = ["delete_selection", "normal_mode"]
+  "c"         = [":clipboard-yank", "normal_mode"]
+  "v"         = [":clipboard-paste-replace", "normal_mode"]
+  "x"         = [":clipboard-yank", "delete_selection_noyank", "normal_mode"]
 
   "C"         = [":pipe clip --pass", "normal_mode"]
   "V"         = [":insert-output clip --out", "normal_mode"]
@@ -255,7 +254,7 @@ newline = "↲"
   
   "d"         = ["delete_selection_noyank", "normal_mode"]
   "r"         = ["delete_selection_noyank", "insert_mode"]
-  "R"         = ["replace", "normal_mode"]
+  "R"         = "replace"
 
 
 # ---

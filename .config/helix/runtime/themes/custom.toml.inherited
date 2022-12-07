@@ -10,9 +10,10 @@ inherits = "monokai_pro_spectrum"
 "comment" = { fg = "base6" }
 
 # cursor, variables, constants, attributes, fields
-"ui.cursor"        = { fg = "base8x0c", bg = "green" , modifiers = ["bold"] }
-"ui.cursor.insert" = { fg = "base8x0c", bg = "red"   , modifiers = ["bold"] }
-"ui.cursor.select" = { fg = "base8x0c", bg = "yellow", modifiers = ["bold"] }
+"ui.cursor.primary" = { }
+"ui.cursor"         = { fg = "base8x0c", bg = "green" , modifiers = ["bold"] }
+"ui.cursor.insert"  = { fg = "base8x0c", bg = "red"   , modifiers = ["bold"] }
+"ui.cursor.select"  = { fg = "base8x0c", bg = "yellow", modifiers = ["bold"] }
 
 [palette]
 # base colors
