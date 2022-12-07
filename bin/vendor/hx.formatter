@@ -60,7 +60,7 @@ case "$language" in
 			#
 			cd "${HOME}/dev" &> /dev/null
 
-			bundle info rubocop &> /dev/null && runner='bundle exec'
+			[ -e 'Gemfile' ] && has 'rubocop' < Gemfile &> /dev/null && runner='bundle exec'
 			eval "${runner} rubocop --server --stdin source_file --stderr --autocorrect --fail-level='fatal'" < /dev/stdin
 		;;
 
