@@ -49,14 +49,11 @@ set regexp
 ## beginning of the line.
 set smarthome
 
-## Don't allow nano to be suspended.
-unset suspend
-
 ## Use this tab size instead of the default; it must be greater than 0.
 set tabsize 2
 
 ## Don't save automatically on exit; prompt when needed.
-unset tempfile
+unset saveonexit
 
 ## Snip whitespace at the end of lines when justifying or hard-wrapping.
 set trimblanks
