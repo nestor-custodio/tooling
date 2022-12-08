@@ -1,0 +1,64 @@
+AllCops:
+  TargetRubyVersion: 3.0
+  Include:
+    - '**/*.rb'
+    - '**/*.ruby'
+    - '**/*.spec'
+    - '**/Gemfile'
+  NewCops: enable
+  SuggestExtensions: false
+
+Layout/LineLength:
+  Max: 200
+
+Lint/DuplicateBranch:
+  # Checks that there are no repeated bodies within `if/unless`, `case-when` and `rescue` constructs.
+  Enabled: false
+Lint/MissingSuper:
+  # Checks for `method_missing` to call `super`.
+  Enabled: false
+
+Metrics/AbcSize:
+  # A calculated magnitude based on number of assignments, branches, and conditions.
+  # Default is *17*.
+  Max: 200
+Metrics/BlockLength:
+  # Avoid long blocks with many lines.
+  # Default is *25*.
+  Max: 250
+Metrics/ClassLength:
+  # Avoid classes longer than 100 lines of code.
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  # A complexity metric that is strongly correlated to the number of test cases needed to validate a method.
+  # Default is *7*.
+  Max: 20
+Metrics/MethodLength:
+  # Avoid methods longer than 10 lines of code.
+  Enabled: false
+Metrics/PerceivedComplexity:
+  # A complexity metric geared towards measuring complexity for a human reader.
+  # Default is *8*.
+  Max: 20
+
+Style/Documentation:
+  # Document classes and non-namespace modules.
+  Enabled: false
+Style/FetchEnvVar:
+  # Suggests `ENV.fetch` for the replacement of `ENV[]`.
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  # Enforces use of the frozen_string_literal comment in every file.
+  Enabled: false
+Style/NumericLiterals:
+  # Add underscores to large numeric literals to improve their readability.
+  Enabled: false
+Style/RegexpLiteral:
+  # Use / or %r around regular expressions.
+  EnforcedStyle: percent_r
+Style/RescueModifier:
+  # Avoid using rescue in its modifier form.
+  Enabled: false
+Style/StringLiterals:
+  # Check for use of ' vs ".
+  ConsistentQuotesInMultiline: true
