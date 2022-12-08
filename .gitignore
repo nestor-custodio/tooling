@@ -17,6 +17,13 @@
 **/s3/
 **/s3?
 
+# We don't care about old Rails migrations.
+#
+**/db/migrate/200*
+**/db/migrate/201*
+**/db/migrate/2020*
+**/db/migrate/2021*
+
 
 # Rules for use in the "tooling" repo specifically.
 
