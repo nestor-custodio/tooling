@@ -74,13 +74,13 @@ source '/home/nestor/bin/std.lib'
 
 # Set the PushOver keys.
 
-user_key="$( project attributes/pushover-user-key )"
-service_keys="$( project attributes/pushover-service-keys )"
+project 'attributes/pushover-keys' | store-as pushover_keys
+json '.user' <<< "$pushover_keys"  | store-as user_key
 
 case "$service" in
 
 	(gcp)
-		service_key="$( json "$service_keys" .gcp )"
+		json '.services.gcp' <<< "$pushover_keys" | store-as service_key
 		;;
 
 	*) error-out 2 "unknown SERVICE_CODE (${service})" ;;
