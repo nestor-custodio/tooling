@@ -27,6 +27,10 @@ shopt -s lastpipe expand_aliases
 	cd_to_script  () { cd "$(             script-path    )" ; }
 	cd_to_realpath() { cd "$( dirname "$( script-real )" )" ; }
 
+
+	TMPDIR="${TMPDIR:-/tmp}"
+	tempname { mktemp --dry-run -t "$( script-name ).XXX" ;}
+
 }
 
 # ---

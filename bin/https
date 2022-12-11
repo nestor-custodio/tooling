@@ -113,7 +113,7 @@ case "$command" in
 
 	(me|safe)
 		caddyfile_template="${HOME}/bin/https:safe.caddyfile"
-		caddyfile_generated="$( mktemp --dry-run -t 'https:safe.XXXXX' )"
+		tempname | store-as caddyfile_generated
 
 		sed -e "s|#CLIENT_IP#|$( client-ip )|" < "$caddyfile_template" > "$caddyfile_generated"
 
@@ -125,7 +125,7 @@ case "$command" in
 		cidr_blacklist="${caddy_bin}.blacklist"
 
 		caddyfile_template="${HOME}/bin/https:open.caddyfile"
-		caddyfile_generated="$( mktemp --dry-run -t 'https:open.XXXXX' )"
+		tempname | store-as caddyfile_generated
 
 		sed -z -e "s|#BLACKLIST#.*||" < "$caddyfile_template" > "$caddyfile_generated"
 		sed -e "s|^|remote_ip |" < "$cidr_blacklist" >> "$caddyfile_generated"

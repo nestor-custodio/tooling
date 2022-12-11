@@ -66,11 +66,14 @@ source '/home/nestor/bin/std.lib'
 
 # Make sure file locations are writable.
 
-mktemp --quiet --tmpdir="$( dirname "$file_1" )" swap.XXX | store-as temp_1
-mktemp --quiet --tmpdir="$( dirname "$file_2" )" swap.XXX | store-as temp_2
-rm -f "$temp_1" "$temp_2"
+dirname "$file_1" | store-as dir_1
+dirname "$file_2" | store-as dir_2
 
-{ [ -n "$temp_1" ] && [ -n "$temp_2" ]; } || error-out 3 'write access denied'
+TMPDIR="$dir_1" tempname | store-as temp_1
+TMPDIR="$dir_2" tempname | store-as temp_2
+
+[ -w "$dir_1" ] || error-out 3 'write access denied'
+[ -w "$dir_2" ] || error-out 3 'write access denied'
 
 
 # Swap the files.
