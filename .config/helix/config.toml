@@ -171,11 +171,10 @@ newline = "↲"
   "y"         = "redo"
 
   "C-k"       = ["extend_to_line_bounds", "delete_selection_noyank"]
-  "C-d"       = ["extend_to_line_bounds", "yank", "paste_after", "move_char_right"]
+  "D"         = ["extend_to_line_bounds", "yank", "paste_after", "collapse_selection"]
 
   "d"         = "delete_selection_noyank"
   "del"       = "delete_selection_noyank"
-  "D"         = "delete_char_backward"
   "backspace" = "delete_char_backward"
 
   "tab"       = "indent"
