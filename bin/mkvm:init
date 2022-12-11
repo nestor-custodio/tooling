@@ -92,7 +92,8 @@ startup_log='/var/log/startup'
 		report 'installing global packages'
 
 			apt-get -qq update
-			apt-get -qqy install asciinema         \
+			apt-get -qqy install ansifilter        \
+			                     asciinema         \
 			                     build-essential   \
 			                     byobu             \
 			                     curl              \
