@@ -9,4 +9,6 @@ external-sources=true
 
 # Disable problem rules.
 #
-disable=1090,1117,2002,2034,2154,2155,2164,2181,2197
+disable=SC2148               # Disregard files of unknown type.
+disable=SC2034,SC2119,SC2154 # std.lib usage generates a lot of false positives for these.
+disable=SC2164,SC2197
