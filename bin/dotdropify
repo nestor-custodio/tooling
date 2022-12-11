@@ -6,7 +6,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [FILE]
+		Usage: $( script-name ) FILE
 
 		Imports the given file into the 'dotdrop' store and sets up the symlink.
 

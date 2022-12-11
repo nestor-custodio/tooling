@@ -33,7 +33,7 @@ source '/home/nestor/bin/std.lib'
 	# ---
 	# ---
 
-	CHAR_OPTS='ab'
+	CHAR_OPTS='ab:'
 	LONG_OPTS='help,option_a,option_b:'
 
 	set-params
