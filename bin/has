@@ -50,4 +50,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-cat | fgrep --quiet "$lookup_string"
+fgrep --quiet "$lookup_string"

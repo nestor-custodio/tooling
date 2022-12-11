@@ -75,7 +75,7 @@ source '/home/nestor/bin/std.lib'
 
 	# Set flags ...
 
-		[ -r 'package.json' ] && cat package.json | json '.scripts.test' | store-as javascript
+		[ -r 'package.json' ] && json '.scripts.test' < package.json | store-as javascript
 
 
 	# Run the tests ...
