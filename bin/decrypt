@@ -1,0 +1,92 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [FILE]
+
+		Convenience wrapper for Conrad Sollitt's "encrypt.sh".
+
+		Derypts the given FILE (or STDIN) using either a given password or the
+		project-level default. Plaintext is written to STDOUT.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+		  --password                The password to use.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if file not found,
+			3  if decryption-related error.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	project 'attributes/default-encryption-password' | store-as password
+
+	# ---
+	# ---
+
+	CHAR_OPTS='p:'
+	LONG_OPTS='help,pw:,password:'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(-p|--pw|--password)
+				password="$1" && shift
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	case "$#" in
+
+		0)
+			tempname | store-as input_file
+			cat - > "$input_file"
+			stdin_read='1'
+			;;
+
+		1)
+			input_file="$1" && shift
+			[ -e "$input_file" ] || error-out 2 'given FILE does not exist'
+			;;
+
+		*)
+			error-out 1 'invalid option(s)'
+			;;
+
+	esac
+
+}
+
+# ---
+# ---
+
+
+tempname | store-as output_file
+crypt -d -p "$password" -i "$input_file" -o "$output_file" &> /dev/null || error-out 3 'unable to decrypt cyphertext'
+cat "$output_file"
+
+[ -n "$stdin_read" ] && rm "$input_file"
+rm "$output_file"
