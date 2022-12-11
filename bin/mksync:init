@@ -18,16 +18,9 @@ startup_log='/var/log/startup'
 # -- INIT -- #
 [ -e "$init_log" ] || {
 
-	timestamp() { date '+%s.%N' ; }
-	SCRIPT_TIMESTAMP="$( timestamp )"
-
 	report() {
 		local report="$1" && shift
-
-		local now="$( timestamp )"
-		local delta="$( bc <<< "(${now} - ${SCRIPT_TIMESTAMP}) / 1" )"
-
-		echo -e "\n\n------------------------------------------------------------------------\n@ ${delta}s: ${report}\n"
+		echo -e "\n\n------------------------------------------------------------------------\n@ $( date '+%s' ): ${report}\n"
 	}
 
 	# ---
