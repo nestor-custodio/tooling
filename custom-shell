@@ -143,6 +143,38 @@ export PGHOST='postgres'
   alias rg='rg --engine="pcre2" --color=auto --follow'
 
 
+  # shellcheck
+
+  # `shellcheck` is a bit of a pain to use on directories that
+  # include both executable scripts and data files, as it generates
+  # a ton of false positive warnings for the non-script files. This
+  # shim filters non-files and non-executables out of the parameter
+  # list.
+
+  shellcheck() {
+    declare -a args=("$@")
+    declare -a executables
+
+    for (( i=0; i < "${#args[*]}"; i++ )); do
+      # We only want to run our sanity checks on non-option arguments.
+      # Anything that begins with a '-' gets passed through unlatered.
+
+      if [ "$( head -c1 <<< "${args[$i]}" )" != '-' ]; then
+        [ -d "${args[$i]}" ] && continue  # Skip directories.
+        [ -x "${args[$i]}" ] || continue  # Only keep executables.
+        head -n1 "${args[$i]}" | has '#!' || continue  # Only keep shebang'ed files.
+      fi
+
+      executables+=("${args[$i]}")
+    done
+
+    # We don't want the function name back, so `which` is a must.
+    # shellcheck disable=SC2230
+    #
+    "$( which shellcheck )" "${executables[@]}"
+  }
+
+
   # tree
 
   alias list='tree -lR --dirsfirst --sort=version'
