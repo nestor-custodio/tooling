@@ -113,11 +113,12 @@ export PGHOST='postgres'
 
   # lazydocker
 
-  # shellcheck disable=SC2230
-  # We don't want the function name back, so `which` is a must.
-  #
   lazydocker() {
     command -v docker &> /dev/null || sudo apt install -qqy docker.io
+
+    # We don't want the function name back, so `which` is a must.
+    # shellcheck disable=SC2230
+    #
     sudo "$( which lazydocker )" "$@"
   }
 
