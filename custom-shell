@@ -335,7 +335,7 @@ alias %='break_out_of_links'
   alias rs='bundle exec rails server'
   alias rs1='RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 bundle exec rails server'
 
-  rails-tasks() { [ -e 'Gemfile' ] && bundle exec rails --tasks "$1"; }  # rt for "Rails Tasks"
+  rails-tasks() { [ -e 'Gemfile' ] && bundle exec rails --tasks="$1" --all; }  # rt for "Rails Tasks"
   alias rt='rails-tasks'
 
   alias brubocop='bundle exec rubocop --format=fuubar --color --parallel'
