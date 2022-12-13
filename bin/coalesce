@@ -18,7 +18,7 @@ source '/home/nestor/bin/std.lib'
 		  --help                    Show this help text.
 
 		Exit status:
-		  0  if OK
+		  0  if OK,
 		  1  if no strings given (empty or not).
 	EOF
 

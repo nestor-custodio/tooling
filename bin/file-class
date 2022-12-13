@@ -25,7 +25,7 @@ source '/home/nestor/bin/std.lib'
 
 		Exit status:
 		  0  if OK,
-		  1  if invalid option
+		  1  if invalid option,
 		  2  if unknown file class.
 	EOF
 
