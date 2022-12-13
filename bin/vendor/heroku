@@ -5,5 +5,14 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+# Sometimes issuing a heroku command will silently
+# trigger a `heroku update --autoupdate`, which then
+# leaves a zombie node process in the background (🤬)
+# and prevents our own updater from running correctly.
+#
+# Let's intercept these and just silently bail on 'em.
+#
+[ "$1" == 'update' ] && exit-out
+
 runtime_bin="$( script-path )/heroku-runtime/bin"
 exec "${runtime_bin}/node" "${runtime_bin}/run" "$@"
