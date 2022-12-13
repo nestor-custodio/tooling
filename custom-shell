@@ -423,3 +423,6 @@ vm_customization_file="${HOME}/vm-scripts/$( hostname )/custom-shell"
 # so we're breaking out of those by default on new shells to avoid having to do it manually.
 #
 break_out_of_links
+
+
+true  # Never start a shell with a non-0 status on the prompt.
