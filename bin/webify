@@ -73,9 +73,15 @@ source '/home/nestor/bin/std.lib'
 webroot="$( realpath "$webroot" )"
 [ -e "$webroot" ] || error-out 2 'path not found'
 
-
-port="$( shuf -n1 --input-range='3000-3999' )"
 webroot_url="https://$( hostname ).custodio.app/"
+
+
+ss -4tln | grep -P '(?<=:)3[0-9]{3}\b' --only-matching | store-as unavailable_ports
+while true; do
+	shuf -n1 --input-range='3001-3999' | store-as port
+	has "$port" <<< "$unavailable_ports" || break
+done
+
 
 echo
 echo "Serving \"${webroot}\" on:"
