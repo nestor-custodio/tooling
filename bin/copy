@@ -1,0 +1,68 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [DATA]
+
+		Copies the given DATA (or STDIN) into the system clipboard.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	case "$#" in
+	
+		0)
+			cat - | store-as data
+			tmux set-buffer -w "$data"
+			;;
+
+		1)
+			data="$1" && shift
+			tmux set-buffer -w "$data"
+			;;
+
+		*)
+			error-out 1 'invalid option(s)'
+			;;
+
+	esac
+
+}
+
+# ---
+# ---
+
+
+# shellcheck disable=SC2317
+noop  # Positional parameter processing has already taken care of everything.
