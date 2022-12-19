@@ -1,0 +1,6 @@
+#! /bin/env bash
+shopt -s lastpipe expand_aliases
+
+# ---
+
+my-command
