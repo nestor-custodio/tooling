@@ -3,66 +3,242 @@ shopt -s lastpipe expand_aliases
 
 # ---
 
-dev() {
-  # Fuzzy-find-based dev location utility.
-  # - If no search term is given, `cd` into the dev root.
-  # - If a single match is found, `cd` into it or open it into the editor, as applicable.
-  # - If multiple matches are found, allow interactive selection and then process as above.
+# ENV helpers.
 
-  local search="$1" && shift
-  local dev_root="${DEV_ROOT:-${HOME}/dev}"
+  alias development='RUBY_ENV=development RAILS_ENV=development RACK_ENV=development NODE_ENV=development'
+  alias testing='RUBY_ENV=test RAILS_ENV=test RACK_ENV=test NODE_ENV=test'
+  alias staging='RUBY_ENV=staging RAILS_ENV=staging RACK_ENV=staging NODE_ENV=production'
+  alias production='RUBY_ENV=production RAILS_ENV=production RACK_ENV=production NODE_ENV=production'
 
+  alias d='RUBY_ENV=development RAILS_ENV=development RACK_ENV=development NODE_ENV=development'
+  alias t='RUBY_ENV=test RAILS_ENV=test RACK_ENV=test NODE_ENV=test'
+  alias s='RUBY_ENV=staging RAILS_ENV=staging RACK_ENV=staging NODE_ENV=production'
+  alias p='RUBY_ENV=production RAILS_ENV=production RACK_ENV=production NODE_ENV=production'
 
-  # We want to be at $dev_root before the editor runs
-  # so file searches, etc are project-wide by default.
+  # Default to "development".
   #
-  cd "$dev_root"
+  export RUBY_ENV=development
+  export RAILS_ENV=development
+  export RACK_ENV=development
+  export NODE_ENV=development
 
 
-  # Simpleton case: no params given.
-  #
-  [ "$search" == '' ] && return 0
+# Lookup helpers.
+
+  dev() {
+    # Fuzzy-find-based dev location utility.
+    # - If no search term is given, `cd` into the dev root.
+    # - If a single match is found, `cd` into it or open it into the editor, as applicable.
+    # - If multiple matches are found, allow interactive selection and then process as above.
+
+    local search="$1" && shift
+    local dev_root="${DEV_ROOT:-${HOME}/dev}"
 
 
-  # Compile list of all *possible* entries.
-  #
-  local directories_only list
-  [ "${search: -1}" == '/' ] && directories_only="--type=d"
-  list="$( fd "$directories_only" --hidden --exclude='.git/' --color='always' )"
-
-  # Find *matching* entries, asking interactively if necessary.
-  #
-  readarray -t matches < <( fzf --query="'${search} " --multi --select-1 --preview-window='default' <<< "$list" )
+    # We want to be at $dev_root before the editor runs
+    # so file searches, etc are project-wide by default.
+    #
+    cd "$dev_root"
 
 
-  # Process matches...
-  #
-  case "${#matches[*]}" in
-    0)
-      return 1
-      ;;
+    # Simpleton case: no params given.
+    #
+    [ "$search" == '' ] && return 0
 
-    1)
-      local match="${matches[0]}"
-      case "$( file-class --follow "$match" )" in
-        d) cd "./${match%/}" ;;
-        r) "$EDITOR" -- "$match" ;;
+
+    # Compile list of all *possible* entries.
+    #
+    local directories_only list
+    [ "${search: -1}" == '/' ] && directories_only="--type=d"
+    list="$( fd "$directories_only" --hidden --exclude='.git/' --color='always' )"
+
+    # Find *matching* entries, asking interactively if necessary.
+    #
+    readarray -t matches < <( fzf --query="'${search} " --multi --select-1 --preview-window='default' <<< "$list" )
+
+
+    # Process matches...
+    #
+    case "${#matches[*]}" in
+      0)
+        return 1
+        ;;
+
+      1)
+        local match="${matches[0]}"
+        case "$( file-class --follow "$match" )" in
+          d) cd "./${match%/}" ;;
+          r) "$EDITOR" -- "$match" ;;
         
-        *)
-          echo 'unexpected file class'
-          return 1
-          ;;
-      esac
-      ;;
+          *)
+            echo 'unexpected file class'
+            return 1
+            ;;
+        esac
+        ;;
 
-    *)
-      for (( i=0; i < "${#matches[*]}"; i++ )); do
-        [ "$( file-class --follow "${matches[$i]}" )" == 'r' ] || return 1
-      done
+      *)
+        for (( i=0; i < "${#matches[*]}"; i++ )); do
+          [ "$( file-class --follow "${matches[$i]}" )" == 'r' ] || return 1
+        done
 
-      "$EDITOR" -- "${matches[@]}"
-      ;;
-  esac
-}
+        "$EDITOR" -- "${matches[@]}"
+        ;;
+    esac
+  }
 
-alias ::='dev'
+  alias ::='dev'
+
+
+# Language helpers.
+
+  # ruby
+
+    # Executable management.
+    #
+    source "${HOME}/bin/vendor/chruby-source"
+    source "${HOME}/bin/vendor/chruby-source.auto"
+
+    # Linting/Style tooling.
+    #
+    rubocop() { bundle exec rubocop --server --format=fuubar --color --parallel; }
+    rubowatch() { watch --interval="${1:-10}" bundle exec rubocop --server --format=fuubar --color --parallel; }
+
+    # Bundle/Gemfile management.
+    #
+    alias bx='bundle exec'
+    alias br='bundle exec'
+    #
+    alias ba='bundle audit update && bundle audit'
+    #
+    alias bi='([ -e "Gemfile" ] || [ -e "Gemfile.lock" ]) && bundle install --jobs=$( nproc )'
+    alias bi\!='([ -e "Gemfile" ] || [ -e "Gemfile.lock" ])                                  \
+                &&                                                                           \
+                (                                                                            \
+                  (                                                                          \
+                    [ -e ".ruby-version" ]                                                   \
+                    &&                                                                       \
+                    (                                                                        \
+                      (                                                                      \
+                        command -v ruby &> /dev/null                                         \
+                        &&                                                                   \
+                        ruby --version | fgrep --quiet "$( cat .ruby-version )"              \
+                      )                                                                      \
+                      ||                                                                     \
+                      chruby "$( cat .ruby-version )" &> /dev/null                           \
+                      ||                                                                     \
+                      (                                                                      \
+                        ruby-install "$( cat .ruby-version )" &> /dev/null                   \
+                        &&                                                                   \
+                        source "${HOME}/bin/vendor/chruby-source"                            \
+                        &&                                                                   \
+                        chruby "$( cat .ruby-version )" &> /dev/null                         \
+                      )                                                                      \
+                    )                                                                        \
+                  )                                                                          \
+                  ||                                                                         \
+                  chruby ruby &> /dev/null                                                   \
+                )                                                                            \
+                &&                                                                           \
+                (                                                                            \
+                  (                                                                          \
+                    [ -e "Gemfile.lock" ]                                                    \
+                    &&                                                                       \
+                    (                                                                        \
+                      gem list bundler --silent --installed                                  \
+                                       --version="$( tail -n1 Gemfile.lock | tr -d " " )"    \
+                      ||                                                                     \
+                      gem install "bundler:$( tail -n1 Gemfile.lock | tr -d " " )"           \
+                    )                                                                        \
+                  )                                                                          \
+                  ||                                                                         \
+                  (                                                                          \
+                    gem list bundler --silent --installed                                    \
+                    ||                                                                       \
+                    gem install bundler                                                      \
+                  )                                                                          \
+                )                                                                            \
+                &&                                                                           \
+                bundle install --jobs=$( nproc )'
+
+  # rails
+
+    alias rc='bundle exec rails console'
+    alias rs='bundle exec rails server'
+    alias rs1='RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 bundle exec rails server'
+
+    alias db:='bundle exec rails generate migration'
+    alias db+='bundle exec rails db:migrate'
+    alias db-='bundle exec rails db:rollback'
+    alias db\!="bundle exec rails runner 'require %(bundler/inline); gemfile { source %(https://rubygems.org); gem %(lazy_migrate) }; LazyMigrate.run'"
+    alias DB\!='gem update sorbet-runtime &> /dev/null; gem cleanup sorbet-runtime &> /dev/null; db!'
+
+    rails-tasks() { [ -e 'Gemfile' ] && bundle exec rails --tasks="$1" --all; }
+    alias rt='rails-tasks'
+
+
+  # node
+
+    # Executable management.
+    #
+    export N_PREFIX="${HOME}/.nodes"
+
+    # Package helpers.
+    #
+    alias nx='npx'
+    alias na='npx audit'
+    alias ni='npm install'
+
+    # Command helpers.
+    #
+    alias nr='npm run'
+    alias ns='npm run start'
+    #
+    node-tasks() { [ -e 'package.json' ] && npm run | grep -P '^\s*'"$1" --before-context='0' --after-context='1' --color='never'; }
+    alias nt='node-tasks'
+
+
+  # yarn
+
+    # Package helpers.
+    #
+    alias yx='yarn'
+    alias yr='yarn'
+    #
+    alias yi='([ -e "package.json" ] || [ -e "yarn.lock" ]) && yarn install 2> /dev/null'
+    alias yi\!='([ -e "package.json" ] || [ -e "yarn.lock" ])                           \
+                &&                                                                      \
+                (                                                                       \
+                  (                                                                     \
+                    [ -e ".node-version" ]                                              \
+                    &&                                                                  \
+                    (                                                                   \
+                      (                                                                 \
+                        command -v node &> /dev/null                                    \
+                        &&                                                              \
+                        [ "v$( cat .node-version )" == "$( node --version )" ]          \
+                      )                                                                 \
+                      ||                                                                \
+                      n install "$( cat .node-version )"                                \
+                    )                                                                   \
+                  )                                                                     \
+                  ||                                                                    \
+                  (                                                                     \
+                    command -v node &> /dev/null                                        \
+                    ||                                                                  \
+                    n lts                                                               \
+                  )                                                                     \
+                )                                                                       \
+                &&                                                                      \
+                (                                                                       \
+                  yarn --version &> /dev/null                                           \
+                  ||                                                                    \
+                  npm install -g yarn                                                   \
+                )                                                                       \
+                &&                                                                      \
+                yarn install 2> /dev/null'
+
+
+  # multi-language constructs
+
+    alias @='bi!; yi!'
