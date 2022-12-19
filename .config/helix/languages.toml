@@ -2,6 +2,16 @@
 # See the languages documentation: https://docs.helix-editor.com/master/languages.html
 
 [[language]]
+name = "javascript"
+auto-format = true
+formatter = { command = "hx.formatter", args = ["javascript"] }
+
+[[language]]
+name = "jsx"
+auto-format = true
+formatter = { command = "hx.formatter", args = ["jsx"] }
+
+[[language]]
 name = "json"
 auto-format = false
 file-types = ["json", "pjson"]

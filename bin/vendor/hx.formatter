@@ -52,17 +52,24 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+# Since Helix can't give us a `pwd`,
+# we have to assume "~/dev" for sanity's sake.
+#
+cd "${HOME}/dev" &> /dev/null
+
+
 case "$language" in
 
 	(ruby)
-			# Since Helix can't give us a `pwd`,
-			# we have to assume "~/dev" for sanity's sake.
-			#
-			cd "${HOME}/dev" &> /dev/null
-
 			[ -e 'Gemfile' ] && has 'rubocop' < Gemfile &> /dev/null && runner='bundle exec'
 			ls -1 "${GEM_HOME}/gems" | grep -P --quiet -x 'rubocop-[0-9.]+' || gem install rubocop
-			eval "${runner} rubocop --server --stdin source_file --stderr --autocorrect --fail-level='fatal'" < /dev/stdin
+			eval "${runner} rubocop --server --stdin source_file.rb --stderr --autocorrect --fail-level='fatal'" < /dev/stdin
+		;;
+
+	(javascript|jsx)
+			json '(.dependencies // {}),(.devDependencies // {}) | keys[]' < package.json 2> /dev/null | store-as packages
+			hasline prettier <<< "$packages" || command -v prettier &> /dev/null || npm install --global --production prettier
+			npx prettier --stdin --stdin-filepath='source_file.jsx' --parser='typescript' --loglevel='error' < /dev/stdin
 		;;
 
 	*) error-out 1 'unexpected LANGUAGE' ;;
