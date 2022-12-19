@@ -101,6 +101,47 @@ export PGHOST='postgres'
                            --preview=\"${fzf_preview_command}\" "
 
 
+  # git / lazygit
+
+  alias g='lazygit'
+
+  alias gadd='git add'
+  alias gblame='git blame -w --minimal --color-by-age'
+  alias gbranch='git branch'
+  alias gcheckout='git checkout'
+  alias gcherrypick='git cherry-pick'
+  alias gconfig='git config'
+  alias gclone='git clone'
+  alias gcommit='git commit'
+  alias gdelete='git rm -r'
+  alias gdiff='git diff'
+  alias gfetch='git fetch'
+  alias ggraph='git log --oneline --decorate --graph'
+  alias ginit='git init'
+  alias glog='git log'
+  alias gmerge='git merge --no-ff'
+  alias gmove='git mv'
+  alias gmv='git mv'
+  alias gpatch='git apply'
+  alias gpop='git stash pop'
+  alias gpull='git pull'
+  alias gpush='git push'
+  alias grebase='git rebase'
+  alias gremote='git remote'
+  alias gremove='git rm -r'
+  alias greset='git reset'
+  alias grm='git rm -r'
+  alias gstage='git add'
+  alias gstash='git stash'
+  alias gstatus='git status'
+  alias gtag='git tag'
+  alias gtrack='git add'
+  alias gunchange='git checkout HEAD'
+  alias gundelete='git checkout HEAD'
+  alias gunstage='git reset'
+  alias guntrack='git rm -r --cached'
+
+
   # grep
 
   alias grep='/bin/grep -P --color=auto'
@@ -219,223 +260,12 @@ alias %='break_out_of_links'
 
 
 
-# Development
+# Dev tooling.
 
-  export DEV_ROOT="${HOME}/dev"
-  source "${HOME}/bin/dev.src"
+export DEV_ROOT="${HOME}/dev"
 
-
-  # "~/dev" sync
-
-  dev_sync_config="${HOME}/.lsyncd.dev"
-
-  [ -e "$dev_sync_config" ]                                                                    \
-  && command -v lsyncd &> /dev/null                                                            \
-  && { pgrep --pidfile='/var/log/lsyncd/pid' lsyncd || lsyncd "$dev_sync_config"; } &> /dev/null
-
-
-  # heroku
-
-  alias k='heroku'
-
-
-  # git
-
-  alias g='lazygit'
-
-  alias gadd='git add'
-  alias gblame='git blame -w --minimal --color-by-age'
-  alias gbranch='git branch'
-  alias gcheckout='git checkout'
-  alias gcherrypick='git cherry-pick'
-  alias gconfig='git config'
-  alias gclone='git clone'
-  alias gcommit='git commit'
-  alias gdelete='git rm -r'
-  alias gdiff='git diff'
-  alias gfetch='git fetch'
-  alias ggraph='git log --oneline --decorate --graph'
-  alias ginit='git init'
-  alias glog='git log'
-  alias gmerge='git merge --no-ff'
-  alias gmove='git mv'
-  alias gmv='git mv'
-  alias gpatch='git apply'
-  alias gpop='git stash pop'
-  alias gpull='git pull'
-  alias gpush='git push'
-  alias grebase='git rebase'
-  alias gremote='git remote'
-  alias gremove='git rm -r'
-  alias greset='git reset'
-  alias grm='git rm -r'
-  alias gstage='git add'
-  alias gstash='git stash'
-  alias gstatus='git status'
-  alias gtag='git tag'
-  alias gtrack='git add'
-  alias gunchange='git checkout HEAD'
-  alias gundelete='git checkout HEAD'
-  alias gunstage='git reset'
-  alias guntrack='git rm -r --cached'
-
-
-  # env
-
-  alias development='RUBY_ENV=development RAILS_ENV=development RACK_ENV=development NODE_ENV=development'
-  alias testing='RUBY_ENV=test RAILS_ENV=test RACK_ENV=test NODE_ENV=test'
-  alias staging='RUBY_ENV=staging RAILS_ENV=staging RACK_ENV=staging NODE_ENV=production'
-  alias production='RUBY_ENV=production RAILS_ENV=production RACK_ENV=production NODE_ENV=production'
-
-  alias d='RUBY_ENV=development RAILS_ENV=development RACK_ENV=development NODE_ENV=development'
-  alias t='RUBY_ENV=test RAILS_ENV=test RACK_ENV=test NODE_ENV=test'
-  alias s='RUBY_ENV=staging RAILS_ENV=staging RACK_ENV=staging NODE_ENV=production'
-  alias p='RUBY_ENV=production RAILS_ENV=production RACK_ENV=production NODE_ENV=production'
-
-  # Default to "development".
-  #
-  export RUBY_ENV=development
-  export RAILS_ENV=development
-  export RACK_ENV=development
-  export NODE_ENV=development
-
-
-  # ruby
-
-  alias bi='([ -e "Gemfile" ] || [ -e "Gemfile.lock" ]) && bundle install --jobs=$( nproc )'
-  alias bi\!='([ -e "Gemfile" ] || [ -e "Gemfile.lock" ])                                  \
-              &&                                                                           \
-              (                                                                            \
-                (                                                                          \
-                  [ -e ".ruby-version" ]                                                   \
-                  &&                                                                       \
-                  (                                                                        \
-                    (                                                                      \
-                      command -v ruby &> /dev/null                                         \
-                      &&                                                                   \
-                      ruby --version | fgrep --quiet "$( cat .ruby-version )"              \
-                    )                                                                      \
-                    ||                                                                     \
-                    chruby "$( cat .ruby-version )" &> /dev/null                           \
-                    ||                                                                     \
-                    (                                                                      \
-                      ruby-install "$( cat .ruby-version )" &> /dev/null                   \
-                      &&                                                                   \
-                      source "${HOME}/bin/vendor/chruby-source"                            \
-                      &&                                                                   \
-                      chruby "$( cat .ruby-version )" &> /dev/null                         \
-                    )                                                                      \
-                  )                                                                        \
-                )                                                                          \
-                ||                                                                         \
-                chruby ruby &> /dev/null                                                   \
-              )                                                                            \
-              &&                                                                           \
-              (                                                                            \
-                (                                                                          \
-                  [ -e "Gemfile.lock" ]                                                    \
-                  &&                                                                       \
-                  (                                                                        \
-                    gem list bundler --silent --installed                                  \
-                                     --version="$( tail -n1 Gemfile.lock | tr -d " " )"    \
-                    ||                                                                     \
-                    gem install "bundler:$( tail -n1 Gemfile.lock | tr -d " " )"           \
-                  )                                                                        \
-                )                                                                          \
-                ||                                                                         \
-                (                                                                          \
-                  gem list bundler --silent --installed                                    \
-                  ||                                                                       \
-                  gem install bundler                                                      \
-                )                                                                          \
-              )                                                                            \
-              &&                                                                           \
-              bundle install --jobs=$( nproc )'
-
-  alias bx='bundle exec'
-  alias br='bundle exec'
-
-  alias ba='bundle audit update && bundle audit'
-  alias baudit='bundle audit update && bundle audit'
-
-  alias db:='bundle exec rails generate migration'
-  alias db+='bundle exec rails db:migrate'
-  alias db-='bundle exec rails db:rollback'
-  alias db\!="bundle exec rails runner 'require %(bundler/inline); gemfile { source %(https://rubygems.org); gem %(lazy_migrate) }; LazyMigrate.run'"
-  alias DB\!='gem update sorbet-runtime &> /dev/null; gem cleanup sorbet-runtime &> /dev/null; db!'
-
-  alias rc='bundle exec rails console'
-  alias rs='bundle exec rails server'
-  alias rs1='RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 bundle exec rails server'
-
-  rails-tasks() { [ -e 'Gemfile' ] && bundle exec rails --tasks="$1" --all; }  # rt for "Rails Tasks"
-  alias rt='rails-tasks'
-
-  alias brubocop='bundle exec rubocop --format=fuubar --color --parallel'
-  brubowatch() { watch --interval="${1:-10}" bundle exec rubocop --format=fuubar --color --parallel; }
-
-  # Executable management.
-  source "${HOME}/bin/vendor/chruby-source"
-  source "${HOME}/bin/vendor/chruby-source.auto"
-
-
-  # node
-
-  alias ni='npm install'
-  alias nx='npm run'
-  alias nr='npm run'
-
-  alias na='npm audit'
-  alias naudit='npm audit'
-
-  alias ns='npm run start'
-
-  node-tasks() { [ -e 'package.json' ] && json '.scripts | keys[]' < 'package.json' | fgrep --color=never "$1"; }  # nt for "Node Tasks"
-  alias nt='node-tasks'
-
-  # Executable management.
-  export N_PREFIX="${HOME}/.nodes"
-
-
-  # yarn
-
-  alias yi='([ -e "package.json" ] || [ -e "yarn.lock" ]) && yarn install 2> /dev/null'
-  alias yi\!='([ -e "package.json" ] || [ -e "yarn.lock" ])                           \
-              &&                                                                      \
-              (                                                                       \
-                (                                                                     \
-                  [ -e ".node-version" ]                                              \
-                  &&                                                                  \
-                  (                                                                   \
-                    (                                                                 \
-                      command -v node &> /dev/null                                    \
-                      &&                                                              \
-                      [ "v$( cat .node-version )" == "$( node --version )" ]          \
-                    )                                                                 \
-                    ||                                                                \
-                    n install "$( cat .node-version )"                                \
-                  )                                                                   \
-                )                                                                     \
-                ||                                                                    \
-                (                                                                     \
-                  command -v node &> /dev/null                                        \
-                  ||                                                                  \
-                  n lts                                                               \
-                )                                                                     \
-              )                                                                       \
-              &&                                                                      \
-              (                                                                       \
-                yarn --version &> /dev/null                                           \
-                ||                                                                    \
-                npm install -g yarn                                                   \
-              )                                                                       \
-              &&                                                                      \
-              yarn install 2> /dev/null'
-
-
-  # multi-language constructs
-
-  alias @='bi!; yi!'
+dev_helpers="${HOME}/bin/dev.src"
+[ -r "$dev_helpers" ] && source "$dev_helpers"
 
 
 
