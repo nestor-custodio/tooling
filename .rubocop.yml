@@ -8,6 +8,9 @@ AllCops:
   NewCops: enable
   SuggestExtensions: false
 
+Layout/EmptyLineAfterGuardClause:
+  # Add empty line after guard clause.
+  Enabled: false
 Layout/LineLength:
   Max: 200
 
