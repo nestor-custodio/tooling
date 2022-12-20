@@ -101,8 +101,14 @@ shopt -s lastpipe expand_aliases
 
     # Linting/Style tooling.
     #
-    rubocop() { bundle exec rubocop --server --format=fuubar --color --parallel; }
-    rubowatch() { watch --interval="${1:-10}" bundle exec rubocop --server --format=fuubar --color --parallel; }
+    export RUBOCOP_OPTS="--server --format='simple' --format='offenses' --color"
+    #
+    rubocop() { eval "bundle exec rubocop ${RUBOCOP_OPTS}" "$@"; }
+    rubowatch() {
+      local watch_interval
+      [ -z "${1//[0-9.]/}" ] && watch_interval="$1" && shift
+      watch --color --interval="${watch_interval:-10}" eval "bundle exec rubocop ${RUBOCOP_OPTS}" "$@"
+    }
 
     # Bundle/Gemfile management.
     #
