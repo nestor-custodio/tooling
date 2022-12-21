@@ -1,0 +1,94 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [NAME] ...
+
+		Traverses up the directory tree looking for any of the names given,
+		and returning an absolute path to the first such item. Directories
+		can be found by giving a name ending in '/'.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --quiet                   Produce no output; only report if file exists.
+		  --read                    Output the file's contents rather than its name.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if file(s) not found.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	quiet=''
+	read=''
+
+	# ---
+	# ---
+
+	CHAR_OPTS='qr'
+	LONG_OPTS='help,quiet,read'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(-q|--quiet)
+				quiet='1'
+				;;
+
+			(-r|--read)
+				read='1'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] && error-out 1 'no filename(s) given'
+
+}
+
+# ---
+# ---
+
+
+# Sanity check: --quiet and --read are mutually exclusive.
+#
+[ -n "$quiet" ] && [ -n "$read" ] && error-out 1 'cannot specify both --quiet and --read'
+
+
+pwd | sed -r -e 's|/?$|/|' | store-as dir
+
+while [ -n "$dir" ]; do
+	for filename in "$@"; do
+		sed -r -e 's|/+|/|g' <<< "${dir}/${filename}" | store-as full_path
+		[ -e "$full_path" ] || continue
+		
+		[ -n "$quiet" ] && exit-out
+		[ -n "$read" ] && exec cat "$full_path"
+		exit-out "$full_path"
+	done
+
+	sed -r -e 's|[^/]*/$||' <<< "$dir" | store-as dir
+done
+
+exit-out 2
