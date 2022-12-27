@@ -12,8 +12,12 @@ source '/home/nestor/bin/std.lib'
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --disk-size               Size of boot disk. (Default is 10GB.)
+
 		  --machine-type            Compute Instance machine type.
 		  --list-machine-types      List available Compute Instance machine types.
+
+		  --os-release              Ubuntu release image to build atop.
+		  --list-os-releases        List available images for the "Ubuntu OS Cloud" family.
 
 		  --help                    Show this help text.
 
@@ -35,10 +39,35 @@ source '/home/nestor/bin/std.lib'
 		  Note these shortcut options are a convenience and not all machine type families
 		  and suffixes are available for use as simple options.
 
+		OS Release
+		  The Ubuntu OS release to use as a base image. This is either a release version
+		  (e.g. "22.10" or "2210"), or the string "lts" (for the latest LTS release), or
+		  the string "latest" (for the latest release). Default is "latest".
+
+		  Note this selects an entry from GCP's list of "Ubuntu OS Cloud" images, and it
+		  is possible that no available image exists for the requested "--os-release".
+
+		  The "--lts" and "--latest" boolean flags are also available as shortcuts.
+
+		  See '$( script-name ) --list-os-releases' for a list of available images.
+
 		Exit status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF
+
+}
+
+# ---
+
+{ # -- Utility Functions -- #
+
+	image_project='ubuntu-os-cloud'
+
+	os_releases() {
+		local filter='(licenses[] ~ "/'"${image_project}"'/") AND (family !~ "minimal|arm64")'
+		gcloud compute images list --filter="$filter" --format='value(family)' | sort
+	}
 
 }
 
@@ -51,15 +80,25 @@ source '/home/nestor/bin/std.lib'
 	disk_size='10GB'
 	machine_type_family='n2d'
 	machine_type_suffix=''
+	os_release='latest'
 
 	# ---
 	# ---
 
 	CHAR_OPTS=''
-	LONG_OPTS='help,disk-size:,disk:,hdd:,machine-type:,machine:,list-machine-types,machine-types'
+	LONG_OPTS='help'
+
+	LONG_OPTS="${LONG_OPTS},disk-size:,disk:,hdd:"
+
+	LONG_OPTS="${LONG_OPTS},machine-type:,machine:"
 	LONG_OPTS="${LONG_OPTS},e2,f1,g1,n1,n2,n2d"
 	LONG_OPTS="${LONG_OPTS},micro,small,medium"
 	LONG_OPTS="${LONG_OPTS},standard-1,standard-2,standard-4,standard-8,standard-16"
+	LONG_OPTS="${LONG_OPTS},list-machine-types,machine-types"
+
+	LONG_OPTS="${LONG_OPTS},os-release:,os:,release:"
+	LONG_OPTS="${LONG_OPTS},lts,latest"
+	LONG_OPTS="${LONG_OPTS},list-os-releases,list-os-images,list-releases,list-images,releases,images"
 
 	set-params
 	while true; do
@@ -73,10 +112,20 @@ source '/home/nestor/bin/std.lib'
 				disk_size="$1" && shift
 				;;
 
+
 			(--machine-type|--machine)
 				machine_type="$1" && shift
 				machine_type_family="${machine_type%%-*}"
 				machine_type_suffix="${machine_type#*-}"
+				;;
+
+			(--e2|--f1|--g1|--n1|--n2|--n2d)
+				machine_type_family="${option#--}"
+				;;
+
+			(--micro|--small|--medium) ;&
+			(--standard-1|--standard-2|--standard-4|--standard-8|--standard-16)
+				machine_type_suffix="${option#--}"
 				;;
 
 			(--list-machine-types|--machine-types)
@@ -87,13 +136,22 @@ source '/home/nestor/bin/std.lib'
 				exit-out
 				;;
 
-			(--e2|--f1|--g1|--n1|--n2|--n2d)
-				machine_type_family="${option#--}"
+
+			(--os-release|--os|--release)
+			  os_release="$1" && shift
 				;;
 
-			(--micro|--small|--medium) ;&
-			(--standard-1|--standard-2|--standard-4|--standard-8|--standard-16)
-				machine_type_suffix="${option#--}"
+			(--lts)
+				os_release='lts'
+				;;
+
+			(--latest)
+				os_release='latest'
+				;;
+
+			(--list-os-releases|--list-os-images|--list-releases|--list-images|--releases|--images)
+				os_releases | sed -r -e 's|^ubuntu-||' -e 's|-lts$| (lts)|' -e 's|-.*$||'
+				exit-out
 				;;
 
 		esac
@@ -139,13 +197,23 @@ gcp destroy "$instance_name" &> /dev/null
                                  esac
 
 
-# Note we're not specifying a boot image by name -- we're giving only the "project" and "family".
-# See `gcloud compute images list` for a complete list of all available images.
+# Convert the given "os_release" value into an actual image "family" name.
 #
-image_project='ubuntu-os-cloud'
+case "$os_release" in
+	latest)
+		os_releases | tail -n1 | store-as image_family
+		;;
 
-image_filter='(licenses[] ~ "/ubuntu-os-cloud/") AND (family !~ "minimal") AND (family !~ "arm64")'
-gcloud compute images list --filter="$image_filter" --format='value(family)' | sort | tail -n1 | store-as image_family
+	lts)
+	  os_releases | fgrep 'lts' | tail -n1 | store-as image_family
+		;;
+
+	*)
+		grep -P --quiet -x '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
+		os_releases | fgrep "${os_release//./}" | tail -n1 | store-as image_family
+		;;
+esac
+[ -n "$image_family" ] || error-out 1 'requested os release not found'
 
 
 # Startup script.
