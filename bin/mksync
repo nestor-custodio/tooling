@@ -91,7 +91,8 @@ yes | gcloud compute instances delete 'sync' --quiet
 # See `gcloud compute images list` for a complete list of all available images.
 #
 image_project='ubuntu-os-cloud'
-image_family='ubuntu-2204-lts'
+image_list_filter='(licenses[] ~ "/'"${image_project}"'/") AND (family !~ "minimal|arm64") AND (family ~ "lts")'
+gcloud compute images list --filter="$image_list_filter" --format='value(family)' | sort | tail -n1 | store-as image_family
 
 
 # Startup script.
