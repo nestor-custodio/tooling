@@ -18,7 +18,7 @@ color-modes = true
 cursorline  = true
 gutters     = ["line-numbers", "spacer", "diff", "diagnostics"]
 mouse       = true
-scrolloff   = 10
+scrolloff   = 5
 true-color  = true
 
 
