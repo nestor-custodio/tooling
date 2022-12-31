@@ -84,6 +84,8 @@ newline = "↲"
 "p" = "no_op"
 "s" = "no_op"
 "." = "no_op"
+"<" = "no_op"
+">" = "no_op"
 
 
 # Application Control
@@ -110,8 +112,8 @@ newline = "↲"
 "l"       = "move_char_right"
 
 "["       = "goto_file_start"
-"I"       = "page_up"
-"K"       = "page_down"
+"I"       = "half_page_up"
+"K"       = "half_page_down"
 "]"       = "goto_file_end"
 
 "C-h"     = "goto_line_start"
@@ -181,6 +183,8 @@ newline = "↲"
   "S-tab"     = "unindent"
 
   "#"         = "toggle_comments"
+  "^"         = "switch_to_uppercase"
+  "_"         = "switch_to_lowercase"
 
 
 # ---
@@ -224,8 +228,8 @@ newline = "↲"
 "l"       = "extend_char_right"
 
 "["       = "goto_file_start"
-"I"       = "page_up"
-"K"       = "page_down"
+"I"       = "half_page_up"
+"K"       = "half_page_down"
 "]"       = "goto_file_end"
 
 "C-h"     = "goto_line_start"
