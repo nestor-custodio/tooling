@@ -48,4 +48,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-notify gcp "$( hostname ): DING!" "$( date +'%Y-%m-%d %H:%M:%S' )"
+notify pushover "$( hostname ): DING!" "$( date +'%Y-%m-%d %H:%M:%S' )"
