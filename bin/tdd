@@ -53,7 +53,7 @@ source '/home/nestor/bin/std.lib'
 
 		# Check for RSpec usage.
 
-		bundle list --name-only | has rspec && rspec='1'
+		nearest --read 'Gemfile.lock' 'Gemfile' | has rspec && rspec='1'
 
 
 		# Check for Minitest files.
