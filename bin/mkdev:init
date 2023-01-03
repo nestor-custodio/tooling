@@ -218,7 +218,7 @@ startup_log='/var/log/startup'
 
 				Ready In: $( elapsed --since="@$( instance attributes/created-at )" )
 			EOF
-			notify gcp "VM Ready: $( instance name )" "$notification"
+			notify pushover "VM Ready: $( instance name )" "$notification"
 
 
 	  echo -e "\n\n... Init complete in $( puptime )."

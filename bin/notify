@@ -6,22 +6,22 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) SERVICE_CODE [SUBJECT] MESSAGE
+		Usage: $( script-name ) CHANNEL [SUBJECT] MESSAGE
 
-		Sends a message to PushOver user "sakimorix@gmail.com"
+		Sends a message via the specified channel.
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		SERVICE_CODE
-		  Identifies the registered PushOver service to use for message delivery.
-		  Only available value right now is "gcp".
+		CHANNEL
+		  Identifies the messaging channel to use for delivery.
+		  Only available value right now is "pushover".
 
 		Exit status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  on invalid SERVICE_CODE,
-		  3  if message failed to send correctly.
+		  2  on invalid CHANNEL,
+		  3  if message failed to send.
 	EOF
 
 }
@@ -46,19 +46,19 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	service=''
+	channel=''
 	subject=''
 	message=''
 
 	case "$#" in
 
 		2)
-			service="$1" && shift
+			channel="$1" && shift
 			message="$1" && shift
 			;;
 
 		3)
-			service="$1" && shift
+			channel="$1" && shift
 			subject="$1" && shift
 			message="$1" && shift
 			;;
@@ -72,27 +72,25 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-# Set the PushOver keys.
+case "$channel" in
 
-project 'attributes/pushover-keys' | store-as pushover_keys
-json '.user' <<< "$pushover_keys"  | store-as user_key
-
-case "$service" in
-
-	(gcp)
+	(pushover)
+		# Fetch keys.
+		#
+		project 'attributes/pushover-keys' | store-as pushover_keys
+		json '.user'         <<< "$pushover_keys" | store-as user_key
 		json '.services.gcp' <<< "$pushover_keys" | store-as service_key
+
+		# Send the message.
+		#
+		curl -s --form-string 'priority=0'                 \
+						--form-string "user=${user_key}"           \
+						--form-string "token=${service_key}"       \
+						--form-string "title=${subject}"           \
+						--form-string "message=${message}"         \
+						'https://api.pushover.net/1/messages.json' \
+		| json '.status' | hasline 1 &> /dev/null
 		;;
 
-	*) error-out 2 "unknown SERVICE_CODE (${service})" ;;
+	*) error-out 2 "unknown CHANNEL (${channel})" ;;
 esac
-
-
-# Send the message.
-#
-curl -s --form-string 'priority=0'                 \
-				--form-string "user=${user_key}"           \
-				--form-string "token=${service_key}"       \
-				--form-string "title=${subject}"           \
-				--form-string "message=${message}"         \
-				'https://api.pushover.net/1/messages.json' \
-| json '.status' | hasline 1 &> /dev/null
