@@ -47,8 +47,9 @@ export PGHOST='postgres'
   # bat
 
   # It's nice to have a 1-char name for something
-  # that will properly page/colorize `--help` text.
+  # that will properly page/colorize man/help text.
   #
+  m() { man "$@" | bat --plain --language='man' ; }
   h() { "$@" --help | bat --plain --language='help' ; }
 
 
