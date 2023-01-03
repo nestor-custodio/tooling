@@ -79,9 +79,6 @@ source '/home/nestor/bin/std.lib'
 	fi
 	[ -n "$postgres_url" ] || error-out 2 'no source system given'
 
-
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
-
 }
 
 # ---
