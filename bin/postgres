@@ -6,11 +6,15 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [DATABASE_NAME] [-- PGCLI_OPTIONS]
+		Usage: $( script-name ) [DATABASE] [-- PGCLI_OPTIONS]
 
-		Wrapper for connecting to CloudSQL 'postgres' instance using 'pgcli'.
-		When no DATABASE_NAME is given, the hostname given per the current ENV
-		and Rails config, if available.
+		Convenience wrapper for connecting to Postgres using 'pgcli'.
+
+		When a DATABASE *name* is given, it is assumed to be available on the
+		CloudSQL 'postgres' instance. When a DATABASE *url* is given, it will
+		be used as-is. If no DATABASE is given and a DATABASE_URL environment
+		variable is set, that will be used. As a final fallback, the database
+		name given in the Rails config (if any) for the current ENV is used.
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
@@ -43,9 +47,18 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	database_name="$1" && shift
-	[ -n "$database_name" ] || yaml ".${RAILS_ENV}.database" < "${HOME}/dev/config/database.yml" | store-as database_name
-	[ -n "$database_name" ] || error-out 1 'no DATABASE_NAME given or available via Rails config'
+	database="$1" && shift
+
+	# Pull from DATABASE_URL, if available.
+	#
+	[ -n "$database" ] || database="$DATABASE_URL"
+
+	# Pull from Rails DB config, if available.
+	#
+	rails_db_config="${HOME}/dev/config/database.yml"
+	[ -n "$database" ] || ( yaml ".${RAILS_ENV}.database" < "$rails_db_config" ) 2> /dev/null | store-as database
+
+	[ -n "$database" ] || error-out 1 'no DATABASE given or available via ENV or Rails config'
 
 }
 
@@ -56,4 +69,5 @@ source '/home/nestor/bin/std.lib'
 pgcli_exec="$( command -v pgcli )"
 [ -n "$pgcli_exec" ] || error-out 2 'pgcli executable not found'
 
-"$pgcli_exec" --pgclirc="~/.config/pgcli/config" "postgres://nestor@postgres/${database_name}" "$@"
+grep -P --quiet '(postgres|pg|psql)://' <<< "$database" || database="postgres://nestor@postgres/${database}"
+"$pgcli_exec" --pgclirc="~/.config/pgcli/config" "$database" "$@"

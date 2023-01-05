@@ -6,9 +6,15 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) DATABASE_NAME [-- MYCLI_OPTIONS]
+		Usage: $( script-name ) [DATABASE] [-- MYCLI_OPTIONS]
 
-		Wrapper for connecting to MySQL instances on DB VM using 'mycli'.
+		Convenience wrapper for connecting to MySQL using 'mycli'.
+
+		When a DATABASE *name* is given, it is assumed to be available on the
+		CloudSQL 'mysql' DB instance. When a DATABASE *url* is given, it will
+		be used as-is. If no DATABASE is given and a DATABASE_URL environment
+		variable is set, that will be used. As a final fallback, the database
+		name given in the Rails config (if any) for the current ENV is used.
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
@@ -41,8 +47,18 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	database_name="$1" && shift
-	[ -n "$database_name" ] || error-out 1 'no DATABASE_NAME given'
+	database="$1" && shift
+
+	# Pull from DATABASE_URL, if available.
+	#
+	[ -n "$database" ] || database="$DATABASE_URL"
+
+	# Pull from Rails DB config, if available.
+	#
+	rails_db_config="${HOME}/dev/config/database.yml"
+	[ -n "$database" ] || ( yaml ".${RAILS_ENV}.database" < "$rails_db_config" ) 2> /dev/null | store-as database
+
+	[ -n "$database" ] || error-out 1 'no DATABASE given or available via ENV or Rails config'
 
 }
 
@@ -53,4 +69,5 @@ source '/home/nestor/bin/std.lib'
 mycli_exec="$( command -v mycli )"
 [ -n "$mycli_exec" ] || error-out 2 'mycli executable not found'
 
-"$mycli_exec" --myclirc="~/.config/mycli/config" "mysql://nestor@mysql/${database_name}" "$@"
+grep -P --quiet '(mysql|my)://' <<< "$database" || database="mysql://nestor@mysql/${database}"
+"$mycli_exec" --myclirc="~/.config/mycli/config" "$database" "$@"
