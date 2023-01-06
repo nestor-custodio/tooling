@@ -3,26 +3,6 @@ shopt -s lastpipe expand_aliases
 
 # ---
 
-# ENV helpers.
-
-  alias development='RUBY_ENV=development RAILS_ENV=development RACK_ENV=development NODE_ENV=development'
-  alias testing='RUBY_ENV=test RAILS_ENV=test RACK_ENV=test NODE_ENV=test'
-  alias staging='RUBY_ENV=staging RAILS_ENV=staging RACK_ENV=staging NODE_ENV=production'
-  alias production='RUBY_ENV=production RAILS_ENV=production RACK_ENV=production NODE_ENV=production'
-
-  alias d='RUBY_ENV=development RAILS_ENV=development RACK_ENV=development NODE_ENV=development'
-  alias t='RUBY_ENV=test RAILS_ENV=test RACK_ENV=test NODE_ENV=test'
-  alias s='RUBY_ENV=staging RAILS_ENV=staging RACK_ENV=staging NODE_ENV=production'
-  alias p='RUBY_ENV=production RAILS_ENV=production RACK_ENV=production NODE_ENV=production'
-
-  # Default to "development".
-  #
-  export RUBY_ENV=development
-  export RAILS_ENV=development
-  export RACK_ENV=development
-  export NODE_ENV=development
-
-
 # Lookup helpers.
 
   dev() {
@@ -274,3 +254,55 @@ shopt -s lastpipe expand_aliases
   # multi-language constructs
 
     alias @='bi!; yi!'
+
+
+# ENV helpers.
+# Note we want to define this stuff last so when we store the starting ("clean") list
+# of ENV vars (as "${ENV_VARS[clean]}") it includes all of the variables defined above.
+
+  known-env-vars() { export -p | sed -r -e 's#=.*$##' -e 's#^.* ##' | sort ; }
+  declare -Ax ENV_VARS; ENV_VARS[clean]="$( known-env-vars )"
+
+  set-env() {
+    local env_name="$1" && shift
+    [ -n "$env_name" ] || return
+
+    export RUBY_ENV="$env_name"
+    export RAILS_ENV="$env_name"
+    export RACK_ENV="$env_name"
+    export NODE_ENV="$env_name"
+  }
+
+  load-env() {
+    local env_name="$1" && shift
+    declare -a env_list=('.env' '.env.local')
+    [ -n "$env_name" ] && env_list+=(".env.${env_name}" ".env.${env_name}.local")
+
+    unload-env
+    set-env "$env_name"
+    for env_file in "${env_list[@]}"; do source "${HOME}/dev/${env_file}" 2> /dev/null; done
+  }
+
+  unload-env() {
+    local clean_vars_file="$( mktemp --dry-run -t 'unload-env.XXX' )"
+    echo -n "${ENV_VARS[clean]}" > "$clean_vars_file"
+
+    for new_env_var in $( known-env-vars | fgrep -vx --file="$clean_vars_file" ); do unset "$new_env_var"; done
+    rm "$clean_vars_file"
+  }
+
+  # ---
+
+  alias development="set-env 'development' ;" 
+  alias testing="set-env 'test' ;"
+  alias staging="set-env 'staging' ;"
+  alias production="set-env 'production' ;"
+
+  alias d='development' 
+  alias t='test'
+  alias s='staging'
+  alias p='production'
+
+  # Default to "development".
+  #
+  set-env 'development'
