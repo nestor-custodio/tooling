@@ -276,16 +276,6 @@ alias %='break_out_of_links'
 
 
 
-# Dev tooling.
-
-export DEV_ROOT="${HOME}/dev"
-
-dev_helpers="${HOME}/bin/dev.src"
-[ -r "$dev_helpers" ] && source "$dev_helpers"
-
-
-
-
 # Set the prompt.
 #
 prompt_setter="${HOME}/bin/prompt.src"
@@ -296,6 +286,13 @@ prompt_setter="${HOME}/bin/prompt.src"
 #
 vm_customization_file="${HOME}/vm-scripts/$( hostname )/custom-shell"
 [ -r "$vm_customization_file" ] && source "$vm_customization_file"
+
+
+# Load Dev-specific tooling (ENV/language helpers).
+#
+export DEV_ROOT="${HOME}/dev"
+dev_helpers="${HOME}/bin/dev.src"
+[ -r "$dev_helpers" ] && source "$dev_helpers"
 
 
 # New windows/panes opened from within a symlinked location will show up within ~/links,
