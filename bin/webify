@@ -71,7 +71,7 @@ source '/home/nestor/bin/std.lib'
 
 
 webroot="$( realpath "$webroot" )"
-[ -e "$webroot" ] || error-out 2 'path not found'
+[ -d "$webroot" ] || error-out 2 'path not found'
 
 webroot_url="https://$( hostname ).custodio.app/"
 

@@ -24,7 +24,7 @@ find-up() {
 	local path="$( pwd )"
   while [ "$path" != '' ]; do
 		file="${path}/${basename}"
-		[ -e "$file" ] && echo "$file" && return 0
+		[ -r "$file" ] && echo "$file" && return 0
 
 		path="${path%/*}"
 	done
