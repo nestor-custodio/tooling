@@ -61,7 +61,7 @@ cd "${HOME}/dev" &> /dev/null
 case "$language" in
 
 	(ruby)
-			[ -e 'Gemfile' ] && has 'rubocop' < Gemfile &> /dev/null && runner='bundle exec'
+			nearest --read 'Gemfile.lock' 'Gemfile' | has 'rubocop' && runner='bundle exec'
 			ls -1 "${GEM_HOME}/gems" | grep -P --quiet -x 'rubocop-[0-9.]+' || gem install rubocop
 			eval "${runner} rubocop --server --stdin source_file.rb --stderr --autocorrect --fail-level='fatal'" < /dev/stdin
 		;;
