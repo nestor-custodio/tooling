@@ -135,7 +135,7 @@ keybinding:
     scrollUpMain: '<up>'
     scrollDownMain: '<down>'
     executeCustomCommand: '!'
-    createRebaseOptionsMenu: 'r'
+    createRebaseOptionsMenu: '~'
     pushFiles: 'P'
     pullFiles: 'p'
     refresh: '<c-r>'
