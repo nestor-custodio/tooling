@@ -15,10 +15,10 @@ shopt -s lastpipe expand_aliases
 	script-real() { realpath "$0" ; }
 	script-name() { basename "$0" ; }
 
-	file-blanks() { script-file | sed -e 's#.# #g' ; }
-	path-blanks() { script-path | sed -e 's#.# #g' ; }
-	real-blanks() { script-real | sed -e 's#.# #g' ; }
-	name-blanks() { script-name | sed -e 's#.# #g' ; }
+	file-blanks() { script-file | sed -e 's|.| |g' ; }
+	path-blanks() { script-path | sed -e 's|.| |g' ; }
+	real-blanks() { script-real | sed -e 's|.| |g' ; }
+	name-blanks() { script-name | sed -e 's|.| |g' ; }
 
 
 	STARTUP_DIR="$( pwd )"

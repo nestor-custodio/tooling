@@ -52,4 +52,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-sed -r -e 's#^(.*/)?([^.]+)(\..*)?#\2#' <<< "$file"
+sed -r -e 's|^(.*/)?([^.]+)(\..*)?|\2|' <<< "$file"

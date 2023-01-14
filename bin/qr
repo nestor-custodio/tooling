@@ -43,4 +43,4 @@ source '/home/nestor/bin/std.lib'
 
 
 qrencode --8bit --type=utf8 --margin=1 --output=- "$@" \
-| sed -r -e '1{ h; s#.#▄#g; s#^# #; p; x; }' -e 's#^# #' -e '${ p; z; }'
+| sed -r -e '1{ h; s|.|▄|g; s|^| |; p; x; }' -e 's|^| |' -e '${ p; z; }'

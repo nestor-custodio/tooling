@@ -49,4 +49,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-coalesce "$( vm-zone | sed -r -e 's#-[^-]+$##' )" 'us-central1'
+coalesce "$( vm-zone | sed -r -e 's|-[^-]+$||' )" 'us-central1'

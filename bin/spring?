@@ -51,7 +51,7 @@ source '/home/nestor/bin/std.lib'
 
 [ "$( realpath "$( pwd )" )" == "$( realpath "${HOME}/dev" )" ] || error-out 2 'not currently in ~/dev'
 
-spring status | head -n1 | sed -e 's#:$#.#' | store-as status
+spring status | head -n1 | sed -e 's|:$|.|' | store-as status
 echo "$status"
 
 has 'is running' <<< "$status" || exit 1

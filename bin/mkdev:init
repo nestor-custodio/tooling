@@ -161,7 +161,7 @@ startup_log='/var/log/startup'
 					# - "git@github.com:username/repo.git"     => "github.com/username/repo"
 					# - "https://github.com/username/repo.git" => "github.com/username/repo"
 
-					dev_dir="$( sed -r -e 's#^.*://##' -e 's#^.*@##' -e 's#:#/#' -e 's#\.git$##' <<< "$git_repo" )"
+					dev_dir="$( sed -r -e 's|^.*://||' -e 's|^.*@||' -e 's|:|/|' -e 's|\.git$||' <<< "$git_repo" )"
 				
 				}
 
@@ -213,8 +213,8 @@ startup_log='/var/log/startup'
 				External: $( wan-ip )
 				Disk Use: $( df -h / --output='pcent,size,avail'                         \
 				             | sed -r -e '1 d'                                           \
-				                      -e 's# +#:#g'                                      \
-				                      -e 's#^:?(.*):(.*):(.*)$#\1 of \2 (\3 Available)#' )
+				                      -e 's| +|:|g'                                      \
+				                      -e 's|^:?(.*):(.*):(.*)$|\1 of \2 (\3 Available)|' )
 
 				Ready In: $( elapsed --since="@$( instance attributes/created-at )" )
 			EOF

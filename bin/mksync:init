@@ -123,7 +123,7 @@ startup_log='/var/log/startup'
 			# Attach the volume.
 			report '... attaching volume'
 
-			zone="$( instance zone | sed -e 's#.*/##' )"
+			zone="$( instance zone | sed -e 's|.*/||' )"
 			gcloud compute instances attach-disk 'sync' --disk='sync-storage' --mode='rw' --zone="$zone"
 
 
@@ -195,8 +195,8 @@ startup_log='/var/log/startup'
 				External: $( wan-ip )
 				Disk Use: $( df -h / --output='pcent,size,avail'                         \
 				             | sed -r -e '1 d'                                           \
-				                      -e 's# +#:#g'                                      \
-				                      -e 's#^:?(.*):(.*):(.*)$#\1 of \2 (\3 Available)#' )
+				                      -e 's| +|:|g'                                      \
+				                      -e 's|^:?(.*):(.*):(.*)$|\1 of \2 (\3 Available)|' )
 
 				Ready In: $( elapsed --since="@$( instance attributes/created-at )" )
 			EOF

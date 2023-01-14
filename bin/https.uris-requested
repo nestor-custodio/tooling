@@ -1,2 +1,2 @@
 #! /bin/env bash
-cat "/var/log/https-access-log::"* | jq -sr '.[].request.uri' | sed -r -e 's#\?.*$##' -e 's#/[0-9]+(/.*)?$##' | grep -Pv '^/(assets|packs)/' | sort | uniq
+cat "/var/log/https-access-log::"* | jq -sr '.[].request.uri' | sed -r -e 's|\?.*$||' -e 's|/[0-9]+(/.*)?$||' | grep -Pv '^/(assets|packs)/' | sort | uniq

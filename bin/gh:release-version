@@ -58,4 +58,4 @@ source '/home/nestor/bin/std.lib'
 gh --repo="$repo_id" release view --json='tagName' 2> /dev/null | json .tagName | store-as version_number
 [ -z "$version_number" ] && curl --silent "https://api.github.com/repos/${repo_id}/tags" | json '.[0].name' | store-as version_number
 
-sed -r -e 's#^v##' <<< "$version_number"
+sed -r -e 's|^v||' <<< "$version_number"

@@ -260,7 +260,7 @@ shopt -s lastpipe expand_aliases
 # Note we want to define this stuff last so when we store the starting ("clean") list
 # of ENV vars (as "${ENV_VARS[clean]}") it includes all of the variables defined above.
 
-  known-env-vars() { export -p | sed -r -e 's#=.*$##' -e 's#^.* ##' | sort ; }
+  known-env-vars() { export -p | sed -r -e 's|=.*$||' -e 's|^.* ||' | sort ; }
   declare -Ax ENV_VARS; ENV_VARS[clean]="$( known-env-vars )"
 
   set-env() {
