@@ -240,16 +240,14 @@ export PGHOST='postgres'
 
   # watch
 
-  # `watch` can't be used with aliases, so we need to turn *it*
-  # into an alias (with continued expansion by ending with a space).
-  # (https://unix.stackexchange.com/questions/25327/watch-command-alias-expansion)
+  # We have to define our own `watch` replacement to allow for
+  # use of aliases and functions.
 
-  alias watch='/bin/watch --color '
-  alias watch-1='/bin/watch --color --interval=1 '
-  alias watch-2='/bin/watch --color --interval=2 '
-  alias watch-3='/bin/watch --color --interval=3 '
-  alias watch-5='/bin/watch --color --interval=5 '
-  alias watch-10='/bin/watch --color --interval=10 '
+  mira() {
+    local watch_interval
+    [ -n "$1" ] && [ -z "${1//[0-9]/}" ] && interval="$1" && shift
+    [ "$#" -gt 0 ] && watch --color --interval="${watch_interval:-10}" --exec -- bash -ci "$* ; exit &> /dev/null"
+  }
 
 
 
