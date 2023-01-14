@@ -12,11 +12,6 @@
 #
 **/*.local.rb
 
-# Allow per-repo S3 tooling.
-#
-**/s3/
-**/s3?
-
 # We don't care about old Rails migrations.
 #
 **/db/migrate/200*

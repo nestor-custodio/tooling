@@ -17,7 +17,7 @@ shopt -s autocd checkwinsize globstar interactive_comments lastpipe no_empty_cmd
 #                                    - native packages
 #                                    - the current directory's "./bin"
 #
-export PATH=".:${HOME}/bin:${HOME}/bin/vendor:${HOME}/.nodes/bin:${HOME}/.yarn/bin:/snap/bin:$PATH:./bin"
+export PATH=".:${HOME}/bin:${HOME}/bin/vendor:${HOME}/.nodes/bin:${HOME}/.yarn/bin:/snap/bin:${PATH}:./bin"
 
 
 # Explicitly set our language and sorting collation of choice.
@@ -284,8 +284,13 @@ prompt_setter="${HOME}/bin/prompt.src"
 
 # Load additional VM-specific customizations.
 #
-vm_customization_file="${HOME}/vm-scripts/$( hostname )/custom-shell"
-[ -r "$vm_customization_file" ] && source "$vm_customization_file"
+vm_customization_home="${HOME}/vm-scripts/$( hostname )"
+if [ -d "$vm_customization_home" ]; then
+  export PATH="${PATH}:${vm_customization_home}/bin"
+
+  vm_customization_file="${vm_customization_home}/custom-shell"
+  [ -r "$vm_customization_file" ] && source "$vm_customization_file"
+fi
 
 
 # Load Dev-specific tooling (ENV/language helpers).
