@@ -96,18 +96,16 @@ shopt -s lastpipe expand_aliases
     # shellcheck disable=SC2046
     rubowatch() {
       local watch_interval
-      [ -z "${1//[0-9.]/}" ] && watch_interval="$1" && shift
+      [ -n "$1" ] && [ -z "${1//[0-9.]/}" ] && watch_interval="$1" && shift
       watch --color --interval="${watch_interval:-10}" $( _rubocop_runner ) "$@"
     }
 
     # Test re-run helper.
     #
     tddwatch() {
-      tdd "$@"
-      #
       local watch_interval
-      [ -z "${1//[0-9.]/}" ] && watch_interval="$1" && shift
-      fswatch -or "${HOME}/dev" --event='Updated' --latency="${watch_interval:-5}" | xargs -i tdd "$@"
+      [ -n "$1" ] && [ -z "${1//[0-9.]/}" ] && watch_interval="$1" && shift
+      tdd "$@"; fswatch -or "${HOME}/dev" --event='Updated' --latency="${watch_interval:-5}" | xargs -i tdd "$@"
     }
       
     # Bundle/Gemfile management.
