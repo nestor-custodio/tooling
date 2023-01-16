@@ -113,7 +113,13 @@ shopt -s lastpipe expand_aliases
     alias bx='bundle exec'
     alias br='bundle exec'
     #
-    alias ba='bundle audit update && bundle audit'
+    alias ba='(                                    \
+                gem list bundler-audit --installed \
+                ||                                 \
+                gem install bundler-audit          \
+              ) &> /dev/null                       \
+              &&                                   \
+              bundle-audit check --update'
     #
     alias bi='nearest --quiet "Gemfile.lock" "Gemfile" && bundle install --jobs=$( nproc )'
     alias bi\!='nearest --quiet "Gemfile.lock" "Gemfile"                                  \
@@ -192,7 +198,7 @@ shopt -s lastpipe expand_aliases
     # Package helpers.
     #
     alias nx='npx'
-    alias na='npx audit'
+    alias na='npm audit'
     alias ni='npm install'
 
     # Command helpers.
@@ -214,6 +220,8 @@ shopt -s lastpipe expand_aliases
     #
     alias yx='yarn'
     alias yr='yarn'
+    #
+    alias ya='yarn audit'
     #
     alias yi='nearest --quiet "package.json" "yarn.lock" && yarn install 2> /dev/null'
     alias yi\!='nearest --quiet "package.json" "yarn.lock"                           \
