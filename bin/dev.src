@@ -130,25 +130,25 @@ shopt -s lastpipe expand_aliases
                     &&                                                                    \
                     (                                                                     \
                       (                                                                   \
-                        command -v ruby &> /dev/null                                      \
+                        command -v ruby                                                   \
                         &&                                                                \
                         ruby --version | has "$ruby_version"                              \
                       )                                                                   \
                       ||                                                                  \
-                      chruby "$ruby_version" &> /dev/null                                 \
+                      chruby "$ruby_version"                                              \
                       ||                                                                  \
                       (                                                                   \
-                        ruby-install "$ruby_version" &> /dev/null                         \
+                        ruby-install "$ruby_version"                                      \
                         &&                                                                \
                         source "${HOME}/bin/vendor/chruby-source"                         \
                         &&                                                                \
-                        chruby "$ruby_version" &> /dev/null                               \
+                        chruby "$ruby_version"                                            \
                       )                                                                   \
                     )                                                                     \
                   )                                                                       \
                   ||                                                                      \
-                  chruby ruby &> /dev/null                                                \
-                )                                                                         \
+                  chruby ruby                                                             \
+                ) &> /dev/null                                                            \
                 &&                                                                        \
                 (                                                                         \
                   (                                                                       \
@@ -157,19 +157,18 @@ shopt -s lastpipe expand_aliases
                     bundler_version="$( tail -n1 "$lockfile" | tr -d " " )"               \
                     &&                                                                    \
                     (                                                                     \
-                      gem list bundler --silent --installed                               \
-                                       --version="$bundler_version"                       \
+                      gem list bundler --installed --version="$bundler_version"           \
                       ||                                                                  \
                       gem install "bundler:${bundler_version}"                            \
                     )                                                                     \
                   )                                                                       \
                   ||                                                                      \
                   (                                                                       \
-                    gem list bundler --silent --installed                                 \
+                    gem list bundler --installed                                          \
                     ||                                                                    \
                     gem install bundler                                                   \
                   )                                                                       \
-                )                                                                         \
+                ) &> /dev/null                                                            \
                 &&                                                                        \
                 bundle install --jobs=$( nproc )'
 
@@ -232,7 +231,7 @@ shopt -s lastpipe expand_aliases
                     &&                                                               \
                     (                                                                \
                       (                                                              \
-                        command -v node &> /dev/null                                 \
+                        command -v node                                              \
                         &&                                                           \
                         node --version | has "$node_version"                         \
                       )                                                              \
@@ -242,17 +241,17 @@ shopt -s lastpipe expand_aliases
                   )                                                                  \
                   ||                                                                 \
                   (                                                                  \
-                    command -v node &> /dev/null                                     \
+                    command -v node                                                  \
                     ||                                                               \
                     n lts                                                            \
                   )                                                                  \
-                )                                                                    \
+                ) &> /dev/null                                                       \
                 &&                                                                   \
                 (                                                                    \
-                  command -v yarn &> /dev/null                                       \
+                  command -v yarn                                                    \
                   ||                                                                 \
                   npm install -g yarn                                                \
-                )                                                                    \
+                ) &> /dev/null                                                       \
                 &&                                                                   \
                 yarn install 2> /dev/null'
 
