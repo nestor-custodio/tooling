@@ -49,6 +49,14 @@ source '/home/nestor/bin/std.lib'
 		echo "$_github_repo"
 	}
 
+	_executable_url=''
+	executable-url() {
+		[ -n "$_executable_url" ] && { echo "$_executable_url"; return ; }
+	
+		cat "$( executable ).url" | store-as _executable_url
+		echo "$_executable_url"
+	}
+
 	# ---
 	
 	update-tooling() {
@@ -174,6 +182,11 @@ case "$tool_name" in
 		mv "${extract_dir}/auto.sh"   "${HOME}/bin/vendor/chruby-source.auto"
 		chmod 644 "${HOME}/bin/vendor/chruby-source*"
 		rm -rf "$extract_dir"
+		;;
+
+	(crypt)
+		curl "$( executable-url )" --silent --location > "$( executable )" || error-out 2 'unable to fetch release'
+		chmod 755 "$( executable )"
 		;;
 
 	(heroku)

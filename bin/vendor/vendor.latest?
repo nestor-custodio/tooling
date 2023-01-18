@@ -181,6 +181,12 @@ case "$tool_name" in
 
 	# Items requiring special handling.
 
+	(crypt)
+		# This tool provides no versioning info. 🤷.
+		# Last update was back in 2020-11-24, however.
+		noop
+		;;
+
 	(chruby)
 		eval "$( head -n1 '/home/nestor/bin/vendor/chruby-source' )"
 		check-version --local-version="$CHRUBY_VERSION"
@@ -191,7 +197,7 @@ case "$tool_name" in
 		;;
 
 	(redis-viewer)
-		# There's no way to *check* this, so 🤷.
+		# This tool provides no versioning info. 🤷.
 		# I've requested adding a `--version` option via:
 		# https://github.com/saltfishpr/redis-viewer/issues/7
 		noop
