@@ -33,6 +33,7 @@
 /static-web-server
 /unison
 /usql
+/watchexec
 /yq
 
 # Support Files.

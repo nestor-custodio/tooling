@@ -75,12 +75,13 @@ source '/home/nestor/bin/std.lib'
 
 	update-deb-tooling() {
 
-		[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+		# Arguments/options passed into this will be passed through to the
+		# underlying `eget` call. Most useful for `--asset`, `--source`, etc.
 
 		# ---
 
 		mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
-		eget --quiet "$( github-repo )" --asset='.deb' --to='/dev/stdout' | dpkg --extract '/dev/stdin' "$extract_dir"
+		eget --quiet "$( github-repo )" --asset='.deb' "$@" --to='/dev/stdout' | dpkg --extract '/dev/stdin' "$extract_dir"
 		mv "${extract_dir}/usr/bin/${tool_name}" "$( executable )" &> /dev/null || error-out 2 'unable to fetch/find binary'
 		chmod 755 "$( executable )"
 		rm -rf "$extract_dir"
@@ -157,8 +158,9 @@ case "$tool_name" in
 
 	# Items available as a DEB package.
 
-	(hostctl          ) update-deb-tooling ;;
-	(gh               ) update-deb-tooling ;;
+	(hostctl          ) update-deb-tooling               ;;
+	(gh               ) update-deb-tooling               ;;
+	(watchexec        ) update-deb-tooling --asset='gnu' ;;
 
 
 	# Items requiring special handling.

@@ -176,6 +176,7 @@ case "$tool_name" in
 	(static-web-server) check-version                  --puller='(?<=static-web-server ).*'    ;;
 	(unison           ) check-version --cmd='-version' --puller='(?<=unison version ).*?(?= )' ;;
 	(usql             ) check-version                  --puller='(?<=usql ).*'                 ;;
+	(watchexec        ) check-version                  --puller='(?<=watchexec ).*'            ;;
 	(yq               ) check-version                  --puller='(?<=version v).*'             ;;
 
 
