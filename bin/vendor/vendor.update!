@@ -125,13 +125,6 @@ source '/home/nestor/bin/std.lib'
 case "$tool_name" in
 
 
-	# Snap packages.
-
-	(dotdrop)
-		sudo snap refresh --devmode dotdrop &> /dev/null || error-out 2
-		;;
-
-
 	# Straight-forward `eget` pulls.
 
 	(bat              ) update-tooling --asset='gnu'                     ;;
@@ -182,6 +175,7 @@ case "$tool_name" in
 	(chruby)
 		mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
 		eget --quiet "$( github-repo )" --source --file='chruby.*' --all --to="$extract_dir"
+
 		mv "${extract_dir}/chruby.sh" "${HOME}/bin/vendor/chruby-source"
 		mv "${extract_dir}/auto.sh"   "${HOME}/bin/vendor/chruby-source.auto"
 		chmod 644 "${HOME}/bin/vendor/chruby-source*"
@@ -191,6 +185,10 @@ case "$tool_name" in
 	(crypt)
 		curl "$( executable-url )" --silent --location > "$( executable )" || error-out 2 'unable to fetch release'
 		chmod 755 "$( executable )"
+		;;
+
+	(dotdrop)
+		sudo snap refresh --devmode dotdrop &> /dev/null || error-out 2
 		;;
 
 	(heroku)
@@ -206,7 +204,7 @@ case "$tool_name" in
 		mkdir -p "$target" && rm -rf "$target"/*
 
 		eget --quiet "$( github-repo )" --download-only --source --to='/dev/stdout' \
-		| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to download/extract latest release'
+		| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
 		;;
 
 
