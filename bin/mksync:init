@@ -18,14 +18,14 @@ startup_log='/var/log/startup'
 # -- INIT -- #
 [ -e "$init_log" ] || {
 
-	report() {
+	function report {
 		local report="$1" && shift
 		echo -e "\n\n------------------------------------------------------------------------\n@ $( date '+%s' ): ${report}\n"
 	}
 
 	# ---
 
-	metadata() {
+	function metadata {
 		local metadata_key="$1" && shift
 
 		# Set the GCP Metadata API's base URI.
@@ -39,12 +39,12 @@ startup_log='/var/log/startup'
 		curl "${gcp_metadata_api}/${metadata_key}" --silent --header 'Metadata-Flavor: Google' --fail && echo
 	}
 
-	project() {
+	function project {
 		local metadata_key="$1" && shift
 		metadata "project/${metadata_key}"
 	}
 
-	instance() {
+	function instance {
 		local metadata_key="$1" && shift
 		metadata "instance/${metadata_key}"
 	}

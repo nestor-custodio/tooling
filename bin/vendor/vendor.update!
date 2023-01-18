@@ -34,7 +34,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Utility Functions -- #
 
 	_executable=''
-	executable() {
+	function executable {
 		[ -n "$_executable" ] && { echo "$_executable"; return ; }
 	
 		echo "/home/nestor/bin/vendor/${tool_name}" | store-as _executable
@@ -42,7 +42,7 @@ source '/home/nestor/bin/std.lib'
 	}
 
 	_github_repo=''
-	github-repo() {
+	function github-repo {
 		[ -n "$_github_repo" ] && { echo "$_github_repo"; return ; }
 	
 		cat "$( executable ).repo" | store-as _github_repo
@@ -50,7 +50,7 @@ source '/home/nestor/bin/std.lib'
 	}
 
 	_executable_url=''
-	executable-url() {
+	function executable-url {
 		[ -n "$_executable_url" ] && { echo "$_executable_url"; return ; }
 	
 		cat "$( executable ).url" | store-as _executable_url
@@ -59,7 +59,7 @@ source '/home/nestor/bin/std.lib'
 
 	# ---
 	
-	update-tooling() {
+	function update-tooling {
 
 		# Arguments/options passed into this will be passed through to the
 		# underlying `eget` call. Most useful for `--asset`, `--source`, etc.
@@ -73,7 +73,7 @@ source '/home/nestor/bin/std.lib'
 
 	# ---
 
-	update-deb-tooling() {
+	function update-deb-tooling {
 
 		# Arguments/options passed into this will be passed through to the
 		# underlying `eget` call. Most useful for `--asset`, `--source`, etc.

@@ -58,14 +58,14 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Utility Functions -- #
 
-	is_localhost() {
+	function is_localhost {
 		local instance_name="$1" && shift
 		[ -n "$instance_name" ] || error-out 3 'no instance name given'
 
 		[ "$instance_name" == "$( vm-name )" ]
 	}
 
-	instance_state() {
+	function instance_state {
 		local instance_name="$1" && shift
 		[ -n "$instance_name" ] || error-out 3 'no instance name given'
 
@@ -74,8 +74,8 @@ source '/home/nestor/bin/std.lib'
 
 	# ---
 
-	instance_is_running() { [ "$( instance_state "$@" )" == "RUNNING"    ] ; }
-	instance_is_stopped() { [ "$( instance_state "$@" )" == "TERMINATED" ] ; }
+	function instance_is_running { [ "$( instance_state "$@" )" == "RUNNING"    ] ; }
+	function instance_is_stopped { [ "$( instance_state "$@" )" == "TERMINATED" ] ; }
 
 }
 

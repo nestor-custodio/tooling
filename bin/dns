@@ -77,12 +77,12 @@ source '/home/nestor/bin/std.lib'
 
 	{ # -- Lookup Helpers -- #
 
-		dns_lookup() {
+		function dns_lookup {
 			local domain_name="$1" && shift
 			echo "(name:'${domain_name}') AND (type:'A')"
 		}
 
-		dns_record() {
+		function dns_record {
 			local domain_name="$1" && shift
 			gcloud dns record-sets list --zone="$dns_zone" --filter="$( dns_lookup "$domain_name" )"  --format='json' | json '.[0]'
 		}
@@ -91,10 +91,10 @@ source '/home/nestor/bin/std.lib'
 
 	{ # -- Transaction Helpers -- #
 
-		dns_transaction() { gcloud --format='none' --verbosity='error' dns record-sets transaction "$@" --zone="$dns_zone" &> /dev/null ; }
+		function dns_transaction { gcloud --format='none' --verbosity='error' dns record-sets transaction "$@" --zone="$dns_zone" &> /dev/null ; }
 
-		catch_transaction_errors() { set -e && trap 'dns_transaction abort ; error-out 3 "transaction error"' ERR ; }
-		ignore_transaction_errors() { trap - ERR && set +e ; }
+		function catch_transaction_errors { set -e && trap 'dns_transaction abort ; error-out 3 "transaction error"' ERR ; }
+		function ignore_transaction_errors { trap - ERR && set +e ; }
 
 	}
 

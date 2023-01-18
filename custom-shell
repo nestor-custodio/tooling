@@ -49,8 +49,8 @@ export PGHOST='postgres'
   # It's nice to have a 1-char name for something
   # that will properly page/colorize man/help text.
   #
-  m() { man "$@" | bat --plain --language='man' ; }
-  h() { "$@" --help | bat --plain --language='help' ; }
+  function m { man "$@" | bat --plain --language='man' ; }
+  function h { "$@" --help | bat --plain --language='help' ; }
 
 
   # cd
@@ -142,7 +142,7 @@ export PGHOST='postgres'
   alias gunstage='git reset'
   alias guntrack='git rm -r --cached'
 
-  gdeploy() {
+  function gdeploy {
     local remote="${1:-production}"
     local branch="$( git branch --show-current )"
 
@@ -170,7 +170,7 @@ export PGHOST='postgres'
 
   # lazydocker
 
-  lazydocker() {
+  function lazydocker {
     command -v docker &> /dev/null || sudo apt install -qqy docker.io
 
     # We don't want the function name back, so `which` is a must.
@@ -209,7 +209,7 @@ export PGHOST='postgres'
   # shim filters non-files and non-executables out of the parameter
   # list.
 
-  shellcheck() {
+  function shellcheck {
     declare -a args=("$@")
     declare -a executables
 
@@ -243,7 +243,7 @@ export PGHOST='postgres'
   # We have to define our own `watch` replacement to allow for
   # use of aliases and functions.
 
-  mira() {
+  function mira {
     local watch_interval
     [ -n "$1" ] && [ -z "${1//[0-9]/}" ] && interval="$1" && shift
     [ "$#" -gt 0 ] && watch --color --interval="${watch_interval:-10}" --exec -- bash -ci "$* ; exit &> /dev/null"
@@ -260,11 +260,11 @@ alias .....='cd ../../../..'
 
 alias md='mkdir'
 alias rd='rmdir'
-mkcd() { mkdir -p "$1" && cd "$1"; }
+function mkcd { mkdir -p "$1" && cd "$1"; }
 
 alias mirror='rsync --recursive --whole-file --delete-during --force --verbose --links --perms --executability --times'
 
-break_out_of_links() {
+function break_out_of_links {
   local pwd="$( pwd -P )"
   local link_root="${HOME}/links/"
   starts-with "$link_root" <<< "$pwd" && cd "$( sed -e "s|${link_root}|/|" <<< "$pwd" )"

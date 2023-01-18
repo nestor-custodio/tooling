@@ -67,7 +67,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 # ---
 
-fetch() {
+function fetch {
 	local metadata_key="$1" && shift
 
 

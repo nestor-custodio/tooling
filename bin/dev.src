@@ -5,7 +5,7 @@ shopt -s lastpipe expand_aliases
 
 # Lookup helpers.
 
-  dev() {
+  function dev {
     # Fuzzy-find-based dev location utility.
     # - If no search term is given, `cd` into the dev root.
     # - If a single match is found, `cd` into it or open it into the editor, as applicable.
@@ -83,7 +83,7 @@ shopt -s lastpipe expand_aliases
     #
     export RUBOCOP_OPTS="--server --format='simple' --format='offenses' --color"
     #
-    _rubocop_runner() {
+    function _rubocop_runner {
       local runner=''
       nearest --read 'Gemfile.lock' 'Gemfile' | has 'rubocop' && runner='bundle exec rubocop'
       [ -z "$runner" ] && { which rubocop || gem install rubocop ; } &> /dev/null && runner="$( which rubocop )"
@@ -92,9 +92,9 @@ shopt -s lastpipe expand_aliases
     }
     #
     # shellcheck disable=SC2046
-    rubocop() { $( _rubocop_runner ) "$@"; }
+    function rubocop { $( _rubocop_runner ) "$@"; }
     # shellcheck disable=SC2046
-    rubowatch() {
+    function rubowatch {
       local watch_interval
       [ -n "$1" ] && [ -z "${1//[0-9.]/}" ] && watch_interval="$1" && shift
       watch --color --interval="${watch_interval:-10}" $( _rubocop_runner ) "$@"
@@ -102,7 +102,7 @@ shopt -s lastpipe expand_aliases
 
     # Test re-run helper.
     #
-    tddwatch() {
+    function tddwatch {
       local watch_interval
       [ -n "$1" ] && [ -z "${1//[0-9.]/}" ] && watch_interval="$1" && shift
       tdd "$@"; fswatch -or "${HOME}/dev" --event='Updated' --latency="${watch_interval:-5}" | xargs -i tdd "$@"
@@ -184,7 +184,7 @@ shopt -s lastpipe expand_aliases
     alias db\!="bundle exec rails runner 'require %(bundler/inline); gemfile { source %(https://rubygems.org); gem %(lazy_migrate) }; LazyMigrate.run'"
     alias DB\!='gem update sorbet-runtime &> /dev/null; gem cleanup sorbet-runtime &> /dev/null; db!'
 
-    rails-tasks() { nearest --quiet 'Gemfile' && bundle exec rails --tasks="$1" --all; }
+    function rails-tasks { nearest --quiet 'Gemfile' && bundle exec rails --tasks="$1" --all; }
     alias rt='rails-tasks'
 
 
@@ -205,7 +205,7 @@ shopt -s lastpipe expand_aliases
     alias nr='npm run'
     alias ns='npm run start'
     #
-    node-tasks() {
+    function node-tasks {
       local lookup="$1" && shift
       [ -z "$lookup" ] && lookup='^' || lookup='^.*'"$lookup"'.*$'
       nearest --quiet 'package.json' && npm run | grep -P "$lookup" --context='1000' --color='always'
@@ -265,10 +265,10 @@ shopt -s lastpipe expand_aliases
 # Note we want to define this stuff last so when we store the starting ("clean") list
 # of ENV vars (as "${ENV_VARS[clean]}") it includes all of the variables defined above.
 
-  known-env-vars() { export -p | sed -r -e 's|=.*$||' -e 's|^.* ||' | sort ; }
+  function known-env-vars { export -p | sed -r -e 's|=.*$||' -e 's|^.* ||' | sort ; }
   declare -Ax ENV_VARS; ENV_VARS[clean]="$( known-env-vars )"
 
-  set-env() {
+  function set-env {
     local env_name="$1" && shift
     [ -n "$env_name" ] || return
 
@@ -278,7 +278,7 @@ shopt -s lastpipe expand_aliases
     export NODE_ENV="$env_name"
   }
 
-  load-env() {
+  function load-env {
     local env_name="$1" && shift
     declare -a env_list=('.env' '.env.local')
     [ -n "$env_name" ] && env_list+=(".env.${env_name}" ".env.${env_name}.local")
@@ -288,7 +288,7 @@ shopt -s lastpipe expand_aliases
     for env_file in "${env_list[@]}"; do source "${HOME}/dev/${env_file}" 2> /dev/null; done
   }
 
-  unload-env() {
+  function unload-env {
     local clean_vars_file="$( mktemp --dry-run -t 'unload-env.XXX' )"
     echo -n "${ENV_VARS[clean]}" > "$clean_vars_file"
 
