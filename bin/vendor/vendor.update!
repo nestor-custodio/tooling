@@ -168,9 +168,11 @@ case "$tool_name" in
 		mkdir -p "$target" && rm -rf "$target"/*
 
 		mktemp --tmpdir "$TEMPFILE_TEMPLATE" | store-as zip_file
+		curl "$( executable-url )" --silent --location > "$zip_file" || error-out 2 'unable to fetch release'
+
 		mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
-		curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' --silent --location > "$zip_file"
-		unzip -q "$zip_file" -d "$extract_dir" || error-out 2 'unable to download/extract latest release'
+		unzip -q "$zip_file" -d "$extract_dir" || error-out 2 'unable to extract release'
+
 		mv "${extract_dir}/aws/dist"/* "${target}/"
 		rm -rf "$zip_file" "$extract_dir"
 		;;
@@ -193,8 +195,8 @@ case "$tool_name" in
 		target="${HOME}/bin/vendor/heroku-runtime"
 		mkdir -p "$target" && rm -rf "$target"/*
 
-		curl 'https://cli-assets.heroku.com/heroku-linux-x64.tar.gz' --silent --location \
-		| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to download/extract latest release'
+		curl "$( executable-url )" --silent --location \
+		| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
 		;;
 
 	(ruby-install)
