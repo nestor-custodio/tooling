@@ -188,7 +188,7 @@ export PGHOST='postgres'
 
   # ls
 
-  function ls {
+  function f {
     # Note we're `eval`'ing this because we're building out the `--hide` params.
     #
     eval                                                                                       \
@@ -197,7 +197,7 @@ export PGHOST='postgres'
                    --group-directories-first --time-style='long-iso' --quoting-style='literal' \
                    "$@"
   }
-  function la {
+  function a {
     "$( real ls )" -ohH --color='auto' --almost-all                                            \
                    --group-directories-first --time-style='long-iso' --quoting-style='literal' \
                    "$@"
