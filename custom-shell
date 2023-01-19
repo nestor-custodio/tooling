@@ -20,6 +20,11 @@ shopt -s autocd checkwinsize globstar interactive_comments lastpipe no_empty_cmd
 export PATH=".:${HOME}/bin:${HOME}/bin/vendor:${HOME}/.nodes/bin:${HOME}/.yarn/bin:/snap/bin:${PATH}:./bin"
 
 
+# Helper for absolute paths to real binaries.
+#
+function real { realpath "$( which "$@" )" ;}
+
+
 # Explicitly set our language and sorting collation of choice.
 #
 export LANG=en_US.UTF-8
@@ -28,10 +33,9 @@ export LC_COLLATE=en_US.UTF-8
 
 # Explicitly set our $EDITOR of choice.
 #
-export EDITOR="$( cd && command -v hx )"
-alias helix='$EDITOR'
-alias :='$EDITOR'
-alias :?='$EDITOR .'
+export EDITOR="$( real hx )"
+function helix { "$EDITOR" "$@" ;}
+function :     { "$EDITOR" "$@" ;}
 
 
 # Postgres should connect to host "postgres" by default.
@@ -104,74 +108,71 @@ export PGHOST='postgres'
 
   # git / lazygit
 
-  alias g='lazygit'
+  function g { lazygit ;}
 
-  alias gadd='git add'
-  alias gblame='git blame -w --minimal --color-by-age'
-  alias gbranch='git branch'
-  alias gcheckout='git checkout'
-  alias gcherrypick='git cherry-pick'
-  alias gconfig='git config'
-  alias gclone='git clone'
-  alias gcommit='git commit'
-  alias gdelete='git rm -r'
-  alias gdiff='git diff'
-  alias gfetch='git fetch'
-  alias ggraph='git log --oneline --decorate --graph'
-  alias ginit='git init'
-  alias glog='git log'
-  alias gmerge='git merge --no-ff'
-  alias gmove='git mv'
-  alias gmv='git mv'
-  alias gpatch='git apply'
-  alias gpop='git stash pop'
-  alias gpull='git pull'
-  alias gpush='git push'
-  alias grebase='git rebase'
-  alias gremote='git remote'
-  alias gremove='git rm -r'
-  alias greset='git reset'
-  alias grm='git rm -r'
-  alias gstage='git add'
-  alias gstash='git stash'
-  alias gstatus='git status'
-  alias gtag='git tag'
-  alias gtrack='git add'
-  alias gunchange='git checkout HEAD'
-  alias gundelete='git checkout HEAD'
-  alias gunstage='git reset'
-  alias guntrack='git rm -r --cached'
+  function gadd        { git add                               "$@" ;}
+  function gblame      { git blame -w --minimal --color-by-age "$@" ;}
+  function gbranch     { git branch                            "$@" ;}
+  function gcheckout   { git checkout                          "$@" ;}
+  function gcherrypick { git cherry-pick                       "$@" ;}
+  function gconfig     { git config                            "$@" ;}
+  function gclone      { git clone                             "$@" ;}
+  function gcommit     { git commit                            "$@" ;}
+  function gdiff       { git diff                              "$@" ;}
+  function gfetch      { git fetch                             "$@" ;}
+  function ggraph      { git log --oneline --decorate --graph  "$@" ;}
+  function ginit       { git init                              "$@" ;}
+  function glog        { git log                               "$@" ;}
+  function gmerge      { git merge --no-ff                     "$@" ;}
+  function gmove       { git mv                                "$@" ;}
+  function gmv         { git mv                                "$@" ;}
+  function gpatch      { git apply                             "$@" ;}
+  function gpop        { git stash pop                         "$@" ;}
+  function gpull       { git pull                              "$@" ;}
+  function gpush       { git push                              "$@" ;}
+  function grebase     { git rebase                            "$@" ;}
+  function gremote     { git remote                            "$@" ;}
+  function greset      { git reset                             "$@" ;}
+  function gstage      { git add                               "$@" ;}
+  function gstash      { git stash                             "$@" ;}
+  function gstatus     { git status                            "$@" ;}
+  function gtag        { git tag                               "$@" ;}
+  function gtrack      { git add                               "$@" ;}
+  function gunchange   { git checkout HEAD                     "$@" ;}
+  function gundelete   { git checkout HEAD                     "$@" ;}
+  function gunstage    { git reset                             "$@" ;}
+  function guntrack    { git rm -r --cached                    "$@" ;}
 
   function gdeploy {
     local remote="${1:-production}"
-    local branch="$( git branch --show-current )"
+    local branch="$( gbranch --show-current )"
 
     local prompt='Deploy branch "\033[33;1m%s\033[0m" to remote "\033[31;1m%s\033[0m"? (y/N) '
     local confirmation='n'
 
-    git remote 2> /dev/null | hasline "$remote" || return 1
+    gremote 2> /dev/null | hasline "$remote" || return 1
 
     printf "$prompt" "$branch" "$remote"; read confirmation
     [ "$( tr 'A-Z' 'a-z' <<< "$confirmation" )" == 'y' ] || return 2
 
-    git push "$remote" "${branch}:main" && ding-me
+    gpush "$remote" "${branch}:main" && ding-me
   }
 
 
   # grep
 
-  alias grep='/bin/grep -P --color=auto'
+  function grep { "$( real grep )" -P --color=auto "$@" ;}
 
 
   # heroku
 
-  alias k='heroku'
+  function k { heroku "$@" ;}
 
 
   # lazydocker
 
   function lazydocker {
-    command -v docker &> /dev/null || sudo apt install -qqy docker.io
+    which docker &> /dev/null || sudo apt install -qqy docker.io
 
     # We don't want the function name back, so `which` is a must.
     # shellcheck disable=SC2230
@@ -182,23 +183,35 @@ export PGHOST='postgres'
 
   # less
 
-  alias less='less --quit-if-one-screen --LONG-PROMPT --LINE-NUMBERS --RAW-CONTROL-CHARS --silent --chop-long-lines --shift=1'
+  function less { "$( real less )" --quit-if-one-screen --LONG-PROMPT --LINE-NUMBERS --RAW-CONTROL-CHARS --silent --chop-long-lines --shift=1 "$@" ;}
 
 
   # ls
 
-  alias ls="/bin/ls -ohH --group-directories-first --time-style=long-iso --color=auto --quoting-style=literal $( sed -r -e 's|(.*)|--hide="\1"|' < ~/.hidden | tr "\n" ' ' )"
-  alias la='/bin/ls -ohH --group-directories-first --time-style=long-iso --color=auto --quoting-style=literal --almost-all'
+  function ls {
+    # Note we're `eval`'ing this because we're building out the `--hide` params.
+    #
+    eval                                                                                       \
+    "$( real ls )" -ohH --color='auto'                                                         \
+                   $( sed -r -e 's|(.*)|--hide="\1"|' < ~/.hidden | tr "\n" ' ' )              \
+                   --group-directories-first --time-style='long-iso' --quoting-style='literal' \
+                   "$@"
+  }
+  function la {
+    "$( real ls )" -ohH --color='auto' --almost-all                                            \
+                   --group-directories-first --time-style='long-iso' --quoting-style='literal' \
+                   "$@"
+  }
 
 
   # pgcli
 
-  alias pgcli='pgcli --pgclirc="~/.config/pgcli/config"'
+  function pgcli { "$( real pgcli )" --pgclirc="~/.config/pgcli/config" "$@" ;}
 
 
   # rg
 
-  alias rg='rg --engine="pcre2" --color=auto --follow'
+  function rg { "$( real rg )" --engine="pcre2" --color=auto --follow "$@" ;}
 
 
   # shellcheck
@@ -229,19 +242,19 @@ export PGHOST='postgres'
     # We don't want the function name back, so `which` is a must.
     # shellcheck disable=SC2230
     #
-    "$( which shellcheck )" "${executables[@]}"
+    "$( real shellcheck )" "${executables[@]}"
   }
 
 
   # tree
 
-  alias list='tree -lR --dirsfirst --sort=version'
+  function list { tree -lR --dirsfirst --sort=version "$@" ;}
 
 
   # watch
 
   # We have to define our own `watch` replacement to allow for
-  # use of aliases and functions.
+  # use of functions.
 
   function mira {
     local watch_interval
@@ -254,22 +267,28 @@ export PGHOST='postgres'
 
 # Filesystem manipulation niceties.
 
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
+function md { mkdir "$@" ;}
+function rd { rmdir "$@" ;}
 
-alias md='mkdir'
-alias rd='rmdir'
+function ...   { cd ../..       ;}
+function ....  { cd ../../..    ;}
+function ..... { cd ../../../.. ;}
+
 function mkcd { mkdir -p "$1" && cd "$1"; }
 
-alias mirror='rsync --recursive --whole-file --delete-during --force --verbose --links --perms --executability --times'
+function mirror {
+  rsync --verbose                               \
+        --recursive --force                     \
+        --whole-file --delete-during            \
+        --links --perms --executability --times \
+        "$@"
+}
 
-function break_out_of_links {
+function break-out-of-links {
   local pwd="$( pwd -P )"
   local link_root="${HOME}/links/"
   starts-with "$link_root" <<< "$pwd" && cd "$( sed -e "s|${link_root}|/|" <<< "$pwd" )"
 }
-alias %='break_out_of_links'
 
 
 
@@ -301,7 +320,7 @@ dev_helpers="${HOME}/bin/dev.src"
 # New windows/panes opened from within a symlinked location will show up within ~/links,
 # so we're breaking out of those by default on new shells to avoid having to do it manually.
 #
-break_out_of_links
+break-out-of-links
 
 
 true  # Never start a shell with a non-0 status on the prompt.

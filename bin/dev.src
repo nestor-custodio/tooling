@@ -1,5 +1,5 @@
 #! /bin/env bash
-shopt -s lastpipe expand_aliases
+shopt -s lastpipe
 
 # ---
 
@@ -67,7 +67,7 @@ shopt -s lastpipe expand_aliases
     esac
   }
 
-  alias ::='dev'
+  function :: { dev "$@" ;}
 
 
 # Language helpers.
@@ -108,84 +108,81 @@ shopt -s lastpipe expand_aliases
       tdd "$@"; fswatch -or "${HOME}/dev" --event='Updated' --latency="${watch_interval:-5}" | xargs -i tdd "$@"
     }
       
+
     # Bundle/Gemfile management.
-    #
-    alias bx='bundle exec'
-    alias br='bundle exec'
-    #
-    alias ba='(                                    \
-                gem list bundler-audit --installed \
-                ||                                 \
-                gem install bundler-audit          \
-              ) &> /dev/null                       \
-              &&                                   \
-              bundle-audit check --update'
-    #
-    alias bi='nearest --quiet "Gemfile.lock" "Gemfile" && bundle install --jobs=$( nproc )'
-    alias bi\!='nearest --quiet "Gemfile.lock" "Gemfile"                                  \
-                &&                                                                        \
-                (                                                                         \
-                  (                                                                       \
-                    ruby_version="$( nearest --read ".ruby-version" )"                    \
-                    &&                                                                    \
-                    (                                                                     \
-                      (                                                                   \
-                        command -v ruby                                                   \
-                        &&                                                                \
-                        ruby --version | has "$ruby_version"                              \
-                      )                                                                   \
-                      ||                                                                  \
-                      chruby "$ruby_version"                                              \
-                      ||                                                                  \
-                      (                                                                   \
-                        ruby-install "$ruby_version"                                      \
-                        &&                                                                \
-                        source "${HOME}/bin/vendor/chruby-source"                         \
-                        &&                                                                \
-                        chruby "$ruby_version"                                            \
-                      )                                                                   \
-                    )                                                                     \
-                  )                                                                       \
-                  ||                                                                      \
-                  chruby ruby                                                             \
-                ) &> /dev/null                                                            \
-                &&                                                                        \
-                (                                                                         \
-                  (                                                                       \
-                    lockfile="$( nearest "Gemfile.lock" )"                                \
-                    &&                                                                    \
-                    bundler_version="$( tail -n1 "$lockfile" | tr -d " " )"               \
-                    &&                                                                    \
-                    (                                                                     \
-                      gem list bundler --installed --version="$bundler_version"           \
-                      ||                                                                  \
-                      gem install "bundler:${bundler_version}"                            \
-                    )                                                                     \
-                  )                                                                       \
-                  ||                                                                      \
-                  (                                                                       \
-                    gem list bundler --installed                                          \
-                    ||                                                                    \
-                    gem install bundler                                                   \
-                  )                                                                       \
-                ) &> /dev/null                                                            \
-                &&                                                                        \
-                bundle install --jobs=$( nproc )'
+
+      function bx { bundle exec "$@" ;}
+      function br { bundle exec "$@" ;}
+
+      # ---
+
+      function ba {
+        gem list bundler-audit --installed || gem install bundler-audit &> /dev/null
+        bundle-audit check --update
+      }
+
+      # ---
+
+      function bi {
+        nearest --quiet 'Gemfile.lock' 'Gemfile' || return
+        bundle install --jobs=$( nproc )
+      }
+
+      function bi! {
+        nearest --quiet 'Gemfile.lock' 'Gemfile' || return
+
+        # Ensure specific ruby.
+        #
+        if ruby_version="$( nearest --read '.ruby-version' )"; then
+          ruby --version 2> /dev/null | has "$ruby_version" || chruby "$ruby_version"                  \
+          || { ruby-install "$ruby_version" && RUBIES=("${HOME}/.rubies"/*) && chruby "$ruby_version" ;}
+        fi
+
+        # Ensure specific bundler.
+        #
+        if lockfile="$( nearest 'Gemfile.lock' )"; then
+          bundler_version="$( tail -n1 "$lockfile" | tr -d ' ' )"
+          gem list bundler --silent --installed --version="$bundler_version" || gem install "bundler:${bundler_version}"
+        else
+          gem list bundler --silent --installed || gem install bundler
+        fi
+
+        bundle install --jobs=$( nproc )
+      }
 
   # rails
 
-    alias rc='bundle exec rails console'
-    alias rs='bundle exec rails server'
-    alias rs1='RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 bundle exec rails server'
+    function rc  {                                       bundle exec rails console ;}
+    function rs  {                                       bundle exec rails server  ;}
+    function rs1 { RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 bundle exec rails server  ;}
 
-    alias db:='bundle exec rails generate migration'
-    alias db+='bundle exec rails db:migrate'
-    alias db-='bundle exec rails db:rollback'
-    alias db\!="bundle exec rails runner 'require %(bundler/inline); gemfile { source %(https://rubygems.org); gem %(lazy_migrate) }; LazyMigrate.run'"
-    alias DB\!='gem update sorbet-runtime &> /dev/null; gem cleanup sorbet-runtime &> /dev/null; db!'
+    # ---
 
-    function rails-tasks { nearest --quiet 'Gemfile' && bundle exec rails --tasks="$1" --all; }
-    alias rt='rails-tasks'
+    function db: { bundle exec rails generate migration "$@" ;}
+    function db+ { bundle exec rails db:migrate              ;}
+    function db- { bundle exec rails db:rollback             ;}
+
+    function db! {
+      bundle exec rails runner "
+        require 'bundler/inline'
+        gemfile {
+          source 'https://rubygems.org'
+          gem 'lazy_migrate'
+        }
+        LazyMigrate.run
+      "
+    }
+
+    function DB! {
+      gem update  --silent sorbet-runtime
+      gem cleanup --silent sorbet-runtime
+      db!
+    }
+
+    # ---
+
+    function rails-tasks { nearest --quiet 'Gemfile' && bundle exec rails --tasks="$1" --all ;}
+    function rt { rails-tasks "$@" ;}
 
 
   # node
@@ -196,69 +193,64 @@ shopt -s lastpipe expand_aliases
 
     # Package helpers.
     #
-    alias nx='npx'
-    alias na='npm audit'
-    alias ni='npm install'
+    function nx { npx         "$@" ;}
+    function na { npm audit   "$@" ;}
+    function ni { npm install "$@" ;}
+
 
     # Command helpers.
-    #
-    alias nr='npm run'
-    alias ns='npm run start'
-    #
-    function node-tasks {
-      local lookup="$1" && shift
-      [ -z "$lookup" ] && lookup='^' || lookup='^.*'"$lookup"'.*$'
-      nearest --quiet 'package.json' && npm run | grep -P "$lookup" --context='1000' --color='always'
-    }
-    alias nt='node-tasks'
+
+      function nr { npm run       "$@" ;}
+      function ns { npm run start "$@" ;}
+
+      # ---
+
+      function node-tasks {
+        local lookup="$1" && shift
+        [ -z "$lookup" ] && lookup='^' || lookup='^.*'"$lookup"'.*$'
+        nearest --quiet 'package.json' && npm run | grep -P "$lookup" --context='1000' --color='always'
+      }
+      function nt { node-tasks "$@" ;}
 
 
   # yarn
 
     # Package helpers.
-    #
-    alias yx='yarn'
-    alias yr='yarn'
-    #
-    alias ya='yarn audit'
-    #
-    alias yi='nearest --quiet "package.json" "yarn.lock" && yarn install 2> /dev/null'
-    alias yi\!='nearest --quiet "package.json" "yarn.lock"                           \
-                &&                                                                   \
-                (                                                                    \
-                  (                                                                  \
-                    node_version="$( nearest --read ".node-version" )"               \
-                    &&                                                               \
-                    (                                                                \
-                      (                                                              \
-                        command -v node                                              \
-                        &&                                                           \
-                        node --version | has "$node_version"                         \
-                      )                                                              \
-                      ||                                                             \
-                      n install "$node_version"                                      \
-                    )                                                                \
-                  )                                                                  \
-                  ||                                                                 \
-                  (                                                                  \
-                    command -v node                                                  \
-                    ||                                                               \
-                    n lts                                                            \
-                  )                                                                  \
-                ) &> /dev/null                                                       \
-                &&                                                                   \
-                (                                                                    \
-                  command -v yarn                                                    \
-                  ||                                                                 \
-                  npm install -g yarn                                                \
-                ) &> /dev/null                                                       \
-                &&                                                                   \
-                yarn install 2> /dev/null'
+
+    function yx { yarn "$@" ;}
+    function yr { yarn "$@" ;}
+
+    function ya { yarn audit "$@" ;}
+
+    # ---
+
+    function yi {
+      nearest --quiet 'package.json' 'yarn.lock' || return
+      yarn install 2> /dev/null
+    }
+
+    function yi! {
+      nearest --quiet 'package.json' 'yarn.lock' || return
+
+      # Ensure node.
+      #
+      if node_version="$( nearest --read '.node-version' )"; then
+        node --version 2> /dev/null | has "$node_version" || n install "$node_version"
+      else
+        command -v node || n lts
+      fi
+
+      # Ensure yarn.
+      #
+      command -v yarn || npm install -g yarn
+
+      yarn install 2> /dev/null
+    }
 
 
   # multi-language constructs
 
-    alias @='bi!; yi!'
+    function @ { { bi || bi! ;} && { yi || yi! ;} ;}
 
 
 # ENV helpers.
@@ -298,15 +290,15 @@ shopt -s lastpipe expand_aliases
 
   # ---
 
-  alias development="set-env 'development' ;" 
-  alias testing="set-env 'test' ;"
-  alias staging="set-env 'staging' ;"
-  alias production="set-env 'production' ;"
+  function development { set-env 'development'; "$@" ;}
+  function testing     { set-env 'test'       ; "$@" ;}
+  function staging     { set-env 'staging'    ; "$@" ;}
+  function production  { set-env 'production' ; "$@" ;}
 
-  alias d='development' 
-  alias t='test'
-  alias s='staging'
-  alias p='production'
+  function d { development "$@" ;}
+  function t { test        "$@" ;}
+  function s { staging     "$@" ;}
+  function p { production  "$@" ;}
 
   # Default to "development".
   #
