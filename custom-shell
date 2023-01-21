@@ -251,18 +251,6 @@ export PGHOST='postgres'
   function list { tree -lR --dirsfirst --sort=version "$@" ;}
 
 
-  # watch
-
-  # We have to define our own `watch` replacement to allow for
-  # use of functions.
-
-  function mira {
-    local watch_interval
-    [ -n "$1" ] && [ -z "${1//[0-9]/}" ] && interval="$1" && shift
-    [ "$#" -gt 0 ] && watch --color --interval="${watch_interval:-10}" --exec -- bash -ci "$* ; exit &> /dev/null"
-  }
-
-
 
 
 # Filesystem manipulation niceties.
@@ -324,7 +312,7 @@ export -f ... .... ..... :                                                      
           gcommit gconfig gdeploy gdiff gfetch ggraph ginit glog gmerge gmove gmv   \
           gpatch gpop gpull gpush grebase gremote grep greset gstage gstash gstatus \
           gtag gtrack gunchange gundelete gunstage guntrack h helix k lazydocker    \
-          less list m md mira mirror mkcd pgcli rd real rg shellcheck
+          less list m md mirror mkcd pgcli rd real rg shellcheck
 
 
 # New windows/panes opened from within a symlinked location will show up within ~/links,

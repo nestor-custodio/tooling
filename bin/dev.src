@@ -83,31 +83,15 @@ shopt -s lastpipe
     #
     export RUBOCOP_OPTS="--server --format='simple' --format='offenses' --color"
     #
-    function _rubocop_runner {
-      local runner=''
-      nearest --read 'Gemfile.lock' 'Gemfile' | has 'rubocop' && runner='bundle exec rubocop'
-      [ -z "$runner" ] && { which rubocop || gem install rubocop ; } &> /dev/null && runner="$( which rubocop )"
-      #
-      echo "$runner"
-    }
-    #
-    # shellcheck disable=SC2046
-    function rubocop { $( _rubocop_runner ) "$@"; }
-    # shellcheck disable=SC2046
-    function rubowatch {
-      local watch_interval
-      [ -n "$1" ] && [ -z "${1//[0-9.]/}" ] && watch_interval="$1" && shift
-      watch --color --interval="${watch_interval:-10}" $( _rubocop_runner ) "$@"
+    function rubocop {
+      if nearest --read 'Gemfile.lock' 'Gemfile' | has 'rubocop'; then
+        bundle exec rubocop "$@"
+      else
+        which rubocop || gem install rubocop &> /dev/null
+        "$( which rubocop )" "$@"
+      fi
     }
 
-    # Test re-run helper.
-    #
-    function tddwatch {
-      local watch_interval
-      [ -n "$1" ] && [ -z "${1//[0-9.]/}" ] && watch_interval="$1" && shift
-      tdd "$@"; fswatch -or "${HOME}/dev" --event='Updated' --latency="${watch_interval:-5}" | xargs -i tdd "$@"
-    }
-      
 
     # Bundle/Gemfile management.
 
@@ -311,5 +295,4 @@ shopt -s lastpipe
 #
 export -f :: @ ba bi bi! br bx d db! db+ db- db: DB! dev development known-env-vars \
           load-env na ni node-tasks nr ns nt nx p production rails-tasks rc rs rs1  \
-          rt rubocop _rubocop_runner rubowatch s set-env staging t tddwatch testing \
-          unload-env ya yi yi! yr yx
+          rt rubocop s set-env staging t testing unload-env ya yi yi! yr yx
