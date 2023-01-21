@@ -77,8 +77,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-if [ -n "$input" ]; then
-	yq eval - --output-format='json' <<< "$input" | json "$selector"
-else
-	yq eval - --output-format='json' < /dev/stdin | json "$selector"
+if [ -n "$input" ]
+	then yq eval - --output-format='json' <<< "$input" | json "$selector"
+	else yq eval - --output-format='json' < /dev/stdin | json "$selector"
 fi

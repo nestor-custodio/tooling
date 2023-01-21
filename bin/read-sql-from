@@ -72,7 +72,8 @@ source '/home/nestor/bin/std.lib'
 
 	# Set $postgres_url from either the explicit parameter or the Heroku option set.
 	#
-	if [ "$#" == 1 ]; then postgres_url="$1" && shift
+	if [ "$#" == 1 ]; then
+		postgres_url="$1" && shift
 	else
 		[ -n "$heroku_app_name" ] && [ -n "$heroku_config_var" ] \
 		&& postgres_url="$( heroku config:get "$heroku_config_var" --app="$heroku_app_name" 2> /dev/null )"

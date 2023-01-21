@@ -86,8 +86,7 @@ function fetch {
 # ---
 
 
-if [ -z "$short" ]; then
-	fetch "$metadata_key"
-else
-	fetch "$metadata_key" | sed -e 's|.*/||'
+if [ -z "$short" ]
+	then fetch "$metadata_key"
+	else fetch "$metadata_key" | sed -e 's|.*/||'
 fi

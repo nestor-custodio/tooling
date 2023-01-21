@@ -68,8 +68,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-if [ -z "$short" ]; then
-	metadata "instance/${metadata_key}"
-else
-	metadata --short "instance/${metadata_key}"
+if [ -z "$short" ]
+	then metadata "instance/${metadata_key}"
+	else metadata --short "instance/${metadata_key}"
 fi

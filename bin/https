@@ -66,10 +66,9 @@ source '/home/nestor/bin/std.lib'
 			;;
 
 		1)
-			if grep -P --quiet -x '(?:.*:)?[0-9]{1,5}' <<< "$1"; then
-				binding="$1" && shift
-			else
-				command="$1" && shift
+			if grep -P --quiet -x '(?:.*:)?[0-9]{1,5}' <<< "$1"
+				then binding="$1" && shift
+				else command="$1" && shift
 			fi
 			;;
 
