@@ -303,3 +303,13 @@ shopt -s lastpipe
   # Default to "development".
   #
   set-env 'development'
+
+
+
+
+# Ensure all of the above-defined functions are usable in subshells as well.
+#
+export -f :: @ ba bi bi! br bx d db! db+ db- db: DB! dev development known-env-vars \
+          load-env na ni node-tasks nr ns nt nx p production rails-tasks rc rs rs1  \
+          rt rubocop _rubocop_runner rubowatch s set-env staging t tddwatch testing \
+          unload-env ya yi yi! yr yx
