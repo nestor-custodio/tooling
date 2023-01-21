@@ -1,0 +1,130 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) --time=TIME_SPEC COMMAND [ARGS]
+		       $( name-blanks ) --files[=EXTENSIONS] COMMAND [ARGS]
+
+		Executes the given COMMAND either based on a timer ('--time') or when
+		a file changes ('--files'). When watching for file changes, a list of
+		specific file extensions to watch may be given as the comma-separated
+		EXTENSIONS value (e.g. '--files="rb,erb"').
+
+		If the given COMMAND requires its own set of flags, the standard '--'
+		separator is *required* either immediately before or immediately after
+		the COMMAND name in order for those to be parsed properly.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+		  --no-clear                Prevents clearing of the screen between
+		                            iterations of the command.
+
+		Time Specs
+
+		  The time to wait between iterations (when the '--time' option is in
+		  play) may be given as a number of seconds (decimals allowed), or in
+		  a "[number][unit]" format (e.g. '--timer=5s' or '--timer=1m'), where
+		  the "unit" is 's' (seconds), 'm' (minutes), or 'h' (hours).
+
+		Exit status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	wait_type=''
+	duration_s=''
+	extensions=''
+
+	show_header=''
+	clear_screen='1'
+
+	# ---
+	# ---
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+	LONG_OPTS="${LONG_OPTS},time:,timer:,every:"
+	LONG_OPTS="${LONG_OPTS},file::,files::,fs::,watch::"
+	LONG_OPTS="${LONG_OPTS},no-clear"
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--time|--timer|--every)
+				[ -n "$wait_type" ] && error-out 1 'cannot wait on both time and files'
+				time_spec="$1" && shift
+				wait_type='time'
+
+				[[ "$time_spec" =~ ^([0-9.]+)([s|m|h])?$ ]]
+				duration="${BASH_REMATCH[1]}"
+				duration_unit="${BASH_REMATCH[2]:-s}"
+
+				case "$duration_unit" in
+					(s) calc "${duration} *    1.0" | store-as duration_s ;;
+					(m) calc "${duration} *   60.0" | store-as duration_s ;;
+					(h) calc "${duration} * 3600.0" | store-as duration_s ;;
+
+					*) error-out 1 "unparseable TIME_SPEC: ${time_spec}"
+				esac
+				;;
+
+			(--file|--files|--fs|--watch)
+				[ -n "$wait_type" ] && error-out 1 'cannot wait on both time and files'
+				extensions="$1" && shift
+				wait_type='files'
+				;;
+
+			(--no-clear)
+				clear_screen=''
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] && error-out 1 'no COMMAND given'
+
+}
+
+# ---
+# ---
+
+
+case "$wait_type" in
+	(time)
+		while true; do
+			[ -n "$clear_screen" ] && clear!
+			"$@"
+			sleep "$duration_s"
+		done
+		;;
+
+	(files)
+		[ -n "$extensions" ] && extensions_arg="--exts='${extensions}'"
+		[ -n "$clear_screen" ] && clear_screen_arg='--clear'
+
+		watchexec "$extensions_arg" "$clear_screen_arg" --debounce='500' --restart --shell='bash' "$@"
+		;;
+
+	*) error-out 1 'must specify one of --time or --files' ;;
+esac
