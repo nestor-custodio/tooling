@@ -5,5 +5,5 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-set-env 'test'
+load-env 'test'
 yarn --silent test --passWithNoTests "$@"

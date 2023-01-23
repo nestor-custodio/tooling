@@ -241,7 +241,7 @@ shopt -s lastpipe
 # of ENV vars (as "${ENV_VARS[clean]}") it includes all of the variables defined above.
 
   function known-env-vars { export -p | sed -r -e 's|=.*$||' -e 's|^.* ||' | sort ; }
-  declare -Ax ENV_VARS; ENV_VARS[clean]="$( known-env-vars )"
+  export CLEAN_ENV_VARS; CLEAN_ENV_VARS="$( known-env-vars )"
 
   function set-env {
     local env_name="$1" && shift
@@ -255,17 +255,24 @@ shopt -s lastpipe
 
   function load-env {
     local env_name="$1" && shift
-    declare -a env_list=('.env' '.env.local')
-    [ -n "$env_name" ] && env_list+=(".env.${env_name}" ".env.${env_name}.local")
+    declare -a env_list=()
 
     unload-env
     set-env "$env_name"
+
+    # Check (and load) .env files in the same order as the 'dotenv' gem.
+    # (https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use)
+    #
+                          env_list+=('.env')
+    [ -n "$env_name" ] && env_list+=(".env.${env_name}")
+                          env_list+=('.env.local')
+    [ -n "$env_name" ] && env_list+=(".env.${env_name}.local")
     for env_file in "${env_list[@]}"; do source "${HOME}/dev/${env_file}" 2> /dev/null; done
   }
 
   function unload-env {
     local clean_vars_file="$( mktemp --dry-run -t 'unload-env.XXX' )"
-    echo -n "${ENV_VARS[clean]}" > "$clean_vars_file"
+    echo -n "${CLEAN_ENV_VARS}" > "$clean_vars_file"
 
     for new_env_var in $( known-env-vars | fgrep -vx --file="$clean_vars_file" ); do unset "$new_env_var"; done
     rm "$clean_vars_file"
@@ -279,7 +286,7 @@ shopt -s lastpipe
   function production  { set-env 'production' ; "$@" ;}
 
   function d { development "$@" ;}
-  function t { test        "$@" ;}
+  function t { testing     "$@" ;}
   function s { staging     "$@" ;}
   function p { production  "$@" ;}
 

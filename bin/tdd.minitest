@@ -5,7 +5,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-set-env 'test'
+load-env 'test'
 
 
 # If one or more files are given, run just those.
