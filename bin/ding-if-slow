@@ -1,0 +1,42 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) COMMAND [ARGS]
+
+		Runs the given command (passing all args), then calls 'ding-me' if the
+		command runs for more than DING_IF_SLOW_TIMEOUT seconds (default is 60).
+
+		NOTE: To prevent breaking expected behaviour, the '--help' flag will
+		      output this help text *only* when it is the only argument given.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if OK,
+		  1  if no COMMAND given.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$*" == '--help' ] && exit-out "$usage"
+
+	[ "$#" == 0 ] && error-out 1 'no COMMAND given'
+
+}
+
+# ---
+# ---
+
+
+"$@"; timestamp | store-as now
+calc? "(${now} - ${SCRIPT_TIMESTAMP}) <= ${DING_IF_SLOW_TIMEOUT:-60}" || ding-me

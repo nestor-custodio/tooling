@@ -6,4 +6,4 @@ source '/home/nestor/bin/std.lib'
 
 
 load-env 'test'
-yarn --silent test --passWithNoTests "$@"
+ding-if-slow yarn --silent test --passWithNoTests "$@"

@@ -6,4 +6,4 @@ source '/home/nestor/bin/std.lib'
 
 
 load-env 'test'
-bundle exec rspec --format=documentation "$@"
+ding-if-slow bundle exec rspec --format=documentation "$@"

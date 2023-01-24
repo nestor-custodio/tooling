@@ -1,0 +1,58 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [EXPRESSION]
+
+		It's possible to give 'calc' a boolean expression, which is then passed
+		down to the underlying *bc* implementation, returning a '0' (false) or a
+		'1' (true) via STDOUT. This tool lets you a corresponding exit code back
+		instead ('0' becomes a 1 and '1' becomes a 0).
+
+		Note any non-0 exit code returned by 'calc' is passed through as a 2.
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		Exit status:
+		  0  if TRUE,
+		  1  if FALSE,
+		  2  if the underlying tooling generates an error.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+# ---
+# ---
+
+
+output="$( calc "$@" 2> /dev/null )" || error-out 2 'invalid expression'
+
+case "$output" in
+	0) exit-out 1 ;;
+	1) exit-out 0 ;;
+
+	*) error-out 2 'non-boolean result' ;;
+esac
