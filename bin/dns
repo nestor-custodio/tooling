@@ -17,10 +17,12 @@ source '/home/nestor/bin/std.lib'
 
 		A "get" with no "record"/"ip"/"ttl" will return a record by default.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if no record to get/delete,

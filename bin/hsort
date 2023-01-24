@@ -11,12 +11,14 @@ source '/home/nestor/bin/std.lib'
 		Wrapper for GNU sort that lets you specify a number of "header" lines to
 		keep at the top of the file, before sorting begins.
 
+		Any SORT_OPTIONS given are passed through to the underlying *sort* call.
+
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Any SORT_OPTIONS given are passed through to the underlying *sort* call.
 
-		Exit status:
+		Exit Status:
 		  0  if OK,
 		  1  if invalid header line count,
 		  2  if option.

@@ -11,10 +11,12 @@ source '/home/nestor/bin/std.lib'
 		Reports the IP of the connected client.
 		If user is local, reports the host WAN IP.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if unable to determine IP.

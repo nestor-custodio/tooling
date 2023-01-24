@@ -11,10 +11,12 @@ source '/home/nestor/bin/std.lib'
 		Outputs the current compute instance's region.
 		(Just a handy shorthand for a metadata query against the instance region.)
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF

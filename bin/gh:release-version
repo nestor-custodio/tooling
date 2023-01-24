@@ -13,10 +13,12 @@ source '/home/nestor/bin/std.lib'
 
 		The REPO_ID value is given as "username/repo_name".
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF

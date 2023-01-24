@@ -10,11 +10,12 @@ source '/home/nestor/bin/std.lib'
 
 		Wrapper for 'hostctl' that adds an unsorted entry for the host and IP.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
 
-		Exit status:
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF

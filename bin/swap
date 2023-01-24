@@ -10,10 +10,12 @@ source '/home/nestor/bin/std.lib'
 
 		Makes a best-effort attempt to swap FILE_1 and FILE_2 'atomically'.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if file not found,

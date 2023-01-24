@@ -10,6 +10,7 @@ source '/home/nestor/bin/std.lib'
 
 		Wrapper for 'hostctl' that imports via simple hostfile reference.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
@@ -23,7 +24,7 @@ source '/home/nestor/bin/std.lib'
 		  $( script-name) group/sample
 
 
-		Exit status:
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if hostfile not found/readable.

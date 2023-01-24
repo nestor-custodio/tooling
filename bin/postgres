@@ -16,10 +16,12 @@ source '/home/nestor/bin/std.lib'
 		variable is set, that will be used. As a final fallback, the database
 		name given in the Rails config (if any) for the current ENV is used.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if 'pgcli' executable not found.

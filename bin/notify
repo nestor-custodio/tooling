@@ -8,16 +8,15 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name ) CHANNEL [SUBJECT] MESSAGE
 
-		Sends a message via the specified channel.
+		Sends a message via the given delivery CHANNEL.
+		(Only available value right now is "pushover".)
+
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		CHANNEL
-		  Identifies the messaging channel to use for delivery.
-		  Only available value right now is "pushover".
 
-		Exit status:
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  on invalid CHANNEL,

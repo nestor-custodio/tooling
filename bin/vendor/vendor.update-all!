@@ -10,11 +10,13 @@ source '/home/nestor/bin/std.lib'
 
 		Checks for newer releases and updates all vendor tooling as needed.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --checks-only             Only run the version checks; no downloads.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF

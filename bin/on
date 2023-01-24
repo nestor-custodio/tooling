@@ -18,19 +18,21 @@ source '/home/nestor/bin/std.lib'
 		separator is *required* either immediately before or immediately after
 		the COMMAND name in order for those to be parsed properly.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 		  --no-clear                Prevents clearing of the screen between
 		                            iterations of the command.
 
-		Time Specs
 
+		Time Specs
 		  The time to wait between iterations (when the '--time' option is in
 		  play) may be given as a number of seconds (decimals allowed), or in
 		  a "[number][unit]" format (e.g. '--timer=5s' or '--timer=1m'), where
 		  the "unit" is 's' (seconds), 'm' (minutes), or 'h' (hours).
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF

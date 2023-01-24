@@ -10,10 +10,12 @@ source '/home/nestor/bin/std.lib'
 
 		Exposes the given WEBROOT ("./" by default) as an HTTPS service.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if webroot not found.

@@ -12,6 +12,7 @@ source '/home/nestor/bin/std.lib'
 
 		Stores or retrieves data from a makeshift "clipboard".
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
@@ -20,7 +21,8 @@ source '/home/nestor/bin/std.lib'
 		  --pass                    Stores STDIN into the clipboard, and pipes it through to STDOUT.
 		                            (This is the default behaviour.)
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF

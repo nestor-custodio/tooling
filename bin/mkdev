@@ -10,6 +10,7 @@ source '/home/nestor/bin/std.lib'
 
 		Creates a new GCP dev VM instance with the given name.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --dev                     Name of local store to clone into "~/dev".
 		  --repo                    URL for hosted repo to clone into "~/dev".
@@ -24,6 +25,7 @@ source '/home/nestor/bin/std.lib'
 
 		  --help                    Show this help text.
 
+
 		Repository URLs
 		  Values to --repo may be a repo URL (e.g. "https://github.com/user/repo") or a
 		  clone source ("https://github.com/user/repo.git", "git@github.com:user/repo.git").
@@ -35,8 +37,10 @@ source '/home/nestor/bin/std.lib'
 
 		  e.g. Using the above, a --repo may be given as "--repo='nlc:env_parser'".
 
+
 		Disk Sizes
 		  Per GCP restrictions, this has a minimum value of 12GB (given as "12GB").
+
 
 		Machine Types
 		  The default machine type (if none is given) is an "n2d-standard-2".
@@ -53,6 +57,7 @@ source '/home/nestor/bin/std.lib'
 		  Note these shortcut options are a convenience and not all machine type families
 		  and suffixes are available for use as simple options.
 
+
 		OS Release
 		  The Ubuntu OS release to use as a base image. This is either a release version
 		  (e.g. "22.10" or "2210"), or the string "lts" (for the latest LTS release), or
@@ -65,7 +70,8 @@ source '/home/nestor/bin/std.lib'
 
 		  See '$( script-name ) --list-os-releases' for a list of available images.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF

@@ -11,10 +11,12 @@ source '/home/nestor/bin/std.lib'
 		Asserts whether the corresponding binary is indeed the latest release.
 		When this is not the case, both version numbers are reported via STDOUT.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if mismatched version numbers.

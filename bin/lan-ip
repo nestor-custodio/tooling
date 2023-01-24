@@ -11,10 +11,12 @@ source '/home/nestor/bin/std.lib'
 		Outputs a list of all active IPv4 addresses on the host.
 		In the case of multiple addresses, the list is ' / '-separated.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF

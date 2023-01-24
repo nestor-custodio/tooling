@@ -13,11 +13,13 @@ source '/home/nestor/bin/std.lib'
 		Reversibly encrypts the given FILE (or STDIN) using either a given
 		password or the project-level default. Cyphertext is written to STDOUT.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 		  --password                The password to use.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if file not found/readable,

@@ -33,6 +33,7 @@ source '/home/nestor/bin/std.lib'
 		Convenience wrapper for various Google Cloud Platform client commands.
 		Acts as an alias for 'glcoud compute' when not used as above.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
@@ -42,10 +43,12 @@ source '/home/nestor/bin/std.lib'
 		    --medium                Shortcut for "--machine-type=e2-medium".
 		    --standard              Shortcut for "--machine-type=e2-standard-2".
 
+
 		Machine Types
 		  See https://cloud.google.com/compute/vm-instance-pricing for a list of types.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if invalid request,

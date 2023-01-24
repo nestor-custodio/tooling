@@ -12,12 +12,14 @@ source '/home/nestor/bin/std.lib'
 		and returning an absolute path to the first such item. Directories
 		can be found by giving a name ending in '/'.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --quiet                   Produce no output; only report if file exists.
 		  --read                    Output the file's contents rather than its name.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if file(s) not found.

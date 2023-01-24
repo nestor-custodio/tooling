@@ -11,11 +11,13 @@ source '/home/nestor/bin/std.lib'
 		Reports on the status of a Redis Memorystore instance named 'redis'.
 		If instance exists, its metadata is also given via STDOUT.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --any-status              Show instance even if not "RUNNING".
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if instance exists,
 		  1  if instance does not exist.
 	EOF

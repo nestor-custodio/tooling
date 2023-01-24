@@ -14,11 +14,13 @@ source '/home/nestor/bin/std.lib'
 		For additional info on the GNU coreutils date parser, see command:
 		  info '(coreutils) date invocation'
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 		  -s | --seconds            Use second precision (no decimal component).
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if invalid DATE value.

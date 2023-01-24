@@ -15,10 +15,12 @@ source '/home/nestor/bin/std.lib'
 
 		Note any non-0 exit code returned by 'calc' is passed through as a 2.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if TRUE,
 		  1  if FALSE,
 		  2  if the underlying tooling generates an error.

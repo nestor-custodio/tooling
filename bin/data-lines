@@ -13,11 +13,12 @@ source '/home/nestor/bin/std.lib'
 		This is a workaround for the fact that 'wc -l' reports "1" for empty
 		input, which makes it an unreliable way to get an actual line count.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
 
-		Exit status:
+		Exit Status:
 		 0  if OK,
 		 1  if invalid option.
 	EOF

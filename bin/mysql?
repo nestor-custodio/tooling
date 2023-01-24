@@ -10,10 +10,12 @@ source '/home/nestor/bin/std.lib'
 
 		Reports on the status of the 'mysql' Cloud SQL instance.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if service is running,
 		  1  if service is not running.
 	EOF

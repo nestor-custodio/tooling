@@ -14,10 +14,12 @@ source '/home/nestor/bin/std.lib'
 		      the '--help' flag will output this help text via STDERR
 		      *in addition to* producing the expected non-empty output via STDOUT.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if no strings given (empty or not).
 	EOF

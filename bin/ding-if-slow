@@ -14,10 +14,12 @@ source '/home/nestor/bin/std.lib'
 		NOTE: To prevent breaking expected behaviour, the '--help' flag will
 		      output this help text *only* when it is the only argument given.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if no COMMAND given.
 	EOF

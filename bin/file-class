@@ -10,11 +10,13 @@ source '/home/nestor/bin/std.lib'
 
 		Categorizes the type of file given, as reported by 'stat'.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --follow                  Follow links and report on *that* file.
 		  --help                    Show this help text.
 
-		Output values:
+
+		Output:
 		  'd' -> directory
 		  'r' -> regular file
 		  'l' -> symbolic link
@@ -23,7 +25,8 @@ source '/home/nestor/bin/std.lib'
 		  'b' -> block special file (i.e. "/dev/loop0")
 		  'c' -> character special file (i.e. "/dev/zero")
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if unknown file class.

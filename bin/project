@@ -10,13 +10,15 @@ source '/home/nestor/bin/std.lib'
 
 		Queries the GCP *project* metadata store for the given key.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 		  --short                   Return the last segment (after the final "/")
 		                            for metadata values that look like a relative
 		                            URL (see values for "machine-type" or "zone").
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF

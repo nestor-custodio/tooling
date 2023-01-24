@@ -17,21 +17,23 @@ source '/home/nestor/bin/std.lib'
 		e.g. A time range of 7 days and 3 minutes will show as "1w 3m", with no
 		day ("d"), hour ("h"), or second ("s") component.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		  -y|--year                 Sets the output granularity to years.
-		  -w|--week                 Sets the output granularity to weeks.
-		  -d|--day                  Sets the output granularity to days.
-		  -h|--hour                 Sets the output granularity to hours.
-		  -m|--minute               Sets the output granularity to minutes.
-		  -s|--second               Sets the output granularity to seconds.
+		  -y | --year               Sets the output granularity to years.
+		  -w | --week               Sets the output granularity to weeks.
+		  -d | --day                Sets the output granularity to days.
+		  -h | --hour               Sets the output granularity to hours.
+		  -m | --minute             Sets the output granularity to minutes.
+		  -s | --second             Sets the output granularity to seconds.
 
 		All dates must be given in a coreutils-parseable format.
 		For additional info on the GNU coreutils date parser, see command:
 		  info '(coreutils) date invocation'
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if invalid from/to/since date.

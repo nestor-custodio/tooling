@@ -11,10 +11,12 @@ source '/home/nestor/bin/std.lib'
 		Convenience tool for rebooting down the system *forcefully*.
 		You are given 2 seconds to quit out (via Ctrl-C) before the reboot.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF

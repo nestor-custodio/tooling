@@ -11,10 +11,12 @@ source '/home/nestor/bin/std.lib'
 		Convenience tool for determining whether the text provided
 		via STDIN ends with the given LOOKUP_STRING (as a literal).
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option.
 	EOF

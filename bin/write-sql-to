@@ -10,10 +10,12 @@ source '/home/nestor/bin/std.lib'
 
 		Routes SQL from STDIN to our Cloud SQL instance under the given DB name.
 
+
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-		Exit status:
+
+		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
 		  2  if no DATABASE_NAME given.
