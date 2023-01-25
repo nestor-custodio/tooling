@@ -84,7 +84,7 @@ shopt -s lastpipe
     export RUBOCOP_OPTS="--server --format='simple' --format='offenses' --color"
     #
     function rubocop {
-      if nearest --read 'Gemfile.lock' 'Gemfile' | has 'rubocop'; then
+      if nearest --read 'Gemfile.lock' 'Gemfile' | has? 'rubocop'; then
         bundle exec rubocop "$@"
       else
         which rubocop || gem install rubocop &> /dev/null
@@ -118,7 +118,7 @@ shopt -s lastpipe
         # Ensure specific ruby.
         #
         if ruby_version="$( nearest --read '.ruby-version' )"; then
-          ruby --version 2> /dev/null | has "$ruby_version" || chruby "$ruby_version"                  \
+          ruby --version 2> /dev/null | has? "$ruby_version" || chruby "$ruby_version"                 \
           || { ruby-install "$ruby_version" && RUBIES=("${HOME}/.rubies"/*) && chruby "$ruby_version" ;}
         fi
 
@@ -219,7 +219,7 @@ shopt -s lastpipe
       # Ensure node.
       #
       if node_version="$( nearest --read '.node-version' )"
-        then node --version 2> /dev/null | has "$node_version" || n install "$node_version"
+        then node --version 2> /dev/null | has? "$node_version" || n install "$node_version"
         else command -v node || n lts
       fi
 

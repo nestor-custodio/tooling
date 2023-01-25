@@ -88,7 +88,7 @@ case "$channel" in
 						--form-string "title=${subject}"           \
 						--form-string "message=${message}"         \
 						'https://api.pushover.net/1/messages.json' \
-		| json '.status' | hasline 1 &> /dev/null
+		| json '.status' | has-line? 1 &> /dev/null
 		;;
 
 	*) error-out 2 "unknown CHANNEL (${channel})" ;;

@@ -259,7 +259,7 @@ case "$os_release" in
 		;;
 
 	*)
-		grep -P --quiet -x '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
+		matches-line? '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
 		os_releases | fgrep "${os_release//./}" | tail -n1 | store-as image_family
 		;;
 esac

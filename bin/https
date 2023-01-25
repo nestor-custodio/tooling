@@ -89,7 +89,7 @@ source '/home/nestor/bin/std.lib'
 
 	# Ensure defaults.
 
-	if has ':' <<< "$binding"; then
+	if has? ':' <<< "$binding"; then
 		# Binding is in "HOST:PORT" form.
 		noop
 	else

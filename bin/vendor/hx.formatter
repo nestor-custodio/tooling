@@ -70,7 +70,7 @@ case "$language" in
 
 	(javascript|jsx)
 			json '(.dependencies // {}),(.devDependencies // {}) | keys[]' < package.json 2> /dev/null | store-as packages
-			hasline prettier <<< "$packages" || command -v prettier &> /dev/null || npm install --global --production prettier
+			has-line? 'prettier' <<< "$packages" || command -v prettier &> /dev/null || npm install --global --production prettier
 			npx prettier --stdin --stdin-filepath='source_file.jsx' --parser='typescript' --loglevel='error' < /dev/stdin
 		;;
 

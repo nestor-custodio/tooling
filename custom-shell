@@ -88,7 +88,7 @@ export PGHOST='postgres'
 
   fzf_keybinding_spec="ctrl-i:up,ctrl-k:down,space:toggle,ctrl-space:toggle"
 
-  fzf_preview_command="file --brief --mime-type -- {} | starts-with 'text/'   \
+  fzf_preview_command="file --brief --mime-type -- {} | starts-with? 'text/'  \
                        && bat --force-colorization --line-range='1:200' -- {} \
                        || echo '(non-text content)'"
 
@@ -150,7 +150,7 @@ export PGHOST='postgres'
     local prompt='Deploy branch "\033[33;1m%s\033[0m" to remote "\033[31;1m%s\033[0m"? (y/N) '
     local confirmation='n'
 
-    gremote 2> /dev/null | hasline "$remote" || return 1
+    gremote 2> /dev/null | has-line? "$remote" || return 1
 
     printf "$prompt" "$branch" "$remote"; read confirmation
     [ "$( tr 'A-Z' 'a-z' <<< "$confirmation" )" == 'y' ] || return 2
@@ -233,7 +233,7 @@ export PGHOST='postgres'
       if [ "$( head -c1 <<< "${args[$i]}" )" != '-' ]; then
         [ -d "${args[$i]}" ] && continue  # Skip directories.
         [ -x "${args[$i]}" ] || continue  # Only keep executables.
-        head -n1 "${args[$i]}" | has '#!' || continue  # Only keep shebang'ed files.
+        head -n1 "${args[$i]}" | has? '#!' || continue  # Only keep shebang'ed files.
       fi
 
       executables+=("${args[$i]}")
@@ -275,7 +275,7 @@ function mirror {
 function break-out-of-links {
   local pwd="$( pwd -P )"
   local link_root="${HOME}/links/"
-  starts-with "$link_root" <<< "$pwd" && cd "$( sed -e "s|${link_root}|/|" <<< "$pwd" )"
+  starts-with? "$link_root" <<< "$pwd" && cd "$( sed -e "s|${link_root}|/|" <<< "$pwd" )"
 }
 
 

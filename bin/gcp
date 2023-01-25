@@ -268,7 +268,7 @@ source '/home/nestor/bin/std.lib'
 				#
 				gcloud compute machine-types list --zones="$( vm-zone )" \
 				                                  --format='value(name)' \
-				| hasline "$machine_type" &> /dev/null || error-out 1 'invalid machine type'
+				| has-line? "$machine_type" &> /dev/null || error-out 1 'invalid machine type'
 
 				# This is a noop if the requested machine type is already set.
 				#

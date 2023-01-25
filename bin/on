@@ -74,16 +74,14 @@ source '/home/nestor/bin/std.lib'
 				time_spec="$1" && shift
 				wait_type='time'
 
-				[[ "$time_spec" =~ ^([0-9.]+)([s|m|h])?$ ]]
-				duration="${BASH_REMATCH[1]}"
-				duration_unit="${BASH_REMATCH[2]:-s}"
+				matches-line? '[0-9]*\.?[0-9]+[smh]?' <<< "$time_spec" || error-out 1 "unparseable TIME_SPEC: ${time_spec}"
+				tr -d 'smh'  <<< "$time_spec" | store-as duration
+				tr -d '0-9.' <<< "$time_spec" | store-as duration_unit
 
-				case "$duration_unit" in
+				case "${duration_unit:-s}" in
 					(s) calc "${duration} *    1.0" | store-as duration_s ;;
 					(m) calc "${duration} *   60.0" | store-as duration_s ;;
 					(h) calc "${duration} * 3600.0" | store-as duration_s ;;
-
-					*) error-out 1 "unparseable TIME_SPEC: ${time_spec}"
 				esac
 				;;
 

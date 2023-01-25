@@ -6,9 +6,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name )
+		Usage: $( script-name ) LOOKUP_STRING
 
-		Reports on status of Spring server.
+		Convenience tool for determining whether the text provided
+		via STDIN *contains* the given LOOKUP_STRING (as a literal).
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -17,8 +18,7 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid option,
-		  2  if command not invoked from valid location.
+		  1  if invalid option.
 	EOF
 
 }
@@ -43,7 +43,8 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	lookup_string="$*" && shift
+	[ -n "$lookup_string" ] || error-out 1 'no lOOKUP_STRING given'
 
 }
 
@@ -51,9 +52,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-[ "$( realpath "$( pwd )" )" == "$( realpath "${HOME}/dev" )" ] || error-out 2 'not currently in ~/dev'
-
-spring status | head -n1 | sed -e 's|:$|.|' | store-as status
-echo "$status"
-
-has? 'is running' <<< "$status" || exit 1
+fgrep --quiet "$lookup_string"

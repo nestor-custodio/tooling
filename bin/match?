@@ -9,7 +9,7 @@ source '/home/nestor/bin/std.lib'
 		Usage: $( script-name ) LOOKUP_STRING
 
 		Convenience tool for determining whether the text provided
-		via STDIN contains the given LOOKUP_STRING as a literal on its own line.
+		via STDIN *contains* the given LOOKUP_STRING (as a PCRE regex).
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -52,4 +52,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-fgrep --quiet -x "$lookup_string"
+grep -P --quiet "$lookup_string"

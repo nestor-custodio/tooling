@@ -71,5 +71,5 @@ source '/home/nestor/bin/std.lib'
 mycli_exec="$( command -v mycli )"
 [ -n "$mycli_exec" ] || error-out 2 'mycli executable not found'
 
-grep -P --quiet '(mysql|my)://' <<< "$database" || database="mysql://nestor@mysql/${database}"
+matches? '(mysql|my)://' <<< "$database" || database="mysql://nestor@mysql/${database}"
 "$mycli_exec" --myclirc="~/.config/mycli/config" "$database" "$@"

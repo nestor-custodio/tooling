@@ -81,7 +81,7 @@ webroot_url="https://$( hostname ).custodio.app/"
 ss -4tln | grep -P '(?<=:)3[0-9]{3}\b' --only-matching | store-as unavailable_ports
 while true; do
 	shuf -n1 --input-range='3001-3999' | store-as port
-	has "$port" <<< "$unavailable_ports" || break
+	has? "$port" <<< "$unavailable_ports" || break
 done
 
 

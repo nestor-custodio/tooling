@@ -71,5 +71,5 @@ source '/home/nestor/bin/std.lib'
 pgcli_exec="$( command -v pgcli )"
 [ -n "$pgcli_exec" ] || error-out 2 'pgcli executable not found'
 
-grep -P --quiet '(postgres|pg|psql)://' <<< "$database" || database="postgres://nestor@postgres/${database}"
+matches? '(postgres|pg|psql)://' <<< "$database" || database="postgres://nestor@postgres/${database}"
 "$pgcli_exec" --pgclirc="~/.config/pgcli/config" "$database" "$@"
