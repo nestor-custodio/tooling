@@ -80,7 +80,7 @@ TMPDIR="$dir_2" tempname | store-as temp_2
 
 # Swap the files.
 
-mv "$file_1" "$temp_1" || {                                                 error-out 4 'swap not allowed'; }
-mv "$file_2" "$temp_2" || { mv "$temp_1" "$file_1";                         error-out 4 'swap not allowed'; }
-mv "$temp_1" "$file_2" || { mv "$temp_1" "$file_1"; mv "$temp_2" "$file_2"; error-out 4 'swap not allowed'; }
-mv "$temp_2" "$file_1" || { mv "$file_2" "$file_1"; mv "$temp_2" "$file_2"; error-out 4 'swap not allowed'; }
+mv "$file_1" "$temp_1" || {                                                   error-out 4 'swap not allowed' ;}
+mv "$file_2" "$temp_2" || { mv "$temp_1" "$file_1" ;                          error-out 4 'swap not allowed' ;}
+mv "$temp_1" "$file_2" || { mv "$temp_1" "$file_1" ; mv "$temp_2" "$file_2" ; error-out 4 'swap not allowed' ;}
+mv "$temp_2" "$file_1" || { mv "$file_2" "$file_1" ; mv "$temp_2" "$file_2" ; error-out 4 'swap not allowed' ;}

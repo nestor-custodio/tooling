@@ -240,7 +240,7 @@ shopt -s lastpipe
 # Note we want to define this stuff last so when we store the starting ("clean") list
 # of ENV vars (as "${ENV_VARS[clean]}") it includes all of the variables defined above.
 
-  function known-env-vars { export -p | sed -r -e 's|=.*$||' -e 's|^.* ||' | sort ; }
+  function known-env-vars { export -p | sed -r -e 's|=.*$||' -e 's|^.* ||' | sort ;}
   export CLEAN_ENV_VARS; CLEAN_ENV_VARS="$( known-env-vars )"
 
   function set-env {

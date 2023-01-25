@@ -10,22 +10,22 @@ shopt -s lastpipe expand_aliases
 
 	alias store-as="read -r -d ''"
 
-	function script-file { echo     "$0" ; }
-	function script-path { dirname  "$0" ; }
-	function script-real { realpath "$0" ; }
-	function script-name { basename "$0" ; }
+	function script-file { echo     "$0" ;}
+	function script-path { dirname  "$0" ;}
+	function script-real { realpath "$0" ;}
+	function script-name { basename "$0" ;}
 
-	function file-blanks { script-file | sed -e 's|.| |g' ; }
-	function path-blanks { script-path | sed -e 's|.| |g' ; }
-	function real-blanks { script-real | sed -e 's|.| |g' ; }
-	function name-blanks { script-name | sed -e 's|.| |g' ; }
+	function file-blanks { script-file | sed -e 's|.| |g' ;}
+	function path-blanks { script-path | sed -e 's|.| |g' ;}
+	function real-blanks { script-real | sed -e 's|.| |g' ;}
+	function name-blanks { script-name | sed -e 's|.| |g' ;}
 
 
 	STARTUP_DIR="$( pwd )"
-	function reset_to_startup_dir { cd "$STARTUP_DIR" || exit 99 ; }
+	function reset_to_startup_dir { cd "$STARTUP_DIR" || exit 99 ;}
 
-	function cd_to_script   { cd "$(             script-path    )" ; }
-	function cd_to_realpath { cd "$( dirname "$( script-real )" )" ; }
+	function cd_to_script   { cd "$(             script-path    )" ;}
+	function cd_to_realpath { cd "$( dirname "$( script-real )" )" ;}
 
 
 	TMPDIR="${TMPDIR:-/tmp}"

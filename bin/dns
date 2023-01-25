@@ -93,10 +93,10 @@ source '/home/nestor/bin/std.lib'
 
 	{ # -- Transaction Helpers -- #
 
-		function dns_transaction { gcloud --format='none' --verbosity='error' dns record-sets transaction "$@" --zone="$dns_zone" &> /dev/null ; }
+		function dns_transaction { gcloud --format='none' --verbosity='error' dns record-sets transaction "$@" --zone="$dns_zone" &> /dev/null ;}
 
-		function catch_transaction_errors { set -e && trap 'dns_transaction abort ; error-out 3 "transaction error"' ERR ; }
-		function ignore_transaction_errors { trap - ERR && set +e ; }
+		function catch_transaction_errors { set -e && trap 'dns_transaction abort ; error-out 3 "transaction error"' ERR ;}
+		function ignore_transaction_errors { trap - ERR && set +e ;}
 
 	}
 

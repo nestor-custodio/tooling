@@ -77,8 +77,8 @@ source '/home/nestor/bin/std.lib'
 
 	# ---
 
-	function instance_is_running { [ "$( instance_state "$@" )" == "RUNNING"    ] ; }
-	function instance_is_stopped { [ "$( instance_state "$@" )" == "TERMINATED" ] ; }
+	function instance_is_running { [ "$( instance_state "$@" )" == "RUNNING"    ] ;}
+	function instance_is_stopped { [ "$( instance_state "$@" )" == "TERMINATED" ] ;}
 
 }
 

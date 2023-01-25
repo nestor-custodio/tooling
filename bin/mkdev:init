@@ -148,7 +148,7 @@ startup_log='/var/log/startup'
 
 
 			# Set up the sync-persisted store, if needed.
-			{ [ -n "$dev_dir" ] || [ -n "$git_repo" ] ; } && {
+			{ [ -n "$dev_dir" ] || [ -n "$git_repo" ] ;} && {
 
 				# Make sure the remote store exists.
 

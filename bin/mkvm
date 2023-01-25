@@ -135,7 +135,7 @@ source '/home/nestor/bin/std.lib'
 
 			(--list-machine-types|--machine-types)
 				gcloud compute machine-types list | store-as machine_types
-				function machine-type-columns { cut --characters='1-18,46-' ; }
+				function machine-type-columns { cut --characters='1-18,46-' ;}
 				head -n1 <<< "$machine_types" | machine-type-columns
 				fgrep "$( vm-zone )" <<< "$machine_types" | sort --field-separator='-' --key='1,1' --key='2,2' --key='3,3n' | machine-type-columns
 				exit-out
