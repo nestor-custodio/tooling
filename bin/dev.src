@@ -109,7 +109,7 @@ shopt -s lastpipe
 
       function bi {
         nearest --quiet 'Gemfile.lock' 'Gemfile' || return
-        bundle install --jobs=$( nproc )
+        bundle install --jobs="$( nproc )"
       }
 
       function bi! {
@@ -131,7 +131,7 @@ shopt -s lastpipe
           gem list bundler --silent --installed || gem install bundler
         fi
 
-        bundle install --jobs=$( nproc )
+        bundle install --jobs="$( nproc )"
       }
 
   # rails

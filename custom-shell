@@ -153,7 +153,7 @@ export PGHOST='postgres'
     gremote 2> /dev/null | has-line? "$remote" || return 1
 
     printf "$prompt" "$branch" "$remote"; read confirmation
-    [ "$( tr 'A-Z' 'a-z' <<< "$confirmation" )" == 'y' ] || return 2
+    [ "$( tr '[:upper:]' '[:lower:]' <<< "$confirmation" )" == 'y' ] || return 2
 
     gpush "$remote" "${branch}:main" && ding-me
   }
@@ -214,7 +214,7 @@ export PGHOST='postgres'
   function rg { "$( real rg )" --engine="pcre2" --color=auto --follow "$@" ;}
 
 
-  # shellcheck
+  # ... shellcheck (this comment can't look like a Shellcheck directive)
 
   # `shellcheck` is a bit of a pain to use on directories that
   # include both executable scripts and data files, as it generates

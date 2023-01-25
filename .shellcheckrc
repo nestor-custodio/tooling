@@ -9,6 +9,14 @@ external-sources=true
 
 # Disable problem rules.
 #
-disable=SC2148               # Disregard files of unknown type.
-disable=SC2034,SC2119,SC2154 # std.lib usage generates a lot of false positives for these.
-disable=SC2164,SC2197
+disable=SC1071 # Don't complain about scripts targetting shells not supported by Shellcheck.
+disable=SC1090 # Allow `source`ing from variables.
+disable=SC2012 # Allow use of `ls`.
+disable=SC2034 # std.lib usage generates a lot of false positives for this.
+disable=SC2119 # std.lib usage generates a lot of false positives for this.
+disable=SC2148 # Disregard files of unknown type.
+disable=SC2154 # std.lib usage generates a lot of false positives for this.
+disable=SC2155 # Allow simultaneous declaration and assignment.
+disable=SC2164
+disable=SC2197
+disable=SC2211 # Allow natural use of predicate tooling.

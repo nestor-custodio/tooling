@@ -37,7 +37,7 @@ source '/home/nestor/bin/std.lib'
 
 	_executable=''
 	function executable {
-		[ -n "$_executable" ] && { echo "$_executable"; return ; }
+		[ -n "$_executable" ] && echo "$_executable" && return
 	
 		echo "/home/nestor/bin/vendor/${tool_name}" | store-as _executable
 		echo "$_executable"
@@ -45,17 +45,17 @@ source '/home/nestor/bin/std.lib'
 
 	_github_repo=''
 	function github-repo {
-		[ -n "$_github_repo" ] && { echo "$_github_repo"; return ; }
+		[ -n "$_github_repo" ] && echo "$_github_repo" && return
 	
-		cat "$( executable ).repo" | store-as _github_repo
+		store-as _github_repo < "$( executable ).repo"
 		echo "$_github_repo"
 	}
 
 	_executable_url=''
 	function executable-url {
-		[ -n "$_executable_url" ] && { echo "$_executable_url"; return ; }
+		[ -n "$_executable_url" ] && echo "$_executable_url" && return
 	
-		cat "$( executable ).url" | store-as _executable_url
+		store-as _executable_url < "$( executable ).url"
 		echo "$_executable_url"
 	}
 
@@ -162,7 +162,7 @@ case "$tool_name" in
 
 	(aws)
 		target="${HOME}/bin/vendor/aws-runtime"
-		mkdir -p "$target" && rm -rf "$target"/*
+		mkdir -p "$target" && rm -rf "${target:?}"/*
 
 		mktemp --tmpdir "$TEMPFILE_TEMPLATE" | store-as zip_file
 		curl "$( executable-url )" --silent --location > "$zip_file" || error-out 2 'unable to fetch release'
@@ -195,7 +195,7 @@ case "$tool_name" in
 
 	(heroku)
 		target="${HOME}/bin/vendor/heroku-runtime"
-		mkdir -p "$target" && rm -rf "$target"/*
+		mkdir -p "$target" && rm -rf "${target:?}"/*
 
 		curl "$( executable-url )" --silent --location \
 		| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
@@ -203,7 +203,7 @@ case "$tool_name" in
 
 	(ruby-install)
 		target="${HOME}/bin/vendor/ruby-install-runtime"
-		mkdir -p "$target" && rm -rf "$target"/*
+		mkdir -p "$target" && rm -rf "${target:?}"/*
 
 		eget --quiet "$( github-repo )" --download-only --source --to='/dev/stdout' \
 		| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
