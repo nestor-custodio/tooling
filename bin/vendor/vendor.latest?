@@ -32,7 +32,7 @@ source '/home/nestor/bin/std.lib'
 	function executable {
 		[ -n "$_executable" ] && echo "$_executable" && return
 	
-		echo "/home/nestor/bin/vendor/${tool_name}" | store-as _executable
+		echo "${HOME}/bin/vendor/${tool_name}" | store-as _executable
 		echo "$_executable"
 	}
 
@@ -199,7 +199,7 @@ case "$tool_name" in
 		;;
 
 	(chruby)
-		eval "$( head -n1 '/home/nestor/bin/vendor/chruby-source' )"
+		eval "$( head -n1 "${HOME}/bin/vendor/chruby-source" )"
 		check-version --local-version="$CHRUBY_VERSION"
 		;;
 

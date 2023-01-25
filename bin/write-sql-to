@@ -58,4 +58,4 @@ source '/home/nestor/bin/std.lib'
 dropdb "$database_name" --if-exists --force
 createdb "$database_name"
 
-sed -r -e 's#^((CREATE EXTENSION|COMMENT ON EXTENSION) .*\bplpgsql\b)#-- \1#g' | psql --dbname="postgres://nestor@postgres/${database_name}"
+sed -r -e 's#^((CREATE EXTENSION|COMMENT ON EXTENSION) .*\bplpgsql\b)#-- \1#g' | psql --dbname="postgres://${USER}@postgres/${database_name}"

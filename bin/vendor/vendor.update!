@@ -39,7 +39,7 @@ source '/home/nestor/bin/std.lib'
 	function executable {
 		[ -n "$_executable" ] && echo "$_executable" && return
 	
-		echo "/home/nestor/bin/vendor/${tool_name}" | store-as _executable
+		echo "${HOME}/bin/vendor/${tool_name}" | store-as _executable
 		echo "$_executable"
 	}
 
