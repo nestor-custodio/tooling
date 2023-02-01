@@ -134,6 +134,96 @@ shopt -s lastpipe
         bundle install --jobs="$( nproc )"
       }
 
+
+    # Gem Release Tooling
+
+      function release-gem {
+
+        option="$1" && shift
+        case "$option" in
+          (--major) bump='major' ;;
+          (--minor) bump='minor' ;;
+          (--patch) bump='patch' ;;
+        esac
+
+        [ "$#" == 0 ] || return 1
+
+        # ---
+
+        pushd "${HOME}/dev"
+
+        superbase ./*.gemspec | store-as gem_name
+        [ -n "$gem_name" ] || return 2
+
+        gh repo set-default --view 2> /dev/null | store-as repo_id
+        [ -n "$repo_id" ] || return 3
+
+        gh:release-version "$repo_id" 2> /dev/null | store-as old_version
+        [ -n "$old_version" ] || old_version='0.0.0'
+
+
+        # Determine new version number and prompt for confirmation ...
+
+        IFS='.-' read -r -a parts <<< "$old_version"
+        major="${parts[0]}"
+        minor="${parts[1]}"
+        patch="${parts[2]}"
+
+        case "$bump" in
+          (major)
+            calc "${major} + 1" | store-as major
+            new_version="${major}.0.0"
+
+            printf "Last release was '%s'.\nPublish new release as (%s):" "$old_version" "$new_version"
+            read -r -p ' '; [ -n "$REPLY" ] && new_version="$REPLY"
+            ;;
+
+          (minor)
+            calc "${minor} + 1" | store-as minor
+            new_version="${major}.${minor}.0"
+
+            printf "Last release was '%s'.\nPublish new release as (%s):" "$old_version" "$new_version"
+            read -r -p ' '; [ -n "$REPLY" ] && new_version="$REPLY"
+            ;;
+
+          (patch)
+            calc "${patch} + 1" | store-as patch
+            new_version="${major}.${minor}.${patch}"
+
+            printf "Last release was '%s'.\nPublish new release as (%s):" "$old_version" "$new_version"
+            read -r -p ' '; [ -n "$REPLY" ] && new_version="$REPLY"
+            ;;
+
+          *)
+            printf "Last release was '%s'.\nPublish new release as:" "$old_version"
+            read -r -p ' ' new_version
+            [ -n "$new_version" ] || return 4
+           ;;
+        esac
+
+
+        # Repackage gem ...
+
+        fd --exclude 'Gemfile*' | xargs -I '{}' -- sed -i -e "s|${old_version}|${new_version}|" '{}'
+        yard doc
+        gem build
+        bundle install
+
+
+        # Commit changes ...
+
+        gcommit -am "version: release v${new_version}"
+        gpush
+
+
+        # Publish release ...
+
+        gh release create "v${new_version}" --latest
+        gem push "${gem_name}-${new_version}.gem"
+        
+      }
+
+
   # rails
 
     function rc  {                                       bundle exec rails console ;}
