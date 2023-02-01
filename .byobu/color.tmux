@@ -1,5 +1,16 @@
+
+# Status bar background.
+#
 BYOBU_DARK="red"
+
+# Status bar background *for window tabs*.
+#
 BYOBU_LIGHT="white,bold"
-BYOBU_ACCENT="red"
+
+# Border color for active pane.
+#
 BYOBU_HIGHLIGHT="red"
-MONOCHROME=0
+
+# Border color for inactive panes.
+#
+BYOBU_ACCENT="red"

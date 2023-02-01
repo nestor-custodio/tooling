@@ -21,7 +21,7 @@ set -g destroy-unattached off
 
 ## Fix an issue with status bar left spacing,
 ## and date/time always showing on the right.
-set -g status-left '#[fg=white,bold,bg=red]  #( hostname | tr a-z A-Z ) #[default] #(byobu-status tmux_left)'
+set -g status-left '#[fg=white,bold] #( hostname | tr a-z A-Z ) #[default] #(byobu-status tmux_left)'
 set -g status-right '#(byobu-status tmux_right)'
 
 
