@@ -104,8 +104,6 @@ startup_log='/var/log/startup'
 			                     wget            \
 			                     zip unzip
 
-			snap install --devmode dotdrop 2> /dev/null
-
 	}
 
 	# ---
@@ -165,7 +163,6 @@ startup_log='/var/log/startup'
 			EOF
 
 			sudo --user='nestor' mkdir /home/nestor/docs /home/nestor/links && mount -a
-			sudo --user='nestor' dotdrop --cfg='/home/nestor/links/dotdrop-config.yaml' --profile='global' install --force
 
 	}
 

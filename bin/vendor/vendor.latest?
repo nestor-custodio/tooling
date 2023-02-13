@@ -203,10 +203,6 @@ case "$tool_name" in
 		check-version --local-version="$CHRUBY_VERSION"
 		;;
 
-	(dotdrop)
-		check-version 2> /dev/null
-		;;
-
 	(redis-viewer)
 		# This tool provides no versioning info. 🤷.
 		# I've requested adding a `--version` option via:

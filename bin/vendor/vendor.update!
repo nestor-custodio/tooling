@@ -189,10 +189,6 @@ case "$tool_name" in
 		chmod 755 "$( executable )"
 		;;
 
-	(dotdrop)
-		sudo snap refresh --devmode dotdrop &> /dev/null || error-out 2
-		;;
-
 	(heroku)
 		target="${HOME}/bin/vendor/heroku-runtime"
 		mkdir -p "$target" && rm -rf "${target:?}"/*

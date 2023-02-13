@@ -64,17 +64,6 @@ export PGHOST='postgres'
   export CDPATH=".:${HOME}"
 
 
-  # dotdrop
-
-  # Ensure `dotdrop` can find its config file.
-  #
-  export DOTDROP_CONFIG="${HOME}/links/dotdrop-config.yaml"
-
-  # All hosts share the same `dotdrop` profile.
-  #
-  export DOTDROP_PROFILE='global'
-
-
   # eget
 
   # Make sure `eget` knows where to download binaries to
@@ -274,8 +263,8 @@ function mirror {
 
 function break-out-of-links {
   local pwd="$( pwd -P )"
-  local link_root="${HOME}/links/"
-  starts-with? "$link_root" <<< "$pwd" && cd "$( sed -e "s|${link_root}|/|" <<< "$pwd" )"
+  local link_root="${HOME}/links/home/"
+  starts-with? "$link_root" <<< "$pwd" && cd "${pwd//${link_root}/~/}"
 }
 
 
