@@ -1,0 +1,84 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Starts a timer. Tracking has nanosecond precision, but displays
+		with *second* granularity and only updates periodically.
+
+		Pressing <space> will continue the count on a new line, leaving
+		the old line as reference (useful for split timing); 'q' quits.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+function clear-line { printf '\e[0K\e[1A\e[1G\e[0K' ;}
+
+function show-timer { printf '%02dh %02dm %02ds\n' "$1" "$2" "$3" ;}
+
+# ---
+# ---
+
+
+# Initialize display.
+#
+show-timer 0 0 0
+
+
+while true; do
+	calc "$( timestamp ) - ${SCRIPT_TIMESTAMP}" | store-as elapsed
+
+	calc "floor(${elapsed} / 3600)" | store-as h
+	calc "floor(${elapsed} /   60)" | store-as m
+	calc "floor(${elapsed}       )" | store-as s
+
+	clear-line
+	show-timer "$h" "$m" "$s"
+
+	read -r -s -t1 -N1 input
+	case "$input" in
+		' ') show-timer "$h" "$m" "$s" ;;
+		'q') exit 0 ;;
+	esac
+done
