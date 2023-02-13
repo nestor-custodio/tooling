@@ -2,6 +2,10 @@
 # See the languages documentation: https://docs.helix-editor.com/master/languages.html
 
 [[language]]
+name = "bash"
+auto-format = true
+
+[[language]]
 name = "javascript"
 auto-format = true
 formatter = { command = "hx.formatter", args = ["javascript"] }

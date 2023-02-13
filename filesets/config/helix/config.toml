@@ -98,11 +98,19 @@ newline = "↲"
 
 # Application Control
 
-":"       = "command_mode"
-"P"       = "command_palette"
+":"         = "command_mode"
+"P"         = "command_palette"
 
-"ret"     = "insert_mode"
-";"       = "select_mode"
+"ret"       = "insert_mode"
+";"         = "select_mode"
+
+"C-up"      = "jump_view_up"
+"C-down"    = "jump_view_down"
+"C-left"    = "jump_view_left"
+"C-right"   = "jump_view_right"
+
+"C-S-down"  = "hsplit_new"
+"C-S-right" = "vsplit_new"
 
 
 # File Operations
@@ -277,9 +285,13 @@ newline = "↲"
 [keys.insert]
 
 
-# Editing
+# Document Navigation
 
-  # Modification
-  
-  "tab"       = "indent"
-  "S-tab"     = "unindent"
+"C-i"       = "move_line_up"
+"C-k"       = "move_line_down"
+"C-j"       = "move_char_left"
+"C-l"       = "move_char_right"
+
+# Because CTRL+I = TAB
+#
+"tab"       = "move_line_up"
