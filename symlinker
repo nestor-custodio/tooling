@@ -1,0 +1,55 @@
+#! /bin/env bash
+shopt -s lastpipe
+
+# ---
+
+IFS="$( printf '\t' )"
+data_file="$( basename "$0" ).json"
+source_home="$( dirname "$( realpath "$0" )" )"
+jq_executable="$( find "$source_home" -name jq -print -quit )"
+
+"$jq_executable" -r 'to_entries | map([.key, .value])[] | @tsv' < "${source_home}/${data_file}" | while read source_dir symlink_dir; do
+
+	source_dir="${source_home}/${source_dir}"
+	symlink_dir="${symlink_dir/\~/${HOME}}"
+
+	ls -1 -A "$source_dir" | while read item; do
+
+		source_item="${source_dir}/${item}"
+		symlink_item="${symlink_dir}/${item}"
+
+		case "$( stat --format='%F' "$symlink_item" )" in
+			# A file type of '' means the `stat` call above failed,
+			# which itself means the "$symlink_item" does not exist.
+			''                      ) ;;
+
+			'fifo'                  ) exit 1 ;;
+			'socket'                ) exit 1 ;;
+			'block special file'    ) exit 1 ;;
+			'character special file') exit 1 ;;
+
+			'directory'             ) rm -rf "$symlink_item" ;;
+			'regular file'          ) rm     "$symlink_item" ;;
+			'regular empty file'    ) rm     "$symlink_item" ;;
+
+			'symbolic link'         )
+				# Do nothing if link already points to source.
+				#
+				source_realpath="$( realpath "$source_item" )"
+				symlink_realpath="$( realpath "$symlink_item" )"
+				[ "$source_realpath" == "$symlink_realpath" ] && continue
+		
+				rm "$symlink_item"
+				;;
+
+			*) exit 2 ;;
+		esac 2> /dev/null
+
+		# Create the symlink.
+		#
+		[ -d "$symlink_dir" ] || mkdir -p "$symlink_dir"
+		ln -sT "$source_item" "$symlink_item"
+
+	done
+
+done

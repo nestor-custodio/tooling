@@ -120,6 +120,68 @@ startup_log='/var/log/startup'
 			EOF
 
 			sudo --user='nestor' mkdir /home/nestor/docs /home/nestor/links && mount -a
+			sudo --user='nestor' /home/nestor/links/symlinker
+
+	}
+
+	# ---
+
+	{ # -- Development Setup -- #
+
+		# Install additional dev tooling.
+		report 'installing additional dev tooling'
+
+			apt-get -qqy install litecli mycli pgcli postgresql-client s3fs  # Additional dev tooling.
+			apt-get -qqy install libmysqlclient-dev libpq-dev libsqlclient-dev libsqlite3-dev  # So we can build Ruby/Rails db gems.
+
+
+		# Prepare "~/dev".
+		report 'preparing ~/dev'
+
+			dev_root='/home/nestor/dev'
+			sudo --user='nestor' mkdir "$dev_root"
+
+			dev_dir="$( instance attributes/dev-dir )"
+			git_repo="$( instance attributes/git-repo )"
+
+
+			# Set up the sync-persisted store, if needed.
+			{ [ -n "$dev_dir" ] || [ -n "$git_repo" ] ;} && {
+
+				# Make sure the remote store exists.
+
+				report '... creating dev dir on sync'
+
+				[ -n "$git_repo" ] && {
+
+					# Transform repo URLs:
+					# - "git@github.com:username/repo.git"     => "github.com/username/repo"
+					# - "https://github.com/username/repo.git" => "github.com/username/repo"
+
+					dev_dir="$( sed -r -e 's|^.*://||' -e 's|^.*@||' -e 's|:|/|' -e 's|\.git$||' <<< "$git_repo" )"
+				
+				}
+
+				dev_remote_path="/export/dev/${dev_dir}/"
+				sudo --user='nestor' ssh sync "mkdir -p '${dev_remote_path}'" &> /dev/null
+
+
+				# Mount the persisted store into the dev root.
+				
+				report '... mounting dev dir from sync'
+
+				dev_mount_path="sync:/dev/${dev_dir}"
+				echo "${dev_mount_path}  ${dev_root}  nfs _netdev,auto,fg 0 0" >> /etc/fstab && mount -a
+
+
+				# Clone the given git_repo if needed.
+
+				[ -n "$git_repo" ] && ! [ -d "${dev_root}/.git" ] && {
+					report '... cloning repo (--no-checkout) into dev root'
+					sudo --user='nestor' git clone "$git_repo" "$dev_root" --no-checkout
+				}
+
+			}
 
 	}
 

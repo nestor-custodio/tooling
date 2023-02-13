@@ -109,60 +109,18 @@ startup_log='/var/log/startup'
 	# ---
 	# ---
 
-	{ # -- NFS Config -- #
-
-		sync_data_root='/export'
-
-
-		# Set up the persisted Sync storage.
-		report 'setting up the persisted Sync storage'
-
-			# Attach the volume.
-			report '... attaching volume'
-
-			zone="$( instance zone | sed -e 's|.*/||' )"
-			gcloud compute instances attach-disk 'sync' --disk='sync-storage' --mode='rw' --zone="$zone"
-
-
-			# Prep the nfs-kernel-server mounts.
-			report '... prepping the nfs-kernel-server mounts'
-
-			mkdir -p "$sync_data_root"
-			chmod 777 "$sync_data_root" && chown nobody:nogroup "$sync_data_root"
-			echo "/dev/sdb1 ${sync_data_root} ext4 defaults 0 0" >> /etc/fstab && mount "$sync_data_root"
-
-
-		# Set the firewall rules.
-		report 'setting the firewall rules'
-
-			ufw allow from any to any port ssh
-			ufw allow from 10.128.0.0/20 to any port nfs
-			ufw --force enable
-
-
-		# Set up the NFS Server service.
-		report 'setting up the NFS Server service'
-
-			apt-get -qqy install nfs-kernel-server
-
-			echo "${sync_data_root} 10.0.0.0/8(fsid=0,rw,sync,no_subtree_check)" >> /etc/exports && exportfs -a
-			service nfs-kernel-server start
-
-	}
-
-	# ---
-
 	{ # -- NFS Mounts -- #
 
 		# Set up NFS mount for "docs" and "links".
 		report 'setting up NFS mount for "docs" and "links"'
 
 			cat <<-'EOF' >> /etc/fstab
-				/export/docs  /home/nestor/docs  none bind,auto,fg 0 0
-				/export/links /home/nestor/links none bind,auto,fg 0 0
+				sync:/docs  /home/nestor/docs  nfs _netdev,auto,fg 0 0
+				sync:/links /home/nestor/links nfs _netdev,auto,fg 0 0
 			EOF
 
 			sudo --user='nestor' mkdir /home/nestor/docs /home/nestor/links && mount -a
+			sudo --user='nestor' /home/nestor/links/symlinker
 
 	}
 

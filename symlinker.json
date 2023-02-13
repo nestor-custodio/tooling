@@ -1,0 +1,7 @@
+{
+  "home"                : "~"             ,
+  "filesets/byobu"      : "~/.byobu"      ,
+  "filesets/config"     : "~/.config"     ,
+  "filesets/local:share": "~/.local/share",
+  "filesets/ssh"        : "~/.ssh"
+}
