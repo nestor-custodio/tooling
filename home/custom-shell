@@ -136,7 +136,7 @@ export PGHOST='postgres'
     local remote="${1:-production}"
     local branch="$( gbranch --show-current )"
 
-    local prompt='Deploy branch "\033[33;1m%s\033[0m" to remote "\033[31;1m%s\033[0m"? (y/N) '
+    local prompt='Deploy branch "\e[33;1m%s\e[0m" to remote "\e[31;1m%s\e[0m"? (y/N) '
     local confirmation='n'
 
     gremote 2> /dev/null | has-line? "$remote" || return 1
@@ -144,7 +144,7 @@ export PGHOST='postgres'
     printf "$prompt" "$branch" "$remote"; read confirmation
     [ "$( tr '[:upper:]' '[:lower:]' <<< "$confirmation" )" == 'y' ] || return 2
 
-    gpush "$remote" "${branch}:main" && ding-me
+    ding-if-slow gpush --force "$remote" "${branch}:main"
   }
 
 
