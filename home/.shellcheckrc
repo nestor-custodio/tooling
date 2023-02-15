@@ -14,6 +14,7 @@ disable=SC1090 # Allow `source`ing from variables.
 disable=SC2012 # Allow use of `ls`.
 disable=SC2034 # std.lib usage generates a lot of false positives for this.
 disable=SC2119 # std.lib usage generates a lot of false positives for this.
+disable=SC2120 # Allow functions with optional params.
 disable=SC2148 # Disregard files of unknown type.
 disable=SC2154 # std.lib usage generates a lot of false positives for this.
 disable=SC2155 # Allow simultaneous declaration and assignment.

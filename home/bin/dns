@@ -73,8 +73,7 @@ source '/home/nestor/bin/std.lib'
 	dns_domain='.custodio.app'
 
 	domain_name="${name%.}"
-	# shellcheck disable=2295
-	domain_name="${domain_name%$dns_domain}"
+	domain_name="${domain_name%"$dns_domain"}"
 	domain_name="${domain_name}${dns_domain}."
 
 	{ # -- Lookup Helpers -- #

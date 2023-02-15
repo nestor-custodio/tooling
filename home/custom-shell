@@ -22,7 +22,14 @@ export PATH=".:${HOME}/bin:${HOME}/bin/vendor:${HOME}/.nodes/bin:${HOME}/.yarn/b
 
 # Helper for absolute paths to real binaries.
 #
-function real { realpath "$( which "$@" )" ;}
+function real {
+  # We want a real binary, not a possible override function, so `which` is a must.
+  # shellcheck disable=SC2230
+  #
+  local binary="$( which "$@" )"
+
+  realpath "$binary"
+}
 
 
 # Explicitly set our language and sorting collation of choice.
@@ -136,12 +143,10 @@ export PGHOST='postgres'
     local remote="${1:-production}"
     local branch="$( gbranch --show-current )"
 
-    local prompt='Deploy branch "\e[33;1m%s\e[0m" to remote "\e[31;1m%s\e[0m"? (y/N) '
-    local confirmation='n'
-
     gremote 2> /dev/null | has-line? "$remote" || return 1
 
-    printf "$prompt" "$branch" "$remote"; read confirmation
+    local confirmation
+    printf 'Deploy branch "\e[33;1m%s\e[0m" to remote "\e[31;1m%s\e[0m"? (y/N) ' "$branch" "$remote"; read -r confirmation
     [ "$( tr '[:upper:]' '[:lower:]' <<< "$confirmation" )" == 'y' ] || return 2
 
     ding-if-slow gpush --force "$remote" "${branch}:main"
@@ -161,12 +166,8 @@ export PGHOST='postgres'
   # lazydocker
 
   function lazydocker {
-    which docker &> /dev/null || sudo apt install -qqy docker.io
-
-    # We don't want the function name back, so `which` is a must.
-    # shellcheck disable=SC2230
-    #
-    sudo "$( which lazydocker )" "$@"
+    command -v docker &> /dev/null || sudo apt install -qqy docker.io
+    sudo "$( real lazydocker )" "$@"
   }
 
 
@@ -178,19 +179,16 @@ export PGHOST='postgres'
   # ls
 
   function f {
-    # Note we're `eval`'ing this because we're building out the `--hide` params.
-    #
-    eval                                                                                       \
-    "$( real ls )" -ohH --color='auto'                                                         \
-                   $( sed -r -e 's|(.*)|--hide="\1"|' < ~/.hidden | tr "\n" ' ' )              \
-                   --group-directories-first --time-style='long-iso' --quoting-style='literal' \
-                   "$@"
+    # Use of `eval` here is required because we're building out the `--hide` params,
+    # and is why "$@" subsequently requires special handling.
+
+    arg_params="$( [ -n "$*" ] && printf '"%s" ' "$@" )"
+    hide_params="$( xargs --arg-file="${HOME}/.hidden" --replace printf '--hide="%s" ' "{}" 2> /dev/null )"
+    style_params="-ohH --color='auto' --group-directories-first --time-style='long-iso' --quoting-style='literal'"
+
+    eval "ls ${style_params} ${hide_params} ${arg_params}"
   }
-  function a {
-    "$( real ls )" -ohH --color='auto' --almost-all                                            \
-                   --group-directories-first --time-style='long-iso' --quoting-style='literal' \
-                   "$@"
-  }
+  function a { f --almost-all "$@" ;}
 
 
   # pgcli
@@ -228,9 +226,6 @@ export PGHOST='postgres'
       executables+=("${args[$i]}")
     done
 
-    # We don't want the function name back, so `which` is a must.
-    # shellcheck disable=SC2230
-    #
     "$( real shellcheck )" "${executables[@]}"
   }
 

@@ -8,12 +8,12 @@ data_file="$( basename "$0" ).json"
 source_home="$( dirname "$( realpath "$0" )" )"
 jq_executable="$( find "$source_home" -name jq -print -quit )"
 
-"$jq_executable" -r 'to_entries | map([.key, .value])[] | @tsv' < "${source_home}/${data_file}" | while read source_dir symlink_dir; do
+"$jq_executable" -r 'to_entries | map([.key, .value])[] | @tsv' < "${source_home}/${data_file}" | while read -r source_dir symlink_dir; do
 
 	source_dir="${source_home}/${source_dir}"
-	symlink_dir="${symlink_dir/\~/${HOME}}"
+	symlink_dir="${symlink_dir/'~'/"$HOME"}"
 
-	ls -1 -A "$source_dir" | while read item; do
+	ls -1 -A "$source_dir" | while read -r item; do
 
 		source_item="${source_dir}/${item}"
 		symlink_item="${symlink_dir}/${item}"
