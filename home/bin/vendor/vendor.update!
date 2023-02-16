@@ -153,9 +153,9 @@ case "$tool_name" in
 
 	# Items available as a DEB package.
 
-	(hostctl          ) update-deb-tooling               ;;
-	(gh               ) update-deb-tooling               ;;
-	(watchexec        ) update-deb-tooling --asset='gnu' ;;
+	(hostctl          ) update-deb-tooling                               ;;
+	(gh               ) update-deb-tooling                               ;;
+	(watchexec        ) update-deb-tooling --asset='gnu' --asset='^deb.' ;;
 
 
 	# Items requiring special handling.
