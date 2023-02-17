@@ -71,8 +71,9 @@ source '/home/nestor/bin/std.lib'
 
 		1)
 			input_file="$1" && shift
-			[ -e "$input_file" ] || error-out 2 'given FILE does not exist'
-			[ -r "$input_file" ] || error-out 2 'given FILE is not accessible'
+			[ -e "$input_file" ] || error-out 2 'FILE not found'
+			[ -f "$input_file" ] || error-out 2 'FILE is not a file'
+			[ -r "$input_file" ] || error-out 2 'FILE is not accessible'
 			;;
 
 		*)

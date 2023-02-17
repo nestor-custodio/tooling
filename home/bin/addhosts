@@ -6,7 +6,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) HOSTFILE_BASENAME
+		Usage: $( script-name ) HOSTFILE
 
 		Wrapper for 'hostctl' that imports via simple hostfile reference.
 
@@ -67,7 +67,8 @@ source '/home/nestor/bin/std.lib'
 hostfile_store="${HOME}/hostfiles"
 
 hostfile="${hostfile_store}/${hostfile_reference}"
-[ -e "$hostfile" ] || error-out 2 'hostfile not found'
-[ -r "$hostfile" ] || error-out 2 'hostfile not accessible'
+[ -e "$hostfile" ] || error-out 2 'HOSTFILE not found'
+[ -f "$hostfile" ] || error-out 2 'HOSTFILE is not a file'
+[ -r "$hostfile" ] || error-out 2 'HOSTFILE is not accessible'
 
 hostctl add "$( superbase "$hostfile" )" --from="$hostfile"
