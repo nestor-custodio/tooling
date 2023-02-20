@@ -218,9 +218,8 @@ export PGHOST='postgres'
       # Anything that begins with a '-' gets passed through unlatered.
 
       if [ "$( head -c1 <<< "${args[$i]}" )" != '-' ]; then
-        [ -d "${args[$i]}" ] && continue  # Skip directories.
-        [ -x "${args[$i]}" ] || continue  # Only keep executables.
-        head -n1 "${args[$i]}" | has? '#!' || continue  # Only keep shebang'ed files.
+        [ -f "${args[$i]}" ] || continue  # Only keep files.
+        [ -x "${args[$i]}" ] || starts-with? '#!' < "${args[$i]}" || continue  # Only keep script-likes.
       fi
 
       executables+=("${args[$i]}")
