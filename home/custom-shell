@@ -116,9 +116,7 @@ export PGHOST='postgres'
   function gcommit     { git commit                            "$@" ;}
   function gdiff       { git diff                              "$@" ;}
   function gfetch      { git fetch                             "$@" ;}
-  function ggraph      { git log --oneline --decorate --graph  "$@" ;}
   function ginit       { git init                              "$@" ;}
-  function glog        { git log                               "$@" ;}
   function gmerge      { git merge --no-ff                     "$@" ;}
   function gmove       { git mv                                "$@" ;}
   function gmv         { git mv                                "$@" ;}
@@ -138,6 +136,9 @@ export PGHOST='postgres'
   function gundelete   { git checkout HEAD                     "$@" ;}
   function gunstage    { git reset                             "$@" ;}
   function guntrack    { git rm -r --cached                    "$@" ;}
+
+  function glog        { git log --color='always' "$@" | bat ;}
+  function ggraph      { glog --oneline --decorate --graph "$@" ;}
 
   function gdeploy {
     local remote="${1:-production}"
