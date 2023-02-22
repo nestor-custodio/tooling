@@ -6,13 +6,17 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [WEBROOT]
+		Usage: $( script-name ) [WEBROOT] [ { --me | --safe } | { --all | --open } ]
 
-		Exposes the given WEBROOT ("./" by default) as an HTTPS service.
+		Exposes the given WEBROOT ("./" by default) as an HTTPS service. If neither
+		--me, --safe, --all, nor --open is given, the underlying 'https' proxy will
+		run as if --safe was given.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
+		  --me  | --safe            Used to drive the underlying 'https' proxy.
+		  --all | --open            Used to drive the underlying 'https' proxy.
 
 
 		Exit Status:
@@ -27,8 +31,15 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Options -- #
 
+	# Set defaults.
+
+	https_safety='safe'
+
+	# ---
+	# ---
+
 	CHAR_OPTS=''
-	LONG_OPTS='help'
+	LONG_OPTS='help,me,safe,all,open'
 
 	set-params
 	while true; do
@@ -36,6 +47,16 @@ source '/home/nestor/bin/std.lib'
 		case "$option" in
 			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
+
+
+			(--me|--safe)
+				https_safety='safe'
+				;;
+
+			(--all|--open)
+				https_safety='open'
+				;;
+
 		esac
 	done
 
@@ -92,7 +113,7 @@ echo
 qr "$webroot_url"
 
 
-https all "$port" &> /dev/null
+https "$https_safety" "$port" &> /dev/null
 static-web-server --root="$webroot" --port="$port" --compression='true' --directory-listing='true' --directory-listing-order='0'
 https stop
 echo
