@@ -54,11 +54,12 @@ source '/home/nestor/bin/std.lib'
 
 # Refresh the SSH_CONNECTION variable.
 #
-# NOTE: When a shell is loaded into a `tmux` pane, it is passed a correct,
-#       *current* SSH_CONNECTION value from `tmux`. If a disconnection and
-#       reconnect happens, however, the SS_CONNECTION value already loaded
-#       into the shell is not updated/refreshed. To do this, we ask `tmux`
-#       for its *current* value and update the local variable before use.
+# NOTE: When a shell is loaded into a `tmux` pane, its environment is
+#       given a correct, *currently valid* SSH_CONNECTION value. When
+#       the client connection is reset, however, running shells DON'T
+#       get an updated SSH_CONNECTION value. To refresh the value, we
+#       have to ask `tmux` for the current connection info ourselves,
+#       and then update the local environment variable before use.
 #
 #       Also note despite the "export" call below, this update does not
 #       actually bubble out to the calling shell, as this script is not

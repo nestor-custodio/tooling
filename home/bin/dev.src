@@ -108,12 +108,12 @@ shopt -s lastpipe
       # ---
 
       function bi {
-        nearest --quiet 'Gemfile.lock' 'Gemfile' || return
+        nearest --quiet 'Gemfile.lock' 'Gemfile' || return 0
         bundle install --jobs="$( nproc )"
       }
 
       function bi! {
-        nearest --quiet 'Gemfile.lock' 'Gemfile' || return
+        nearest --quiet 'Gemfile.lock' 'Gemfile' || return 0
 
         # Ensure specific ruby.
         #
@@ -299,12 +299,12 @@ shopt -s lastpipe
     # ---
 
     function yi {
-      nearest --quiet 'package.json' 'yarn.lock' || return
+      nearest --quiet 'package.json' 'yarn.lock' || return 0
       yarn install 2> /dev/null
     }
 
     function yi! {
-      nearest --quiet 'package.json' 'yarn.lock' || return
+      nearest --quiet 'package.json' 'yarn.lock' || return 0
 
       # Ensure node.
       #
@@ -335,7 +335,7 @@ shopt -s lastpipe
 
   function set-env {
     local env_name="$1" && shift
-    [ -n "$env_name" ] || return
+    [ -n "$env_name" ] || return 1
 
     export RUBY_ENV="$env_name"
     export RAILS_ENV="$env_name"
