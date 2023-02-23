@@ -12,11 +12,7 @@ source "$( dirname "$0" )/status_helpers"
 df --type=ext4 --human-readable --output=pcent,size --total | tail -n1 \
 | sed -r -e 's|^ *([0-9]+)% +([^ ]+).*$|\1 \2|' | read -r -d '' percent_used total_space
 
-
 ### (( "$( calc "${percent_used} >= 70.0" )" )) && SET ALERT
 
 
-# ---
-# ---
-
-left_piped " 💿 %i%%%% of %s" "$percent_used" "$total_space"
+left_piped " 📦 %i%%%% of %s" "$percent_used" "$total_space"

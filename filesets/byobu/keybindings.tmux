@@ -18,21 +18,13 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 
 
 
-## Set Escape
-
-	## Alt-Space -> enter tmux command for *this* system.
-	set -g prefix M-Space
-
-	## Alt-Ctrl-Space -> enter tmux command for *remote* system.
-	bind-key M-C-Space send-prefix
-
-
-
-
 ## Non-Session/Window/Pane Commands
 
+	## Allow arbitrary shell command execution.
+	bind-key -n M-Space command-prompt -p "#[bold] (shell command)" "run-shell 'blindly %%'"
+	
 	## Allow in-context tmux command execution.
-	bind-key -n M-x command-prompt -p "(tmux command) " "%%"
+	bind-key -n M-x command-prompt -p "#[bold] (tmux command)" "%%"
 
 	## Reload Profile.
 	bind-key -n M-` source $BYOBU_PREFIX/share/byobu/profiles/tmuxrc
@@ -47,8 +39,8 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
   bind-key -n M-,      switch-client -p
   bind-key -n M-.      switch-client -n
 
-  bind-key -n M-C-d    confirm-before -p "Detach From Session?" detach
-  bind-key -n M-C-q    confirm-before -p "Close All Windows In Session?" kill-session
+  bind-key -n M-C-d    confirm-before -p "#[bold] Detach From Session?" detach
+  bind-key -n M-C-q    confirm-before -p "#[bold] Close All Windows In Session?" kill-session
 
 
 
@@ -64,8 +56,8 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
   bind-key -n M-C-u    swap-window -t -1 \; select-window -t -1
   bind-key -n M-C-o    swap-window -t +1 \; select-window -t +1
 
-  bind-key -n M-C-r    command-prompt -p "(rename-window) " "rename-window '%%'"
-  bind-key -n M-C-\\   confirm-before -p "Close Window (And All Panes)?" kill-window
+  bind-key -n M-C-r    command-prompt -p "#[bold] (rename-window)" "rename-window '%%'"
+  bind-key -n M-C-\\   confirm-before -p "#[bold] Close Window (And All Panes)?" kill-window
 
 
 
@@ -74,7 +66,7 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 
   bind-key -n M-]      split-window -h -c "#{pane_current_path}"
   bind-key -n M-[      split-window -v -c "#{pane_current_path}"
-  bind-key -n M-p      confirm-before -p "Pop Out This Pane (Into Its Own Window)?" break-pane
+  bind-key -n M-p      confirm-before -p "#[bold] Pop Out This Pane (Into Its Own Window)?" break-pane
 
   bind-key -n M--      select-pane -M
   bind-key -n M-=      select-pane -m
@@ -94,7 +86,7 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
   bind-key -n M-z      resize-pane -Z
   bind-key -n M-a      set -w synchronize-panes
 
-  bind-key -n M-r      command-prompt -p "(rename-pane) " "select-pane -T '%%'"
+  bind-key -n M-r      command-prompt -p "#[bold] (rename-pane)" "select-pane -T '%%'"
   bind-key -n M-\'     kill-pane
 
 

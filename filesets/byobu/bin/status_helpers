@@ -9,8 +9,8 @@
 # ---
 # ---
 
-unpiped() { echo -e "#[default]$( printf "$@" )#[default]"; }
+unpiped() { echo -e "#[default]$( printf "$@" )#[default]" ;}
 
-left_piped()  { echo -e "#[default]❘$( printf "$@" )#[default]"; }
-right_piped() { echo -e "#[default]$( printf "$@" )|#[default]"; }
-double_piped() { echo -e "#[default]|$( printf "$@" )|#[default]"; }
+left_piped()  { echo -e "#[default]❘$( printf "$@" )#[default]" ;}
+right_piped() { echo -e "#[default]$( printf "$@" )|#[default]" ;}
+double_piped() { echo -e "#[default]|$( printf "$@" )|#[default]" ;}

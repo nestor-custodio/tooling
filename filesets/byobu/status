@@ -60,7 +60,7 @@
 #   - brightyellow    - brightblue     - brightmagenta
 #   - brightcyan      - brightwhite    - (24-bit hex, as "#abcdef")
 #
-# - Availabler non-color attributes are:
+# - Available non-color attributes are:
 #   - dim         - underscore    - bold      - reverse
 #   - standout    - blink         - hidden    - italics
 #   - default

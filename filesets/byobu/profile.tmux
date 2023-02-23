@@ -1,6 +1,9 @@
 source $BYOBU_PREFIX/share/byobu/profiles/tmux
 
 
+## Set default editor.
+set -g editor hx
+
 ## Enable mouse support.
 set -g mouse on
 
