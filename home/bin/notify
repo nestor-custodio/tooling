@@ -91,5 +91,5 @@ case "$channel" in
 		| json '.status' | has-line? 1 &> /dev/null
 		;;
 
-	*) error-out 2 "unknown CHANNEL (${channel})" ;;
+	*) error-out 2 "unknown CHANNEL: '${channel}'" ;;
 esac

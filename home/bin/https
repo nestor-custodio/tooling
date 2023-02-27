@@ -144,7 +144,7 @@ case "$command" in
 		;;
 
 	*)
-		error-out 1 "unknown command \"${command}\""
+		error-out 1 "unknown command: '${command}'"
 		;;
 
 esac
