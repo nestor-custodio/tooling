@@ -27,8 +27,6 @@
 #
 /.aws/
 /.bundle/
-/.cache/
-/.drive/
 /.gdfuse/
 /.gem/
 /.nodes/
