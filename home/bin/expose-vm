@@ -6,9 +6,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name )
+		Usage: $( script-name ) [INSTANCE_NAME]
 
-		Publishes a DNS 'A' record for this compute instance.
+		Publishes a DNS 'A' record for the given compute instance (or localhost
+		if no INSTANCE_NAME is given).
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -17,7 +18,9 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid option.
+		  1  if invalid option,
+		  2  if invalid INSTANCE_NAME,
+		  3  if unable to determine WAN IP.
 	EOF
 
 }
@@ -42,7 +45,21 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	case "$#" in
+
+		0)
+			instance name | store-as instance_name
+			;;
+
+		1)
+			instance_name="$1" && shift
+			;;
+
+		*)
+			error-out 1 'invalid option(s)'
+			;;
+
+	esac
 
 }
 
@@ -50,4 +67,18 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-dns set "$( wan-ip )"
+declare -A filters
+filters[running]="(status:'running')"
+filters[by_name]="(name:'${instance_name}')"
+
+wan_ip_selector='.[].networkInterfaces[].accessConfigs[].natIP // ""'
+
+gcloud compute instances list --filter="${filters[running]} AND ${filters[by_name]}" --format='json' | store-as instance_data
+[ "$instance_data" != '[]' ] || error-out 2 "invalid INSTANCE_NAME: '${instance_name}'"
+
+
+jq -r "$wan_ip_selector" <<< "$instance_data" | head -n1 | store-as instance_wan_ip
+[ -n "$instance_wan_ip" ] || error-out 3 'unable to determine WAN IP'
+
+
+dns set "$instance_wan_ip" --name="${instance_name}"
