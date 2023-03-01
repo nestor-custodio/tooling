@@ -123,15 +123,8 @@ shopt -s lastpipe expand_aliases
 		# This param preprocessing code expects that both
 		# CHAR_OPTS and LONG_OPTS have already been set, per the above.
 
-		# Guard against incompatible `getopt`.
-		getopt --test > /dev/null; [ "$?" == 4 ] || error-out "incompatible tooling"
-
-		# Parse and prep options and params for processing.
 		PARSED="$( getopt -o "$CHAR_OPTS" -l "$LONG_OPTS" -- "$@" 2> /dev/null )" || error-out "invalid option(s)"
 		eval set -- "$PARSED"
-
-
-		true
 
 	}'
 
