@@ -219,13 +219,7 @@ source '/home/nestor/bin/std.lib'
 			instance_name="$1" && shift
 
 
-			gcloud compute instances resume "$instance_name"
-
-			gcloud compute instances list --filter="(name:'${instance_name}')" --format='yaml'       \
-			| yaml '.networkInterfaces[].accessConfigs[] | select(.name == "external-nat") | .natIP' \
-			| store-as instance_ip
-
-			[ -n "$instance_ip" ] && dns set "$instance_ip" --for="$instance_name"
+			gcloud compute instances resume "$instance_name" && expose-vm "$instance_name"
 			;;
 
 		# ---
