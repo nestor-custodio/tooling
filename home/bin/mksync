@@ -107,7 +107,7 @@ startup_script_file="$( script-real ):init"
 gcloud compute instances create 'sync'                                 \
        --project="$vm_project" --zone="$vm_zone"                       \
                                                                        \
-       --machine-type=e2-micro                                         \
+       --machine-type=e2-medium                                        \
        --boot-disk-type=pd-standard --boot-disk-size=10GB              \
        --image-project="$image_project" --image-family="$image_family" \
                                                                        \
