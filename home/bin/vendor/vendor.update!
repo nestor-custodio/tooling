@@ -9,9 +9,12 @@ source '/home/nestor/bin/std.lib'
 		Usage: $( script-name ) TOOL_NAME
 
 		Makes a best-effort attempt to update the corresponding binary.
+		If the TOOL_NAME is "all", all vendor tooling will be updated as needed.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
+		  --checks-only             Only run the version checks; no downloads.
+		                            Valid only when TOOL_NAME is "all".
 		  --help                    Show this help text.
 
 
@@ -39,7 +42,7 @@ source '/home/nestor/bin/std.lib'
 	function executable {
 		[ -n "$_executable" ] && echo "$_executable" && return
 	
-		echo "${HOME}/bin/vendor/${tool_name}" | store-as _executable
+		store-as _executable <<< "${HOME}/bin/vendor/${tool_name}"
 		echo "$_executable"
 	}
 
@@ -96,8 +99,15 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Options -- #
 
+	# Set defaults.
+
+	checks_only=''
+
+	# ---
+	# ---
+
 	CHAR_OPTS=''
-	LONG_OPTS='help'
+	LONG_OPTS='help,checks,checks-only'
 
 	set-params
 	while true; do
@@ -105,6 +115,10 @@ source '/home/nestor/bin/std.lib'
 		case "$option" in
 			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
+
+			(--checks|--checks-only)
+				checks_only='1'
+				;;
 		esac
 	done
 
@@ -125,6 +139,21 @@ source '/home/nestor/bin/std.lib'
 
 
 case "$tool_name" in
+
+
+	# The "update all" case.
+
+	(all)
+		ls -1 --literal "${HOME}/bin/vendor"/*.repo | while read -r repo_file; do
+			superbase "$repo_file" | store-as tool_name
+
+			vendor.latest? "$tool_name" | store-as update_report
+			[ -z "$update_report" ] && continue
+
+			echo "${tool_name}: ${update_report}"
+			[ -z "$checks_only" ] && vendor.update! "$tool_name"
+		done
+		;;
 
 
 	# Straight-forward `eget` pulls.
