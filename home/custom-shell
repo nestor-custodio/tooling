@@ -42,7 +42,7 @@ export LC_COLLATE=en_US.UTF-8
 #
 export EDITOR="$( real hx )"
 function helix { "$EDITOR" "$@" ;}
-function ,     { "$EDITOR" "$@" ;}
+function ::    { "$EDITOR" "$@" ;}
 
 
 # Postgres should connect to host "postgres" by default.
@@ -288,7 +288,7 @@ dev_helpers="${HOME}/bin/dev.src"
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f ... .... ..... ,                                                          \
+export -f ... .... ..... ::                                                         \
           a break-out-of-links f g gadd gblame gbranch gcheckout gcherrypick gclone \
           gcommit gconfig gdeploy gdiff gfetch ggraph ginit glog gmerge gmove gmv   \
           gpatch gpop gpull gpush grebase gremote grep greset gstage gstash gstatus \
