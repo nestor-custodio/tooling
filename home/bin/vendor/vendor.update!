@@ -184,6 +184,7 @@ case "$tool_name" in
 
 	(hostctl          ) update-deb-tooling                               ;;
 	(gh               ) update-deb-tooling                               ;;
+	(portal           ) update-deb-tooling --asset='.deb'                ;;
 	(watchexec        ) update-deb-tooling --asset='gnu' --asset='^deb.' ;;
 
 
