@@ -31,6 +31,13 @@ hidden = false
 
 
 
+[editor.lsp]
+
+display-messages = true
+
+
+
+
 [editor.statusline]
 
 left   = ["spinner", "spacer", "mode", "spacer", "file-name"]
@@ -112,6 +119,8 @@ newline = "↲"
 "C-S-down"  = "hsplit_new"
 "C-S-right" = "vsplit_new"
 
+"D"         = "hover"
+
 
 # File Operations
 
@@ -142,6 +151,10 @@ newline = "↲"
 "/"       = "search"
 "E"       = "goto_prev_diag"
 "e"       = "goto_next_diag"
+
+"C-j"     = "save_selection"
+"C-u"     = "jump_backward"
+"C-o"     = "jump_forward"
 
 
 # Tab/Pane Management
@@ -188,7 +201,7 @@ newline = "↲"
   "y"         = "redo"
 
   "C-k"       = ["extend_to_line_bounds", "delete_selection_noyank"]
-  "D"         = ["extend_to_line_bounds", "yank", "paste_after", "collapse_selection"]
+  "C-d"       = ["extend_to_line_bounds", "yank", "paste_after", "collapse_selection"]
 
   "d"         = "delete_selection_noyank"
   "del"       = "delete_selection_noyank"
