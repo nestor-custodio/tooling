@@ -32,10 +32,16 @@ function real {
 }
 
 
+# Though the system only supports 256 color,
+# setting COLORTERM gives faster text rendering.
+#
+export COLORTERM='truecolor'
+
+
 # Explicitly set our language and sorting collation of choice.
 #
-export LANG=en_US.UTF-8
-export LC_COLLATE=en_US.UTF-8
+export LANG='en_US.UTF-8'
+export LC_COLLATE='en_US.UTF-8'
 
 
 # Explicitly set our $EDITOR of choice.
