@@ -6,17 +6,17 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [YAML_STRING] SELECTOR
+		Usage: $( script-name ) [TOML_STRING] SELECTOR
 
-		Runs a jq query for SELECTOR against the given YAML_STRING (or STDIN).
+		Runs a jq query for SELECTOR against the given TOML_STRING (or STDIN).
 		Strings are outputed "raw" (no quotes). If the given query yields a null
 		or false, the output is an empty string.
 
-		If neither a YAML_STRING nor a SELECTOR is given, input is assumed to be
+		If neither a TOML_STRING nor a SELECTOR is given, input is assumed to be
 		STDIN and the SELECTOR is assumed to be ".". This means the no-param use
-		makes this a filter that pretty-prints the YAML given via STDIN as JSON.
+		makes this a filter that pretty-prints the TOML given via STDIN as JSON.
 
-		NOTE: *yq* is used only for YAML parsing; the selector runs against *jq*.
+		NOTE: *yq* is used only for TOML parsing; the selector runs against *jq*.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -80,6 +80,6 @@ source '/home/nestor/bin/std.lib'
 
 
 if [ -n "$input" ]
-	then yq eval - --input-format='yaml' --output-format='json' <<< "$input" | json "$selector"
-	else yq eval - --input-format='yaml' --output-format='json' < /dev/stdin | json "$selector"
+	then yq eval - --input-format='toml' --output-format='json' <<< "$input" | json "$selector"
+	else yq eval - --input-format='toml' --output-format='json' < /dev/stdin | json "$selector"
 fi
