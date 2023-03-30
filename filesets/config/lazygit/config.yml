@@ -128,7 +128,7 @@ keybinding:
     prevMatch: 'N'
     optionMenu: '?'
     select: '<enter>'
-    goInto: '>'
+    goInto: '<space>'
     remove: 'd'
     new: 'n'
     edit: 'o'
