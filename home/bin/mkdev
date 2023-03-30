@@ -223,9 +223,9 @@ source '/home/nestor/bin/std.lib'
 [ "$instance_name" == "$( vm-name )" ] && error-out 1 'invalid INSTANCE_NAME given'
 
 
-# --dev and --repo are mutually exclusive.
+# Sanity check: --dev and --repo are mutually exclusive.
 #
-[ -n "$dev_dir" ] && [ -n "$git_repo" ] && error-out 1 '--dev and --repo are mutually exclusive'
+[ -n "$dev_dir" ] && [ -n "$git_repo" ] && error-out 1 'cannot specify both --dev and --repo'
 
 
 # ---
