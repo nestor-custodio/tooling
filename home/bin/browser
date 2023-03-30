@@ -1,0 +1,112 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) URL
+
+		Finds a running 'links' instance and replaces it with a new instance,
+		loading the given URL.
+		
+		When no running instance is found, one is spawned within a new window.
+		When multiple instances are found, the *newest* one is used by default.
+		
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+			--new                     Force creation of a new browsing instance.
+			--newest                  Replace the *newest* running 'links' instance.
+			--oldest                  Replace the *oldest* running 'links' instance.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	target='newest'
+
+	# ---
+	# ---
+
+	CHAR_OPTS=''
+	LONG_OPTS='help,new,newest,oldest'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--new)
+				target='new'
+				;;
+
+			(--newest)
+				target='newest'
+				;;
+
+			(--oldest)
+				target='oldest'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	url="$1" && shift
+	[ -n "$url" ] || error-out 1 'no URL given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+# Compile a list of panes with running 'links' instances.
+#
+tmux list-panes -a -F '#{pane_id} #{pane_current_command}' | grep -P '^[^ ]*(?= +links$)' --only-matching | store-as pane_ids
+
+# Force --new if no existing instances exist.
+#
+[ -z "$pane_ids" ] && target='new'
+
+
+case "$target" in
+
+	(new)
+		tmux new-window -- links "$url"
+		;;
+
+	(newest)
+		tail -n1 <<< "$pane_ids" | store-as pane_id
+		tmux respawn-pane -k -t "$pane_id" -- links "$url"
+		tmux select-window -t "$pane_id"
+		;;
+
+	(oldest)
+		head -n1 <<< "$pane_ids" | store-as pane_id
+		tmux respawn-pane -k -t "$pane_id" -- links "$url"
+		tmux select-window -t "$pane_id"
+		;;
+
+esac

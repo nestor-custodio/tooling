@@ -51,6 +51,11 @@ function helix { "$EDITOR" "$@" ;}
 function ::    { "$EDITOR" "$@" ;}
 
 
+# Surface web content via our own `browser` helper.
+#
+export BROWSER="${HOME}/bin/browser"
+
+
 # Postgres should connect to host "postgres" by default.
 # (https://www.postgresql.org/docs/current/libpq-envars.html)
 #

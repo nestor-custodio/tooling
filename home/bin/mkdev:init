@@ -98,6 +98,7 @@ startup_log='/var/log/startup'
 			                     byobu           \
 			                     curl            \
 			                     git             \
+			                     links           \
 			                     nfs-common      \
 			                     qrencode        \
 			                     tree            \
