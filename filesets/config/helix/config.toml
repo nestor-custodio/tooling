@@ -13,42 +13,13 @@ theme = "custom"
 
 [editor]
 
+auto-format = false
 auto-pairs  = false
+bufferline  = "multiple"
 color-modes = true
 cursorline  = true
-gutters     = ["line-numbers", "spacer", "diff", "diagnostics"]
 mouse       = true
 scrolloff   = 5
-true-color  = true
-
-
-
-
-[editor.file-picker]
-
-hidden = false
-
-
-
-
-[editor.lsp]
-
-display-messages = true
-
-
-
-
-[editor.statusline]
-
-left   = ["spinner", "spacer", "mode", "spacer", "file-name"]
-center = []
-right  = ["diagnostics", "position", "file-type", "spacer"]
-
-mode.normal = "NORMAL"
-mode.insert = "INSERT"
-mode.select = "SELECT"
-
-
 
 
 [editor.cursor-shape]
@@ -58,6 +29,9 @@ insert = "block"
 select = "block"
 
 
+[editor.file-picker]
+
+hidden = false
 
 
 [editor.indent-guides]
@@ -66,11 +40,27 @@ render    = true
 character = "│"
 
 
+[editor.lsp]
+
+display-messages = true
+snippets         = false
+
+
+[editor.statusline]
+
+left   = ["spinner", "spacer", "mode", "spacer", "file-name", "file-modification-indicator"]
+center = []
+right  = ["diagnostics", "spacer", "position", "spacer", "position-percentage", "spacer", "file-type", "spacer"]
+
+mode.normal = "NORMAL"
+mode.insert = "INSERT"
+mode.select = "SELECT"
 
 
 [editor.whitespace.render]
 
 space   = "all"
+nbsp    = "all"
 tab     = "all"
 newline = "none"
 
@@ -78,6 +68,7 @@ newline = "none"
 [editor.whitespace.characters]
 
 space   = "⸱"
+nbsp    = "_"
 newline = "↲"
 
 
@@ -95,7 +86,6 @@ newline = "↲"
 # Unused And Problematic
 
 "f" = "no_op"
-"p" = "no_op"
 "s" = "no_op"
 "." = "no_op"
 "<" = "no_op"
