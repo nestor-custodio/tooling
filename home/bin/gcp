@@ -61,14 +61,14 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Utility Functions -- #
 
-	function is_localhost {
+	function is-localhost {
 		local instance_name="$1" && shift
 		[ -n "$instance_name" ] || error-out 3 'no instance name given'
 
 		[ "$instance_name" == "$( vm-name )" ]
 	}
 
-	function instance_state {
+	function instance-state {
 		local instance_name="$1" && shift
 		[ -n "$instance_name" ] || error-out 3 'no instance name given'
 
@@ -77,8 +77,8 @@ source '/home/nestor/bin/std.lib'
 
 	# ---
 
-	function instance_is_running { [ "$( instance_state "$@" )" == "RUNNING"    ] ;}
-	function instance_is_stopped { [ "$( instance_state "$@" )" == "TERMINATED" ] ;}
+	function instance-is-running { [ "$( instance-state "$@" )" == "RUNNING"    ] ;}
+	function instance-is-stopped { [ "$( instance-state "$@" )" == "TERMINATED" ] ;}
 
 }
 
@@ -159,7 +159,7 @@ source '/home/nestor/bin/std.lib'
 
 				# Check for current-instance request.
 				#
-				is_localhost "$instance_name" && error-out 2 'cannot remote into localhost'
+				is-localhost "$instance_name" && error-out 2 'cannot remote into localhost'
 
 
 			gcloud compute ssh "$instance_name"
@@ -238,11 +238,11 @@ source '/home/nestor/bin/std.lib'
 
 				# Check for current-instance request.
 				#
-				is_localhost "$old_instance_name" && error-out 2 'cannot rename localhost'
+				is-localhost "$old_instance_name" && error-out 2 'cannot rename localhost'
 
 				# Check that instance in question is currently *stopped*.
 				#
-				instance_is_stopped "$old_instance_name" || error-out 2 'cannot rename a running instance'
+				instance-is-stopped "$old_instance_name" || error-out 2 'cannot rename a running instance'
 
 
 			gcloud beta compute instances set-name "$old_instance_name" --new-name="$new_instance_name" \
@@ -270,11 +270,11 @@ source '/home/nestor/bin/std.lib'
 
 				# Check for current-instance request.
 				#
-				is_localhost "$instance_name" && error-out 2 'cannot set scaling for localhost'
+				is-localhost "$instance_name" && error-out 2 'cannot set scaling for localhost'
 
 				# Check that instance in question is currently *stopped*.
 				#
-				instance_is_stopped "$instance_name" || error-out 2 'cannot set scaling on a running instance'
+				instance-is-stopped "$instance_name" || error-out 2 'cannot set scaling on a running instance'
 
 
 			gcloud compute instances set-machine-type "$instance_name" --machine-type="$machine_type"

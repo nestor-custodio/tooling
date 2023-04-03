@@ -84,7 +84,7 @@ source '/home/nestor/bin/std.lib'
 
 	image_project='ubuntu-os-cloud'
 
-	function os_releases {
+	function os-releases {
 		local filter='(licenses[] ~ "/'"${image_project}"'/") AND (family !~ "minimal|arm64")'
 		gcloud compute images list --filter="$filter" --format='value(family)' | sort
 	}
@@ -195,7 +195,7 @@ source '/home/nestor/bin/std.lib'
 				;;
 
 			(--list-os-releases|--list-os-images|--list-releases|--list-images|--releases|--images)
-				os_releases | sed -r -e 's|^ubuntu-||' -e 's|-lts$| (lts)|' -e 's|-.*$||'
+				os-releases | sed -r -e 's|^ubuntu-||' -e 's|-lts$| (lts)|' -e 's|-.*$||'
 				exit-out
 				;;
 
@@ -251,16 +251,16 @@ gcp destroy "$instance_name" &> /dev/null
 #
 case "$os_release" in
 	latest)
-		os_releases | tail -n1 | store-as image_family
+		os-releases | tail -n1 | store-as image_family
 		;;
 
 	lts)
-	  os_releases | fgrep 'lts' | tail -n1 | store-as image_family
+	  os-releases | fgrep 'lts' | tail -n1 | store-as image_family
 		;;
 
 	*)
 		matches-line? '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
-		os_releases | fgrep "${os_release//./}" | tail -n1 | store-as image_family
+		os-releases | fgrep "${os_release//./}" | tail -n1 | store-as image_family
 		;;
 esac
 [ -n "$image_family" ] || error-out 1 'requested os release not found'

@@ -78,24 +78,24 @@ source '/home/nestor/bin/std.lib'
 
 	{ # -- Lookup Helpers -- #
 
-		function dns_lookup {
+		function dns-lookup {
 			local domain_name="$1" && shift
 			echo "(name:'${domain_name}') AND (type:'A')"
 		}
 
-		function dns_record {
+		function dns-record {
 			local domain_name="$1" && shift
-			gcloud dns record-sets list --zone="$dns_zone" --filter="$( dns_lookup "$domain_name" )"  --format='json' | json '.[0]'
+			gcloud dns record-sets list --zone="$dns_zone" --filter="$( dns-lookup "$domain_name" )"  --format='json' | json '.[0]'
 		}
 
 	}
 
 	{ # -- Transaction Helpers -- #
 
-		function dns_transaction { gcloud --format='none' --verbosity='error' dns record-sets transaction "$@" --zone="$dns_zone" &> /dev/null ;}
+		function dns-transaction { gcloud --format='none' --verbosity='error' dns record-sets transaction "$@" --zone="$dns_zone" &> /dev/null ;}
 
-		function catch_transaction_errors { set -e && trap 'dns_transaction abort ; error-out 3 "transaction error"' ERR ;}
-		function ignore_transaction_errors { trap - ERR && set +e ;}
+		function catch-transaction-errors { set -e && trap 'dns-transaction abort ; error-out 3 "transaction error"' ERR ;}
+		function ignore-transaction-errors { trap - ERR && set +e ;}
 
 	}
 
@@ -112,7 +112,7 @@ source '/home/nestor/bin/std.lib'
 			[ "$#" == 0 ] || error-out 1 'too many parameters'
 
 
-			record="$( dns_record "$domain_name" )"
+			record="$( dns-record "$domain_name" )"
 			[ -n "$record" ] || error-out 2 'no DNS record found'
 
 			case "$response_type" in
@@ -132,7 +132,7 @@ source '/home/nestor/bin/std.lib'
 			new_ttl='60'
 
 
-			old_record="$( dns_record "$domain_name" )"
+			old_record="$( dns-record "$domain_name" )"
 			if [ -n "$old_record" ]; then
 				json "$old_record" '.rrdatas[0]' | store-as old_ip
 				json "$old_record" '.ttl'        | store-as old_ttl
@@ -143,15 +143,15 @@ source '/home/nestor/bin/std.lib'
 			fi
 
 
-			if (dns_transaction start); then
-				catch_transaction_errors
+			if (dns-transaction start); then
+				catch-transaction-errors
 
-					[ -n "$old_record" ] && dns_transaction remove  --name="$domain_name" --type='A' --ttl="$old_ttl" "$old_ip"
+					[ -n "$old_record" ] && dns-transaction remove  --name="$domain_name" --type='A' --ttl="$old_ttl" "$old_ip"
 
-					                        dns_transaction add     --name="$domain_name" --type='A' --ttl="$new_ttl" "$new_ip"
-					                        dns_transaction execute
+					                        dns-transaction add     --name="$domain_name" --type='A' --ttl="$new_ttl" "$new_ip"
+					                        dns-transaction execute
 
-				ignore_transaction_errors
+				ignore-transaction-errors
 			else
 				error-out 3 'transaction error'
 			fi
@@ -163,20 +163,20 @@ source '/home/nestor/bin/std.lib'
 			[ "$#" == 0 ] || error-out 1 'too many parameters'
 
 
-			record="$( dns_record "$domain_name" )"
+			record="$( dns-record "$domain_name" )"
 			[ -n "$record" ] || error-out 2 'no DNS record found'
 
 			json "$record" '.rrdatas[0]' | store-as record_ip
 			json "$record" '.ttl'        | store-as record_ttl
 
 
-			if (dns_transaction start); then
-				catch_transaction_errors
+			if (dns-transaction start); then
+				catch-transaction-errors
 
-					dns_transaction remove  --name="$domain_name" --type='A' --ttl="$record_ttl" "$record_ip"
-					dns_transaction execute
+					dns-transaction remove  --name="$domain_name" --type='A' --ttl="$record_ttl" "$record_ip"
+					dns-transaction execute
 
-				ignore_transaction_errors
+				ignore-transaction-errors
 			else
 				error-out 3 'transaction error'
 			fi
