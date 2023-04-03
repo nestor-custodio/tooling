@@ -47,8 +47,8 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 
 ## Window Management
 
-  bind-key -n M-C-n    new-window -c "#{pane_current_path}" \; rename-window "-"
-  bind-key -n M-n      new-window -c "#{pane_current_path}" \; rename-window "-"
+  bind-key -n M-C-n    new-window -c "#{pane_current_path}" \; rename-window "" \; select-pane -T ""
+  bind-key -n M-n      new-window -c "#{pane_current_path}" \; rename-window "" \; select-pane -T ""
 
   bind-key -n M-u      previous-window
   bind-key -n M-o      next-window
@@ -64,8 +64,8 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 
 ## Pane Management/Navigation
 
-  bind-key -n M-]      split-window -h -c "#{pane_current_path}"
-  bind-key -n M-[      split-window -v -c "#{pane_current_path}"
+  bind-key -n M-]      split-window -h -c "#{pane_current_path}" \; select-pane -T ""
+  bind-key -n M-[      split-window -v -c "#{pane_current_path}" \; select-pane -T ""
   bind-key -n M-p      confirm-before -p "#[bold] Pop Out This Pane (Into Its Own Window)?" break-pane
 
   bind-key -n M--      select-pane -M

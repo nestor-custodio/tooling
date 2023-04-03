@@ -88,7 +88,7 @@ screen_lower_right="color network custom raid reboot_required updates_available 
 # NOTE: for greater control over formatting, we're manipulating the tmux status bar text ourselves via the profile config.
 #
 tmux_left=""
-tmux_right=" custom"
+tmux_right="custom"
 
 
 # You can have as many tmux right lines as you want, and cycle through them using Shift-F5 (assuming the default keybindings).
