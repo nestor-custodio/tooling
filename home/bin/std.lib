@@ -35,6 +35,16 @@ shopt -s lastpipe expand_aliases
 
 # ---
 
+{ # -- Print Helpers -- #
+
+	function backspace { seq "${1:-1}" | xargs -I {} printf '\b \b' ;}
+
+	function clear-line { printf '\e[2K\e[1G' ;}
+
+}
+
+# --
+
 { # -- Error Helpers -- #
 
 	function exit-out {
