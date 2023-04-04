@@ -95,6 +95,8 @@ case "$target" in
 
 	(new)
 		tmux new-window -- links "$url"
+		tmux rename-window 'browser'
+		tmux select-pane -T ''
 		;;
 
 	(newest)
