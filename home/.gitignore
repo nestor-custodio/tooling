@@ -1,16 +1,20 @@
 # Rules for global usage across all repos.
 
 **/:*
-**/*.local
 **/node_modules/
+
+# Allow local overrides.
+#
+**/*.local
+**/*.local.*
 
 # NFS temp storage creates ".nfs[0-9]+" files.
 #
 **/.nfs*
 
-# Allow Ruby/Rails overrides.
+# Never navigate into S3 mounts.
 #
-**/*.local.rb
+**/s3/
 
 # We don't care about old Rails migrations.
 #

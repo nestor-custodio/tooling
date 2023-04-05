@@ -26,5 +26,5 @@
 
 --ignored-suffix='.local'
 --tabs=2
---theme='Monokai Extended Bright'
+--theme='Monokai Extended'
 --style='numbers,changes,rule,snip'
