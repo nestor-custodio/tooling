@@ -116,7 +116,8 @@ startup_log='/var/log/startup'
 		report 'setting up FS Cache for NFS use'
 
 			apt-get -qqy install cachefilesd
-			sed -ri -e 's|^.*RUN=.*$|RUN=yes|' /etc/default/cachefilesd
+			sed -ri -e 's|^ *#+ *RUN=.*$|RUN=yes|' /etc/default/cachefilesd
+			sed -ri -e 's|^ *#+ *STARTTIME=|STARTTIME=|' /etc/init.d/cachefilesd
 			service cachefilesd --full-restart
 
 
