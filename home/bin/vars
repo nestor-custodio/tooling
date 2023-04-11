@@ -1,0 +1,107 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [REGEX]
+
+		Lists *real* environment variables, optionally restricting the list to
+		items whose name or contents match the given REGEX.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+		  --names                   List only variable names.
+		                            (Note this affects how REGEX is used.)
+		  -0 | -z | --null          End each output line with NUL, not newline.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	names_only=''
+	null_separator=''
+
+	declare -A sed_scripts
+	sed_scripts[names_only]=''
+
+	var_separator_esc='\n'
+	interim_separator_esc='\xA0'
+	interim_separator_char="$( printf "$interim_separator_esc" )"
+
+	# ---
+	# ---
+
+	CHAR_OPTS='0z'
+	LONG_OPTS='help,name,names,null'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--name|--names)
+				names_only='1'
+				sed_scripts[names_only]='s|=.*'"$interim_separator_esc"'|'"$interim_separator_esc"'|g'
+				;;
+
+			(-0|-z|--null)
+				null_separator='1'
+				var_separator_esc='\x00'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	lookup_regex="$1" && shift
+	# We're purposefully not checking this value.
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+function filter_to_regex_param {
+	if [ -z "$lookup_regex" ]
+		then cat
+		else grep -Pi $( [ -n "$null_separator" ] && echo '-z' ) "$lookup_regex"
+	fi
+} # function filter_to_regex
+
+# ---
+# ---
+
+sed_scripts[separate_vars]='s|'"$interim_separator_esc"'?declare (-[^ ]+ )*|'"$var_separator_esc"'|g'
+sed_scripts[drop_leading_separator]='s|^'"$var_separator_esc"'||'
+sed_scripts[restore_internal_newlines]='s|'"$interim_separator_esc"'|\n|g'
+
+
+export -p | tr '\n' "$interim_separator_char"           \
+| sed -r -e "${sed_scripts[names_only]}"                \
+         -e "${sed_scripts[separate_vars]}"             \
+         -e "${sed_scripts[drop_leading_separator]}"    \
+         -e "${sed_scripts[restore_internal_newlines]}" \
+| filter_to_regex_param
