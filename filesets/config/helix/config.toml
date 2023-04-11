@@ -48,7 +48,7 @@ snippets         = false
 
 [editor.statusline]
 
-left   = ["spinner", "spacer", "mode", "spacer", "file-name", "file-modification-indicator"]
+left   = ["spinner", "spacer", "mode", "spacer", "spacer", "file-modification-indicator", "file-name"]
 center = []
 right  = ["diagnostics", "spacer", "position", "spacer", "position-percentage", "spacer", "file-type", "spacer"]
 
