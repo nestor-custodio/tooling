@@ -87,6 +87,8 @@ newline = "↲"
 
 "f" = "no_op"
 "s" = "no_op"
+"t" = "no_op"
+"T" = "no_op"
 "." = "no_op"
 "<" = "no_op"
 ">" = "no_op"
@@ -288,13 +290,5 @@ newline = "↲"
 [keys.insert]
 
 
-# Document Navigation
-
-"C-i"       = "move_line_up"
-"C-k"       = "move_line_down"
-"C-j"       = "move_char_left"
-"C-l"       = "move_char_right"
-
-# Because CTRL+I = TAB
-#
-"tab"       = "move_line_up"
+"tab"       = "indent"
+"S-tab"     = "unindent"
