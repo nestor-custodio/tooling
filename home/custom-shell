@@ -185,7 +185,10 @@ export PGHOST='postgres'
 
   # less
 
-  function less { "$( real less )" --quit-if-one-screen --LONG-PROMPT --LINE-NUMBERS --RAW-CONTROL-CHARS --silent --chop-long-lines --shift=1 "$@" ;}
+  function less {
+    "$( real less )" --LINE-NUMBERS --RAW-CONTROL-CHARS --chop-long-lines       \
+                     --LONG-PROMPT --shift='1' --silent --quit-if-one-screen "$@"
+  }
 
 
   # ls

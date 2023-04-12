@@ -8,7 +8,7 @@
 **/*.local
 **/*.local.*
 
-# NFS temp storage creates ".nfs[0-9]+" files.
+# NFS temp storage creates ".nfs[0-9a-f]+" files.
 #
 **/.nfs*
 
