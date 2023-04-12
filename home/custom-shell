@@ -196,9 +196,9 @@ export PGHOST='postgres'
 
     arg_params="$( [ -n "$*" ] && printf '"%s" ' "$@" )"
     hide_params="$( xargs --arg-file="${HOME}/.hidden" --replace printf '--hide="%s" ' "{}" 2> /dev/null )"
-    style_params="-ohH --color='auto' --group-directories-first --time-style='long-iso' --quoting-style='literal'"
+    style_params="-ohH --color='always' --group-directories-first --time-style='long-iso' --quoting-style='literal'"
 
-    eval "ls ${style_params} ${hide_params} ${arg_params}"
+    eval "ls ${style_params} ${hide_params} ${arg_params}" | grep -Pvx 'total [0-9.]+[kKmMgGtT]?'
   }
   function a { f --almost-all "$@" ;}
 
