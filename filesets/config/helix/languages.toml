@@ -1,9 +1,14 @@
 # Language support configuration.
 # See the languages documentation: https://docs.helix-editor.com/master/languages.html
+# Source new blocks from the base language config: https://github.com/helix-editor/helix/blob/master/languages.toml
 
 [[language]]
 name = "bash"
 auto-format = true
+
+[[language]]
+name = "erb"
+file-types = ["erb", "inky"]
 
 [[language]]
 name = "javascript"
