@@ -95,14 +95,10 @@ startup_log='/var/log/startup'
 			apt-get -qqy install ansifilter      \
 			                     asciinema       \
 			                     build-essential \
-			                     byobu           \
-			                     curl            \
-			                     git             \
 			                     links           \
 			                     nfs-common      \
 			                     qrencode        \
 			                     tree            \
-			                     wget            \
 			                     zip unzip
 
 	}
