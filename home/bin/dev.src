@@ -113,11 +113,6 @@ shopt -s lastpipe
 
       function bi {
         nearest --quiet 'Gemfile.lock' 'Gemfile' || return 0
-        bundle install --jobs="$( nproc )" "$@"
-      }
-
-      function bi! {
-        nearest --quiet 'Gemfile.lock' 'Gemfile' || return 0
 
         # Ensure specific ruby.
         #
@@ -304,11 +299,6 @@ shopt -s lastpipe
 
     function yi {
       nearest --quiet 'package.json' 'yarn.lock' || return 0
-      yarn install 2> /dev/null
-    }
-
-    function yi! {
-      nearest --quiet 'package.json' 'yarn.lock' || return 0
 
       # Ensure node.
       #
@@ -327,7 +317,7 @@ shopt -s lastpipe
 
   # multi-language constructs
 
-    function @ { { bi || bi! ;} && { yi || yi! ;} ;}
+    function @ { bi && yi ;}
 
 
 # ENV helpers.
@@ -393,6 +383,6 @@ shopt -s lastpipe
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f ::? @ ba bi bi! br bx d db! db+ db- db: DB! dev development known-env-vars \
-          load-env na ni node-tasks nr ns nt nx p production rails-tasks rc rs rs1   \
-          rt rubocop s set-env staging t testing unload-env ya yi yi! yr yx
+export -f ::? @ ba bi br bx d db! db+ db- db: DB! dev development known-env-vars   \
+          load-env na ni node-tasks nr ns nt nx p production rails-tasks rc rs rs1 \
+          rt rubocop s set-env staging t testing unload-env ya yi yr yx
