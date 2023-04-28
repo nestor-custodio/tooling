@@ -9,4 +9,4 @@ source '/home/nestor/bin/std.lib'
 # ensuring the snap install before handing over control.
 
 snap list chromium &> /dev/null || sudo snap install chromium
-exec /snap/bin/chromium --headless "$@"
+exec /snap/bin/chromium.chromedriver "$@"
