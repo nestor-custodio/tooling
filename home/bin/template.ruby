@@ -1,4 +1,4 @@
-#! /bin/env ruby-jit
+#! /bin/env ruby
 
 require 'bundler/setup'
 Bundler.require :default

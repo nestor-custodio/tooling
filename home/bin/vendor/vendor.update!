@@ -219,7 +219,8 @@ case "$tool_name" in
 
 		mv "${extract_dir}/chruby.sh" "${HOME}/bin/vendor/chruby-source"
 		mv "${extract_dir}/auto.sh"   "${HOME}/bin/vendor/chruby-source.auto"
-		chmod 644 "${HOME}/bin/vendor/chruby-source*"
+		sed -ri -e 's|\bRUBYOPT\b|RUBYOPT_X|g' "${HOME}/bin/vendor/chruby-source"*
+		chmod 644 "${HOME}/bin/vendor/chruby-source"*
 		rm -rf "$extract_dir"
 		;;
 
