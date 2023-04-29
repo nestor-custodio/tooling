@@ -141,8 +141,8 @@ startup_log='/var/log/startup'
 			global_installers="/home/nestor/bin/installers"
 			ls "$global_installers"/*.deb &> /dev/null && apt install "$global_installers"/*.deb > /dev/null
 
-			vm_specific_installers="/home/nestor/vm-scripts/$( instance name )/installers"
-			ls "$vm_specific_installers"/*.deb &> /dev/null && apt install "$vm_specific_installers"/*.deb > /dev/null
+			vm_specific_installer="/home/nestor/vm-scripts/$( instance name )/init"
+			[ -e "$vm_specific_installer" ] && "$vm_specific_installer"
 
 			apt-get -qqy install -f  # Resolve possible dependency issues.
 
