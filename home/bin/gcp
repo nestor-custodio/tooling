@@ -219,7 +219,9 @@ source '/home/nestor/bin/std.lib'
 			instance_name="$1" && shift
 
 
-			gcloud compute instances resume "$instance_name" && expose-vm "$instance_name"
+			gcloud compute instances resume "$instance_name" || error-out 3 'instance failed to resume'
+			sleep 2  # Instances will sometimes take a bit to fully wake and request their new IP.
+			expose-vm "$instance_name"
 			;;
 
 		# ---
