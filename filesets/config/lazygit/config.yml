@@ -12,6 +12,7 @@ reporting: 'undetermined'
 
 disableStartupPopups: true
 notARepository: 'skip'
+promptToReturnFromSubprocess: false
 quitOnTopLevelReturn: false
 confirmOnQuit: false
 
@@ -30,10 +31,12 @@ gui:
   sidePanelWidth: 0.3333
   expandFocusedSidePanel: true
   mainPanelSplitMode: 'flexible'
+  commandLogSize: 8
 
   skipNoStagedFilesWarning: false
-  skipUnstageLineWarning: false
+  skipRewordInEditorWarning: true
   skipStashWarning: true
+  skipUnstageLineWarning: false
 
   commitLength:
     show: true
@@ -82,8 +85,8 @@ git:
   pull:
     mode: 'rebase'
 
-  allBranchesLogCmd: 'git log --graph --all --color=always --abbrev-commit --decorate --date=relative --pretty=medium'
-  branchLogCmd: 'git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium {{branchName}} --'
+  allBranchesLogCmd: 'git log --graph --all --color=always --abbrev-commit --decorate --date=iso --pretty=medium'
+  branchLogCmd: 'git log --graph --color=always --abbrev-commit --decorate --date=iso --pretty=medium {{branchName}} --'
 
 
 # ---
@@ -114,11 +117,12 @@ keybinding:
 
   universal:
 
+    jumpToBlock: ['1', '2', '3', '4', '5']
+
     quit: 'q'
-    quit-alt1: '`'
+    quit-alt1: null
 
     confirm: '<enter>'
-    confirm-alt1: '~'
     return: '<esc>'
 
     prevItem: 'i'
@@ -135,7 +139,6 @@ keybinding:
     scrollUpMain: '<up>'
     scrollDownMain: '<down>'
     executeCustomCommand: '!'
-    createRebaseOptionsMenu: '~'
     pushFiles: 'P'
     pullFiles: 'p'
     refresh: '<c-r>'
@@ -145,113 +148,134 @@ keybinding:
     prevScreenMode: '-'
     undo: 'z'
     redo: 'y'
-    copyToClipboard: '~'
-    submitEditorText: '<enter>'
 
-    quitWithoutChangingDirectory: '~'
-    togglePanel: '<backspace>'
+    togglePanel: '<tab>'
     prevPage: 'I'
     nextPage: 'K'
     gotoTop: '['
     gotoBottom: ']'
     scrollLeft: 'j'
     scrollRight: 'l'
-    prevBlock: '~'
-    nextBlock: '~'
-    openFile: '~'
-    createPatchOptionsMenu: '~'
-    filteringMenu: '~'
-    diffingMenu: '~'
-    appendNewline: '~'
+    submitEditorText: '<enter>'
+    extrasMenu: '@'
+    increaseContextInDiffView: '}'
+    decreaseContextInDiffView: '{'
 
-    prevItem-alt: '~'
-    nextItem-alt: '~'
-    prevBlock-alt: '~'
-    nextBlock-alt: '~'
-    optionMenu-alt1: '~'
-    scrollUpMain-alt1: '~'
-    scrollDownMain-alt1: '~'
-    scrollUpMain-alt2: '~'
-    scrollDownMain-alt2: '~'
-    diffingMenu-alt: '~'
+    quitWithoutChangingDirectory: null
+    prevBlock: null
+    nextBlock: null
+    prevItem-alt: null
+    nextItem-alt: null
+    prevBlock-alt: null
+    nextBlock-alt: null
+    optionMenu-alt1: null
+    openRecentRepos: null
+    openFile: null
+    scrollUpMain-alt1: null
+    scrollDownMain-alt1: null
+    scrollUpMain-alt2: null
+    scrollDownMain-alt2: null
+    createRebaseOptionsMenu: null
+    createPatchOptionsMenu: null
+    filteringMenu: '^'
+    diffingMenu: null
+    diffingMenu-alt: null
+    copyToClipboard: null
+    toggleWhitespaceInDiffView: null
 
 
   status:
-    checkForUpdate: '~'
-    recentRepos: '~'
-    allBranchesLogGraph: 'g'
+
+    checkForUpdate: null
+    recentRepos: null
 
 
   files:
-    commitChanges: 'c'
-    commitChangesWithoutHook: '~'
-    commitChangesWithEditor: 'C'
-    ignoreFile: '~'
-    refreshFiles: '<c-r>'
-    stashAllChanges: 's'
-    viewStashOptions: '<c-s>'
-    toggleStagedAll: 'a'
-    viewResetOptions: '~'
+
     fetch: 'f'
+    refreshFiles: '<c-r>'
+    toggleStagedAll: 'a'
+    commitChanges: 'c'
+    commitChangesWithEditor: 'C'
+    toggleTreeView: 'v'
+    openStatusFilter: '^'
 
     amendLastCommit: '+'
+    stashAllChanges: 's'
+    viewStashOptions: '<c-s>'
 
-  submodules:
-    init: '~'
-    update: '~'
-    bulkMenu: '~'
+    commitChangesWithoutHook: null
+    ignoreFile: null
+    openMergeTool: null
+    viewResetOptions: null
 
 
   branches:
+
     checkoutBranchByName: 'c'
     rebaseBranch: 'R'
     renameBranch: 'r'
     mergeIntoCurrentBranch: 'm'
+    fastForward: 'f'
+    createTag: 't'
     pushTag: 'T'
     setUpstream: 'u'
-    fetchRemote: 'f'
 
-    createPullRequest: '~'
-    copyPullRequestURL: '~'
-    forceCheckoutBranch: '~'
-    viewGitFlowOptions: '~'
-    fastForward: '~'
+    fetchRemote: null
+    createPullRequest: null
+    viewPullRequestOptions: null
+    forceCheckoutBranch: null
+    viewGitFlowOptions: null
 
 
   commits:
+
     squashDown: 's'
     renameCommit: 'r'
-    viewResetOptions: '~'
+    renameCommitWithEditor: 'R'
+    viewResetOptions: '<c-r>'
     markCommitAsFixup: 'f'
+    squashAboveCommits: 'S'
     moveDownCommit: '<c-k>'
     moveUpCommit: '<c-i>'
+    amendToCommit: '+'
     pickCommit: 'p'
     cherryPickCopy: 'c'
+    cherryPickCopyRange: 'C'
     pasteCommits: 'v'
     tagCommit: 't'
     checkoutCommit: '<enter>'
+    resetCherryPick: '<esc>'
 
-    renameCommitWithEditor: 'R'
-    createFixupCommit: '~'
-    squashAboveCommits: '~'
-    amendToCommit: '+'
-    revertCommit: '~'
-    cherryPickCopyRange: '~'
-    resetCherryPick: '~'
-    copyCommitMessageToClipboard: '~'
-
-  commitFiles:
-    checkoutCommitFile: '<enter>'
+    createFixupCommit: null
+    revertCommit: null
+    copyCommitMessageToClipboard: null
+    openLogMenu: null
+    viewBisectOptions: null
 
 
   stash:
+
     popStash: '<enter>'
+    renameStash: 'r'
+
+
+  commitFiles:
+
+    checkoutCommitFile: '<enter>'
 
 
   main:
 
-    toggleDragSelect: '^'
+    toggleDragSelect: 'm'
     toggleSelectHunk: '<space>'
-    pickBothHunks: '~'
+    pickBothHunks: 'b'
 
-    toggleDragSelect-alt: '~'
+    toggleDragSelect-alt: null
+
+
+  submodules:
+
+    init: null
+    update: null
+    bulkMenu: null
