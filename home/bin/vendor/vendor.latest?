@@ -117,7 +117,7 @@ source '/home/nestor/bin/std.lib'
 		# ---
 
 
-		[ -z "$local_version" ] && "$( executable )" "$cmd" 2> /dev/null | grep -P --only-matching "$puller" | store-as local_version
+		[ -z "$local_version" ] && "$( executable )" "$cmd" 2>&1 | grep -P --only-matching "$puller" | store-as local_version
 		gh:release-version "$( github-repo )" | store-as release_version
 
 		[ "$local_version" == "$release_version" ] || exit-out 2 "${local_version} ➜ ${release_version}"
@@ -177,6 +177,7 @@ case "$tool_name" in
 	(hostctl          ) check-version                  --puller='(?<=hostctl version ).*'      ;;
 	(hx               ) check-version                  --puller='(?<=helix ).*?(?= )'          ;;
 	(jq               ) check-version                                                          ;;
+	(jtbl             ) check-version --cmd='-v'       --puller='(?<=version ).*'              ;;
 	(lazydocker       ) check-version                  --puller='(?<=Version: ).*'             ;;
 	(lazygit          ) check-version                  --puller='(?<=version=).*?(?=,)'        ;;
 	(n                ) check-version                  --puller='(?<=v).*'                     ;;

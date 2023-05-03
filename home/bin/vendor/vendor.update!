@@ -177,6 +177,7 @@ case "$tool_name" in
 	(fzf              ) update-tooling                                   ;;
 	(hx               ) update-tooling                                   ;;
 	(jq               ) update-tooling                                   ;;
+	(jtbl             ) update-tooling                                   ;;
 	(lazydocker       ) update-tooling                                   ;;
 	(lazygit          ) update-tooling                                   ;;
 	(n                ) update-tooling --source                          ;;
