@@ -189,6 +189,7 @@ case "$tool_name" in
 	(unison           ) check-version --cmd='-version' --puller='(?<=unison version ).*?(?= )' ;;
 	(usql             ) check-version                  --puller='(?<=usql ).*'                 ;;
 	(watchexec        ) check-version                  --puller='(?<=release: ).*'             ;;
+	(xsv              ) check-version                                                          ;;
 	(yq               ) check-version                  --puller='(?<=version v).*'             ;;
 
 

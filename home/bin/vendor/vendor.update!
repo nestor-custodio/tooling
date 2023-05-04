@@ -187,6 +187,7 @@ case "$tool_name" in
 	(static-web-server) update-tooling --asset='gnu'                     ;;
 	(unison           ) update-tooling --asset='static'                  ;;
 	(usql             ) update-tooling --asset='^static'                 ;;
+	(xsv              ) update-tooling                                   ;;
 	(yq               ) update-tooling --asset='^.tar.gz'                ;;
 
 
