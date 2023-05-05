@@ -120,6 +120,7 @@ export PGHOST='postgres'
   function gadd        { git add                               "$@" ;}
   function gblame      { git blame -w --minimal --color-by-age "$@" ;}
   function gbranch     { git branch                            "$@" ;}
+  function gbranch?    { git branch --show-current             "$@" ;}
   function gcheckout   { git checkout                          "$@" ;}
   function gcherrypick { git cherry-pick                       "$@" ;}
   function gconfig     { git config                            "$@" ;}
