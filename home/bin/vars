@@ -16,6 +16,7 @@ source '/home/nestor/bin/std.lib'
 		  --help                    Show this help text.
 		  --names                   List only variable names.
 		                            (Note this affects how REGEX is used.)
+		  --all-vars                Include "CLEAN_" vars (normally omitted.)
 		  -0 | -z | --null          End each output line with NUL, not newline.
 
 
@@ -32,21 +33,21 @@ source '/home/nestor/bin/std.lib'
 
 	# Set defaults.
 
-	names_only=''
+	all_vars=''
 	null_separator=''
-
-	declare -A sed_scripts
-	sed_scripts[names_only]=''
 
 	var_separator_esc='\n'
 	interim_separator_esc='\xA0'
 	interim_separator_char="$( printf "$interim_separator_esc" )"
 
+	declare -A sed_scripts
+	sed_scripts[names_only]=''
+
 	# ---
 	# ---
 
 	CHAR_OPTS='0z'
-	LONG_OPTS='help,name,names,null'
+	LONG_OPTS='help,name,names,all-vars,all,null'
 
 	set-params
 	while true; do
@@ -57,8 +58,11 @@ source '/home/nestor/bin/std.lib'
 
 
 			(--name|--names)
-				names_only='1'
 				sed_scripts[names_only]='s|=.*'"$interim_separator_esc"'|'"$interim_separator_esc"'|g'
+				;;
+
+			(--all-vars|--all)
+				all_vars='1'
 				;;
 
 			(-0|-z|--null)
@@ -84,12 +88,19 @@ source '/home/nestor/bin/std.lib'
 # ---
 # ---
 
+function filter_for_all_vars {
+	if [ -n "$all_vars" ]
+		then cat
+		else grep -v '^CLEAN_'
+	fi
+} # function filter_for_all_vars
+
 function filter_to_regex_param {
 	if [ -z "$lookup_regex" ]
 		then cat
 		else grep -Pi $( [ -n "$null_separator" ] && echo '-z' ) "$lookup_regex"
 	fi
-} # function filter_to_regex
+} # function filter_to_regex_param
 
 # ---
 # ---
@@ -104,4 +115,5 @@ export -p | tr '\n' "$interim_separator_char"           \
          -e "${sed_scripts[separate_vars]}"             \
          -e "${sed_scripts[drop_leading_separator]}"    \
          -e "${sed_scripts[restore_internal_newlines]}" \
+| filter_for_all_vars                                   \
 | filter_to_regex_param
