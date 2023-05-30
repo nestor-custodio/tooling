@@ -153,6 +153,11 @@ export PGHOST='postgres'
   function ggraph      { glog --oneline --decorate --graph "$@" ;}
 
   function gdeploy {
+    # Deploys to the given remote (defaults to 'production').
+    # Prompts for confirmation (y/N) before pushing to target.
+
+    [ "$1" == '--help' ] && echo 'Usage: gdeploy [REMOTE_NAME]' && return 0
+
     local remote="${1:-production}"
     local branch="$( gbranch --show-current )"
 
