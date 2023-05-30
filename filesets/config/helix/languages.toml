@@ -7,6 +7,10 @@ name = "bash"
 auto-format = true
 
 [[language]]
+name = "env"
+file-types = [".env", ".env.*", ".envrc"]
+
+[[language]]
 name = "erb"
 file-types = ["erb", "inky"]
 
