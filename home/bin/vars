@@ -95,6 +95,7 @@ function filter_for_all_vars {
 	fi
 } # function filter_for_all_vars
 
+# shellcheck disable=SC2046
 function filter_to_regex_param {
 	if [ -z "$lookup_regex" ]
 		then cat
