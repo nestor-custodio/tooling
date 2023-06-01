@@ -169,6 +169,7 @@ case "$tool_name" in
 
 	(bat              ) update-tooling --asset='gnu'                     ;;
 	(btop             ) update-tooling                                   ;;
+	(bw               ) update-tooling --asset='.zip' --tag='cli'        ;;
 	(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig' ;;
 	(circleci         ) update-tooling                                   ;;
 	(delta            ) update-tooling --asset='gnu'                     ;;
