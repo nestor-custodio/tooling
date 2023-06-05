@@ -51,4 +51,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-coalesce "$( project project-id )" 'portable-shell'
+project project-id

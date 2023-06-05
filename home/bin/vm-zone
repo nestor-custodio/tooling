@@ -51,4 +51,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-coalesce "$( instance zone --short )" 'us-central1-a'
+instance zone --short
