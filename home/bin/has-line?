@@ -27,8 +27,15 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Options -- #
 
+	# Set defaults.
+
+	regex=''
+
+	# ---
+	# ---
+
 	CHAR_OPTS=''
-	LONG_OPTS='help'
+	LONG_OPTS='help,regex'
 
 	set-params
 	while true; do
@@ -36,6 +43,12 @@ source '/home/nestor/bin/std.lib'
 		case "$option" in
 			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
+
+
+			(--regex)
+				regex='1'
+				;;
+
 		esac
 	done
 
@@ -52,4 +65,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-fgrep --quiet -x "$lookup_string"
+if [ -n "$regex" ]
+	then grep  --quiet -x "$lookup_string"
+	else fgrep --quiet -x "$lookup_string"
+fi 
