@@ -76,9 +76,8 @@ case "$channel" in
 	(pushover)
 		# Fetch keys.
 		#
-		project 'attributes/pushover-keys' | store-as pushover_keys
-		json '.user'         <<< "$pushover_keys" | store-as user_key
-		json '.services.gcp' <<< "$pushover_keys" | store-as service_key
+		creds pushover/user-key     | store-as user_key
+		creds pushover/services/gcp | store-as service_key
 
 		# Send the message.
 		#

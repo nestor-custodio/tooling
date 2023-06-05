@@ -23,7 +23,7 @@ source '/home/nestor/bin/std.lib'
 		  0  if OK,
 		  1  if invalid option,
 		  2  if file not found/readable,
-			3  if encryption-related error.
+		  3  if encryption-related error.
 	EOF
 
 }
@@ -34,7 +34,7 @@ source '/home/nestor/bin/std.lib'
 
 	# Set defaults.
 
-	project 'attributes/default-encryption-password' | store-as password
+	creds encryption-keys/default | store-as password
 
 	# ---
 	# ---
