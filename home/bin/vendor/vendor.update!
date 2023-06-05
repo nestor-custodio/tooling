@@ -7,6 +7,7 @@ source '/home/nestor/bin/std.lib'
 
 	cat <<-EOF | store-as usage
 		Usage: $( script-name ) TOOL_NAME
+		       $( name-blanks ) --checks-only
 
 		Makes a best-effort attempt to update the corresponding binary.
 		If the TOOL_NAME is "all", all vendor tooling will be updated as needed.
@@ -14,7 +15,6 @@ source '/home/nestor/bin/std.lib'
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --checks-only             Only run the version checks; no downloads.
-		                            Valid only when TOOL_NAME is "all".
 		  --help                    Show this help text.
 
 
@@ -127,7 +127,6 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	tool_name="$1" && shift
-	[ -n "$tool_name" ] || error-out 1 'no TOOL_NAME given'
 
 
 	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
@@ -138,6 +137,31 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+# Sanity check: we need *exactly one* of TOOL_NAME and --checks-only
+#
+[ -z "$tool_name" ] && [ -z "$checks_only" ] && error-out 1 'no TOOL_NAME given'
+[ -n "$tool_name" ] && [ -n "$checks_only" ] && error-out 1 'cannot specify both a TOOL_NAME and --checks-only'
+
+
+# Process --checks-only request.
+#
+if [ -n "$checks_only" ]; then
+
+	ls -1 --literal "${HOME}/bin/vendor"/*.repo | while read -r repo_file; do
+		superbase "$repo_file" | store-as tool_name
+
+		echo -n "$tool_name: ..."
+		vendor.latest? "$tool_name" | store-as update_report
+		[ -z "$update_report" ] && clear-line && continue
+
+		backspace 3 && echo "$update_report"
+	done
+
+fi
+
+
+# Process tool update request.
+#
 case "$tool_name" in
 
 
@@ -151,15 +175,11 @@ case "$tool_name" in
 			vendor.latest? "$tool_name" | store-as update_report
 			[ -z "$update_report" ] && clear-line && continue
 
-			if [ -n "$checks_only" ]
-				then backspace 3 && echo "$update_report"
-				else
-					backspace 3
-					echo -n "${update_report} ..."
-					if vendor.update! "$tool_name"
-						then backspace 3 && echo "✔"
-						else backspace 3 && echo "x"
-					fi
+			backspace 3
+			echo -n "${update_report} ..."
+			if vendor.update! "$tool_name"
+				then backspace 3 && echo "✔"
+				else backspace 3 && echo "x"
 			fi
 		done
 		;;
