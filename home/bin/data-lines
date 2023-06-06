@@ -10,8 +10,9 @@ source '/home/nestor/bin/std.lib'
 
 		Gives the number of (non-empty) lines in the given FILE (or STDIN).
 		
-		This is a workaround for the fact that 'wc -l' reports "1" for empty
-		input, which makes it an unreliable way to get an actual line count.
+		This tool replaces 'wc -l' for counting lines of data, since that counts
+		empty input as "1" line and also counts whitespace-only lines, making it
+		too unreliable for our liking.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -64,4 +65,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-/bin/grep -c '.' < "${filename:-/dev/stdin}"
+tr -d '[:blank:]' < "${filename:-/dev/stdin}" | /bin/grep -c '.'
