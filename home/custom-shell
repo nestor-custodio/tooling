@@ -191,9 +191,16 @@ export PGHOST='postgres'
 
   # less
 
+  # `less` (and pager use in general) should allow "smart case" searches,
+  # allow color codes without mangling, and never ring the terminal bell.
+  #
+  export LESS='--ignore-case --raw-control-chars --silent'
+
+  # Set sensible default when manually invoked from a shell.
+  #
   function less {
-    "$( real less )" --LINE-NUMBERS --RAW-CONTROL-CHARS --chop-long-lines       \
-                     --LONG-PROMPT --shift='1' --silent --quit-if-one-screen "$@"
+    "$( real less )" --LINE-NUMBERS --chop-long-lines                  \
+                     --LONG-PROMPT --shift='1' --quit-if-one-screen "$@"
   }
 
 
