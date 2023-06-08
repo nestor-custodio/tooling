@@ -1,2 +1,94 @@
 #! /bin/env bash
-nohup "$@" &> /dev/null &
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) COMMAND [-- ARGS]
+
+		Runs the given COMMAND (passing along any ARGS given) in the background,
+		with no HUP action and no PID reported into the console upon completion.
+
+		To facilitate piping and stream redirection, any one *whole param* that
+		conforms to a known operator (per the REDIRECTION section of Bash's man
+		page) will be interpreted as such. Note this does NOT include the '<<-'
+		operator (for here-DOCS), but DOES include '<<<' (for here-STRINGS).
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+# ---
+# ---
+
+
+tempname | store-as executable
+
+
+if [ "$#" == 1 ]; then
+
+	# Single-param invocation should run unquoted, as it may
+	# be a compound command (e.g. "first < in > out | second").
+
+	cat <<-EOF > "$executable"
+		#! /bin/env bash
+		${1} ; rm -f '${executable}'
+	EOF
+
+else
+
+	cat <<-EOF > "$executable"
+		#! /bin/env bash
+		${@@Q} ; rm -f '${executable}'
+	EOF
+
+	# Unquote pipes + redirectors.
+	#
+	sed -ri -e "s# '(\|)' # \1 #g"                            \
+	        -e "s# '([0-9]?<)' # \1 #g"                       \
+	        -e "s# '([0-9]?>)' # \1 #g"                       \
+	        -e "s# '([0-9]?>>)' # \1 #g"                      \
+	        -e "s# '(&>|>&|&>>)' # \1 #g"                     \
+	        -e "s# '([0-9]?<<<)' # \1 #g"                     \
+	        -e "s# '([0-9]?<&-?|[0-9]?&>-?)' # \1 #g"         \
+	        -e "s# '([0-9]?<&[0-9]-|[0-9]?>&[0-9]-)' # \1 #g" \
+	        -e "s# '([0-9]?<>)' # \1 #g"                      \
+	        "$executable"
+
+fi
+
+
+# Run it!
+#
+chmod +x "$executable"
+nohup "$executable" &> /dev/null &
