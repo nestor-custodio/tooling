@@ -5,7 +5,8 @@ shopt -s lastpipe
 
 # Set shell niceties.
 #
-shopt -s autocd checkwinsize globstar interactive_comments lastpipe no_empty_cmd_completion sourcepath
+set +H
+shopt -s autocd checkwinsize globstar interactive_comments no_empty_cmd_completion sourcepath
 
 
 # Executable search order should be: - the current directory
