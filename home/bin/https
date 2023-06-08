@@ -6,8 +6,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [ me  | safe ] [BINDING]
-		       $( script-name ) { all | open } [BINDING]
+		Usage: $( script-name ) [ { me | safe } | { all | open } ] [BINDING]
 		       $( script-name ) { off | stop }
 
 		Starts/stops an auto-certing HTTP(S) reverse-proxy that shuttles traffic
