@@ -1,12 +1,27 @@
 #! /bin/bash
-shopt -s lastpipe
+
+[ -n "$PS1"            ] || return # Exit unless interactive.
+[ -n "$_byobu_sourced" ] || return # Exit unless within a Byobu session.
 
 # ---
 
-# Set shell niceties.
+
+# Set shell behaviours.
 #
-set +H
-shopt -s autocd checkwinsize globstar interactive_comments no_empty_cmd_completion sourcepath
+shopt -s autocd checkwinsize globstar interactive_comments lastpipe no_empty_cmd_completion sourcepath
+
+# Set command history behaviours.
+#
+set +H # Disable history expansion ("!" usage).
+shopt -s histappend # Append to the history file.
+
+
+# Check for window changes and update $LINES/$COLUMNS as needed.
+#
+shopt -s checkwinsize
+
+
+# ---
 
 
 # Executable search order should be: - the current directory
@@ -24,7 +39,7 @@ export PATH=".:${HOME}/bin:${HOME}/bin/vendor:${HOME}/.nodes/bin:${HOME}/.yarn/b
 # Helper for absolute paths to real binaries.
 #
 function real {
-  # We want a real binary, not a possible override function, so `which` is a must.
+  # We want a real binary, so `which` is a must.
   # shellcheck disable=SC2230
   #
   local binary="$( which "$@" )"
@@ -34,7 +49,7 @@ function real {
 
 
 # Though the system only supports 256 color,
-# setting COLORTERM gives faster text rendering.
+# setting $COLORTERM gives faster text rendering.
 #
 export COLORTERM='truecolor'
 
@@ -63,6 +78,37 @@ export BROWSER="${HOME}/bin/browser"
 export PGHOST='postgres'
 
 
+# Make it easier to navigate from a location under
+# ~/links/home to where it actually resides in the filesystem.
+#
+function break-out-of-links {
+  local pwd="$( pwd -P )"
+  local link_root="${HOME}/links/home/"
+  starts-with? "$link_root" <<< "$pwd" && cd "${pwd//${link_root}/~/}"
+}
+
+
+# Filesystem navigation niceties.
+#
+function ...   { cd ../..       ;}
+function ....  { cd ../../..    ;}
+function ..... { cd ../../../.. ;}
+#
+function mkcd { mkdir -p "$1" && cd "$1"; }
+
+
+# Make it easier to mirror one location into another.
+#
+function mirror {
+  rsync --verbose                               \
+        --recursive --force                     \
+        --whole-file --delete-during            \
+        --links --perms --executability --times \
+        "$@"
+}
+
+
+# ---
 
 
 # Set sensible tooling defaults and shortcuts.
@@ -112,6 +158,13 @@ export PGHOST='postgres'
                                                                 \
                            --preview-window='hidden'            \
                            --preview=\"${fzf_preview_command}\" "
+
+
+  # gcc
+
+  # Colorize warnings/errors.
+  #
+  export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 
   # git / lazygit
@@ -192,8 +245,14 @@ export PGHOST='postgres'
 
   # less
 
-  # `less` (and pager use in general) should allow "smart case" searches,
-  # allow color codes without mangling, and never ring the terminal bell.
+  # Allow use of `less` with non-plaintext data.
+  # (See `lesspipe` manpage for additional info.)
+  #
+  eval "$( lesspipe )"
+
+  # `less` (and pager use in general) should allow
+  # "smart case" searches, pass color codes through
+  # without mangling, and never ring the terminal bell.
   #
   export LESS='--ignore-case --raw-control-chars --silent'
 
@@ -217,7 +276,12 @@ export PGHOST='postgres'
 
     eval "ls ${style_params} ${hide_params} ${arg_params}" | grep -Pvx 'total [0-9.]+[kKmMgGtT]?'
   }
+
   function a { f --almost-all "$@" ;}
+
+  # Colorize `ls` output by file class/type.
+  #
+  eval "$( dircolors )"
 
 
   # pgcli
@@ -263,37 +327,19 @@ export PGHOST='postgres'
   function list { tree -lR --dirsfirst --sort=version "$@" ;}
 
 
-
-
-# Filesystem manipulation niceties.
-
-function ...   { cd ../..       ;}
-function ....  { cd ../../..    ;}
-function ..... { cd ../../../.. ;}
-
-function mkcd { mkdir -p "$1" && cd "$1"; }
-
-function mirror {
-  rsync --verbose                               \
-        --recursive --force                     \
-        --whole-file --delete-during            \
-        --links --perms --executability --times \
-        "$@"
-}
-
-function break-out-of-links {
-  local pwd="$( pwd -P )"
-  local link_root="${HOME}/links/home/"
-  starts-with? "$link_root" <<< "$pwd" && cd "${pwd//${link_root}/~/}"
-}
-
-
+# ---
 
 
 # Set the prompt.
 #
 prompt_setter="${HOME}/bin/prompt.src"
 [ -r "$prompt_setter" ] && source "$prompt_setter"
+
+
+# Load command completion data.
+#
+completion_loader='/usr/share/bash-completion/bash_completion'
+[ -r "$completion_loader" ] && source "$completion_loader"
 
 
 # Load additional VM-specific customizations.
