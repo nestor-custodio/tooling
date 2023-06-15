@@ -150,7 +150,7 @@ if [ -n "$checks_only" ]; then
 	ls -1 --literal "${HOME}/bin/vendor"/*.repo | while read -r repo_file; do
 		superbase "$repo_file" | store-as tool_name
 
-		echo -n "$tool_name: ..."
+		printf "\e[1m%s\e[0m: ..." "$tool_name"
 		vendor.latest? "$tool_name" | store-as update_report
 		[ -z "$update_report" ] && clear-line && continue
 
@@ -171,15 +171,15 @@ case "$tool_name" in
 		ls -1 --literal "${HOME}/bin/vendor"/*.repo | while read -r repo_file; do
 			superbase "$repo_file" | store-as tool_name
 
-			echo -n "$tool_name: ..."
+			printf "\e[1m%s\e[0m: ..." "$tool_name"
 			vendor.latest? "$tool_name" | store-as update_report
 			[ -z "$update_report" ] && clear-line && continue
 
 			backspace 3
 			echo -n "${update_report} ..."
 			if vendor.update! "$tool_name"
-				then backspace 3 && echo "✔"
-				else backspace 3 && echo "x"
+				then backspace 3 && printf "\e[32;1m%s\e[0m\n" "✔"
+				else backspace 3 && printf "\e[31;1m%s\e[0m\n" "x"
 			fi
 		done
 		;;
