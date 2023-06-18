@@ -1,7 +1,7 @@
 {
-  "filesets/home"       : "~"             ,
-  "filesets/byobu"      : "~/.byobu"      ,
-  "filesets/config"     : "~/.config"     ,
-  "filesets/local:share": "~/.local/share",
-  "filesets/ssh"        : "~/.ssh"
+  "home"       : "~"             ,
+  "byobu"      : "~/.byobu"      ,
+  "config"     : "~/.config"     ,
+  "local:share": "~/.local/share",
+  "ssh"        : "~/.ssh"
 }
