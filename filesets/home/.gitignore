@@ -47,7 +47,7 @@
 # Support Files.
 #
 /links/
-/hostfiles/
+/hostfiles/*
 !/hostfiles/.keep
-/vm-scripts/
+/vm-scripts/*
 !/vm-scripts/.keep

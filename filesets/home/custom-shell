@@ -79,12 +79,12 @@ export PGHOST='postgres'
 
 
 # Make it easier to navigate from a location under
-# ~/links/home to where it actually resides in the filesystem.
+# "~/links/home" to where it actually resides in the filesystem.
 #
 function break-out-of-links {
   local pwd="$( pwd -P )"
   local link_root="${HOME}/links/home/"
-  starts-with? "$link_root" <<< "$pwd" && cd "${pwd//${link_root}/~/}"
+  starts-with? "$link_root" <<< "$pwd" && cd "${pwd//${link_root}/${HOME}/}"
 }
 
 
@@ -120,6 +120,14 @@ function mirror {
   #
   function h { "$@" --help | bat --plain --language='help' ; }
   function m { MANPAGER='cat' man "$@" | bat --plain --language='man' ; }
+
+
+  # bw
+
+  # The default `bw` data directory is
+  # "~/.config/Bitwarden CLI", which... yikes.
+  #
+  export BITWARDENCLI_APPDATA_DIR="${HOME}/.config/bw"
 
 
   # cd
@@ -286,7 +294,7 @@ function mirror {
 
   # pgcli
 
-  function pgcli { "$( real pgcli )" --pgclirc="~/.config/pgcli/config" "$@" ;}
+  function pgcli { "$( real pgcli )" --pgclirc="${HOME}/.config/pgcli/config" "$@" ;}
 
 
   # rg
@@ -370,7 +378,7 @@ export -f ... .... ..... ::                                                     
           less list m mirror mkcd pgcli real rg shellcheck
 
 
-# New windows/panes opened from within a symlinked location will show up within ~/links,
+# New windows/panes opened from within a symlinked location will show up within "~/links",
 # so we're breaking out of those by default on new shells to avoid having to do it manually.
 #
 break-out-of-links

@@ -63,13 +63,13 @@ cd "${HOME}/dev" &> /dev/null
 case "$language" in
 
 	(ruby)
-			nearest --read 'Gemfile.lock' 'Gemfile' | has 'rubocop' && runner='bundle exec'
-			ls -1 "${GEM_HOME}/gems" | grep -P --quiet -x 'rubocop-[0-9.]+' || gem install rubocop
-			eval "${runner} rubocop --server --stdin source_file.rb --stderr --autocorrect --fail-level='fatal'" < /dev/stdin
+			# cat /dev/stdin
+			rubocop --server --stdin source_file.rb --stderr --autocorrect --fail-level='fatal' < /dev/stdin
 		;;
 
 	(javascript|jsx)
-			json '(.dependencies // {}),(.devDependencies // {}) | keys[]' < package.json 2> /dev/null | store-as packages
+			# cat /dev/stdin
+			nearest --read 'package.json' | json '(.dependencies // {}),(.devDependencies // {}) | keys[]' | store-as packages
 			has-line? 'prettier' <<< "$packages" || command -v prettier &> /dev/null || npm install --global --production prettier
 			npx prettier --stdin --stdin-filepath='source_file.jsx' --parser='typescript' --loglevel='error' < /dev/stdin
 		;;
