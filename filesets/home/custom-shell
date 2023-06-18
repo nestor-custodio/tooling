@@ -129,6 +129,10 @@ function mirror {
   #
   export BITWARDENCLI_APPDATA_DIR="${HOME}/.config/bw"
 
+  # Wrap all `bw` calls so we can automatically
+  # append an active session key to the request.
+  function bw { "$( real bw )" --session="$( creds bitwarden/session-key )" "$@" ;}
+
 
   # cd
 
