@@ -94,7 +94,7 @@ function ...   { cd ../..       ;}
 function ....  { cd ../../..    ;}
 function ..... { cd ../../../.. ;}
 #
-function mkcd { mkdir -p "$1" && cd "$1"; }
+function mkcd { mkdir -p "$1" && cd "$1" ;}
 
 
 # Make it easier to mirror one location into another.
@@ -118,8 +118,8 @@ function mirror {
   # It's nice to have a 1-char name for something
   # that will properly page/colorize help/manpage text.
   #
-  function h { "$@" --help | bat --plain --language='help' ; }
-  function m { MANPAGER='cat' man "$@" | bat --plain --language='man' ; }
+  function h { "$@" --help | bat --plain --language='help' ;}
+  function m { MANPAGER='cat' man "$@" | bat --plain --language='man' ;}
 
 
   # bw
