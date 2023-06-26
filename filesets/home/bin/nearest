@@ -87,7 +87,7 @@ while [ -n "$dir" ]; do
 		
 		[ -n "$quiet" ] && exit-out
 		[ -n "$read" ] && exec cat "$full_path"
-		exit-out "$full_path"
+		exit-out 0 "$full_path"
 	done
 
 	sed -r -e 's|[^/]*/$||' <<< "$dir" | store-as dir
