@@ -17,7 +17,8 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid option.
+		  1  if invalid option,
+		  2  if failed to unmount.
 	EOF
 
 }
@@ -50,5 +51,13 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+exit_code='0'
 drive_mount="${HOME}/drive"
-'drive?' && sync "$drive_mount" && umount "$drive_mount" && rmdir "$drive_mount"
+
+if 'drive?'; then
+	sync "$drive_mount"
+	umount "$drive_mount" || exit_code='2'
+fi
+
+[ -d "$drive_mount" ] && rmdir "$drive_mount" &> /dev/null
+exit-out "$exit_code"
