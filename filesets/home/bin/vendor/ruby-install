@@ -5,5 +5,5 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-exec "$( script-path )/ruby-install-runtime/bin/ruby-install" "$@" \
+"$( script-path )/ruby-install-runtime/bin/ruby-install" "$@" \
 && rm -rf "${HOME}/src"
