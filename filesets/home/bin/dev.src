@@ -91,7 +91,7 @@ shopt -s lastpipe
       if nearest --read 'Gemfile.lock' 'Gemfile' | has? 'rubocop'; then
         bundle exec rubocop "$@"
       else
-        which rubocop || gem install rubocop &> /dev/null
+        which rubocop &> /dev/null || gem install rubocop &> /dev/null
         "$( which rubocop )" "$@"
       fi
     }
