@@ -1,2 +1,5 @@
+/builds/*
+!/builds/.keep
+
 /installers/*
 !/installers/.keep
