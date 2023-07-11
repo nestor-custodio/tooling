@@ -83,7 +83,7 @@ export PGHOST='postgres'
 #
 function break-out-of-links {
   local pwd="$( pwd -P )"
-  local link_root="${HOME}/links/home/"
+  local link_root="${HOME}/links/filesets/home/"
   starts-with? "$link_root" <<< "$pwd" && cd "${pwd//${link_root}/${HOME}/}"
 }
 
