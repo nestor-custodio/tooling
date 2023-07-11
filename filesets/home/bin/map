@@ -1,0 +1,54 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) COMMAND [ARGS]
+
+		A simpler form of "xargs", this invokes COMMAND (passing all ARGS) for
+		every line of STDIN, passing output through to STDOUT. Input is quoted
+		and used as the *final* argument to the given command. If this doesn't
+		meet your needs, then you'll need "xargs".
+
+		NOTE: To prevent breaking expected behaviour, the '--help' flag will
+		      output this help text *only* when it is the only argument given.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Examples:
+
+		  # GZip target files.
+		  fd '*.big' | $( script-name ) gzip
+
+		  # Delete all files/dirs from a list.
+		  $( script-name ) rm -rf < the-list.txt
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$*" == '--help' ] && exit-out "$usage"
+
+	[ "$#" == 0 ] && error-out 1 'no COMMAND given'
+
+}
+
+# ---
+# ---
+
+
+cat - | xargs --replace --no-run-if-empty -- "$@" "{}"
