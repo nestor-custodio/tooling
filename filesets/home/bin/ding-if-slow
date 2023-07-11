@@ -8,7 +8,7 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name ) COMMAND [ARGS]
 
-		Runs the given command (passing all args), then calls 'ding-me' if the
+		Runs the given COMMAND (passing all ARGS), then calls 'ding-me' if the
 		command runs for more than DING_IF_SLOW_TIMEOUT seconds (default is 60).
 
 		NOTE: To prevent breaking expected behaviour, the '--help' flag will
