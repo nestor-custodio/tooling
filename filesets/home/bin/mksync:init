@@ -179,6 +179,7 @@ startup_log='/var/log/startup'
 			[ -e "$vm_specific_installer" ] && "$vm_specific_installer"
 
 			apt-get -qqy install -f  # Resolve possible dependency issues.
+			apt-get -qqy autoremove  # Remove unnecessary leftover packages.
 
 
 		# Notify of init completion.
