@@ -177,7 +177,6 @@ case "$tool_name" in
 	(hostctl          ) check-version                  --puller='(?<=hostctl version ).*'      ;;
 	(hx               ) check-version                  --puller='(?<=helix ).*?(?= )'          ;;
 	(jq               ) check-version                                                          ;;
-	(jtbl             ) check-version --cmd='-v'       --puller='(?<=version ).*'              ;;
 	(lazydocker       ) check-version                  --puller='(?<=Version: ).*'             ;;
 	(lazygit          ) check-version                  --puller='(?<=version=).*?(?=,)'        ;;
 	(n                ) check-version                  --puller='(?<=v).*'                     ;;
