@@ -19,7 +19,7 @@ source '/home/nestor/bin/std.lib'
 		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  if mismatched version numbers.
+		  2  if update available.
 	EOF
 
 }

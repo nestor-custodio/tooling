@@ -157,6 +157,7 @@ if [ -n "$checks_only" ]; then
 		backspace 3 && echo "$update_report"
 	done
 
+	exit-out
 fi
 
 
