@@ -20,7 +20,8 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid option.
+		  1  if invalid option,
+		  2  if unable to retrieve requested metadata.
 	EOF
 
 }
@@ -78,10 +79,9 @@ function fetch {
 	#
 	local gcp_metadata_api='http://metadata.google.internal/computeMetadata/v1'
 
-
-	# We're tacking on an `echo` because the metadata response is "too clean" (i.e. has no "\n").
-	#
-	curl "${gcp_metadata_api}/${metadata_key}" --silent --header 'Metadata-Flavor: Google' --fail && echo
+	set-trap ERR 'exit-out 2'
+	curl "${gcp_metadata_api}/${metadata_key}" --silent --header 'Metadata-Flavor: Google' --fail | clean
+	clear-trap ERR
 }
 
 # ---
