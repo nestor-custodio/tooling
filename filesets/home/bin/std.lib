@@ -43,9 +43,48 @@ shopt -s lastpipe expand_aliases
 
 }
 
-# --
+# ---
 
 { # -- Error Helpers -- #
+
+	declare -A _pre_trap_flags
+
+	function set-trap {
+		# Allows simplified setting of traps by
+		# automatically managing any related shell flags.
+
+		local signal="$1" && shift
+		local processor="$1" && shift
+
+
+		# Remember the inital state of relevant shell flags,
+		# then set as required to accomodate the requested trap.
+
+		case "$signal" in
+
+			ERR)
+				set +o | grep -P '\b(errexit|pipefail)\b' | store-as _pre_trap_flags[$signal]
+				set -o errexit
+				set -o pipefail
+				;;
+
+		esac
+
+
+		trap "$processor" "$signal"
+	}
+
+	function clear-trap {
+		# Resets traps for the given signal, and restores
+		# any related shell flags that may have been tweaked.
+
+		local signal="$1" && shift
+
+		trap - "$signal"
+		eval "${_pre_trap_flags[$signal]}"; unset _pre_trap_flags[$signal]
+	}
+
+	# ---
 
 	function exit-out {
 		# Prints a "clean" message (as given) to STDOUT, then exits.
