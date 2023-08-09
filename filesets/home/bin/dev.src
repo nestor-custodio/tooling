@@ -304,12 +304,12 @@ shopt -s lastpipe
       #
       if node_version="$( nearest --read '.node-version' )"
         then node --version 2> /dev/null | has? "$node_version" || n install "$node_version"
-        else command -v node || n lts
+        else which node &> /dev/null || n lts
       fi
 
       # Ensure yarn.
       #
-      command -v yarn || npm install -g yarn
+      which yarn &> /dev/null || npm install -g yarn
 
       yarn install 2> /dev/null
     }
