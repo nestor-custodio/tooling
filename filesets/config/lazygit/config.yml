@@ -36,7 +36,7 @@ gui:
   skipNoStagedFilesWarning: false
   skipRewordInEditorWarning: true
   skipStashWarning: true
-  skipUnstageLineWarning: false
+  skipDiscardChangeWarning: false
 
   commitLength:
     show: true
@@ -237,7 +237,7 @@ keybinding:
     markCommitAsFixup: 'f'
     squashAboveCommits: 'S'
     moveDownCommit: '<c-k>'
-    moveUpCommit: '<c-i>'
+    moveUpCommit: '<tab>'  # This is really a mapping to '<c-i>', but that's no longer allowed as of 0.40.
     amendToCommit: '+'
     pickCommit: 'p'
     cherryPickCopy: 'c'
