@@ -225,6 +225,8 @@ shopt -s lastpipe
 
   # rails
 
+    function rx  {                                       bundle exec rails runner  "$@" ;}
+
     function rc  {                                       bundle exec rails console "$@" ;}
     function rs  {                                       bundle exec rails server  "$@" ;}
     function rs1 { RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 bundle exec rails server  "$@" ;}
@@ -385,4 +387,4 @@ shopt -s lastpipe
 #
 export -f :? @ ba bi br bx d db! db+ db- db: DB! dev development known-env-vars    \
           load-env na ni node-tasks nr ns nt nx p production rails-tasks rc rs rs1 \
-          rt rubocop s set-env staging t testing unload-env ya yi yr yx
+          rt rubocop rx s set-env staging t testing unload-env ya yi yr yx
