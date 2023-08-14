@@ -24,6 +24,26 @@ define sign (x) {
 
 /* ------------------------------------------------------------------------- */
 
+define min (a, b) {
+  in_scale = scale;
+
+  output = a
+  if (a > b) output = b
+
+  scale = in_scale; return output;
+}
+
+define max (a, b) {
+  in_scale = scale;
+
+  output = a
+  if (a < b) output = b
+
+  scale = in_scale; return output;
+}
+
+/* ------------------------------------------------------------------------- */
+
 define truncate (x) {
   in_scale = scale;
 

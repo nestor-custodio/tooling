@@ -72,13 +72,17 @@ source '/home/nestor/bin/std.lib'
 
 tar --create --to-stdout --strip-components='99' "$@" | gzip --best --stdout | encrypt | base64 --wrap='0' | store-as data
 calc "ceil( ${#data} / ${part_count} )" | store-as part_length
+calc "max( ${#part_count}, 2 )" | store-as part_digits
+
+md5sum <<< "$SCRIPT_TIMESTAMP" | tr '[:lower:]' '[:upper:]' | cut -c 1-20 | store-as group_id
+
 
 for i in $( seq "$part_count" ); do
 	calc "( ${i} - 1 ) * $part_length" | store-as start
 
 	printf '\n. . . . . . . . . .\n.\n'
-	printf '# tar.gz.crypt.base64/%d\n%s' "$i" "${data:$start:$part_length}" | qr | clean | sed -r -e 's|^|.   |' -e 's|$|   .|'
-	printf '.\n. . . . . . . . . .\n'
+	printf "# tar.gz.crypt.base64/%0${part_digits}d\n%s" "$i" "${data:$start:$part_length}" | qr | clean | sed -r -e 's|^|.  |' -e 's|$|   .|'
+	printf ".   %s: %0${part_digits}d/%0${part_digits}d\n. . . . . . . . . .\n" "$group_id" "$i" "$part_count"
 
 	# Sometimes we don't need as many parts as were requested.
 	#
