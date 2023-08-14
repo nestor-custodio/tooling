@@ -10,8 +10,8 @@ source '/home/nestor/bin/std.lib'
 
 		It's possible to give 'calc' a boolean expression, which is then passed
 		down to the underlying *bc* implementation, returning a '0' (false) or a
-		'1' (true) via STDOUT. This tool lets you a corresponding exit code back
-		instead ('0' becomes a 1 and '1' becomes a 0).
+		'1' (true) via STDOUT. This tool lets you get the corresponding exit code
+		back instead: '1' (true) becomes a 0, and '0' (false) becomes a 1.
 
 		Note any non-0 exit code returned by 'calc' is passed through as a 2.
 

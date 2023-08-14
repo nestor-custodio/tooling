@@ -6,7 +6,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [NAME] ...
+		Usage: $( script-name ) NAME ...
 
 		Traverses up the directory tree looking for any of the names given,
 		and returning an absolute path to the first such item. Directories
