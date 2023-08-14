@@ -1,0 +1,86 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) FILE ...
+
+		Packages the given FILE(s) into (potentially many) QR codes. Files are
+		encrypted in the process, yielding codes that are "safe" to lose and for
+		strangers to find. Each code has a header detailing how it was generated
+		as well as a sequence identifier; with these we can restore the original
+		file(s).
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+		  -n | --count | --parts    Number of QR codes over which to split the
+		                            to given files. (Default is 1.)
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	part_count='1'
+
+	# ---
+	# ---
+
+	CHAR_OPTS='n:'
+	LONG_OPTS='help,parts:,count:'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(-n|--count|--parts)
+				part_count="$1" && shift
+				[ -z "${part_count//[0-9]/}" ] || error-out 1 "non-numeric PART_COUNT: '${part_count}'"
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] && error-out 1 'no FILE(s) given'
+
+}
+
+# ---
+# ---
+
+
+tar --create --to-stdout --strip-components='99' "$@" | gzip --best --stdout | encrypt | base64 --wrap='0' | store-as data
+calc "ceil( ${#data} / ${part_count} )" | store-as part_length
+
+for i in $( seq "$part_count" ); do
+	calc "( ${i} - 1 ) * $part_length" | store-as start
+
+	printf '\n. . . . . . . . . .\n.\n'
+	printf '# tar.gz.crypt.base64/%d\n%s' "$i" "${data:$start:$part_length}" | qr | clean | sed -r -e 's|^|.   |' -e 's|$|   .|'
+	printf '.\n. . . . . . . . . .\n'
+
+	# Sometimes we don't need as many parts as were requested.
+	#
+	calc? "( ${start} + ${part_length} ) >= ${#data}" && break
+done
