@@ -198,7 +198,7 @@ case "$tool_name" in
 	(fd               ) update-tooling --asset='gnu'                     ;;
 	(fzf              ) update-tooling                                   ;;
 	(hx               ) update-tooling                                   ;;
-	(jq               ) update-tooling                                   ;;
+	(jq               ) update-tooling --asset='amd64'                   ;;
 	(lazydocker       ) update-tooling                                   ;;
 	(lazygit          ) update-tooling                                   ;;
 	(n                ) update-tooling --source                          ;;
