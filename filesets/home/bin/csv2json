@@ -1,0 +1,111 @@
+#! /bin/env ruby
+
+# ------------- #
+# -- STD Lib -- #
+
+require 'bundler/inline'
+require 'csv'
+require 'json'
+require 'pathname'
+
+# ----------------- #
+# -- Gem Loaders -- #
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'optimist'
+end
+
+# ------------------ #
+# -- Misc Helpers -- #
+
+SCRIPT_TIMESTAMP = Time.now.to_f
+
+def script_file = Pathname.new(__FILE__)
+
+def script_path = script_file.dirname
+def script_real = script_file.realpath
+def script_name = script_file.basename
+
+def file_blanks = (' ' * script_file.to_s.length)
+def path_blanks = (' ' * script_path.to_s.length)
+def real_blanks = (' ' * script_real.to_s.length)
+def name_blanks = (' ' * script_name.to_s.length)
+
+# --------------- #
+# -- Help Text -- #
+
+usage = <<~USAGE
+  Usage: #{script_name} --lines [FILE]
+         #{name_blanks} --array [FILE]
+         #{name_blanks} --keyed-by=FIELD_NAME [--int] [FILE]
+
+  Converts the given CSV (via FILE or STDIN) into JSON, proucing either
+  JSONL output, an array of hashes, or a hash of hash values.
+
+
+  Mandatory arguments to long options are mandatory for short options too.
+    --help                    Show this help text.
+
+    -l | --lines | --jsonl    Output JSONL.
+    -a | --array              Output an array.
+    -k | --keyed-by           Output a hash, keyed by the given FIELD_NAME.
+
+
+  Exit Status:
+    0  if OK,
+    1  if invalid option,
+    2  if invalid CSV source,
+    3  if requested hash key not found.
+USAGE
+
+$stdout.write usage and exit if ARGV.intersect? %w[-h --help]
+
+# ----------------------------------- #
+# -- Parameter Processing: Options -- #
+
+options = Optimist.options do
+  # https://www.manageiq.org/optimist/
+
+  opt :lines, 'output JSONL', short: :l
+  opt :jsonl, 'output JSONL', short: nil
+
+  opt :array, 'output an array', short: :a
+
+  opt :keyed_by, 'output a hash, keyed by the given FIELD_NAME', short: :k, type: String
+
+  # ---
+
+  either :lines, :jsonl, :array, :keyed_by
+end
+
+# --------------------------------------- #
+# -- Parameter Processing: Positionals -- #
+
+csv_source = ARGV.shift || $stdin
+
+Optimist.die 'invalid option(s)', 1 unless ARGV.empty?
+
+# ---
+# ---
+
+# Ensure an IO stream.
+csv_stream = case csv_source
+             when IO then csv_source
+             when String then File.open csv_source rescue Optimist.die 'CSV source not found', 2
+             end
+
+# ---
+
+dataset = CSV.parse csv_stream, headers: true,
+                                converters: :numeric,
+                                header_converters: :symbol
+
+if options[:lines] || options[:jsonl]
+  dataset.each { |row| puts JSON.generate(row.to_h) }
+elsif options[:array]
+  puts JSON.generate(dataset.map(&:to_h))
+elsif options[:keyed_by_given]
+  key = options[:keyed_by].to_sym
+  puts JSON.generate(dataset.map(&:to_h).to_h { |row| [row[key], row] })
+end
