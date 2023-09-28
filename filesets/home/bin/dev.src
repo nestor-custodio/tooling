@@ -225,17 +225,39 @@ shopt -s lastpipe
 
   # rails
 
-    function rx  {                                       bundle exec rails runner  "$@" ;}
+    function rails-db {
+      local database="$DATABASE_URL"
+      local db_config="${HOME}/dev/config/database.yml"
 
-    function rc  {                                       bundle exec rails console "$@" ;}
-    function rs  {                                       bundle exec rails server  "$@" ;}
-    function rs1 { RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 bundle exec rails server  "$@" ;}
+    	# Pull from Rails DB config, if no $DATABASE_URL was available.
+    	#
+    	[ -n "$database" ] || database="$( yaml ".${RAILS_ENV}.database" < "$db_config" 2> /dev/null )"
+    	[ -n "$database" ] || return 1
 
-    # ---
+      # Ensure we have a URL.
+      #
+      if ! matches? '://' <<< "$database"; then
+        case "$( yaml ".${RAILS_ENV}.adapter" < "$db_config" 2> /dev/null )" in
+          (postgresql) database="postgres://${USER}@postgres/${database}" ;;
+          (mysql     ) database="mysql://${USER}@mysql/${database}" ;;
+          (sqlite3   ) database="sqlite3://${database}" ;;
 
-    function db: { bundle exec rails generate migration "$@" ;}
-    function db+ { bundle exec rails db:migrate         "$@" ;}
-    function db- { bundle exec rails db:rollback        "$@" ;}
+          *) return 2 ;;
+        esac
+      fi
+
+      echo "$database"
+    }
+
+    function pending-migrations {
+      local migration_file_list="$( ls -m --width=0 "${HOME}/dev/db/migrate"/??????????????_*.rb 2> /dev/null | sed -r -e "s|\S*/([0-9]{14})_[^,]*|'\1'|g" )"
+      usql "$( rails-db )" -Aqt --command="SELECT files.name FROM UNNEST(ARRAY[${migration_file_list}]) AS files(name) LEFT JOIN schema_migrations ON (name = version) WHERE (version IS NULL) ORDER BY 1"
+    }
+    function pending-migrations? { [ -n "$( pending-migrations )" ] ;}
+
+    function db: {                        bundle exec rails generate migration "$@" ;}
+    function db+ { pending-migrations? && bundle exec rails db:migrate         "$@" ;}
+    function db- {                        bundle exec rails db:rollback        "$@" ;}
 
     function db! {
       bundle exec rails runner "
@@ -253,6 +275,14 @@ shopt -s lastpipe
       gem cleanup --silent sorbet-runtime
       db!
     }
+
+    # ---
+
+    function rx  {                                            bundle exec rails runner  "$@" ;}
+
+    function rc  {                                            bundle exec rails console "$@" ;}
+    function rs  { db+;                                       bundle exec rails server  "$@" ;}
+    function rs1 { db+; RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 bundle exec rails server  "$@" ;}
 
     # ---
 
@@ -385,6 +415,7 @@ shopt -s lastpipe
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f :? @ ba bi br bx d db! db+ db- db: DB! dev development known-env-vars    \
-          load-env na ni node-tasks nr ns nt nx p production rails-tasks rc rs rs1 \
-          rt rubocop rx s set-env staging t testing unload-env ya yi yr yx
+export -f :? @ ba bi br bx d db! db+ db- db: DB! dev development known-env-vars load-env   \
+          na ni node-tasks nr ns nt nx p pending-migrations pending-migrations? production \
+          rails-db rails-tasks rc release-gem rs rs1 rt rubocop rx s set-env staging t     \
+          testing unload-env ya yi yr yx
