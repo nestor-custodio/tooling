@@ -151,13 +151,13 @@ shopt -s lastpipe
 
         pushd "${HOME}/dev"
 
-        superbase ./*.gemspec | store-as gem_name
+        gem_name="$( superbase ./*.gemspec )"
         [ -n "$gem_name" ] || return 2
 
-        gh repo set-default --view 2> /dev/null | store-as repo_id
+        repo_id="$( gh repo set-default --view 2> /dev/null )"
         [ -n "$repo_id" ] || return 3
 
-        gh:release-version "$repo_id" 2> /dev/null | store-as old_version
+        old_version="$( gh:release-version "$repo_id" 2> /dev/null )"
         [ -n "$old_version" ] || old_version='0.0.0'
 
 
@@ -170,7 +170,7 @@ shopt -s lastpipe
 
         case "$bump" in
           (major)
-            calc "${major} + 1" | store-as major
+            major="$( calc "${major} + 1" )"
             new_version="${major}.0.0"
 
             printf "Last release was '%s'.\nPublish new release as (%s):" "$old_version" "$new_version"
@@ -178,7 +178,7 @@ shopt -s lastpipe
             ;;
 
           (minor)
-            calc "${minor} + 1" | store-as minor
+            minor="$( calc "${minor} + 1" )"
             new_version="${major}.${minor}.0"
 
             printf "Last release was '%s'.\nPublish new release as (%s):" "$old_version" "$new_version"
@@ -186,7 +186,7 @@ shopt -s lastpipe
             ;;
 
           (patch)
-            calc "${patch} + 1" | store-as patch
+            patch="$( calc "${patch} + 1" )"
             new_version="${major}.${minor}.${patch}"
 
             printf "Last release was '%s'.\nPublish new release as (%s):" "$old_version" "$new_version"
