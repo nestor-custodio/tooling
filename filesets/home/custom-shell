@@ -138,7 +138,7 @@ function mirror {
 
   # Make it easier to `cd` into common locations.
   #
-  export CDPATH=".:${HOME}"
+  export CDPATH=".:${HOME}:${HOME}/docs"
 
 
   # eget
