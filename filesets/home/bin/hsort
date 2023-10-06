@@ -6,10 +6,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) HEADER_LINE_COUNT [-- SORT_OPTIONS]
+		Usage: $( script-name ) [HEADER_LINE_COUNT] [-- SORT_OPTIONS]
 
 		Wrapper for GNU sort that lets you specify a number of "header" lines to
-		keep at the top of the file, before sorting begins.
+		skip before sorting begins. Default HEADER_LINE_COUNT is 1.
 
 		Any SORT_OPTIONS given are passed through to the underlying *sort* call.
 
@@ -20,8 +20,7 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid header line count,
-		  2  if option.
+		  1  if invalid option.
 	EOF
 
 }
@@ -46,9 +45,8 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	header_line_count="$1" && shift
-	[ -n "$header_line_count" ] || error-out 1 'no header line count given'
-	integer? "$header_line_count" || error-out 1 'non-integer header line count given'
+	header_line_count='1'
+	integer? "$1" && header_line_count="$1" && shift
 
 }
 
