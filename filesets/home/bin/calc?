@@ -50,7 +50,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-output="$( calc "$@" 2> /dev/null )" || error-out 2 'invalid expression'
+output="$( calc -- "$@" 2> /dev/null )" || error-out 2 'invalid expression'
 
 case "$output" in
 	0) exit-out 1 ;;
