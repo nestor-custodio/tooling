@@ -121,6 +121,18 @@ function mirror {
   function h { "$@" --help | bat --plain --language='help' ;}
   function m { MANPAGER='cat' man "$@" | bat --plain --language='man' ;}
 
+  # Paging while retaining header lines is a common
+  # enough need that we want to accomodate it easily.
+  #
+  function hbat {
+    [ "$1" == '--help' ] && echo 'Usage: hbat [HEADER_LINE_COUNT] [BAT_OPTIONS]' && return 0
+
+    local header_line_count='1'
+    integer? "$1" && header_line_count="$1" && shift
+
+    bat --pager="less --header='${header_line_count}'" "$@"
+  }
+
 
   # bw
 
@@ -374,11 +386,11 @@ dev_helpers="${HOME}/bin/dev.src"
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f ... .... ..... ::                                                         \
-          a break-out-of-links f g gadd gblame gbranch gcheckout gcherrypick gclone \
-          gcommit gconfig gdeploy gdiff gfetch ggraph ginit glog gmerge gmove gmv   \
-          gpatch gpop gpull gpush grebase gremote grep greset gstage gstash gstatus \
-          gtag gtrack gunchange gundelete gunstage guntrack h helix k lazydocker    \
+export -f ... .... ..... ::                                                           \
+          a break-out-of-links f g gadd gblame gbranch gcheckout gcherrypick gclone   \
+          gcommit gconfig gdeploy gdiff gfetch ggraph ginit glog gmerge gmove gmv     \
+          gpatch gpop gpull gpush grebase gremote grep greset gstage gstash gstatus   \
+          gtag gtrack gunchange gundelete gunstage guntrack h hbat helix k lazydocker \
           less list m mirror mkcd pgcli real rg shellcheck
 
 
