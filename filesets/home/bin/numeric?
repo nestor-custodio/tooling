@@ -1,0 +1,41 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) TEST_VALUE
+
+		Convenience tool for determining whether the value provided is numeric.
+
+		NOTE: To prevent breaking expected behaviour, the '--help' flag will
+		      output this text *in addition to* generating an exit code of 1.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if numeric value,
+		  1  if non-numeric value.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$*" == '--help' ] && exit-out 1 "$usage"
+
+}
+
+# ---
+# ---
+
+
+[ -z "${*//[-0-9. ]/}" ] || exit-out 1
+calc? -- "${*} == ${*}" 2> /dev/null || exit-out 1
