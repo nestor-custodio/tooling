@@ -52,7 +52,7 @@ source '/home/nestor/bin/std.lib'
 
 			(-n|--count|--parts)
 				part_count="$1" && shift
-				[ -z "${part_count//[0-9]/}" ] || error-out 1 "non-numeric PART_COUNT: '${part_count}'"
+				integer? "$part_count" || error-out 1 "non-integer PART_COUNT: '${part_count}'"
 				;;
 
 		esac

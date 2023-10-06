@@ -48,7 +48,7 @@ source '/home/nestor/bin/std.lib'
 
 	header_line_count="$1" && shift
 	[ -n "$header_line_count" ] || error-out 1 'no header line count given'
-	[ "$header_line_count" -eq "$header_line_count" ] || error-out 1 'non-numeric header line count given'
+	integer? "$header_line_count" || error-out 1 'non-integer header line count given'
 
 }
 

@@ -49,7 +49,7 @@ source '/home/nestor/bin/std.lib'
 		local pid="$1" && shift
 		[ -n "$pid" ] || return
 
-		[ -z "${pid//[0-9]/}" ] || error-out 1 "non-numeric PID: '${pid}'"
+		integer? "$pid" || error-out 1 "non-integer PID: '${pid}'"
 		tail --pid="$pid" -f /dev/null
 	}
 
