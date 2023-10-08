@@ -130,7 +130,7 @@ function mirror {
     local header_line_count='1'
     integer? "$1" && header_line_count="$1" && shift
 
-    bat --pager="less --header='${header_line_count}'" "$@"
+    bat --pager="less --header='${header_line_count}' --jump-target='$(( header_line_count + 1 ))'" "$@"
   }
 
 
