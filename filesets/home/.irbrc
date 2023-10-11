@@ -134,7 +134,11 @@ AwesomePrint.send "#{Ruby.repl_engine}!"
 
 
 class Object
-  def user_methods
+  def own_methods
+    public_methods false
+  end
+
+  def real_methods
     return public_methods if self.instance_of? Object
     public_methods - Object.methods
   end
