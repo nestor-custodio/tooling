@@ -67,10 +67,10 @@ set -g set-titles-string "#( hostname )"
 ##       -
 ##     }
 ##     #{?window_zoomed_flag, 🔍,}
-##     #{?window_marked_flag, 💢,}
+##     #{?window_marked_flag, 🎯,}
 ##   ]
 ##
-WINDOW_FORMAT=" #{?window_name,#{$CLEAN_TO_DASH:window_name},-}#{?window_zoomed_flag, 🔍,}#{?window_marked_flag, 💢,} "
+WINDOW_FORMAT=" #{?window_name,#{$CLEAN_TO_DASH:window_name},-}#{?window_zoomed_flag, 🔍,}#{?window_marked_flag, 🎯,} "
 
 set -g window-status-format "$WINDOW_FORMAT"
 set -g window-status-current-format "#[fg=white,bold,bg=brightblack]${WINDOW_FORMAT}#[default]"
@@ -82,14 +82,14 @@ set -g window-status-current-format "#[fg=white,bold,bg=brightblack]${WINDOW_FOR
 
 ## Human-readable pane title string:
 ##
-##   #{?pane_marked,💢 ,}
+##   #{?pane_marked,🎯 ,}
 ##   #{?pane_title,
 ##     #{$CLEAN_TO_COMMAND:pane_title}
 ##     ,
 ##     $COMMAND
 ##   }
 ##
-PANE_FORMAT="#{?pane_marked,💢 ,}#{?pane_title,#{$CLEAN_TO_COMMAND:pane_title},$COMMAND}"
+PANE_FORMAT="#{?pane_marked,🎯 ,}#{?pane_title,#{$CLEAN_TO_COMMAND:pane_title},$COMMAND}"
 
 set -g pane-border-status top
 set -g pane-border-format "#[fg=white,bold] $PANE_FORMAT #[default]"
