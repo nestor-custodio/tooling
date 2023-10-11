@@ -263,7 +263,7 @@ function mirror {
 
   function lazydocker {
     command -v docker &> /dev/null || sudo apt install -qqy docker.io
-    sudo "$( real lazydocker )" "$@"
+    "$( real lazydocker )" "$@"
   }
 
 
