@@ -166,7 +166,7 @@ case "$tool_name" in
 	(aws              ) check-version                  --puller='(?<=aws-cli/).*?(?= )'        ;;
 	(bat              ) check-version                  --puller='(?<=bat ).*?(?= )'            ;;
 	(btop             ) check-version                  --puller='(?<=btop version: ).*'        ;;
-	(caddy            ) check-version --cmd='version'  --puller='(?<=v).*?(?= )'               ;;
+	(caddy            ) check-version                  --puller='(?<=v).*?(?= )'               ;;
 	(circleci         ) check-version --cmd='version'  --puller='.*?(?=\+)'                    ;;
 	(delta            ) check-version                  --puller='(?<=delta ).*'                ;;
 	(eget             ) check-version                  --puller='(?<=eget version ).*'         ;;
