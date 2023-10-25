@@ -10,10 +10,10 @@ source '/home/nestor/bin/std.lib'
 
 		Finds a running 'links' instance and replaces it with a new instance,
 		loading the given URL.
-		
+
 		When no running instance is found, one is spawned within a new window.
 		When multiple instances are found, the *newest* one is used by default.
-		
+
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.

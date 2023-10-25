@@ -10,7 +10,7 @@ source '/home/nestor/bin/std.lib'
 
 		Waits for the given process(es) to terminate. If no arguments are given, PIDs
 		are read from STDIN (one per line) until input is exhausted.
-		
+
 		Example:  pgrep ruby | $( script-name )  # Waits on all ruby processes to end.
 
 
