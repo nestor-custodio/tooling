@@ -161,6 +161,20 @@ function mirror {
   export EGET_BIN="${HOME}/bin/vendor"
 
 
+  # eza
+
+  function f {
+    # shellcheck disable=SC2002
+    # This is not in fact a "useless `cat`" -- it's needed to prevent STDERR output if a "~/.hidden" file does not exist.
+    #
+    local hide_globs="$( cat "${HOME}/.hidden" 2> /dev/null | paste -s --delimiters='|' )"
+
+    eza --long --dereference --color='always' --group-directories-first --time-style='long-iso' --no-quotes --ignore-glob="${hide_globs:-|}" "$@"
+  }
+
+  function a { f --almost-all --ignore-glob='|' "$@" ;}
+
+
   # fzf
 
   fzf_keybinding_spec="ctrl-i:up,ctrl-k:down,space:toggle,ctrl-space:toggle"
@@ -288,19 +302,6 @@ function mirror {
 
 
   # ls
-
-  function f {
-    # Use of `eval` here is required because we're building out the `--hide` params,
-    # and is why "$@" subsequently requires special handling.
-
-    arg_params="$( [ -n "$*" ] && printf '"%s" ' "$@" )"
-    hide_params="$( xargs --arg-file="${HOME}/.hidden" --replace printf '--hide="%s" ' "{}" 2> /dev/null )"
-    style_params="-ohH --color='always' --group-directories-first --time-style='long-iso' --quoting-style='literal'"
-
-    eval "ls ${style_params} ${hide_params} ${arg_params}" | grep -Pvx 'total [0-9.]+[kKmMgGtT]?'
-  }
-
-  function a { f --almost-all "$@" ;}
 
   # Colorize `ls` output by file class/type.
   #

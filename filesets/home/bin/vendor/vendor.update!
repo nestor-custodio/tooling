@@ -195,6 +195,7 @@ case "$tool_name" in
 	(circleci         ) update-tooling                                   ;;
 	(delta            ) update-tooling --asset='gnu'                     ;;
 	(eget             ) update-tooling                                   ;;
+	(eza              ) update-tooling --asset='gnu.zip'                 ;;
 	(fd               ) update-tooling --asset='gnu'                     ;;
 	(fzf              ) update-tooling                                   ;;
 	(hx               ) update-tooling                                   ;;

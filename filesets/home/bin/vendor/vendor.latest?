@@ -170,6 +170,7 @@ case "$tool_name" in
 	(circleci         ) check-version --cmd='version'  --puller='.*?(?=\+)'                    ;;
 	(delta            ) check-version                  --puller='(?<=delta ).*'                ;;
 	(eget             ) check-version                  --puller='(?<=eget version ).*'         ;;
+	(eza              ) check-version                  --puller='(?<=v).*(?= )'                ;;
 	(fd               ) check-version                  --puller='(?<=fd ).*'                   ;;
 	(fzf              ) check-version                  --puller='.*(?= )'                      ;;
 	(gh               ) check-version                  --puller='(?<=gh version ).*?(?= )'     ;;
