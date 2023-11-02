@@ -169,7 +169,7 @@ function mirror {
     #
     local hide_globs="$( cat "${HOME}/.hidden" 2> /dev/null | paste -s --delimiters='|' )"
 
-    eza --long --dereference --color='always' --group-directories-first --time-style='long-iso' --no-quotes --ignore-glob="${hide_globs:-|}" "$@"
+    eza --long --dereference --color='always' --group-directories-first --group --smart-group --time-style='long-iso' --no-quotes --ignore-glob="${hide_globs:-|}" "$@"
   }
 
   function a { f --almost-all --ignore-glob='|' "$@" ;}
