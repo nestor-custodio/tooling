@@ -297,10 +297,22 @@ shopt -s lastpipe
     export N_PREFIX="${HOME}/.nodes"
 
     # Package helpers.
-    #
+
     function nx { npx         "$@" ;}
     function na { npm audit   "$@" ;}
-    function ni { npm install "$@" ;}
+
+    function ni {
+      nearest --quiet 'package.json' || return 0
+
+      # Ensure node.
+      #
+      if node_version="$( nearest --read '.node-version' )"
+        then node --version 2> /dev/null | has? "$node_version" || n install "$node_version"
+        else which node &> /dev/null || n lts
+      fi
+
+      npm install --loglevel='error' "$@"
+    }
 
 
     # Command helpers.
@@ -349,7 +361,7 @@ shopt -s lastpipe
 
   # multi-language constructs
 
-    function @ { bi && yi ;}
+    function @ { bi && ni ;}
 
 
 # ENV helpers.
