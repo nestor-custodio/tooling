@@ -293,7 +293,10 @@ if defined? Rails
 
 
   def db?
-    User.take.present?
+    User.take
+    true
+  rescue StandardError
+    false
   end
 
   def connection
@@ -311,79 +314,4 @@ if defined? Rails
   alias clear_db_cache! clear_cache!
 
 
-  def my_identities
-    {
-      # 'sakimorix@gmail.com': { ldap_username: nil,
-      #                          password: 'password' },
-
-      'custone@tulsaschools.org': { ldap_username: 'custone',
-                                    password: 'password',
-                                    employee_id: 59156 }
-    }
-  end
-
-  def me
-    User.where(email: my_identities.keys).take
-  end
-
-  def me!
-    my_identities.each do |email, identity|
-      User.find_or_create_by({ email:            email,
-                               role:             :district,
-                               has_admin_access: true,
-                               name:             'Nestor Custodio',
-                               first_name:       'Nestor',
-                               last_name:        'Custodio' }.merge identity)
-    end
-
-    me
-  end
-
-
-end
-
-
-
-
-## ---
-## ---
-
-
-def gp_time(var = nil)
-  gp_local = lambda { |datetime| datetime.in_time_zone 'America/Los_Angeles' }
-
-  case var
-    # now
-    when nil then gp_local[Time.now]
-
-    # at [datetime]
-    when Time, DateTime then gp_local[var]
-
-    # in [duration]
-    when ActiveSupport::Duration then gp_local[Time.now] + var
-
-    # like "#h #m #s"
-    when String
-
-      duration_method = lambda do |char|
-        case char
-        when 'w' then :weeks
-        when 'd' then :days
-        when 'h' then :hours
-        when 'm' then :minutes
-        when 's' then :seconds
-        end
-      end
-
-      duration = var.downcase                                                # downcase
-                    .split(%r{(?<=[^0-9])(?=[0-9])})                         # create segments
-                    .map { |segment| segment.gsub %r{[^0-9a-z]}    , ''   }  # drop non-alphanum
-                    .map { |segment| segment.gsub %r{^0+}          , ''   }  # drop leading '0's
-                    .map { |segment| segment.gsub %r{([a-z])[a-z]*}, '\1' }  # reduce alpha to single char
-                    .select { |segment| segment =~ %r{^[0-9]+[wdhms]$} }     # keep only things that are properly formatted
-                    .map { |segment| segment.to_i.send duration_method[segment.last] }  # convert to ActiveSupport::Duration value
-                    .sum 0.seconds
-
-      gp_local[Time.now] + duration
-  end
 end
