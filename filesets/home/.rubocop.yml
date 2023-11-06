@@ -53,6 +53,10 @@ Style/FetchEnvVar:
   # Suggests `ENV.fetch` for the replacement of `ENV[]`.
   Enabled: false
 
+Style/FormatString:
+  # Enforce the use of Kernel#sprintf, Kernel#format or String#%.
+  EnforcedStyle: percent
+
 Style/FrozenStringLiteralComment:
   # Enforces use of the frozen_string_literal comment in every file.
   Enabled: false
