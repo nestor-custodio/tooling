@@ -63,15 +63,18 @@ cd "${HOME}/dev" &> /dev/null
 case "$language" in
 
 	(ruby)
-			# cat /dev/stdin
-			rubocop --server --stdin source_file.rb --stderr --autocorrect --fail-level='fatal' < /dev/stdin
+		rubocop --server --stdin source_file.rb --stderr --autocorrect --fail-level='fatal' < /dev/stdin
 		;;
 
+
 	(javascript|jsx)
-			# cat /dev/stdin
-			nearest --read 'package.json' | json '(.dependencies // {}),(.devDependencies // {}) | keys[]' | store-as packages
-			has-line? 'prettier' <<< "$packages" || command -v prettier &> /dev/null || npm install --global --production prettier
+		if nearest --read 'package.json' | json '(.dependencies // {}),(.devDependencies // {}) | keys[]' | has-line? 'prettier'; then
+			npx prettier --version &> /dev/null || npm install prettier
 			npx prettier --stdin --stdin-filepath='source_file.jsx' --parser='typescript' --loglevel='error' < /dev/stdin
+		else
+			command -v prettier &> /dev/null || npm install --global --production prettier
+			prettier --stdin --stdin-filepath='source_file.jsx' --parser='typescript' --loglevel='error' < /dev/stdin
+		fi
 		;;
 
 	*) error-out 1 'unexpected LANGUAGE' ;;

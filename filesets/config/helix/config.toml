@@ -13,13 +13,17 @@ theme = "custom"
 
 [editor]
 
-auto-format = false
-auto-pairs  = false
-bufferline  = "multiple"
-color-modes = true
-cursorline  = true
-mouse       = true
-scrolloff   = 5
+auto-format          = false
+auto-pairs           = false
+auto-save            = false
+bufferline           = "multiple"
+color-modes          = true
+cursorline           = true
+insert-final-newline = false
+line-number          = "absolute"
+middle-click-paste   = false
+mouse                = true
+scrolloff            = 5
 
 
 [editor.cursor-shape]
@@ -46,9 +50,19 @@ display-messages = true
 snippets         = false
 
 
+[editor.smart-tab]
+
+enable = false
+
+
+[editor.soft-wrap]
+
+wrap-indicator = "↳"
+
+
 [editor.statusline]
 
-left   = ["spinner", "spacer", "mode", "spacer", "spacer", "file-modification-indicator", "file-name"]
+left   = ["spinner", "spacer", "mode", "spacer", "spacer", "file-name", "file-modification-indicator"]
 center = []
 right  = ["diagnostics", "spacer", "position", "spacer", "position-percentage", "spacer", "file-type", "spacer"]
 
@@ -151,9 +165,6 @@ newline = "↲"
 
 # Tab/Pane Management
 
-"w"       = { "ret" = ":buffer-close", "!" = ":buffer-close!" }
-"q"       = { "ret" = ":quit", "!" = ":quit!" }
-
 "u"       = "goto_previous_buffer"
 "o"       = "goto_next_buffer"
 "p"       = "buffer_picker"
@@ -207,6 +218,20 @@ newline = "↲"
   "_"         = "switch_to_lowercase"
 
 
+[keys.normal.w]
+
+"ret" = ":buffer-close"
+"S"   = ":write-buffer-close"
+"!"   = ":buffer-close!"
+
+
+[keys.normal.q]
+
+"ret" = ":quit"
+"S"   = ":write-quit"
+"!"   = ":quit!"
+
+
 # ---
 # ---
 
@@ -230,7 +255,8 @@ newline = "↲"
 ":"       = "command_mode"
 "P"       = "command_palette"
 
-"ret"     = "insert_mode"
+"ret"     = ["collapse_selection", "insert_mode"]
+";"       = "normal_mode"
 
 
 # Selection Management
@@ -290,5 +316,5 @@ newline = "↲"
 [keys.insert]
 
 
-"tab"       = "indent"
+"tab"       = "insert_tab"
 "S-tab"     = "unindent"
