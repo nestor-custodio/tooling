@@ -85,8 +85,8 @@ git:
   pull:
     mode: 'rebase'
 
-  allBranchesLogCmd: 'git log --graph --all --color=always --abbrev-commit --decorate --date=iso --pretty=medium'
-  branchLogCmd: 'git log --graph --color=always --abbrev-commit --decorate --date=iso --pretty=medium {{branchName}} --'
+  allBranchesLogCmd: 'git log --color=always --decorate --graph --all --oneline --'
+  branchLogCmd: 'git log --color=always --decorate --graph {{branchName}} --'
 
 
 # ---
