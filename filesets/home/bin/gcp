@@ -6,7 +6,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) { vms | list-vms } [-- OPTIONS]
+		Usage: $( script-name ) { vms | list-vms } [--all] [-- OPTIONS]
 
 		       $( script-name ) { scp | cp } [-- OPTIONS] SOURCE TARGET
 
@@ -88,13 +88,14 @@ source '/home/nestor/bin/std.lib'
 
 	# Set defaults.
 
+	all=''
 	machine_type=''
 
 	# --
 	# --
 
 	CHAR_OPTS=''
-	LONG_OPTS='help,machine-type:,micro,small,medium,standard'
+	LONG_OPTS='help,all,machine-type:,micro,small,medium,standard'
 
 	set-params
 	while true; do
@@ -103,6 +104,10 @@ source '/home/nestor/bin/std.lib'
 			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
 
+
+			(--all)
+				all='1'
+				;;
 
 			(--machine-type)
 				machine_type="$1" && shift
@@ -138,7 +143,11 @@ source '/home/nestor/bin/std.lib'
 	case "$command" in
 
 		(vms|list-vms)
-			gcloud compute instances list "$@"
+			if [ -n "$all" ]; then
+				gcloud compute instances list --sort-by='status,name' "$@"
+			else
+				gcloud compute instances list --sort-by='status,name' --filter="(status:'RUNNING')" "$@"
+			fi
 			;;
 
 		# ---
