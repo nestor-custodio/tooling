@@ -224,6 +224,11 @@ newline = "↲"
 "S"   = ":write-buffer-close"
 "!"   = ":buffer-close!"
 
+[keys.normal.w.a]
+
+"ret" = ":buffer-close-all"
+"S"   = [":write-all", ":buffer-close-all"]
+"!"   = ":buffer-close-all!"
 
 [keys.normal.q]
 

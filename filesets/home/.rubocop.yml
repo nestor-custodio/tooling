@@ -1,32 +1,12 @@
 AllCops:
   TargetRubyVersion: 3.0
   SuggestExtensions: false
-  NewCops: enable
-
-
-Layout/EmptyLineAfterGuardClause:
-  # Add empty line after guard clause.
-  Enabled: false
-
-Layout/LineLength:
-  # Checks that line length does not exceed the configured limit.
-  Max: 120
 
 
 Lint/DuplicateBranch:
   # Checks that there are no repeated bodies within `if/unless`, `case-when` and `rescue` constructs.
   Enabled: false
 
-
-Metrics/AbcSize:
-  # A calculated magnitude based on number of assignments, branches, and conditions.
-  Max: 30
-
-Metrics/BlockLength:
-  # Avoid long blocks with many lines.
-  Exclude:
-    - 'spec/**/*.rb'
-    - 'test/**/*.rb'
 
 Metrics/CyclomaticComplexity:
   # A complexity metric that is strongly correlated to the number of test cases needed to validate a method.
@@ -59,11 +39,15 @@ Style/FormatString:
 
 Style/FrozenStringLiteralComment:
   # Enforces use of the frozen_string_literal comment in every file.
-  Enabled: false
+  EnforcedStyle: never
 
 Style/NumericLiterals:
   # Add underscores to large numeric literals to improve their readability.
   Enabled: false
+
+Style/PreferredHashMethods:
+  # Checks use of `has_key?` and `has_value?` Hash methods.
+  EnforcedStyle: verbose
 
 Style/RegexpLiteral:
   # Use / or %r around regular expressions.
