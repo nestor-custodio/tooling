@@ -206,7 +206,7 @@ function mirror {
 
   # git / lazygit
 
-  function g { lazygit ;}
+  function g { lazygit "$@" ;}
 
   function gadd        { git add                               "$@" ;}
   function gblame      { git blame -w --minimal --color-by-age "$@" ;}
