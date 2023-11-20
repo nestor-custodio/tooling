@@ -11,7 +11,7 @@ shopt -s lastpipe
     # - If a single match is found, `cd` into it or open it into the editor, as applicable.
     # - If multiple matches are found, allow interactive selection and then process as above.
 
-    local search="$1" && shift
+    local search="$*"
     local dev_root="${DEV_ROOT:-${HOME}/dev}"
 
 
