@@ -1,8 +1,0 @@
-#! /bin/env bash
-source '/home/nestor/bin/std.lib'
-
-# ---
-# ---
-
-
-redis? && "$( script-path )/redis-viewer" "$@"
