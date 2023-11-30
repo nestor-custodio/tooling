@@ -46,12 +46,10 @@ source '/home/nestor/bin/std.lib'
 	
 		0)
 			cat - | store-as data
-			tmux set-buffer -w "$data"
 			;;
 
 		1)
 			data="$1" && shift
-			tmux set-buffer -w "$data"
 			;;
 
 		*)
@@ -66,5 +64,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-# shellcheck disable=SC2317
-noop  # Positional parameter processing has already taken care of everything.
+osc-52 -f "$data" 2> /dev/null > /dev/tty

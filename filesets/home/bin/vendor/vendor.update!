@@ -261,6 +261,11 @@ case "$tool_name" in
 		| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
 		;;
 
+	(osc52)
+		curl "$( executable-url )?format=TEXT" --silent --location | base64 --decode > "$( executable )" || error-out 2 'unable to fetch release'
+		chmod 755 "$( executable )"
+		;;
+
 	(ruby-install)
 		target="${HOME}/bin/vendor/ruby-install-runtime"
 		mkdir -p "$target" && rm -rf "${target:?}"/*

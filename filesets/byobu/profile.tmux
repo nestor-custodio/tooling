@@ -27,6 +27,11 @@ set -g destroy-unattached off
 set -g status-left ' #[fg=white,bold]#( hostname | tr a-z A-Z )#[default] #(byobu-status tmux_left) '
 set -g status-right '#(byobu-status tmux_right) '
 
+## As of tmux 3.3a, copy-paste and OSC-52 support are a bit wonky.
+## We'll work around this by controlling the implementation ourselves.
+## (See https://github.com/tmux/tmux/issues/3646 for more info on this.)
+set -g allow-passthrough on
+set -g copy-command '/home/nestor/bin/vendor/osc52 -f'
 
 ## ----------------------------------------------------------------------------
 ## ----------------------------------------------------------------------------

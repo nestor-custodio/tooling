@@ -179,9 +179,9 @@ newline = "↲"
 
   # Clipboard
 
-  "c"         = ":clipboard-yank"
+  "c"         = [":clipboard-yank", ":pipe-to copy"]
   "v"         = ":clipboard-paste-before"
-  "x"         = [":clipboard-yank", "delete_selection_noyank"]
+  "x"         = [":clipboard-yank", ":pipe-to copy", "delete_selection_noyank"]
 
   "C"         = ":pipe clip --pass"
   "V"         = ":insert-output clip --out"
@@ -299,9 +299,9 @@ newline = "↲"
 
   # Clipboard
 
-  "c"         = [":clipboard-yank", "normal_mode"]
+  "c"         = [":clipboard-yank", ":pipe-to copy", "normal_mode"]
   "v"         = [":clipboard-paste-replace", "normal_mode"]
-  "x"         = [":clipboard-yank", "delete_selection_noyank", "normal_mode"]
+  "x"         = [":clipboard-yank", ":pipe-to copy", "delete_selection_noyank", "normal_mode"]
 
   "C"         = [":pipe clip --pass", "normal_mode"]
   "V"         = [":insert-output clip --out", "normal_mode"]

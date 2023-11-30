@@ -219,6 +219,12 @@ case "$tool_name" in
 		check-version --local-version="$CHRUBY_VERSION"
 		;;
 
+	(osc52)
+		# This tool provides no versioning info. 🤷.
+		# Last update was back in 2023-05-11, however.
+		noop
+		;;
+
 	(redis-viewer)
 		# This tool provides no versioning info. 🤷.
 		# I've requested adding a `--version` option via:
