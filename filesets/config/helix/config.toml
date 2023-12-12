@@ -213,6 +213,7 @@ newline = "↲"
   "tab"       = "indent"
   "S-tab"     = "unindent"
 
+  "="         = "insert_newline"
   "#"         = "toggle_comments"
   "^"         = "switch_to_uppercase"
   "_"         = "switch_to_lowercase"
