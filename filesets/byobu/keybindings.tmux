@@ -95,4 +95,4 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 
 
   ## Capture Scroll Buffer
-  bind-key -n M-c capture-pane -S -32768 \; save-buffer "$BYOBU_RUN_DIR/printscreen" \; delete-buffer \; new-window -n "PRINTSCREEN" "$BYOBU_EDITOR $BYOBU_RUN_DIR/printscreen"
+  bind-key -n M-c capture-pane -S -32768 \; save-buffer "$BYOBU_RUN_DIR/printscreen" \; delete-buffer \; new-window -n "PRINTSCREEN" "COLORTERM='truecolor' $BYOBU_EDITOR $BYOBU_RUN_DIR/printscreen"
