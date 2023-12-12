@@ -92,7 +92,7 @@ shopt -s lastpipe
         bx rubocop "$@"
       else
         which rubocop &> /dev/null || gem install rubocop &> /dev/null
-        "$( which rubocop )" "$@"
+        "$( real rubocop )" "$@"
       fi
     }
 

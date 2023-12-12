@@ -33,7 +33,7 @@ source '/home/nestor/bin/std.lib'
 	[ "$#" == 0 ] && error-out 1 'no string(s) given'
 
 
-	while [ "$#" -gt 0 ]; do
+	while [ "$#" != 0 ]; do
 		string="$1" && shift
 		[ -n "$string" ] || continue
 

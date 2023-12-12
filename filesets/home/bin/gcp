@@ -136,7 +136,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" -gt 0 ] || error-out 1 'no command given'
+	[ "$#" != 0 ] || error-out 1 'no command given'
 
 
 	command="$1" && shift
@@ -161,7 +161,7 @@ source '/home/nestor/bin/std.lib'
 		# ---
 
 		(ssh|shell|connect)
-			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || error-out 1 'no instance name given'
 			instance_name="$1" && shift
 
 			# Run sanity checks.
@@ -175,8 +175,7 @@ source '/home/nestor/bin/std.lib'
 			;;
 
 		(run|exec)
-			[ "$#" -eq 0 ] && error-out 1 'no instance name given'
-			[ "$#" -eq 1 ] && error-out 1 'no remote command given'
+			[ "$#" -lt 2 ] && error-out 1 'an instance name and remote command are required'
 			[ "$#" -gt 2 ] && error-out 1 'too many parameters'
 
 			instance_name="$1" && shift
@@ -190,7 +189,7 @@ source '/home/nestor/bin/std.lib'
 		# ---
 
 		(start|boot)
-			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || error-out 1 'no instance name given'
 			instance_name="$1" && shift
 
 
@@ -198,7 +197,7 @@ source '/home/nestor/bin/std.lib'
 			;;
 
 		(restart|reboot)
-			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || error-out 1 'no instance name given'
 			instance_name="$1" && shift
 
 
@@ -206,7 +205,7 @@ source '/home/nestor/bin/std.lib'
 			;;
 
 		(stop|shutdown|kill)
-			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || error-out 1 'no instance name given'
 			instance_name="$1" && shift
 
 
@@ -216,7 +215,7 @@ source '/home/nestor/bin/std.lib'
 		# ---
 
 		(suspend|sleep)
-			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || error-out 1 'no instance name given'
 			instance_name="$1" && shift
 
 
@@ -224,7 +223,7 @@ source '/home/nestor/bin/std.lib'
 			;;
 
 		(resume|wake)
-			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || error-out 1 'no instance name given'
 			instance_name="$1" && shift
 
 
@@ -237,8 +236,7 @@ source '/home/nestor/bin/std.lib'
 		# ---
 
 		(rename)
-			[ "$#" -eq 0 ] && error-out 1 'no instance name given'
-			[ "$#" -eq 1 ] && error-out 1 'no new instance name given'
+			[ "$#" -lt 2 ] && error-out 1 'old and new instance names are required'
 			[ "$#" -gt 2 ] && error-out 1 'too many parameters'
 
 			old_instance_name="$1" && shift
@@ -261,7 +259,7 @@ source '/home/nestor/bin/std.lib'
 			;;
 
 		(scale)
-			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || error-out 1 'no instance name given'
 			instance_name="$1" && shift
 
 			[ -n "$machine_type" ] || error-out 1 'no machine type given'
@@ -294,7 +292,7 @@ source '/home/nestor/bin/std.lib'
 		# ---
 
 		(destroy|delete|trash)
-			[ "$#" -eq 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || error-out 1 'no instance name given'
 			instance_name="$1" && shift
 
 

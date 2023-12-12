@@ -62,7 +62,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	target_date='now'
-	(( "$#" >= 1 )) && target_date="$1" && shift
+	[ "$#" != 0 ] && target_date="$1" && shift
 	[ -n "$target_date" ] || error-out 1 'invalid options(s)'
 
 
