@@ -6,11 +6,11 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) TOOL_NAME
+		Usage: $( script-name ) [TOOL_NAME] ...
 		       $( name-blanks ) --checks-only
 
 		Makes a best-effort attempt to update the corresponding binary.
-		If the TOOL_NAME is "all", all vendor tooling will be updated as needed.
+		If no TOOL_NAME is given, all vendor tooling will be updated as needed.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -38,32 +38,27 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Utility Functions -- #
 
-	_executable=''
-	function executable {
-		[ -n "$_executable" ] && echo "$_executable" && return
+	_all_tools=''
+	function all-tools {
+		[ -n "$_all_tools" ] && echo "$_all_tools" && return
 	
-		store-as _executable <<< "${HOME}/bin/vendor/${tool_name}"
-		echo "$_executable"
-	}
-
-	_github_repo=''
-	function github-repo {
-		[ -n "$_github_repo" ] && echo "$_github_repo" && return
-	
-		store-as _github_repo < "$( executable ).repo"
-		echo "$_github_repo"
-	}
-
-	_executable_url=''
-	function executable-url {
-		[ -n "$_executable_url" ] && echo "$_executable_url" && return
-	
-		store-as _executable_url < "$( executable ).url"
-		echo "$_executable_url"
+		ls -1 --literal "${HOME}/bin/vendor"/*.repo | map superbase | store-as _all_tools
+		echo "$_all_tools"
 	}
 
 	# ---
 	
+	_tool_name=''
+	function set-tool { _tool_name="$1" ;}
+	function tool-name { echo "$_tool_name" ;}
+
+	function executable { echo "${HOME}/bin/vendor/$( tool-name )" ;}
+
+	function github-repo { cat "$( executable ).repo" 2> /dev/null ;}
+
+	function executable-url { cat "$( executable ).url" 2> /dev/null ;}
+
+
 	function update-tooling {
 
 		# Arguments/options passed into this will be passed through to the
@@ -76,7 +71,6 @@ source '/home/nestor/bin/std.lib'
 
 	}
 
-	# ---
 
 	function update-deb-tooling {
 
@@ -87,9 +81,114 @@ source '/home/nestor/bin/std.lib'
 
 		mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
 		eget --quiet "$( github-repo )" --asset='.deb' "$@" --to='/dev/stdout' | dpkg --extract '/dev/stdin' "$extract_dir"
-		mv "${extract_dir}/usr/bin/${tool_name}" "$( executable )" &> /dev/null || error-out 2 'unable to fetch/find binary'
+		mv "${extract_dir}/usr/bin/$( tool-name )" "$( executable )" &> /dev/null || error-out 2 'unable to fetch/find binary'
 		chmod 755 "$( executable )"
 		rm -rf "$extract_dir"
+
+	}
+
+	# ---
+
+	function update {
+
+		set-tool "$1" && shift
+		case "$( tool-name )" in
+
+			# Straight-forward `eget` pulls.
+
+			(bat              ) update-tooling --asset='gnu'                     ;;
+			(btop             ) update-tooling                                   ;;
+			(bw               ) update-tooling --asset='.zip' --tag='cli'        ;;
+			(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig' ;;
+			(circleci         ) update-tooling                                   ;;
+			(delta            ) update-tooling --asset='gnu'                     ;;
+			(eget             ) update-tooling                                   ;;
+			(eza              ) update-tooling --asset='gnu.zip'                 ;;
+			(fd               ) update-tooling --asset='gnu'                     ;;
+			(fzf              ) update-tooling                                   ;;
+			(hx               ) update-tooling                                   ;;
+			(jq               ) update-tooling --asset='amd64'                   ;;
+			(lazydocker       ) update-tooling                                   ;;
+			(lazygit          ) update-tooling                                   ;;
+			(n                ) update-tooling --source                          ;;
+			(redis-viewer     ) update-tooling                                   ;;
+			(rg               ) update-tooling                                   ;;
+			(shellcheck       ) update-tooling                                   ;;
+			(static-web-server) update-tooling --asset='gnu'                     ;;
+			(unison           ) update-tooling --asset='static'                  ;;
+			(usql             ) update-tooling --asset='^static'                 ;;
+			(xsv              ) update-tooling                                   ;;
+			(yq               ) update-tooling --asset='^.tar.gz'                ;;
+
+
+			# Items available as a DEB package.
+
+			(hostctl          ) update-deb-tooling                               ;;
+			(gh               ) update-deb-tooling                               ;;
+			(portal           ) update-deb-tooling --asset='.deb'                ;;
+			(watchexec        ) update-deb-tooling --asset='gnu' --asset='^deb.' ;;
+
+
+			# Items requiring special handling.
+
+			(aws)
+				target="${HOME}/bin/vendor/aws-runtime"
+				mkdir -p "$target" && rm -rf "${target:?}"/*
+
+				mktemp --tmpdir "$TEMPFILE_TEMPLATE" | store-as zip_file
+				curl "$( executable-url )" --silent --location > "$zip_file" || error-out 2 'unable to fetch release'
+
+				mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
+				unzip -q "$zip_file" -d "$extract_dir" || error-out 2 'unable to extract release'
+
+				mv "${extract_dir}/aws/dist"/* "${target}/"
+				rm -rf "$zip_file" "$extract_dir"
+				;;
+
+			(chruby)
+				mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
+				eget --quiet "$( github-repo )" --source --file='chruby.*' --all --to="$extract_dir"
+
+				mv "${extract_dir}/chruby.sh" "${HOME}/bin/vendor/chruby-source"
+				mv "${extract_dir}/auto.sh"   "${HOME}/bin/vendor/chruby-source.auto"
+				sed -ri -e 's|\bRUBYOPT\b|RUBYOPT_X|g' "${HOME}/bin/vendor/chruby-source"*
+				chmod 644 "${HOME}/bin/vendor/chruby-source"*
+				rm -rf "$extract_dir"
+				;;
+
+			(crypt)
+				curl "$( executable-url )" --silent --location > "$( executable )" || error-out 2 'unable to fetch release'
+				chmod 755 "$( executable )"
+				;;
+
+			(heroku)
+				target="${HOME}/bin/vendor/heroku-runtime"
+				mkdir -p "$target" && rm -rf "${target:?}"/*
+
+				curl "$( executable-url )" --silent --location \
+				| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
+				;;
+
+			(osc52)
+				curl "$( executable-url )?format=TEXT" --silent --location | base64 --decode > "$( executable )" || error-out 2 'unable to fetch release'
+				chmod 755 "$( executable )"
+				;;
+
+			(ruby-install)
+				target="${HOME}/bin/vendor/ruby-install-runtime"
+				mkdir -p "$target" && rm -rf "${target:?}"/*
+
+				eget --quiet "$( github-repo )" --download-only --source --to='/dev/stdout' \
+				| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
+				;;
+
+
+			# Unknown tooling.
+
+			*)
+				error-out 1 "unknown tool '$( tool-name )'"
+				;;
+		esac
 
 	}
 
@@ -107,7 +206,7 @@ source '/home/nestor/bin/std.lib'
 	# ---
 
 	CHAR_OPTS=''
-	LONG_OPTS='help,checks,checks-only'
+	LONG_OPTS='help,check,checks,checks-only'
 
 	set-params
 	while true; do
@@ -116,7 +215,7 @@ source '/home/nestor/bin/std.lib'
 			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
 
-			(--checks|--checks-only)
+			(--check|--checks|--checks-only)
 				checks_only='1'
 				;;
 		esac
@@ -124,31 +223,21 @@ source '/home/nestor/bin/std.lib'
 
 }
 
-{ # -- Parameter Processing: Positionals -- #
-
-	tool_name="$1" && shift
-
-
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
-
-}
-
 # ---
 # ---
-
-
-# Sanity check: we need *exactly one* of TOOL_NAME and --checks-only
-#
-[ -z "$tool_name" ] && [ -z "$checks_only" ] && error-out 1 'no TOOL_NAME given'
-[ -n "$tool_name" ] && [ -n "$checks_only" ] && error-out 1 'cannot specify both a TOOL_NAME and --checks-only'
 
 
 # Process --checks-only request.
 #
 if [ -n "$checks_only" ]; then
 
-	ls -1 --literal "${HOME}/bin/vendor"/*.repo | while read -r repo_file; do
-		superbase "$repo_file" | store-as tool_name
+	# Sanity check: --checks-only and tool names are mutually exclusive.
+	#
+	[ "$#" == 0 ] || error-out 1 'cannot specify both a TOOL_NAME and --checks-only'
+
+
+	all-tools | while read -r tool_name; do
+		set-tool "$tool_name"
 
 		printf "\e[1m%s\e[0m: ..." "$tool_name"
 		vendor.latest? "$tool_name" | store-as update_report
@@ -161,123 +250,35 @@ if [ -n "$checks_only" ]; then
 fi
 
 
-# Process tool update request.
+# Set up all tool names if none are given.
 #
-case "$tool_name" in
+[ "$#" == 0 ] && eval set -- "$( all-tools | tr "\n" ' ' )"
 
 
-	# The "update all" case.
+# Process the list of tool names to update.
+#
+if [ "$#" == 1 ]; then
 
-	(all)
-		ls -1 --literal "${HOME}/bin/vendor"/*.repo | while read -r repo_file; do
-			superbase "$repo_file" | store-as tool_name
+	# Singleton request, so there's no need to report version number or produce other output.
+	#
+	update "$1"
 
-			printf "\e[1m%s\e[0m: ..." "$tool_name"
-			vendor.latest? "$tool_name" | store-as update_report
-			[ -z "$update_report" ] && clear-line && continue
+else
 
-			backspace 3
-			echo -n "${update_report} ..."
-			if vendor.update! "$tool_name"
-				then backspace 3 && printf "\e[32;1m%s\e[0m\n" "✔"
-				else backspace 3 && printf "\e[31;1m%s\e[0m\n" "x"
-			fi
-		done
-		;;
+	while [ "$#" != 0 ]; do
+		tool_name="$1" && shift
 
+		printf "\e[1m%s\e[0m: ..." "$tool_name"
+		vendor.latest? "$tool_name" | store-as update_report
+		[ -z "$update_report" ] && clear-line && continue
 
-	# Straight-forward `eget` pulls.
+		backspace 3
+		echo -n "${update_report} ..."
 
-	(bat              ) update-tooling --asset='gnu'                     ;;
-	(btop             ) update-tooling                                   ;;
-	(bw               ) update-tooling --asset='.zip' --tag='cli'        ;;
-	(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig' ;;
-	(circleci         ) update-tooling                                   ;;
-	(delta            ) update-tooling --asset='gnu'                     ;;
-	(eget             ) update-tooling                                   ;;
-	(eza              ) update-tooling --asset='gnu.zip'                 ;;
-	(fd               ) update-tooling --asset='gnu'                     ;;
-	(fzf              ) update-tooling                                   ;;
-	(hx               ) update-tooling                                   ;;
-	(jq               ) update-tooling --asset='amd64'                   ;;
-	(lazydocker       ) update-tooling                                   ;;
-	(lazygit          ) update-tooling                                   ;;
-	(n                ) update-tooling --source                          ;;
-	(redis-viewer     ) update-tooling                                   ;;
-	(rg               ) update-tooling                                   ;;
-	(shellcheck       ) update-tooling                                   ;;
-	(static-web-server) update-tooling --asset='gnu'                     ;;
-	(unison           ) update-tooling --asset='static'                  ;;
-	(usql             ) update-tooling --asset='^static'                 ;;
-	(xsv              ) update-tooling                                   ;;
-	(yq               ) update-tooling --asset='^.tar.gz'                ;;
+		if ( update "$tool_name" )
+			then backspace 3 && printf "\e[32;1m%s\e[0m\n" "✔"
+			else backspace 3 && printf "\e[31;1m%s\e[0m\n" "x"
+		fi
+	done
 
-
-	# Items available as a DEB package.
-
-	(hostctl          ) update-deb-tooling                               ;;
-	(gh               ) update-deb-tooling                               ;;
-	(portal           ) update-deb-tooling --asset='.deb'                ;;
-	(watchexec        ) update-deb-tooling --asset='gnu' --asset='^deb.' ;;
-
-
-	# Items requiring special handling.
-
-	(aws)
-		target="${HOME}/bin/vendor/aws-runtime"
-		mkdir -p "$target" && rm -rf "${target:?}"/*
-
-		mktemp --tmpdir "$TEMPFILE_TEMPLATE" | store-as zip_file
-		curl "$( executable-url )" --silent --location > "$zip_file" || error-out 2 'unable to fetch release'
-
-		mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
-		unzip -q "$zip_file" -d "$extract_dir" || error-out 2 'unable to extract release'
-
-		mv "${extract_dir}/aws/dist"/* "${target}/"
-		rm -rf "$zip_file" "$extract_dir"
-		;;
-
-	(chruby)
-		mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
-		eget --quiet "$( github-repo )" --source --file='chruby.*' --all --to="$extract_dir"
-
-		mv "${extract_dir}/chruby.sh" "${HOME}/bin/vendor/chruby-source"
-		mv "${extract_dir}/auto.sh"   "${HOME}/bin/vendor/chruby-source.auto"
-		sed -ri -e 's|\bRUBYOPT\b|RUBYOPT_X|g' "${HOME}/bin/vendor/chruby-source"*
-		chmod 644 "${HOME}/bin/vendor/chruby-source"*
-		rm -rf "$extract_dir"
-		;;
-
-	(crypt)
-		curl "$( executable-url )" --silent --location > "$( executable )" || error-out 2 'unable to fetch release'
-		chmod 755 "$( executable )"
-		;;
-
-	(heroku)
-		target="${HOME}/bin/vendor/heroku-runtime"
-		mkdir -p "$target" && rm -rf "${target:?}"/*
-
-		curl "$( executable-url )" --silent --location \
-		| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
-		;;
-
-	(osc52)
-		curl "$( executable-url )?format=TEXT" --silent --location | base64 --decode > "$( executable )" || error-out 2 'unable to fetch release'
-		chmod 755 "$( executable )"
-		;;
-
-	(ruby-install)
-		target="${HOME}/bin/vendor/ruby-install-runtime"
-		mkdir -p "$target" && rm -rf "${target:?}"/*
-
-		eget --quiet "$( github-repo )" --download-only --source --to='/dev/stdout' \
-		| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
-		;;
-
-
-	# Unknown tooling.
-
-	*)
-		error-out 1 "unknown tool '${tool_name}'"
-		;;
-esac
+fi
