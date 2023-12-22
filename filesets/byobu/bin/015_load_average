@@ -15,4 +15,4 @@ calc "${unweighted_load_average} / $( nproc ) * 100" | read -r -d '' load_percen
 # (( "$( calc "${load_percentage} >=  80.0" )" )) && SET ALERT
 
 
-left_piped " 🏋 %04.1f%%%%" "$load_percentage"
+left-piped " 🏋  %04.1f%%%%" "$load_percentage"

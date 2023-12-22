@@ -256,7 +256,7 @@ keybinding:
 
   stash:
 
-    popStash: '<enter>'
+    popStash: 'p'
     renameStash: 'r'
 
 

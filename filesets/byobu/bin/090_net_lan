@@ -9,4 +9,4 @@ source "$( dirname "$0" )/status_helpers"
 # ---
 
 
-left_piped " 🏠 $( lan_ip )"
+left-piped " 🏠 $( lan_ip )"

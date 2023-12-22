@@ -9,4 +9,4 @@ source "$( dirname "$0" )/status_helpers"
 # ---
 
 
-[ -e /var/run/reboot-required ] && unpiped "🔔"
+[ -e /var/run/reboot-required ] && right-piped "🔔 "

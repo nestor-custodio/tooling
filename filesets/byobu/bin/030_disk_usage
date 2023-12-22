@@ -15,4 +15,4 @@ df --type=ext4 --human-readable --output=pcent,size --total | tail -n1 \
 ### (( "$( calc "${percent_used} >= 70.0" )" )) && SET ALERT
 
 
-left_piped " 📦 %i%%%% of %s" "$percent_used" "$total_space"
+left-piped " 📦 %i%%%% of %s" "$percent_used" "$total_space"
