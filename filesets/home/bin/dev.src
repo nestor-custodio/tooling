@@ -112,8 +112,6 @@ shopt -s lastpipe
       # ---
 
       function bi {
-        nearest --quiet 'Gemfile.lock' 'Gemfile' || return 0
-
         # Ensure specific ruby.
         #
         if ruby_version="$( nearest --read '.ruby-version' )"; then
@@ -130,7 +128,11 @@ shopt -s lastpipe
           gem list bundler --silent --installed || gem install bundler
         fi
 
-        bundle install --jobs="$( nproc )" "$@"
+        # Install gemset, if any.
+        #
+        nearest --quiet 'Gemfile.lock' 'Gemfile' && bundle install --jobs="$( nproc )" "$@"
+
+        true # Always move forward.
       }
 
 
@@ -305,16 +307,23 @@ shopt -s lastpipe
     function na { npm audit   "$@" ;}
 
     function ni {
-      nearest --quiet 'package.json' || return 0
-
-      # Ensure node.
+      # Ensure specific node/npm.
       #
-      if node_version="$( nearest --read '.node-version' )"
-        then node --version 2> /dev/null | has? "$node_version" || n install "$node_version"
-        else which node &> /dev/null || n lts
-      fi
+      current_version="$( node --version 2> /dev/null )"
+      requested_version="$( nearest --read '.node-version' )"
+      case "$requested_version" in
+        (lts) [ "$current_version" == "v$( n --lts )" ] || n lts ;;
+        (latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
+        (''|node) [ -n "$current_version" ] || n lts ;;
 
-      npm install --loglevel='error' "$@"
+        *) has? "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
+      esac
+
+      # Install packages, if any.
+      #
+      nearest --quiet 'package.json' && npm install --loglevel='error' "$@"
+
+      true # Always move forward.
     }
 
 
@@ -345,20 +354,27 @@ shopt -s lastpipe
     # ---
 
     function yi {
-      nearest --quiet 'package.json' 'yarn.lock' || return 0
-
-      # Ensure node.
+      # Ensure specific node/npm.
       #
-      if node_version="$( nearest --read '.node-version' )"
-        then node --version 2> /dev/null | has? "$node_version" || n install "$node_version"
-        else which node &> /dev/null || n lts
-      fi
+      current_version="$( node --version 2> /dev/null )"
+      requested_version="$( nearest --read '.node-version' )"
+      case "$requested_version" in
+        (lts) [ "$current_version" == "v$( n --lts )" ] || n lts ;;
+        (latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
+        (''|node) [ -n "$current_version" ] || n lts ;;
 
-      # Ensure yarn.
+        *) has? "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
+      esac
+
+      # Ensure (any) yarn.
       #
       which yarn &> /dev/null || npm install -g yarn
 
-      yarn install 2> /dev/null
+      # Install packages, if any.
+      #
+      nearest --quiet 'package.json' 'yarn.lock' && yarn install 2> /dev/null
+
+      true # Always move forward.
     }
 
 
