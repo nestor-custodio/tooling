@@ -12,7 +12,7 @@ source '/home/nestor/bin/std.lib'
 		encrypted in the process, yielding codes that are "safe" to lose and for
 		strangers to find. Each code has a header detailing how it was generated
 		as well as a sequence identifier; with these we can restore the original
-		file(s).
+		fileset.
 
 
 		Mandatory arguments to long options are mandatory for short options too.

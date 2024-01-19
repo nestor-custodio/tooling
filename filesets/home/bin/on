@@ -49,7 +49,6 @@ source '/home/nestor/bin/std.lib'
 	duration_s=''
 	extensions=''
 
-	show_header=''
 	clear_screen='1'
 
 	# ---
