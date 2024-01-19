@@ -55,8 +55,7 @@ hx --grammar build
 
 gem install solargraph
 
-sudo snap install bash-language-server       --channel='edge' --classic
-sudo snap install marksman                   --channel='edge'
-sudo snap install typescript-language-server --channel='edge'
-sudo snap install vscode-json-languageserver --channel='edge'
-sudo snap install yaml-language-server       --channel='edge'
+npm install --global bash-language-server
+npm install --global typescript-language-server
+npm install --global vscode-json-languageserver
+npm install --global yaml-language-server
