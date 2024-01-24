@@ -394,6 +394,15 @@ shopt -s lastpipe
     local env_name="$1" && shift
     [ -n "$env_name" ] || return 1
 
+    # Allow shortcuts.
+    #
+    case "$env_name" in
+      (d|dev|development) env_name='development' ;;
+      (t|test|testing)    env_name='test'        ;;
+      (s|staging)         env_name='staging'     ;;
+      (p|prod|production) env_name='production'  ;;
+    esac
+
     export RUBY_ENV="$env_name"
     export RAILS_ENV="$env_name"
     export RACK_ENV="$env_name"
@@ -403,6 +412,15 @@ shopt -s lastpipe
   function load-env {
     local env_name="$1" && shift
     declare -a env_list=()
+
+    # Allow shortcuts.
+    #
+    case "$env_name" in
+      (d|dev|development) env_name='development' ;;
+      (t|test|testing)    env_name='test'        ;;
+      (s|staging)         env_name='staging'     ;;
+      (p|prod|production) env_name='production'  ;;
+    esac
 
     unload-env
     set-env "$env_name"
