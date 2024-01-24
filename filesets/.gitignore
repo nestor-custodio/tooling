@@ -1,2 +1,5 @@
+/nodes/*
+!/nodes/.keep
+
 /ssh/*
 !/ssh/.keep
