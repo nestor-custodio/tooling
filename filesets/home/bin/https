@@ -105,36 +105,75 @@ source '/home/nestor/bin/std.lib'
 # ---
 # ---
 
+function run_caddy() {
+	# This expects:
+	# - $binding
+	# - $caddy_bin
+	# - $caddyfile
+	# - $pidfile
+	#
+	# Note also this doesn't produce any output on success,
+	# but passes through STDOUT/STDERR (along with whatever
+	# exit code `caddy` has returned) on failure.
+
+	tempname | store-as caddy_stdout
+	tempname | store-as caddy_stderr
+
+	sudo BINDING="$binding" "$caddy_bin" start "$@"                  \
+	                                           --config="$caddyfile" \
+	                                           --adapter='caddyfile' \
+	                                           --pidfile="$pidfile"  \
+	                                           1> "$caddy_stdout"    \
+	                                           2> "$caddy_stderr"
+	rm "$caddyfile"
+
+	exit_code="$?"
+	if [ "$exit_code" != '0' ]; then
+		cat "$caddy_stderr" 1>&2
+		cat "$caddy_stdout"
+
+		rm "$caddy_stderr"
+		rm "$caddy_stdout"
+
+		exit-out "$exit_code"
+	else
+		rm "$caddy_stderr"
+		rm "$caddy_stdout"
+	fi
+}
+
+# ---
+# ---
+
+
+pidfile='/run/caddy.pid'
 
 caddy_bin="$( command -v caddy )"
-"$caddy_bin" stop &> /dev/null
+[ -e "$pidfile" ] && "$caddy_bin" stop &> /dev/null
+
 
 case "$command" in
 
-	(me|safe)
+	(on|me|safe)
 		caddyfile_template="${HOME}/bin/https:safe.caddyfile"
-		tempname | store-as caddyfile_generated
+		tempname | store-as caddyfile
 
-		sed -e "s|#CLIENT_IP#|$( client-ip )|" < "$caddyfile_template" > "$caddyfile_generated"
+		sed -e "s|#CLIENT_IP#|$( client-ip )|" < "$caddyfile_template" > "$caddyfile"
 
-		sudo BINDING="$binding" "$caddy_bin" start --config="$caddyfile_generated" --adapter='caddyfile' "$@" 2> /dev/null
-		rm "$caddyfile_generated"
+		run_caddy
 		;;
 
 	(all|open)
 		cidr_blacklist="${caddy_bin}.blacklist"
 
 		caddyfile_template="${HOME}/bin/https:open.caddyfile"
-		tempname | store-as caddyfile_generated
+		tempname | store-as caddyfile
 
-		sed -z -e "s|#BLACKLIST#.*||" < "$caddyfile_template" > "$caddyfile_generated"
-		sed -e "s|^|remote_ip |" < "$cidr_blacklist" >> "$caddyfile_generated"
-		sed -z -e "s|.*#BLACKLIST#||" < "$caddyfile_template" >> "$caddyfile_generated"
+		sed -z -e "s|#BLACKLIST#.*||" < "$caddyfile_template" > "$caddyfile"
+		sed -e "s|^|remote_ip |" < "$cidr_blacklist" >> "$caddyfile"
+		sed -z -e "s|.*#BLACKLIST#||" < "$caddyfile_template" >> "$caddyfile"
 
-		sudo BINDING="$binding" "$caddy_bin" start --config="$caddyfile_generated" --adapter='caddyfile' "$@" 2> /dev/null
-		rm "$caddyfile_generated"
-
-		echo
+		run_caddy
 		qr "https://$( hostname ).custodio.app/"
 		;;
 
