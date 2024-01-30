@@ -186,3 +186,9 @@ case "$command" in
 		;;
 
 esac
+
+
+# Ensure logs are easily readable.
+#
+sudo chmod a+r /var/log/https-status-log
+sudo chmod a+r /var/log/https-access-log*
