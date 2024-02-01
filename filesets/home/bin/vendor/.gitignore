@@ -41,4 +41,5 @@
 
 # Support Files.
 #
-/caddy.blacklist
+/caddy.ip-blacklist
+/caddy.uri-blacklist

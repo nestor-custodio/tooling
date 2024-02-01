@@ -13,10 +13,11 @@
 
 "{$HOSTNAME}.custodio.app" {
 
-  @blacklisted_remotes {
-    #BLACKLIST#
-  }
-  abort @blacklisted_remotes
+  @ip_blacklist { #IP_BLACKLIST# }
+  abort @ip_blacklist
+
+  @uri_blacklist path #URI_BLACKLIST#
+  abort @uri_blacklist
 
 
   respond "/ping" "pong"
