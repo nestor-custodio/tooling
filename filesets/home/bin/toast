@@ -1,0 +1,66 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) TEXT
+
+		Displays a 'tmux' toast for the given TEXT.
+		The toast duration is based on the length of TEXT.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	text="$1" && shift
+	[ -n "$text" ] || error-out 1 'no TEXT given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+style='fg=white,bold,bg=brightblack'
+
+calc "${#text} + 4" | store-as width
+calc "max(0.75, ${#text} * 0.05)" | store-as timeout
+
+tmux display-popup -E                      \
+                   -w "$width" -h 3        \
+                   -S "$style" -s "$style" \
+                   "stty -echo ; printf '\e[?25l %s' '${text}' ; sleep '${timeout}' ; exit"
