@@ -27,13 +27,14 @@ shopt -s checkwinsize
 # Executable search order should be: - the current directory
 #                                    - "${HOME}/bin"
 #                                    - "${HOME}/bin/vendor"
+#                                    - "${HOME}/.local/bin"
 #                                    - "${HOME}/.nodes/bin"
 #                                    - "${HOME}/.yarn/bin"
 #                                    - snap packages
 #                                    - native packages
 #                                    - the current directory's "./bin"
 #
-export PATH=".:${HOME}/bin:${HOME}/bin/vendor:${HOME}/.nodes/bin:${HOME}/.yarn/bin:/snap/bin:${PATH}:./bin"
+export PATH=".:${HOME}/bin:${HOME}/bin/vendor:${HOME}/.local/bin:${HOME}/.nodes/bin:${HOME}/.yarn/bin:/snap/bin:${PATH}:./bin"
 
 
 # Helper for absolute paths to real binaries.
