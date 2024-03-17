@@ -83,7 +83,7 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 
   bind-key -n M-/      choose-tree -Z
   bind-key -n M-z      resize-pane -Z
-  bind-key -n M-a      set -w synchronize-panes
+  bind-key -n M-a      set -w synchronize-panes \; run-shell "toast \"All-Pane Input: $( tmux show -w synchronize-panes | ends-with? ' on' && echo 'On' || echo 'Off' )\""
 
   bind-key -n M-r      command-prompt -p "#[bold] (rename-pane)" "select-pane -T '%%'"
   bind-key -n M-\'     kill-pane
