@@ -26,6 +26,9 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 	## Allow in-context tmux command execution.
 	bind-key -n M-x command-prompt -p "#[bold] (tmux command)" "%%"
 
+	## Allow "scratch pad" popup window.
+	bind-key -n M-m display-popup -E -w 75% -h 75%
+
 	## Reload Profile.
 	bind-key -n M-` source $BYOBU_PREFIX/share/byobu/profiles/tmuxrc
 
