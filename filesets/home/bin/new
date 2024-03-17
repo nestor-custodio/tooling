@@ -1,0 +1,90 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) TYPE [FILENAME]
+
+		Edits a new script using the template TYPE given.
+		If a FILENAME is also given, the template is saved
+		to that location, and that's what then opened for editing.
+
+		Available TYPE value are:
+		  bash / sh / shell / script  ->  standard bash tooling
+		  lib / src / source          ->  item to be 'source'd
+		  ruby / rb                   ->  standard ruby tooling
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if FILENAME already exists,
+		  3  if FILENAME could not be written.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	template_type="$1" && shift
+	[ -n "$template_type" ] || error-out 1 'no TYPE given'
+
+	target_filename="$1" && shift
+	# Note we're okay with $target_filename NOT being set.
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+case "$template_type" in
+	(bash|sh|shell|script) template_filename="${HOME}/bin/template.shell" ;;
+	(lib|src|source)       template_filename="${HOME}/bin/template.src"   ;;
+	(ruby|rb)              template_filename="${HOME}/bin/template.ruby"  ;;
+
+	*) error-out 1 'invalid TYPE' ;;
+esac
+
+
+if [ -z "$target_filename" ]; then
+	# Note we're feeding the template CONTENT into the editor.
+	# We wouldn't want to OPEN the template and have the user
+	# accidentally edit it.
+
+	"$EDITOR" < "$template_filename"
+else
+	[ -e "$target_filename" ] && error-out 2 'FILENAME already exists'
+	touch "$target_filename" &> /dev/null || error-out 3 'FILENAME could not be written'
+
+	cp "$template_filename" "$target_filename"
+	"$EDITOR" "$target_filename"
+fi
