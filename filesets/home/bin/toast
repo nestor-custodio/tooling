@@ -57,10 +57,20 @@ source '/home/nestor/bin/std.lib'
 
 style='fg=white,bold,bg=brightblack'
 
-calc "${#text} + 4" | store-as width
-calc "max(0.75, ${#text} * 0.05)" | store-as timeout
+echo -ne "$text" | store-as text
+ansifilter <<< "$text" | store-as text
 
-tmux display-popup -E                      \
-                   -w "$width" -h 3        \
-                   -S "$style" -s "$style" \
-                   "stty -echo ; printf '\e[?25l %s' '${text}' ; sleep '${timeout}' ; exit"
+wc -L <<< "$text" | store-as text_width
+wc -l <<< "$text" | store-as text_height
+
+calc "${text_width} + 4" | store-as width
+calc "${text_height} + 2" | store-as height
+calc "min(${height}, 30)" | store-as height
+
+calc "min(3.00, max(0.75, ${#text} * 0.05))" | store-as timeout
+
+
+tmux display-popup -E                       \
+                   -S "$style" -s "$style"  \
+                   -w "$width" -h "$height" \
+                   "stty -echo ; echo -n '\e[?25l' ; echo -n '${text}' | sed -e 's|^| |' ; sleep '${timeout}' ; exit"
