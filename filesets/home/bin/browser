@@ -82,6 +82,12 @@ source '/home/nestor/bin/std.lib'
 # ---
 # ---
 
+# Record the target URL.
+# ('links' does not give an easy way to extract this.)
+#
+echo "$url" > "${HOME}/.browser.url"
+
+
 # Compile a list of panes with running 'links' instances.
 #
 tmux list-panes -a -F '#{pane_id} #{pane_current_command}' | grep -P '^[^ ]*(?= +links$)' --only-matching | store-as pane_ids
