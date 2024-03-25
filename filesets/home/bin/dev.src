@@ -383,6 +383,15 @@ shopt -s lastpipe
     function @ { bi && ni ;}
 
 
+# Platform helpers.
+
+  # Google App Scripts
+
+  function gapps { clasp "$@" ;}
+  function gapps! { npm install -g @google/clasp ;}
+  function gapps? { command -V clasp &> /dev/null ;}
+
+
 # ENV helpers.
 # Note we want to define this stuff last so when we store the starting ("clean") list
 # of ENV vars (as "${ENV_VARS[clean]}") it includes all of the variables defined above.
