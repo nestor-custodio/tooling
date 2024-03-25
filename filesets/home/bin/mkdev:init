@@ -138,7 +138,6 @@ startup_log='/var/log/startup'
 		report 'installing additional dev tooling'
 
 			apt-get -qqy install litecli mycli pgcli postgresql-client s3fs  # Additional dev tooling.
-			apt-get -qqy install libmysqlclient-dev libpq-dev libsqlclient-dev libsqlite3-dev  # So we can build Ruby/Rails db gems.
 
 
 		# Prepare "~/dev".
