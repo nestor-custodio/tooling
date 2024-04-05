@@ -1,6 +1,6 @@
-// FOR REFERENC ONLY
-// Sourced from 2023-10-27 revision of:
-// https://github.com/helix-editor/helix/blob/master/helix-term/src/commands.rs#L224
+// FOR REFERENCE ONLY
+// Sourced from 2024-04-05 revision of:
+// https://github.com/helix-editor/helix/blob/master/helix-term/src/commands.rs#L237
 
 
 no_op                                        Do nothing
@@ -55,6 +55,10 @@ page_up                                      Move page up
 page_down                                    Move page down
 half_page_up                                 Move half page up
 half_page_down                               Move half page down
+page_cursor_up                               Move page and cursor up
+page_cursor_down                             Move page and cursor down
+page_cursor_half_up                          Move page and cursor half up
+page_cursor_half_down                        Move page and cursor half down
 select_all                                   Select whole document
 select_regex                                 Select all regex matches inside selections
 split_selection                              Split selections on regex matches
@@ -73,6 +77,8 @@ global_search                                Global search in workspace folder
 extend_line                                  Select current line, if already selected, extend to another line based on the anchor
 extend_line_below                            Select current line, if already selected, extend to next line
 extend_line_above                            Select current line, if already selected, extend to previous line
+select_line_above                            Select current line, if already selected, extend or shrink line above based on the anchor
+select_line_below                            Select current line, if already selected, extend or shrink line below based on the anchor
 extend_to_line_bounds                        Extend selection to line bounds
 shrink_to_line_bounds                        Shrink selection to line bounds
 delete_selection                             Delete selection
@@ -92,6 +98,7 @@ code_action                                  Perform code action
 buffer_picker                                Open buffer picker
 jumplist_picker                              Open jumplist picker
 symbol_picker                                Open symbol picker
+changed_file_picker                          Open changed file picker
 select_references_to_symbol_under_cursor     Select symbol references
 workspace_symbol_picker                      Open workspace symbol picker
 diagnostics_picker                           Open diagnostic picker
@@ -112,9 +119,9 @@ goto_type_definition                         Goto type definition
 goto_implementation                          Goto implementation
 goto_file_start                              Goto line number <n> else file start
 goto_file_end                                Goto file end
-goto_file                                    Goto files in selection
-goto_file_hsplit                             Goto files in selection (hsplit)
-goto_file_vsplit                             Goto files in selection (vsplit)
+goto_file                                    Goto files/URLs in selections
+goto_file_hsplit                             Goto files in selections (hsplit)
+goto_file_vsplit                             Goto files in selections (vsplit)
 goto_reference                               Goto references
 goto_window_top                              Goto window top
 goto_window_center                           Goto window center
@@ -188,6 +195,8 @@ remove_primary_selection                     Remove primary selection
 completion                                   Invoke completion popup
 hover                                        Show docs for item under cursor
 toggle_comments                              Comment/uncomment selections
+toggle_line_comments                         Line comment/uncomment selections
+toggle_block_comments                        Block comment/uncomment selections
 rotate_selections_forward                    Rotate selections forward
 rotate_selections_backward                   Rotate selections backward
 rotate_selection_contents_forward            Rotate selection contents forward
@@ -241,6 +250,8 @@ goto_next_comment                            Goto next comment
 goto_prev_comment                            Goto previous comment
 goto_next_test                               Goto next test
 goto_prev_test                               Goto previous test
+goto_next_entry                              Goto next pairing
+goto_prev_entry                              Goto previous pairing
 goto_next_paragraph                          Goto next paragraph
 goto_prev_paragraph                          Goto previous paragraph
 dap_launch                                   Launch debug target
@@ -271,3 +282,5 @@ decrement                                    Decrement item under cursor
 record_macro                                 Record macro
 replay_macro                                 Replay macro
 command_palette                              Open command palette
+goto_word                                    Jump to a two-character label
+extend_to_word                               Extend to a two-character label

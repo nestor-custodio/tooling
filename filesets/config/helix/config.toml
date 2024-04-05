@@ -24,6 +24,8 @@ line-number          = "absolute"
 middle-click-paste   = false
 mouse                = true
 scrolloff            = 5
+shell                = ["bash", "-c"]
+true-color           = true
 
 
 [editor.cursor-shape]
@@ -46,8 +48,7 @@ character = "│"
 
 [editor.lsp]
 
-display-messages = true
-snippets         = false
+snippets = false
 
 
 [editor.smart-tab]
@@ -63,8 +64,8 @@ wrap-indicator = "↳"
 [editor.statusline]
 
 left   = ["spinner", "spacer", "mode", "spacer", "spacer", "file-name", "file-modification-indicator"]
-center = []
-right  = ["diagnostics", "spacer", "position", "spacer", "position-percentage", "spacer", "file-type", "spacer"]
+center = ["version-control"]
+right  = ["diagnostics", "position", "spacer", "position-percentage", "spacer", "file-type", "spacer"]
 
 mode.normal = "NORMAL"
 mode.insert = "INSERT"

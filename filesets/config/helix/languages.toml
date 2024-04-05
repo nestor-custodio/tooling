@@ -3,10 +3,6 @@
 # Source new blocks from the base language config: https://github.com/helix-editor/helix/blob/master/languages.toml
 
 [[language]]
-name = "env"
-file-types = [".env", ".env.*", ".envrc"]
-
-[[language]]
 name = "erb"
 file-types = ["erb", "inky"]
 roots = [".ruby-version", "Gemfile", "Gemfile.lock"]
@@ -24,10 +20,6 @@ formatter = { command = "hx.formatter", args = ["jsx"] }
 roots = [".node-version", "package.json", "yarn.lock"]
 
 [[language]]
-name = "json"
-auto-format = false
-
-[[language]]
 name = "ruby"
 auto-format = true
 formatter = { command = "hx.formatter", args = ["ruby"] }
@@ -36,7 +28,3 @@ roots = [".ruby-version", "Gemfile", "Gemfile.lock"]
 [[language]]
 name = "sql"
 indent = { tab-width = 2, unit = "  " }
-
-[[language]]
-name = "yaml"
-auto-format = false
