@@ -50,12 +50,16 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-hx --grammar fetch
-hx --grammar build
+if [ -z "$( ls "${HOME}/.config/helix/runtime/grammars" 2> /dev/null )" ]; then
+	hx --grammar fetch
+	hx --grammar build
+fi
 
-gem install solargraph
+gem list -i solargraph &> /dev/null || gem install solargraph
 
-npm install --global bash-language-server
-npm install --global typescript-language-server
-npm install --global vscode-json-languageserver
-npm install --global yaml-language-server
+npm install --global --omit='dev' bash-language-server         \
+                                  typescript                   \
+                                  typescript-language-server   \
+                                  vscode-langservers-extracted \
+                                  @vue/language-server         \
+                                  yaml-language-server
