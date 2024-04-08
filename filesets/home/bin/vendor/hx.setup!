@@ -1,0 +1,76 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Sets up the Helix runtime for the latest release,
+		then builds grammars and sets up LSPs (via 'hx.lsp!').
+
+		This should be run whenever we upgrade our 'hx' binary to a new release.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+hx_config="${HOME}/.config/helix"
+hx_runtime="${hx_config}/runtime"
+
+
+# Ensure Helix config root exists.
+#
+[ -d "$hx_config" ] || mkdir -p "$hx_config"
+
+# Download fresh runtime, per latest release.
+#
+[ -d "$hx_runtime" ] && rm -rf "$hx_runtime"
+store-as hx_repo < "${HOME}/bin/vendor/hx.repo"
+eget "$hx_repo" --source --file='runtime' --to="$hx_config"
+
+# Make our custom theme visible within the runtime.
+#
+ln -sT "${hx_config}/theme.toml" "${hx_runtime}/themes/custom.toml"
+
+# Build grammars and set up any LSPs not already installed.
+#
+hx.lsp!
