@@ -98,42 +98,62 @@ newline = "↲"
 [keys.normal]
 
 
-# Unused And Problematic
+# Unused and/or Problematic
 
-"f" = "no_op"
-"s" = "no_op"
-"t" = "no_op"
+"e" = "no_op"
+"A" = "no_op"
+"B" = "no_op"
+"E" = "no_op"
+"G" = "no_op"
+"M" = "no_op"
+"O" = "no_op"
+"P" = "no_op"
+"Q" = "no_op"
 "T" = "no_op"
+"U" = "no_op"
+"W" = "no_op"
+"X" = "no_op"
+"Y" = "no_op"
+"Z" = "no_op"
+
+"`" = "no_op"
+"~" = "no_op"
+"@" = "no_op"
+"$" = "no_op"
+"&" = "no_op"
+"*" = "no_op"
+"(" = "no_op"
+")" = "no_op"
+"_" = "no_op"
+"+" = "no_op"
+"," = "no_op"
 "." = "no_op"
 "<" = "no_op"
-">" = "no_op"
-"%" = "no_op"
 
 
 # Application Control
 
-":"         = "command_mode"
-"P"         = "command_palette"
+":"       = "command_mode"
+"p"       = "command_palette"
 
-"ret"       = "insert_mode"
-";"         = "select_mode"
+"ret"     = "insert_mode"
+";"       = "select_mode"
 
-"C-up"      = "jump_view_up"
-"C-down"    = "jump_view_down"
-"C-left"    = "jump_view_left"
-"C-right"   = "jump_view_right"
+"C-up"    = "jump_view_up"
+"C-down"  = "jump_view_down"
+"C-left"  = "jump_view_left"
+"C-right" = "jump_view_right"
 
-"C-S-down"  = "hsplit_new"
-"C-S-right" = "vsplit_new"
-
-"D"         = "hover"
+"?"       = "hover"
 
 
 # File Operations
 
-"C-s"     = ":update"
 "S"       = ":update"
 "C-n"     = ":new"
+
+"f"       = "file_picker"
+"F"       = "file_picker_in_current_directory"
 
 
 # Document Navigation
@@ -143,22 +163,20 @@ newline = "↲"
 "j"       = "move_char_left"
 "l"       = "move_char_right"
 
-"["       = "goto_file_start"
 "I"       = "half_page_up"
 "K"       = "half_page_down"
-"]"       = "goto_file_end"
+"J"       = ["move_prev_word_start", "collapse_selection"]
+"L"       = ["move_next_word_end", "collapse_selection"]
 
 "C-h"     = "goto_line_start"
 "h"       = "goto_first_nonwhitespace"
-"J"       = ["move_prev_word_start", "collapse_selection"]
-"L"       = ["move_next_word_end", "collapse_selection"]
 "'"       = "goto_line_end"
 
-"g"       = "goto_line"
 "/"       = "search"
-"E"       = "goto_prev_diag"
-"e"       = "goto_next_diag"
+"n"       = "search_next"
+"N"       = "search_prev"
 
+"g"       = "goto_line"
 "C-j"     = "save_selection"
 "C-u"     = "jump_backward"
 "C-o"     = "jump_forward"
@@ -168,7 +186,7 @@ newline = "↲"
 
 "u"       = "goto_previous_buffer"
 "o"       = "goto_next_buffer"
-"p"       = "buffer_picker"
+"t"       = "buffer_picker"
 
 
 # Selection Management
@@ -190,12 +208,9 @@ newline = "↲"
 
   # Modification
 
-  "A"         = "add_newline_above"
   "a"         = "open_above"
   "b"         = "open_below"
-  "B"         = "add_newline_below"
-
-  "H"         = ["goto_first_nonwhitespace", "insert_mode"]
+  "H"         = "insert_at_line_start"
   '"'         = "insert_at_line_end"
 
   "r"         = ["delete_selection_noyank", "insert_mode"]
@@ -210,33 +225,87 @@ newline = "↲"
   "d"         = "delete_selection_noyank"
   "del"       = "delete_selection_noyank"
   "backspace" = "delete_char_backward"
+  "D"         = "delete_char_backward"
 
   "tab"       = "indent"
   "S-tab"     = "unindent"
 
   "="         = "insert_newline"
   "#"         = "toggle_comments"
-  "^"         = "switch_to_uppercase"
-  "_"         = "switch_to_lowercase"
+  "^"         = "align_selections"
+  ">"         = "join_selections"
+  "%"         = "switch_case"
+
+  "!"         = "shell_insert_output"
+  "|"         = "shell_pipe"
+
+
+[keys.normal."space"]
+"b"   = "no_op"
+"c"   = "no_op"
+"f"   = "no_op"
+"k"   = "no_op"
+"p"   = "no_op"
+"y"   = "no_op"
+"C"   = "no_op"
+"F"   = "no_op"
+"P"   = "no_op"
+"R"   = "no_op"
+"Y"   = "no_op"
+"?"   = "no_op"
+"A-c" = "no_op"
+
+
+[keys.normal.q]
+"ret" = ":quit"
+"S"   = ":write-quit"
+"!"   = ":quit!"
 
 
 [keys.normal.w]
-
 "ret" = ":buffer-close"
 "S"   = ":write-buffer-close"
 "!"   = ":buffer-close!"
+"p"   = "wclose"  # Close pane.
+"P"   = "wonly"   # Close other panes.
 
-[keys.normal.w.a]
-
+[keys.normal.w.a]  # close -> [a]ll
 "ret" = ":buffer-close-all"
 "S"   = [":write-all", ":buffer-close-all"]
 "!"   = ":buffer-close-all!"
 
-[keys.normal.q]
 
-"ret" = ":quit"
-"S"   = ":write-quit"
-"!"   = ":quit!"
+[keys.normal.s]  # [s]wap
+"a" = ["extend_to_line_bounds", ":clipboard-yank", "delete_selection_noyank", "move_line_up", ":clipboard-paste-before"]
+"b" = ["extend_to_line_bounds", ":clipboard-yank", "delete_selection_noyank", "move_line_down", ":clipboard-paste-before"]
+"i" = ["extend_to_line_bounds", ":clipboard-yank", "delete_selection_noyank", "move_line_up", ":clipboard-paste-before"]
+"k" = ["extend_to_line_bounds", ":clipboard-yank", "delete_selection_noyank", "move_line_down", ":clipboard-paste-before"]
+
+
+[keys.normal."["]
+"D" = "no_op"
+"G" = "no_op"
+"[" = "goto_file_start"
+"/" = "search_prev"
+
+
+[keys.normal."]"]
+"D" = "no_op"
+"G" = "no_op"
+"]" = "goto_last_line"
+"/" = "search_next"
+
+
+[keys.normal."{"]
+"d" = "goto_first_diag"
+"g" = "goto_first_change"
+"l" = "goto_file_start"
+
+
+[keys.normal."}"]
+"d" = "goto_last_diag"
+"g" = "goto_last_change"
+"l" = "goto_last_line"
 
 
 # ---
@@ -250,51 +319,47 @@ newline = "↲"
 
 "f" = "no_op"
 "o" = "no_op"
-"p" = "no_op"
 "s" = "no_op"
 "u" = "no_op"
 "z" = "no_op"
-"%" = "no_op"
 
 
 # Application Control
 
-":"       = "command_mode"
-"P"       = "command_palette"
+":"     = "command_mode"
+"p"     = "command_palette"
 
-"ret"     = ["collapse_selection", "insert_mode"]
-";"       = "normal_mode"
+"ret"   = ["collapse_selection", "insert_mode"]
+";"     = "normal_mode"
 
 
 # Selection Management
 
-"space"   = "extend_to_line_bounds"
-"a"       = "select_all"
-"w"       = ["move_char_right", "move_prev_word_start", "collapse_selection", "extend_next_word_end"]
-"minus"   = ["keep_primary_selection", "collapse_selection"]
-"/"       = "select_regex"
-"="       = "split_selection_on_newline"
+"space" = "extend_to_line_bounds"
+"a"     = "select_all"
+"w"     = ["move_char_right", "move_prev_word_start", "collapse_selection", "extend_next_word_end"]
+"minus" = ["keep_primary_selection", "collapse_selection"]
+"/"     = "select_regex"
+"="     = "split_selection_on_newline"
 
 
 # Document Navigation
 
-"i"       = "extend_line_up"
-"k"       = "extend_line_down"
-"j"       = "extend_char_left"
-"l"       = "extend_char_right"
+"i"     = "extend_line_up"
+"k"     = "extend_line_down"
+"j"     = "extend_char_left"
+"l"     = "extend_char_right"
 
-"["       = "goto_file_start"
-"I"       = "half_page_up"
-"K"       = "half_page_down"
-"]"       = "goto_file_end"
+"I"     = "half_page_up"
+"K"     = "half_page_down"
+"J"     = "extend_prev_word_start"
+"L"     = "extend_next_word_end"
 
-"C-h"     = "goto_line_start"
-"h"       = "goto_first_nonwhitespace"
-"J"       = "extend_prev_word_start"
-"L"       = "extend_next_word_end"
-"'"       = "goto_line_end"
+"C-h"   = "goto_line_start"
+"h"     = "goto_first_nonwhitespace"
+"'"     = "goto_line_end"
 
-"g"       = "goto_line"
+"g"     = "goto_line"
 
 
 # Editing
@@ -311,9 +376,50 @@ newline = "↲"
 
   # Modification
   
-  "d"         = ["delete_selection_noyank", "normal_mode"]
   "r"         = ["delete_selection_noyank", "insert_mode"]
   "R"         = "replace"
+
+  "d"         = ["delete_selection_noyank", "normal_mode"]
+  "del"       = ["delete_selection_noyank", "normal_mode"]
+  "backspace" = ["delete_selection_noyank", "normal_mode"]
+  "D"         = ["delete_selection_noyank", "normal_mode"]
+
+  "tab"       = "indent"
+  "S-tab"     = "unindent"
+
+  "#"         = ["toggle_comments", "normal_mode"]
+  "^"         = "align_selections"
+  ">"         = "join_selections"
+  "%"         = "switch_case"
+
+  "!"         = "shell_insert_output"
+  "|"         = "shell_pipe"
+
+
+[keys.select."["]
+"D" = "no_op"
+"G" = "no_op"
+"[" = "goto_file_start"
+"/" = "search_prev"
+
+
+[keys.select."]"]
+"D" = "no_op"
+"G" = "no_op"
+"]" = "goto_last_line"
+"/" = "search_next"
+
+
+[keys.select."{"]
+"d" = "goto_first_diag"
+"g" = "goto_first_change"
+"l" = "goto_file_start"
+
+
+[keys.select."}"]
+"d" = "goto_last_diag"
+"g" = "goto_last_change"
+"l" = "goto_last_line"
 
 
 # ---
@@ -323,5 +429,5 @@ newline = "↲"
 [keys.insert]
 
 
-"tab"       = "insert_tab"
-"S-tab"     = "unindent"
+"tab"   = "insert_tab"
+"S-tab" = "unindent"
