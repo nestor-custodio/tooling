@@ -272,6 +272,10 @@ function mirror {
 
   function k { heroku "$@" ;}
 
+  # Disable telemetry reporting.
+  #
+  export DISABLE_TELEMETRY='true'
+
 
   # lazydocker
 
