@@ -10,7 +10,7 @@ source '/home/nestor/bin/std.lib'
 
 		Edits a new script using the template TYPE given.
 		If a FILENAME is also given, the template is saved
-		to that location, and that's what then opened for editing.
+		to that location, and that's then opened for editing.
 
 		Available TYPE value are:
 		  bash / sh / shell / script  ->  standard bash tooling
@@ -85,6 +85,6 @@ else
 	[ -e "$target_filename" ] && error-out 2 'FILENAME already exists'
 	touch "$target_filename" &> /dev/null || error-out 3 'FILENAME could not be written'
 
-	cp "$template_filename" "$target_filename"
+	cp "$template_filename" "$target_filename" --preserve='mode,ownership'
 	"$EDITOR" "$target_filename"
 fi
