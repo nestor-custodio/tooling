@@ -292,6 +292,11 @@ if defined? Rails
   ## --- GENERAL HELPERS ---
 
 
+  def urls
+    Rails.application.routes.url_helpers
+  end
+
+
   def db?
     User.take
     true
