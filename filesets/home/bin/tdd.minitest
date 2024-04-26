@@ -12,6 +12,6 @@ load-env 'test'
 # If no files are given, recursively run everything under "./test/".
 
 if [ -n "$*" ]
-  then ding-if-slow ruby "$@"
-  else fd --glob '*.rb' ./test/ 2> /dev/null | xargs -rl ding-if-slow ruby
+  then ruby "$@"
+  else fd --glob '*.rb' ./test/ 2> /dev/null | map ruby
 fi

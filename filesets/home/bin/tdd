@@ -83,3 +83,11 @@ source '/home/nestor/bin/std.lib'
 	# Run the tests ...
 
 		[ -n "$javascript" ] && tdd.javascript "$@"
+
+
+# ---
+
+
+timestamp | store-as now
+calc? "(${now} - ${SCRIPT_TIMESTAMP}) <= 300" || ding-me
+
