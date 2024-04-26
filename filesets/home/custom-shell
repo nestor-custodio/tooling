@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/env bash
 
 [ -n "$PS1"            ] || return # Exit unless interactive.
 [ -n "$_byobu_sourced" ] || return # Exit unless within a Byobu session.
@@ -22,19 +22,6 @@ shopt -s checkwinsize
 
 
 # ---
-
-
-# Executable search order should be: - the current directory
-#                                    - "${HOME}/bin"
-#                                    - "${HOME}/bin/vendor"
-#                                    - "${HOME}/.local/bin"
-#                                    - "${HOME}/.nodes/bin"
-#                                    - "${HOME}/.yarn/bin"
-#                                    - snap packages
-#                                    - native packages
-#                                    - the current directory's "./bin"
-#
-export PATH=".:${HOME}/bin:${HOME}/bin/vendor:${HOME}/.local/bin:${HOME}/.nodes/bin:${HOME}/.yarn/bin:/snap/bin:${PATH}:./bin"
 
 
 # Helper for absolute paths to real binaries.
@@ -361,7 +348,7 @@ function mirror {
 
 # Set the prompt.
 #
-prompt_setter="${HOME}/bin/prompt.src"
+prompt_setter="${HOME}/bin/set-prompt.src"
 [ -r "$prompt_setter" ] && source "$prompt_setter"
 
 

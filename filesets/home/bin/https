@@ -122,12 +122,15 @@ function run_caddy() {
 	tempname | store-as stdout_storage
 	tempname | store-as stderr_storage
 
-	sudo BINDING="$binding" "$caddy_bin" start "$@"                  \
-	                                           --config="$caddyfile" \
-	                                           --adapter='caddyfile' \
-	                                           --pidfile="$pidfile"  \
-	                                           1> "$stdout_storage"  \
-	                                           2> "$stderr_storage"
+	sudo BINDING="$binding"                 \
+	     HOSTNAME="$( hostname )"           \
+	                                        \
+	     "$caddy_bin" start "$@"            \
+	                  --config="$caddyfile" \
+	                  --adapter='caddyfile' \
+	                  --pidfile="$pidfile"  \
+	                  1> "$stdout_storage"  \
+	                  2> "$stderr_storage"
 	rm "$caddyfile"
 
 	exit_code="$?"
