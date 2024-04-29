@@ -12,8 +12,8 @@ source '/home/nestor/bin/std.lib'
 
 
 		Mandatory arguments to long options are mandatory for short options too.
-		  --dev                     Name of local store to clone into "~/dev".
-		  --repo                    URL for hosted repo to clone into "~/dev".
+		  --dev                     Name of local store to clone into "\$DEV_ROOT".
+		  --repo                    URL for hosted repo to clone into "\$DEV_ROOT".
 
 		  --disk-size               Size of boot disk. (Default is 12GB.)
 

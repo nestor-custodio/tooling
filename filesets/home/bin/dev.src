@@ -12,13 +12,12 @@ shopt -s lastpipe
     # - If multiple matches are found, allow interactive selection and then process as above.
 
     local search="$*"
-    local dev_root="${DEV_ROOT:-${HOME}/dev}"
 
 
-    # We want to be at $dev_root before the editor runs
+    # We want to be at $DEV_ROOT before the editor runs
     # so file searches, etc are project-wide by default.
     #
-    cd "$dev_root"
+    cd "$DEV_ROOT"
 
 
     # Simpleton case: no params given.
@@ -151,7 +150,7 @@ shopt -s lastpipe
 
         # ---
 
-        pushd "${HOME}/dev"
+        pushd "$DEV_ROOT"
 
         gem_name="$( superbase ./*.gemspec )"
         [ -n "$gem_name" ] || return 2
@@ -239,7 +238,7 @@ shopt -s lastpipe
 
     function rails-db {
       local database="$DATABASE_URL"
-      local db_config="${HOME}/dev/config/database.yml"
+      local db_config="${DEV_ROOT}/config/database.yml"
 
     	# Pull from Rails DB config, if no $DATABASE_URL was available.
     	#
@@ -262,7 +261,7 @@ shopt -s lastpipe
     }
 
     function pending-migrations {
-      local migration_file_list="$( ls -m --width=0 "${HOME}/dev/db/migrate"/??????????????_*.rb 2> /dev/null | sed -r -e "s|\S*/([0-9]{14})_[^,]*|'\1'|g" )"
+      local migration_file_list="$( ls -m --width=0 "${DEV_ROOT}/db/migrate"/??????????????_*.rb 2> /dev/null | sed -r -e "s|\S*/([0-9]{14})_[^,]*|'\1'|g" )"
       usql "$( rails-db )" -Aqt --command="SELECT files.name FROM UNNEST(ARRAY[${migration_file_list}]) AS files(name) LEFT JOIN schema_migrations ON (name = version) WHERE (version IS NULL) ORDER BY 1"
     }
     function pending-migrations? { [ -n "$( pending-migrations )" ] ;}
@@ -441,7 +440,7 @@ shopt -s lastpipe
     [ -n "$env_name" ] && env_list+=(".env.${env_name}")
                           env_list+=('.env.local')
     [ -n "$env_name" ] && env_list+=(".env.${env_name}.local")
-    for env_file in "${env_list[@]}"; do source "${HOME}/dev/${env_file}" 2> /dev/null; done
+    for env_file in "${env_list[@]}"; do source "${DEV_ROOT}/${env_file}" 2> /dev/null; done
   }
 
   function unload-env {

@@ -140,11 +140,11 @@ startup_log='/var/log/startup'
 			apt-get -qqy install litecli mycli pgcli postgresql-client s3fs  # Additional dev tooling.
 
 
-		# Prepare "~/dev".
-		report 'preparing ~/dev'
+		# Prepare the dev root.
+		report 'preparing dev root'
 
-			dev_root='/home/nestor/dev'
-			sudo --user='nestor' mkdir "$dev_root"
+			DEV_ROOT='/home/nestor/dev'
+			sudo --user='nestor' mkdir "$DEV_ROOT"
 
 			dev_dir="$( instance attributes/dev-dir )"
 			git_repo="$( instance attributes/git-repo )"
@@ -176,14 +176,14 @@ startup_log='/var/log/startup'
 				report '... mounting dev dir from sync'
 
 				dev_mount_path="sync:/dev/${dev_dir}"
-				echo "${dev_mount_path} ${dev_root} nfs _netdev,auto,fg,fsc 0 0" >> /etc/fstab && mount -a
+				echo "${dev_mount_path} ${DEV_ROOT} nfs _netdev,auto,fg,fsc 0 0" >> /etc/fstab && mount -a
 
 
 				# Clone the given git_repo if needed.
 
-				[ -n "$git_repo" ] && ! [ -d "${dev_root}/.git" ] && {
+				[ -n "$git_repo" ] && ! [ -d "${DEV_ROOT}/.git" ] && {
 					report '... cloning repo (--no-checkout) into dev root'
-					sudo --user='nestor' git clone "$git_repo" "$dev_root" --no-checkout
+					sudo --user='nestor' git clone "$git_repo" "$DEV_ROOT" --no-checkout
 				}
 
 			}

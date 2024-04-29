@@ -53,7 +53,7 @@ source '/home/nestor/bin/std.lib'
 
 spring_log='/var/log/spring'
 
-[ "$( realpath "$( pwd )" )" == "$( realpath "${HOME}/dev" )" ] || error-out 2 'not currently in ~/dev'
+[ "$( realpath "$( pwd )" )" == "$( realpath "$DEV_ROOT" )" ] || error-out 2 "not currently in '${DEV_ROOT}'"
 sudo su -c "rm -rf '${spring_log}' && touch '${spring_log}' && chown '$( whoami ):$( whoami )' '${spring_log}'"
 
 bundle exec spring stop &> /dev/null

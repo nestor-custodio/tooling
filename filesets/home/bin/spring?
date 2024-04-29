@@ -51,7 +51,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-[ "$( realpath "$( pwd )" )" == "$( realpath "${HOME}/dev" )" ] || error-out 2 'not currently in ~/dev'
+[ "$( realpath "$( pwd )" )" == "$( realpath "$DEV_ROOT" )" ] || error-out 2 "not currently in '${DEV_ROOT}'"
 
 spring status | head -n1 | sed -e 's|:$|.|' | store-as status
 echo "$status"
