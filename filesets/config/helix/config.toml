@@ -128,7 +128,6 @@ newline = "↲"
 "+" = "no_op"
 "," = "no_op"
 "." = "no_op"
-"<" = "no_op"
 
 
 # Application Control
@@ -227,13 +226,12 @@ newline = "↲"
   "backspace" = "delete_char_backward"
   "D"         = "delete_char_backward"
 
-  "tab"       = "indent"
-  "S-tab"     = "unindent"
+  ">"         = "indent"
+  "<"         = "unindent"
 
   "="         = "insert_newline"
   "#"         = "toggle_comments"
   "^"         = "align_selections"
-  ">"         = "join_selections"
   "%"         = "switch_case"
 
   "!"         = "shell_insert_output"
@@ -384,12 +382,11 @@ newline = "↲"
   "backspace" = ["delete_selection_noyank", "normal_mode"]
   "D"         = ["delete_selection_noyank", "normal_mode"]
 
-  "tab"       = "indent"
-  "S-tab"     = "unindent"
+  ">"         = "indent"
+  "<"         = "unindent"
 
   "#"         = ["toggle_comments", "normal_mode"]
   "^"         = "align_selections"
-  ">"         = "join_selections"
   "%"         = "switch_case"
 
   "!"         = "shell_insert_output"
@@ -429,5 +426,5 @@ newline = "↲"
 [keys.insert]
 
 
-"tab"   = "insert_tab"
-"S-tab" = "unindent"
+"tab"   = "indent"
+"S-tab" = "insert_tab"
