@@ -105,7 +105,7 @@ startup_script_file="$( script-real ):init"
 # Create the Sync VM.
 #
 gcloud compute instances create 'sync'                                 \
-       --project="$vm_project" --zone="$vm_zone"                       \
+       --project="$vm_project" --zone="$vm_zone" --hostname='sync'     \
                                                                        \
        --machine-type=e2-medium                                        \
        --boot-disk-type=pd-standard --boot-disk-size=10GB              \
