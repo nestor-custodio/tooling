@@ -1,0 +1,72 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) ORIGINAL_FILE MODIFIED_FILE
+		       $( name-blanks ) ORIGINAL_DIRECTORY MODIFIED_DIRECTORY
+
+		Generates a patch file for the given arguments, invoking 'diff' with
+		the proper parameters for files vs directories.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if mismatched parameter types.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	original="$1" && shift
+	[ -n "$original" ] || error-out 1 'no ORIGINAL file/directory given'
+
+	modified="$1" && shift
+	[ -n "$modified" ] || error-out 1 'no MODIFIED file/directory given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+[ -f "$original" ] && [ -f "$modified" ] && param_type='file' 
+[ -d "$original" ] && [ -d "$modified" ] && param_type='dirs'
+
+
+case "$param_type" in
+  (file) diff -Naru "$original" "$modified" ;;
+  (dirs) diff -crB  "$original" "$modified" ;;
+
+  *) exit-out 2 'mismatched (or unexpected) param types'
+esac
