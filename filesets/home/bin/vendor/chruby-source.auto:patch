@@ -1,0 +1,17 @@
+--- chruby-source.auto:original	2024-05-05 13:50:14.198450937 -0500
++++ chruby-source.auto:modified	2024-05-05 13:50:36.568495080 -0500
+@@ -3,6 +3,14 @@
+ function chruby_auto() {
+ 	local dir="$PWD/" version
+ 
++	# Don't run within S3 mounts, as any filesystem operation there will take
++	# a long time and we're unlikely to run any Ruby code from within a bucket.
++	#
++	# Note that since running a proper filesystem check takes a long time, we're using
++	# `bash` built-ins to (very quickly) determine if we're within an "/s3/" directory.
++	#
++	[ -z "${dir/*"/s3/"*}" ] && return
++
+ 	until [[ -z "$dir" ]]; do
+ 		dir="${dir%/*}"
+ 

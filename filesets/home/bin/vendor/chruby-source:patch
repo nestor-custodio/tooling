@@ -1,0 +1,39 @@
+--- chruby-source:original	2024-05-03 14:42:59.893430909 -0500
++++ chruby-source:modified	2024-05-05 13:47:27.359205348 -0500
+@@ -14,13 +14,11 @@
+ 
+ 	if (( $UID != 0 )); then
+ 		[[ -n "$GEM_HOME" ]] && PATH="${PATH//:$GEM_HOME\/bin:/:}"
+-		[[ -n "$GEM_ROOT" ]] && PATH="${PATH//:$GEM_ROOT\/bin:/:}"
+ 
+ 		GEM_PATH=":$GEM_PATH:"
+ 		[[ -n "$GEM_HOME" ]] && GEM_PATH="${GEM_PATH//:$GEM_HOME:/:}"
+-		[[ -n "$GEM_ROOT" ]] && GEM_PATH="${GEM_PATH//:$GEM_ROOT:/:}"
+ 		GEM_PATH="${GEM_PATH#:}"; GEM_PATH="${GEM_PATH%:}"
+-		unset GEM_ROOT GEM_HOME
++		unset GEM_HOME
+ 		[[ -z "$GEM_PATH" ]] && unset GEM_PATH
+ 	fi
+ 
+@@ -42,17 +40,13 @@
+ 	export RUBYOPT_X="$2"
+ 	export PATH="$RUBY_ROOT/bin:$PATH"
+ 
+-	eval "$("$RUBY_ROOT/bin/ruby" - <<EOF
+-puts "export RUBY_ENGINE=#{defined?(RUBY_ENGINE) ? RUBY_ENGINE : 'ruby'};"
+-puts "export RUBY_VERSION=#{RUBY_VERSION};"
+-begin; require 'rubygems'; puts "export GEM_ROOT=#{Gem.default_dir.inspect};"; rescue LoadError; end
+-EOF
+-)"
++	export RUBY_ENGINE="$( "${RUBY_ROOT}/bin/ruby" --version | cut --delimiter=' ' --fields='1' )"
++	export RUBY_VERSION="$( "${RUBY_ROOT}/bin/ruby" --version | cut --delimiter=' ' --fields='2' | sed -r -e 's#[^0-9.].*$##' )"
+ 
+ 	if (( $UID != 0 )); then
+ 		export GEM_HOME="$HOME/.gem/$RUBY_ENGINE/$RUBY_VERSION"
+-		export GEM_PATH="$GEM_HOME${GEM_ROOT:+:$GEM_ROOT}${GEM_PATH:+:$GEM_PATH}"
+-		export PATH="$GEM_HOME/bin${GEM_ROOT:+:$GEM_ROOT/bin}:$PATH"
++		export GEM_PATH="$GEM_HOME${GEM_PATH:+:$GEM_PATH}"
++		export PATH="$GEM_HOME/bin:$PATH"
+ 	fi
+ }
+ 
