@@ -3,14 +3,14 @@ shopt -s lastpipe
 
 # ---
 
-paths=("."                     # the current directory
-       "${HOME}/bin"           # our custom tooling
+paths=("${HOME}/bin"           # our custom tooling
        "${HOME}/bin/vendor"    # our vendor tooling
        "${HOME}/.local/bin"    # native user binaries
        "${HOME}/.nodes/bin"    # node binaries
        "${HOME}/.yarn/bin"     # yarn binaries
        "/snap/bin"             # snap packages
        "${PATH}"               # native system binaries
+       "."                     # the current directory
        "./bin"              )  # the current directory's "./bin"
 
 old_ifs="$IFS"; IFS=':'
