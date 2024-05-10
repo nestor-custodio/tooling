@@ -18,7 +18,8 @@ source '/home/nestor/bin/std.lib'
 		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  if command not invoked from valid location.
+		  2  if spring binary not found,
+		  3  if command not invoked from valid location.
 	EOF
 
 }
@@ -51,7 +52,10 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-[ "$( realpath "$( pwd )" )" == "$( realpath "$DEV_ROOT" )" ] || error-out 2 "not currently in '${DEV_ROOT}'"
+command -V spring &> /dev/null || error-out 2 "'spring' binary not found"
+
+pwd | starts-with? "$DEV_ROOT" || error-out 3 "not currently within '${DEV_ROOT}'"
+cd "$DEV_ROOT"
 
 spring status | head -n1 | sed -e 's|:$|.|' | store-as status
 echo "$status"

@@ -18,7 +18,8 @@ source '/home/nestor/bin/std.lib'
 		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  if command not invoked from valid location.
+		  2  if spring binary not found,
+		  3  if command not invoked from valid location.
 	EOF
 
 }
@@ -51,10 +52,16 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+command -V spring &> /dev/null || error-out 2 "'spring' binary not found"
+
+pwd | starts-with? "$DEV_ROOT" || error-out 3 "not currently within '${DEV_ROOT}'"
+cd "$DEV_ROOT"
+
+whoami | store-as username
 spring_log='/var/log/spring'
+sudo su -c "touch '${spring_log}' && chown '${username}:${username}' '${spring_log}'"
 
-[ "$( realpath "$( pwd )" )" == "$( realpath "$DEV_ROOT" )" ] || error-out 2 "not currently in '${DEV_ROOT}'"
-sudo su -c "rm -rf '${spring_log}' && touch '${spring_log}' && chown '$( whoami ):$( whoami )' '${spring_log}'"
-
-bundle exec spring stop &> /dev/null
-nohup bundle exec spring server &> "$spring_log" &
+# Note we can't `nohup bx ...`.
+#
+spring stop &> /dev/null
+nohup spring server &> "$spring_log" &
