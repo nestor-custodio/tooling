@@ -225,6 +225,12 @@ case "$tool_name" in
 		noop
 		;;
 
+	(marksman)
+		# The Github release tags for this tool do not match
+		# the release version numbers. 🤷.
+		noop
+		;;
+
 	(redis-viewer)
 		# This tool provides no versioning info. 🤷.
 		# I've requested adding a `--version` option via:
