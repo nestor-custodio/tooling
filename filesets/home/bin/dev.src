@@ -296,6 +296,11 @@ shopt -s lastpipe
     #
     export N_PREFIX="${HOME}/.nodes"
 
+    # Don't run Husky installer, and disable its
+    # git hooks if `husky install` has already run.
+    #
+    export HUSKY='0'
+
     # Package helpers.
 
     function nx { npx         "$@" ;}
