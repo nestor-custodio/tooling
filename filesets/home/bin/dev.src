@@ -73,10 +73,6 @@ shopt -s lastpipe
 
   # ruby
 
-    # Default options.
-    #
-    export RUBYOPT="${RUBYOPT} --enable-jit"
-
     # Executable management.
     #
     source "${HOME}/bin/vendor/chruby-source"

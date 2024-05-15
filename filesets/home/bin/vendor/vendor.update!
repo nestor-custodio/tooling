@@ -144,10 +144,10 @@ source '/home/nestor/bin/std.lib'
 				mkdir -p "$extract_dir"
 				eget --quiet "$( github-repo )" --source --file='chruby.*' --all --to="$extract_dir"
 
-				mv "${extract_dir}/chruby.sh" "${HOME}/bin/vendor/chruby-source"
-				mv "${extract_dir}/auto.sh"   "${HOME}/bin/vendor/chruby-source.auto"
-				sed -ri -e 's|\bRUBYOPT\b|RUBYOPT_X|g' "${HOME}/bin/vendor/chruby-source"*
+				patch "${extract_dir}/chruby.sh" "${HOME}/bin/vendor/chruby-source:patch"      --output="${HOME}/bin/vendor/chruby-source"
+				patch "${extract_dir}/auto.sh"   "${HOME}/bin/vendor/chruby-source.auto:patch" --output="${HOME}/bin/vendor/chruby-source.auto"
 				chmod 644 "${HOME}/bin/vendor/chruby-source"*
+
 				rm -rf "$extract_dir"
 				;;
 
