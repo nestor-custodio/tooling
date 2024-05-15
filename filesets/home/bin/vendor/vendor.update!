@@ -28,14 +28,6 @@ source '/home/nestor/bin/std.lib'
 
 # ---
 
-{ # -- Constants -- #
-
-	TEMPFILE_TEMPLATE='vendor-bin-updater.XXX'
-
-}
-
-# ---
-
 { # -- Utility Functions -- #
 
 	_all_tools=''
@@ -79,7 +71,8 @@ source '/home/nestor/bin/std.lib'
 
 		# ---
 
-		mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
+		tempname | store-as extract_dir
+		mkdir -p "$extract_dir"
 		eget --quiet "$( github-repo )" --asset='.deb' "$@" --to='/dev/stdout' | dpkg --extract '/dev/stdin' "$extract_dir"
 		mv "${extract_dir}/usr/bin/$( tool-name )" "$( executable )" &> /dev/null || error-out 2 'unable to fetch/find binary'
 		chmod 755 "$( executable )"
@@ -136,18 +129,19 @@ source '/home/nestor/bin/std.lib'
 				target="${HOME}/bin/vendor/aws-runtime"
 				mkdir -p "$target" && rm -rf "${target:?}"/*
 
-				mktemp --tmpdir "$TEMPFILE_TEMPLATE" | store-as zip_file
+				tempname | store-as zip_file
 				curl "$( executable-url )" --silent --location > "$zip_file" || error-out 2 'unable to fetch release'
 
-				mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
-				unzip -q "$zip_file" -d "$extract_dir" || error-out 2 'unable to extract release'
+				tempname | store-as extract_dir
+				{ mkdir -p "$extract_dir" && unzip -q "$zip_file" -d "$extract_dir" ;} || error-out 2 'unable to extract release'
 
 				mv "${extract_dir}/aws/dist"/* "${target}/"
 				rm -rf "$zip_file" "$extract_dir"
 				;;
 
 			(chruby)
-				mktemp --tmpdir --directory "$TEMPFILE_TEMPLATE" | store-as extract_dir
+				tempname | store-as extract_dir
+				mkdir -p "$extract_dir"
 				eget --quiet "$( github-repo )" --source --file='chruby.*' --all --to="$extract_dir"
 
 				mv "${extract_dir}/chruby.sh" "${HOME}/bin/vendor/chruby-source"
