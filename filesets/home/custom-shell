@@ -196,37 +196,37 @@ function mirror {
 
   function g { lazygit "$@" ;}
 
-  function gadd        { git add                               "$@" ;}
-  function gblame      { git blame -w --minimal --color-by-age "$@" ;}
-  function gbranch     { git branch                            "$@" ;}
-  function gbranch?    { git branch --show-current             "$@" ;}
-  function gcheckout   { git checkout                          "$@" ;}
-  function gcherrypick { git cherry-pick                       "$@" ;}
-  function gconfig     { git config                            "$@" ;}
-  function gclone      { git clone                             "$@" ;}
-  function gcommit     { git commit                            "$@" ;}
-  function gdiff       { git diff                              "$@" ;}
-  function gfetch      { git fetch                             "$@" ;}
-  function ginit       { git init                              "$@" ;}
-  function gmerge      { git merge --no-ff                     "$@" ;}
-  function gmove       { git mv                                "$@" ;}
-  function gmv         { git mv                                "$@" ;}
-  function gpatch      { git apply                             "$@" ;}
-  function gpop        { git stash pop                         "$@" ;}
-  function gpull       { git pull                              "$@" ;}
-  function gpush       { git push                              "$@" ;}
-  function grebase     { git rebase                            "$@" ;}
-  function gremote     { git remote                            "$@" ;}
-  function greset      { git reset                             "$@" ;}
-  function gstage      { git add                               "$@" ;}
-  function gstash      { git stash                             "$@" ;}
-  function gstatus     { git status                            "$@" ;}
-  function gtag        { git tag                               "$@" ;}
-  function gtrack      { git add                               "$@" ;}
-  function gunchange   { git checkout HEAD                     "$@" ;}
-  function gundelete   { git checkout HEAD                     "$@" ;}
-  function gunstage    { git reset                             "$@" ;}
-  function guntrack    { git rm -r --cached                    "$@" ;}
+  function gadd        { git add                                    "$@" ;}
+  function gblame      { git blame -w --minimal --color-by-age      "$@" ;}
+  function gbranch     { git branch                                 "$@" ;}
+  function gbranch?    { git branch --show-current                  "$@" ;}
+  function gcheckout   { git checkout                               "$@" ;}
+  function gcherrypick { git cherry-pick                            "$@" ;}
+  function gconfig     { git config                                 "$@" ;}
+  function gclone      { git clone                                  "$@" ;}
+  function gcommit     { git commit                                 "$@" ;}
+  function gdiff       { git diff                                   "$@" ;}
+  function gfetch      { git fetch                                  "$@" ;}
+  function ginit       { git init                                   "$@" ;}
+  function gmerge      { git merge --no-ff                          "$@" ;}
+  function gmove       { git mv                                     "$@" ;}
+  function gmv         { git mv                                     "$@" ;}
+  function gpatch      { git apply                                  "$@" ;}
+  function gpop        { git stash pop                              "$@" ;}
+  function gpull       { git pull                                   "$@" ;}
+  function gpush       { git push                                   "$@" ;}
+  function grebase     { git rebase                                 "$@" ;}
+  function gremote     { git remote                                 "$@" ;}
+  function greset      { git reset                                  "$@" ;}
+  function gstage      { git add                                    "$@" ;}
+  function gstash      { git stash                                  "$@" ;}
+  function gstatus     { git status --short --branch --ahead-behind "$@" ;}
+  function gtag        { git tag                                    "$@" ;}
+  function gtrack      { git add                                    "$@" ;}
+  function gunchange   { git checkout HEAD                          "$@" ;}
+  function gundelete   { git checkout HEAD                          "$@" ;}
+  function gunstage    { git reset                                  "$@" ;}
+  function guntrack    { git rm -r --cached                         "$@" ;}
 
   function glog        { git log --color='always' "$@" | bat ;}
   function ggraph      { glog --oneline --decorate --graph "$@" ;}
