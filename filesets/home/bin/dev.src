@@ -262,9 +262,9 @@ shopt -s lastpipe
     }
     function pending-migrations? { [ -n "$( pending-migrations )" ] ;}
 
-    function db: {                        r+ migration   "$@" ;}
-    function db+ { pending-migrations? && rd db:migrate  "$@" ;}
-    function db- {                        rd db:rollback "$@" ;}
+    function db: {                                  r+ migration   "$@" ;}
+    function db+ { pending-migrations? || return 0; rd db:migrate  "$@" ;}
+    function db- {                                  rd db:rollback "$@" ;}
 
     function db! {
       rr "require 'bundler/inline'
@@ -283,7 +283,7 @@ shopt -s lastpipe
 
     # ---
 
-    function rs  { db+; rd server "$@" ;}
+    function rs  { db+ && rd server "$@" ;}
     function rs1 { RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 rs "$@" ;}
 
     function rails-tasks { nearest --quiet 'Gemfile' && rd --tasks="$1" --all ;}
