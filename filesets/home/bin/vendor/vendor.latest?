@@ -56,7 +56,12 @@ source '/home/nestor/bin/std.lib'
 	
 	function normalized-version {
 		version="$1" && shift
-		sed -r -e 's#\b0+#0#g' -e 's#\b0([^0.])#\1#g' -e 's#\.$##' <<< "$version"
+
+		sed -r -e 's#^ +##'              \
+		       -e 's# +$##'              \
+		       -e 's#\b0+#0#g'           \
+		       -e 's#\b0([^0.])#\1#g'    \
+		       -e 's#\.$##' <<< "$version"
 	}
 
 	function check-version {
@@ -193,7 +198,7 @@ case "$tool_name" in
 	(rg               ) check-version                  --puller='(?<=ripgrep ).*?(?= )'        ;;
 	(ruby-install     ) check-version                  --puller='(?<=ruby-install: ).*'        ;;
 	(shellcheck       ) check-version                  --puller='(?<=version: ).*'             ;;
-	(static-web-server) check-version                  --puller='(?<=static-web-server ).*'    ;;
+	(static-web-server) check-version                  --puller='(?<=Version: ).*'             ;;
 	(unison           ) check-version --cmd='-version' --puller='(?<=unison version ).*?(?= )' ;;
 	(usql             ) check-version                  --puller='(?<=usql ).*'                 ;;
 	(watchexec        ) check-version                  --puller='(?<=release: ).*'             ;;
