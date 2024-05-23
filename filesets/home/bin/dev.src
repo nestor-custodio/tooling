@@ -107,6 +107,8 @@ shopt -s lastpipe
       # ---
 
       function bi {
+        local gemfile="$( nearest 'Gemfile' )"
+        local lockfile="$( nearest 'Gemfile.lock' )"
         # Ensure specific ruby.
         #
         if ruby_version="$( nearest --read '.ruby-version' )"; then
@@ -116,16 +118,16 @@ shopt -s lastpipe
 
         # Ensure specific bundler.
         #
-        if lockfile="$( nearest 'Gemfile.lock' )"; then
+        if [ -n "$lockfile" ]; then
           bundler_version="$( tail -n1 "$lockfile" | tr -d ' ' )"
           gem list bundler --silent --installed --version="$bundler_version" || gem install "bundler:${bundler_version}"
         else
           gem list bundler --silent --installed || gem install bundler
         fi
 
-        # Install gemset, if any.
+        # Install gemset, if necessary.
         #
-        nearest --quiet 'Gemfile.lock' 'Gemfile' && bundle install --jobs="$( nproc )" "$@"
+        { [ -n "$gemfile" ] || [ -n "$lockfile" ] ;} && { bundle check &> /dev/null || bundle install --jobs="$( nproc )" "$@" ;}
 
         true # Always move forward.
       }
