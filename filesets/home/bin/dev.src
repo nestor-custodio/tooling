@@ -33,6 +33,7 @@ shopt -s lastpipe
 
     # Find *matching* entries, asking interactively if necessary.
     #
+    local matches
     readarray -t matches < <( fzf --query="'${search} " --multi --select-1 --preview-window='default' <<< "$list" )
 
 
@@ -109,8 +110,10 @@ shopt -s lastpipe
       function bi {
         local gemfile="$( nearest 'Gemfile' )"
         local lockfile="$( nearest 'Gemfile.lock' )"
+
         # Ensure specific ruby.
         #
+        local ruby_version
         if ruby_version="$( nearest --read '.ruby-version' )"; then
           ruby --version 2> /dev/null | has? "$ruby_version" || chruby "$ruby_version"                 \
           || { ruby-install "$ruby_version" && RUBIES=("${HOME}/.rubies"/*) && chruby "$ruby_version" ;}
@@ -118,6 +121,7 @@ shopt -s lastpipe
 
         # Ensure specific bundler.
         #
+        local bundler_version
         if [ -n "$lockfile" ]; then
           bundler_version="$( tail -n1 "$lockfile" | tr -d ' ' )"
           gem list bundler --silent --installed --version="$bundler_version" || gem install "bundler:${bundler_version}"
@@ -136,6 +140,12 @@ shopt -s lastpipe
     # Gem Release Tooling
 
       function release-gem {
+
+        local option bump
+        local gem_name repo_id old_version
+        local parts major minor patch new_version
+
+        # ---
 
         option="$1" && shift
         case "$option" in
@@ -305,14 +315,14 @@ shopt -s lastpipe
 
     # Package helpers.
 
-    function nx { npx         "$@" ;}
-    function na { npm audit   "$@" ;}
+    function nx { npx       "$@" ;}
+    function na { npm audit "$@" ;}
 
     function ni {
       # Ensure specific node/npm.
       #
-      current_version="$( node --version 2> /dev/null )"
-      requested_version="$( nearest --read '.node-version' )"
+      local current_version="$( node --version 2> /dev/null )"
+      local requested_version="$( nearest --read '.node-version' )"
       case "$requested_version" in
         (lts) [ "$current_version" == "v$( n --lts )" ] || n lts ;;
         (latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
@@ -323,7 +333,7 @@ shopt -s lastpipe
 
       # Install packages, if any.
       #
-      nearest --quiet 'package.json' && npm install --loglevel='error' "$@"
+      nearest --quiet 'package.json' && npm install "$@"
 
       true # Always move forward.
     }
@@ -358,8 +368,8 @@ shopt -s lastpipe
     function yi {
       # Ensure specific node/npm.
       #
-      current_version="$( node --version 2> /dev/null )"
-      requested_version="$( nearest --read '.node-version' )"
+      local current_version="$( node --version 2> /dev/null )"
+      local requested_version="$( nearest --read '.node-version' )"
       case "$requested_version" in
         (lts) [ "$current_version" == "v$( n --lts )" ] || n lts ;;
         (latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
