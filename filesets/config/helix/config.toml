@@ -63,9 +63,9 @@ wrap-indicator = "↳"
 
 [editor.statusline]
 
-left   = ["spinner", "spacer", "mode", "spacer", "spacer", "file-name", "file-modification-indicator"]
+left   = ["spinner", "spacer", "mode", "spacer", "spacer", "file-name", "file-modification-indicator", "spacer", "spacer", "diagnostics"]
 center = ["version-control"]
-right  = ["diagnostics", "position", "spacer", "position-percentage", "spacer", "file-type", "spacer"]
+right  = ["position", "spacer", "position-percentage", "spacer", "file-type", "spacer"]
 
 mode.normal = "NORMAL"
 mode.insert = "INSERT"
@@ -428,5 +428,4 @@ newline = "↲"
 [keys.insert]
 
 
-"tab"   = "indent"
-"S-tab" = "insert_tab"
+"tab" = "insert_tab"
