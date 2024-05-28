@@ -22,7 +22,7 @@ source '/home/nestor/bin/std.lib'
 
 		       $( script-name ) rename INSTANCE_NAME NEW_INSTANCE_NAME
 
-		       $( script-name ) scale INSTANCE_NAME { --machine-type=MACHINE_TYPE | --micro
+		       $( script-name ) scale INSTANCE_NAME { --machine-type MACHINE_TYPE | --micro
 		       $( name-blanks )                                                   | --small
 		       $( name-blanks )                                                   | --medium
 		       $( name-blanks )                                                   | --standard }

@@ -18,8 +18,8 @@ source '/home/nestor/bin/std.lib'
 
 
 		Exit Status:
-		  0  if OK,
-		  1  if invalid option.
+		  0  if TRUE,
+		  1  if FALSE or invalid option.
 	EOF
 
 }

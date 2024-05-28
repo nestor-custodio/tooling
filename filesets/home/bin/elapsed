@@ -6,8 +6,8 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) --from=DATE_1 --to=DATE_2
-		       $( name-blanks ) --since=DATE
+		Usage: $( script-name ) --from DATE_1 --to DATE_2
+		       $( name-blanks ) --since DATE
 
 		Returns a pretty-printed description of the time elapsed between
 		two dates (--from and --to), or between a date and now (--since).

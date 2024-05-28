@@ -6,9 +6,9 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) get [record|ip|ttl] [--for=NAME]
-		       $( script-name ) set IP              [--for=NAME]
-		       $( script-name ) del                 [--for=NAME]
+		Usage: $( script-name ) get [record|ip|ttl] [--for NAME]
+		       $( script-name ) set IP              [--for NAME]
+		       $( script-name ) del                 [--for NAME]
 
 		Convenience handler for managing GCP-related DNS 'A' records.
 		NAME may be a hostname ('sync') or a full dotted domain name.

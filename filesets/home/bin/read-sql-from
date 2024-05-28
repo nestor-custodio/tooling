@@ -7,7 +7,7 @@ source '/home/nestor/bin/std.lib'
 
 	cat <<-EOF | store-as usage
 		Usage: $( script-name ) POSTGRES_URL
-		       $( name-blanks ) --heroku-app=NAME [--config-var=VARIABLE]
+		       $( name-blanks ) --heroku-app NAME [--config-var VARIABLE]
 
 		Dumps the entirety of the given Postgres database to STDOUT as SQL.
 		Any options given after the '--' delimiter will be passed through as-is
