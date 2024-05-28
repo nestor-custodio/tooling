@@ -380,7 +380,7 @@ shopt -s lastpipe
 
       # Ensure (any) yarn.
       #
-      which yarn &> /dev/null || npm install -g yarn
+      command -v yarn &> /dev/null || npm install -g yarn
 
       # Install packages, if any.
       #
@@ -401,7 +401,7 @@ shopt -s lastpipe
 
   function gapps { clasp "$@" ;}
   function gapps! { npm install -g @google/clasp ;}
-  function gapps? { command -V clasp &> /dev/null ;}
+  function gapps? { command -v clasp &> /dev/null ;}
 
 
 # ENV helpers.

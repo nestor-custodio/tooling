@@ -52,7 +52,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-command -V spring &> /dev/null || error-out 2 "'spring' binary not found"
+command -v spring &> /dev/null || error-out 2 "'spring' binary not found"
 
 pwd | starts-with? "$DEV_ROOT" || error-out 3 "not currently within '${DEV_ROOT}'"
 cd "$DEV_ROOT"
