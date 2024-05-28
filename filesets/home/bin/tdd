@@ -6,16 +6,18 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [RUNNER_OPTIONS]
+		Usage: $( script-name ) [{ --next | --fails }] [-- RUNNER_OPTIONS]
 
 		Run all relevant TDD tooling for the project:
 		- Supports Ruby RSpec and Minitest suites, along with Selenium tests.
 		- Supports Javascript suites triggered via a "test" action.
 
-		Any options given are passed through to the actual "runner" subtooling.
+		Any RUNNER_OPTIONS given are passed through to the "runner" subtooling.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
+		  --fails                   Rerun only previously-failed tests.
+		  --next                    Stop on the next failure.
 		  --help                    Show this help text.
 
 
@@ -30,8 +32,16 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Options -- #
 
+	# Set default.
+
+	declare -A next
+	declare -A fails
+
+	# ---
+	# ---
+
 	CHAR_OPTS=''
-	LONG_OPTS='help'
+	LONG_OPTS='help,next,stop,fail,fails,failures'
 
 	set-params
 	while true; do
@@ -39,6 +49,16 @@ source '/home/nestor/bin/std.lib'
 		case "$option" in
 			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
+
+
+			(--next|--stop)
+				next=( [rspec]='--next-failure' [js]='--bail' )
+				;;
+
+			(--fail|--fails|--failures)
+				fails=( [rspe]='--only-failures' [js]='--onlyFailures' )
+				;;
+
 		esac
 	done
 
@@ -65,8 +85,8 @@ source '/home/nestor/bin/std.lib'
 
 	# Run the tests ...
 
-		[ -n "$rspec"    ] && tdd.rspec    "$@"
-		[ -n "$minitest" ] && tdd.minitest "$@"
+		[ -n "$rspec"    ] && tdd.rspec    "${next[rspec]}"    "${fails[rspec]}"    "$@"
+		[ -n "$minitest" ] && tdd.minitest "${next[minitest]}" "${fails[minitest]}" "$@"
 
 
 # ---
@@ -82,7 +102,7 @@ source '/home/nestor/bin/std.lib'
 
 	# Run the tests ...
 
-		[ -n "$javascript" ] && tdd.javascript "$@"
+		[ -n "$javascript" ] && tdd.javascript "${next[js]}" "${fails[js]}" "$@"
 
 
 # ---
