@@ -274,7 +274,7 @@ startup_script_file="$( script-real ):init"
 # Create the Instance VM.
 #
 gcloud compute instances create "$instance_name"                                           \
-       --project="$( vm-project )" --zone="$( vm-zone )" --hostname="$instance_name"       \
+       --project="$( vm-project )" --zone="$( vm-zone )"                                   \
                                                                                            \
        --machine-type="${machine_type_family}-${machine_type_suffix}"                      \
        --boot-disk-type=pd-standard --boot-disk-size="$disk_size"                          \

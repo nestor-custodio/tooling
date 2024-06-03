@@ -123,7 +123,7 @@ function run_caddy() {
 	tempname | store-as stderr_storage
 
 	sudo BINDING="$binding"                 \
-	     HOSTNAME="$( hostname )"           \
+	     HOSTNAME="$( hostname --short )"   \
 	                                        \
 	     "$caddy_bin" start "$@"            \
 	                  --config="$caddyfile" \
@@ -176,7 +176,7 @@ case "$command" in
 		caddy_config="${caddy_config/\#URI_BLACKLIST#/$uri_blacklist}"
 
 		run_caddy
-		qr "https://$( hostname ).custodio.app/"
+		qr "https://$( hostname --short ).custodio.app/"
 		;;
 
 	(off|stop)

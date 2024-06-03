@@ -186,7 +186,7 @@ startup_log='/var/log/startup'
 		report 'notifying of init completion'
 
 			cat <<-EOF | read -r -d '' notification
-				Hostname: $( hostname )
+				Hostname: $( hostname --short )
 				External: $( wan-ip )
 				Disk Use: $( df -h / --output='pcent,size,avail'                         \
 				             | sed -r -e '1 d'                                           \

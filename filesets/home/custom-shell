@@ -360,7 +360,7 @@ completion_loader='/usr/share/bash-completion/bash_completion'
 
 # Load additional VM-specific customizations.
 #
-vm_customization_home="${HOME}/vm-scripts/$( hostname )"
+vm_customization_home="${HOME}/vm-scripts/$( hostname --short )"
 if [ -d "$vm_customization_home" ]; then
   export PATH="${vm_customization_home}/bin:${PATH}"
 

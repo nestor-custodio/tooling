@@ -96,7 +96,7 @@ source '/home/nestor/bin/std.lib'
 webroot="$( realpath "$webroot" )"
 [ -d "$webroot" ] || error-out 2 'path not found'
 
-webroot_url="https://$( hostname ).custodio.app/"
+webroot_url="https://$( hostname --short ).custodio.app/"
 
 
 sudo lsof -i -P -n | grep -P '(?<=:)[0-9]+\b' --only-matching | store-as unavailable_ports
