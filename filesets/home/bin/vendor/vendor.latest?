@@ -195,6 +195,7 @@ case "$tool_name" in
 	(lazygit          ) check-version                  --puller='(?<=version=).*?(?=,)'        ;;
 	(n                ) check-version                  --puller='(?<=v).*'                     ;;
 	(portal           ) check-version --cmd='version'  --puller='(?<=v).*'                     ;;
+	(q                ) check-version                  --puller='(?<=q version ).*'            ;;
 	(rg               ) check-version                  --puller='(?<=ripgrep ).*?(?= )'        ;;
 	(ruby-install     ) check-version                  --puller='(?<=ruby-install: ).*'        ;;
 	(shellcheck       ) check-version                  --puller='(?<=version: ).*'             ;;

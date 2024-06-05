@@ -105,6 +105,7 @@ source '/home/nestor/bin/std.lib'
 			(lazygit          ) update-tooling                                   ;;
 			(marksman         ) update-tooling                                   ;;
 			(n                ) update-tooling --source                          ;;
+			(q                ) update-tooling                                   ;;
 			(redis-viewer     ) update-tooling                                   ;;
 			(rg               ) update-tooling                                   ;;
 			(shellcheck       ) update-tooling                                   ;;
