@@ -111,7 +111,6 @@ source '/home/nestor/bin/std.lib'
 			(static-web-server) update-tooling --asset='gnu'                     ;;
 			(unison           ) update-tooling --asset='static'                  ;;
 			(usql             ) update-tooling --asset='^static'                 ;;
-			(xsv              ) update-tooling                                   ;;
 			(yq               ) update-tooling --asset='^.tar.gz'                ;;
 
 
