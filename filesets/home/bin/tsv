@@ -1,0 +1,81 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) QUERY
+		       $( name-blanks ) --fields[=]DATAFILE
+
+		No-thoughts TSV query runner (via 'q'); presents legible output.
+		If QUERY begins with '@' or ends in '.sql', it's taken as a
+		filename and its *content* is used as the querytext.
+
+		If called with '--fields', field names (and types) for the given
+		DATAFILE are reported.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if QUERY file (via @) or DATAFILE not found/readable.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help,fields:,names:,types:'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--fields|--names|--types)
+				mode='fields'
+
+				datafile="$1" && shift
+				[ -n "$datafile" ] || error-out 1 'no DATAFILE given'
+				[ -r "$datafile" ] || error-out 2 'DATAFILE not readable'
+
+				# shellcheck disable=SC2016
+				q -t -H "SELECT * FROM ${datafile}" -A 2>/dev/null                          \
+				| tail --lines=+5 | sed -r -e 's#^ *`(.*)` - (.*)$#\1|\2#'                  \
+				| q -p "SELECT c1 as name, c2 as type FROM -" -b -O -T | bat --language='tsv'
+
+				exit-out
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	query_param="$1" && shift
+	[ -n "$query_param" ] || error-out 1 'no QUERY given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+tsv- "$query_param" -- -b -T | bat --language='tsv'
