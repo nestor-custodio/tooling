@@ -55,7 +55,7 @@ if [ -z "$( ls "${HOME}/.config/helix/runtime/grammars" 2> /dev/null )" ]; then
 	hx --grammar build
 fi
 
-gem list -i solargraph &> /dev/null || gem install solargraph
+gem list -i solargraph &> /dev/null || gem install solargraph rbs:2.8.4
 
 npm install --global --omit='dev' bash-language-server         \
                                   typescript                   \
