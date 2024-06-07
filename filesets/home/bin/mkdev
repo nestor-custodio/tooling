@@ -33,7 +33,6 @@ source '/home/nestor/bin/std.lib'
 		  The following prefixes are expanded to their respective user repo stores:
 		  - "nlc:" => "git@github.com:nestor-custodio"
 		  - "tps:" => "git@github.com:tulsaschoolsdata"
-		  - "fabricut:" => "https://github.com/fabricut"
 
 		  e.g. Using the above, a --repo may be given as "--repo='nlc:env_parser'".
 
@@ -144,7 +143,6 @@ source '/home/nestor/bin/std.lib'
 				case "$git_repo" in
 					(nlc:*) git_repo="${git_repo/#nlc:/git@github.com:nestor-custodio/}.git" ;;
 					(tps:*) git_repo="${git_repo/#tps:/git@github.com:tulsaschoolsdata/}.git" ;;
-					(fabricut:*) git_repo="${git_repo/#fabricut:/https://github.com/fabricut/}.git" ;;
 				esac
 
 				# Make sure we haven't duplicated the ".git" extension.
