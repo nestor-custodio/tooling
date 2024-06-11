@@ -6,8 +6,8 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) QUERY
-		       $( name-blanks ) --fields[=]DATAFILE
+		Usage: $( script-name ) [--FILE_ENCODING] QUERY
+		       $( name-blanks ) [--FILE_ENCODING] --fields[=]DATAFILE
 
 		No-thoughts TSV query runner (via 'q'); presents legible output.
 		If QUERY begins with '@' or ends in '.sql', it's taken as a
@@ -19,6 +19,19 @@ source '/home/nestor/bin/std.lib'
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
+
+
+		File Encodings
+		  A file encoding flag can be given directly (e.g. '--utf-8').
+
+		  Available file encodings are:
+		  - utf-8
+		  - utf-16
+		  - utf-bom (utf-8 w/ BOM)
+		  - iso-8859-1 / latin-1 / ascii
+		  - windows-1252 / cp1252 / windows
+
+		  Input files are assumed to be UTF-8 data unless stated otherwise.
 
 
 		Exit Status:
@@ -33,8 +46,20 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Options -- #
 
+	# Set defaults.
+
+	encoding='utf-8'
+
+	# ---
+	# ---
+
 	CHAR_OPTS=''
 	LONG_OPTS='help,fields:,names:,types:'
+	LONG_OPTS="${LONG_OPTS},utf-8"
+	LONG_OPTS="${LONG_OPTS},utf-16"
+	LONG_OPTS="${LONG_OPTS},utf-bom"
+	LONG_OPTS="${LONG_OPTS},iso-8859-1,latin-1,ascii"
+	LONG_OPTS="${LONG_OPTS},windows-1252,cp1252,windows"
 
 	set-params
 	while true; do
@@ -59,6 +84,13 @@ source '/home/nestor/bin/std.lib'
 				exit-out
 				;;
 
+
+			(--utf-8                          ) encoding='utf-8'        ;;
+			(--utf-16                         ) encoding='utf-16'       ;;
+			(--utf-bom                        ) encoding='utf-8-sig'    ;;
+			(--iso-8859-1|--latin-1|--ascii   ) encoding='iso-8859-1'   ;;
+			(--windows-1252|--cp1252|--windows) encoding='windows-1252' ;;
+
 		esac
 	done
 
@@ -78,4 +110,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-tsv- "$query_param" -- -b -T | bat --language='tsv'
+tsv- "$query_param" -- -e "$encoding" -b -T | bat --language='tsv' --wrap='never'
