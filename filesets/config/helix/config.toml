@@ -273,6 +273,12 @@ newline = "↲"
 "!"   = ":buffer-close-all!"
 
 
+[keys.normal.m]
+"a" = "surround_add"
+"i" = "no_op"
+"s" = "no_op"
+
+
 [keys.normal.s]  # [s]wap
 "a" = ["extend_to_line_bounds", ":clipboard-yank", "delete_selection_noyank", "move_line_up", ":clipboard-paste-before"]
 "b" = ["extend_to_line_bounds", ":clipboard-yank", "delete_selection_noyank", "move_line_down", ":clipboard-paste-before"]
@@ -393,6 +399,14 @@ newline = "↲"
 
   "!"         = "shell_insert_output"
   "|"         = "shell_pipe"
+
+
+[keys.select.m]
+"a" = "select_textobject_around"
+"d" = "no_op"
+"i" = "select_textobject_inner"
+"r" = "no_op"
+"s" = "no_op"
 
 
 [keys.select."["]
