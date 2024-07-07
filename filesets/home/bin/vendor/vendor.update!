@@ -89,30 +89,30 @@ source '/home/nestor/bin/std.lib'
 
 			# Straight-forward `eget` pulls.
 
-			(bat              ) update-tooling --asset='gnu'                     ;;
-			(btop             ) update-tooling                                   ;;
-			(bw               ) update-tooling --asset='.zip' --tag='cli'        ;;
-			(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig' ;;
-			(circleci         ) update-tooling                                   ;;
-			(delta            ) update-tooling --asset='gnu'                     ;;
-			(eget             ) update-tooling                                   ;;
-			(eza              ) update-tooling --asset='gnu.zip'                 ;;
-			(fd               ) update-tooling --asset='gnu'                     ;;
-			(fzf              ) update-tooling                                   ;;
-			(hx               ) update-tooling                                   ;;
-			(jq               ) update-tooling --asset='amd64'                   ;;
-			(lazydocker       ) update-tooling                                   ;;
-			(lazygit          ) update-tooling                                   ;;
-			(marksman         ) update-tooling                                   ;;
-			(n                ) update-tooling --source                          ;;
-			(q                ) update-tooling                                   ;;
-			(redis-viewer     ) update-tooling                                   ;;
-			(rg               ) update-tooling                                   ;;
-			(shellcheck       ) update-tooling                                   ;;
-			(static-web-server) update-tooling --asset='gnu'                     ;;
-			(unison           ) update-tooling --asset='static'                  ;;
-			(usql             ) update-tooling --asset='^static'                 ;;
-			(yq               ) update-tooling --asset='^.tar.gz'                ;;
+			(bat              ) update-tooling --asset='gnu'                                 ;;
+			(btop             ) update-tooling                                               ;;
+			(bw               ) update-tooling --asset='bw-linux' --asset='.zip' --tag='cli' ;;
+			(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig'             ;;
+			(circleci         ) update-tooling                                               ;;
+			(delta            ) update-tooling --asset='gnu'                                 ;;
+			(eget             ) update-tooling                                               ;;
+			(eza              ) update-tooling --asset='gnu.zip'                             ;;
+			(fd               ) update-tooling --asset='gnu'                                 ;;
+			(fzf              ) update-tooling                                               ;;
+			(hx               ) update-tooling                                               ;;
+			(jq               ) update-tooling --asset='amd64'                               ;;
+			(lazydocker       ) update-tooling                                               ;;
+			(lazygit          ) update-tooling                                               ;;
+			(marksman         ) update-tooling                                               ;;
+			(n                ) update-tooling --source                                      ;;
+			(q                ) update-tooling                                               ;;
+			(redis-viewer     ) update-tooling                                               ;;
+			(rg               ) update-tooling                                               ;;
+			(shellcheck       ) update-tooling                                               ;;
+			(static-web-server) update-tooling --asset='gnu'                                 ;;
+			(unison           ) update-tooling --asset='static'                              ;;
+			(usql             ) update-tooling --asset='^static'                             ;;
+			(yq               ) update-tooling --asset='^.tar.gz'                            ;;
 
 
 			# Items available as a DEB package.
