@@ -23,7 +23,8 @@ insert-final-newline = false
 line-number          = "absolute"
 middle-click-paste   = false
 mouse                = true
-scrolloff            = 5
+popup-border         = "all"
+scrolloff            = 4
 shell                = ["bash", "-c"]
 true-color           = true
 
@@ -63,9 +64,9 @@ wrap-indicator = "↳"
 
 [editor.statusline]
 
-left   = ["spinner", "spacer", "mode", "spacer", "spacer", "file-name", "file-modification-indicator", "spacer", "spacer", "diagnostics"]
+left   = ["spinner", "spacer", "mode", "spacer", "spacer", "file-name", "file-modification-indicator"]
 center = ["version-control"]
-right  = ["position", "spacer", "position-percentage", "spacer", "file-type", "spacer"]
+right  = ["diagnostics", "spacer", "position", "spacer", "file-type", "spacer"]
 
 mode.normal = "NORMAL"
 mode.insert = "INSERT"
