@@ -145,6 +145,13 @@ class Object
 end
 
 
+class Numeric
+  def whole?
+    remainder(1).zero?
+  end
+end
+
+
 class String
   def to_date(*args, **kwargs, &block)
     Date.parse(self, *args, **kwargs, &block)
