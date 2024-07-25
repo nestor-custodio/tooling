@@ -1,5 +1,5 @@
---- chruby-source.auto:original	2024-05-05 13:50:14.198450937 -0500
-+++ chruby-source.auto:modified	2024-05-05 13:50:36.568495080 -0500
+--- chruby-source.auto.original	2014-11-23 12:26:35.000000000 -0600
++++ chruby-source.auto	2024-07-31 18:14:08.170931666 -0500
 @@ -3,6 +3,14 @@
  function chruby_auto() {
  	local dir="$PWD/" version

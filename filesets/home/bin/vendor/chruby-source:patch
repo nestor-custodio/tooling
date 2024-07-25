@@ -1,6 +1,6 @@
---- chruby-source.old	2024-05-15 14:43:29.901318884 -0500
-+++ chruby-source	2024-05-15 14:47:29.554752630 -0500
-@@ -14,13 +14,11 @@
+--- chruby-source.original	2024-07-31 18:18:54.986113896 -0500
++++ chruby-source	2024-07-31 18:19:29.637397915 -0500
+@@ -14,18 +14,16 @@
  
  	if (( $UID != 0 )); then
  		[[ -n "$GEM_HOME" ]] && PATH="${PATH//:$GEM_HOME\/bin:/:}"
@@ -15,8 +15,17 @@
  		[[ -z "$GEM_PATH" ]] && unset GEM_PATH
  	fi
  
-@@ -42,18 +40,16 @@
+ 	PATH="${PATH#:}"; PATH="${PATH%:}"
+-	unset RUBY_ROOT RUBY_ENGINE RUBY_VERSION RUBYOPT
++	unset RUBY_ROOT RUBY_ENGINE RUBY_VERSION RUBYOPT RUBYLIB
+ 	hash -r
+ }
+ 
+@@ -40,20 +38,19 @@
+ 
+ 	export RUBY_ROOT="$1"
  	export RUBYOPT="$2"
++	export RUBYLIB="${HOME}/bin"
  	export PATH="$RUBY_ROOT/bin:$PATH"
  
 -	eval "$("$RUBY_ROOT/bin/ruby" - <<EOF
@@ -36,7 +45,7 @@
 +		export PATH="$GEM_HOME/bin:$PATH"
  	fi
 +
-+	ruby --help | has? 'mjit' && RUBYOPT="${RUBYOPT} --enable=jit"
++	ruby --help | has? 'mjit' && RUBYOPT="${RUBYOPT} --enable-jit"
  }
  
  function chruby()
