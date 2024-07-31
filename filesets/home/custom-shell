@@ -130,6 +130,7 @@ function mirror {
 
   # Wrap all `bw` calls so we can automatically
   # append an active session key to the request.
+  #
   function bw { "$( real bw )" --session="$( creds bitwarden/session-key )" "$@" ;}
 
 
@@ -231,10 +232,10 @@ function mirror {
   function glog        { git log --color='always' "$@" | bat ;}
   function ggraph      { glog --oneline --decorate --graph "$@" ;}
 
+  # Deploys to the given remote (defaults to 'production').
+  # Prompts for confirmation (y/N) before pushing to target.
+  #
   function gdeploy {
-    # Deploys to the given remote (defaults to 'production').
-    # Prompts for confirmation (y/N) before pushing to target.
-
     [ "$1" == '--help' ] && echo 'Usage: gdeploy [REMOTE_NAME]' && return 0
 
     local remote="${1:-production}"
