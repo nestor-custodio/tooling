@@ -249,6 +249,12 @@ function mirror {
     ding-if-slow gpush --force "$remote" "${branch}:main"
   }
 
+  # Lists all .gitignore'd files/directories.
+  # Accounts for all applicable .gitignore's, including the global file,
+  # the repo file, and any other .gitignore's within specific subdirectories.
+  #
+  function gitignored { git ls-files --others --ignored --directory --exclude-standard "$@" ;}
+
 
   # grep
 
@@ -378,12 +384,12 @@ dev_helpers="${HOME}/bin/dev.src"
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f ... .... ..... ::                                                              \
-          a break-out-of-links f g gadd gblame gbranch gbranch? gcheckout gcherrypick    \
-          gclone gcommit gconfig gdeploy gdiff gfetch ggraph ginit glog gmerge gmove gmv \
-          gpatch gpop gpull gpush grebase gremote grep greset gstage gstash gstatus gtag \
-          gtrack gunchange gundelete gunstage guntrack h hbat helix k lazydocker less    \
-          list m mirror mkcd pgcli real rg shellcheck
+export -f ... .... ..... ::                                                               \
+          a break-out-of-links f g gadd gblame gbranch gbranch? gcheckout gcherrypick     \
+          gclone gcommit gconfig gdeploy gdiff gfetch ggraph ginit gitignored glog gmerge \
+          gmove gmv gpatch gpop gpull gpush grebase gremote grep greset gstage gstash     \
+          gstatus gtag gtrack gunchange gundelete gunstage guntrack h hbat helix k        \
+          lazydocker less list m mirror mkcd pgcli real rg shellcheck
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",
