@@ -9,4 +9,4 @@ source "$( dirname "$0" )/status_helpers"
 # ---
 
 
-unpiped "#[fg=yellow,bold]⚡#[fg=white,bold]$( puptime )"
+unpiped "⚡ $( puptime )"
