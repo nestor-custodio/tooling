@@ -78,7 +78,11 @@ source '/home/nestor/bin/std.lib'
 
 # Ensure s3fs.
 #
-command -v s3fs &> /dev/null || apt install -qqy s3fs
+command -v s3fs &> /dev/null || sudo apt-get -qqy install s3fs
+
+# Ensure we have a bucket to work with.
+#
+[ -n "$bucket" ] || error-out 1 "no BUCKET given (via --bucket) or set (via \$BUCKET)"
 
 
 mkdir -p "$mount_point"
