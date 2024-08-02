@@ -49,10 +49,10 @@ shopt -s lastpipe expand_aliases
 
 	declare -A _pre_trap_flags
 
+	# Allows simplified setting of traps by
+	# automatically managing any related shell flags.
+	#
 	function set-trap {
-		# Allows simplified setting of traps by
-		# automatically managing any related shell flags.
-
 		local signal="$1" && shift
 		local processor="$1" && shift
 
@@ -76,10 +76,10 @@ shopt -s lastpipe expand_aliases
 		trap "$processor" "$signal"
 	}
 
+	# Resets traps for the given signal, and restores
+	# any related shell flags that may have been tweaked.
+	#
 	function clear-trap {
-		# Resets traps for the given signal, and restores
-		# any related shell flags that may have been tweaked.
-
 		local signal="$1" && shift
 
 		trap - "$signal"
@@ -88,10 +88,10 @@ shopt -s lastpipe expand_aliases
 
 	# ---
 
+	# Prints a "clean" message (as given) to STDOUT, then exits.
+	# Good for output that's part of a non-0 exit but not an "error".
+	#
 	function exit-out {
-		# Prints a "clean" message (as given) to STDOUT, then exits.
-		# Good for output that's part of a non-0 exit but not an "error".
-
 		local exit_code='0'
 		local exit_message=''
 
@@ -123,9 +123,9 @@ shopt -s lastpipe expand_aliases
 	}
 
 
+	# Prints an "error" message (with additional formatting) to STDERR, then exits.
+	#
 	function error-out {
-		# Prints an "error" message (with additional formatting) to STDERR, then exits.
-
 		local exit_code='1'
 		local error_message='unspecified error'
 
