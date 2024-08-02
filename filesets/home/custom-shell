@@ -335,7 +335,7 @@ function mirror {
 
       if [ "$( head -c1 <<< "${args[$i]}" )" != '-' ]; then
         [ -f "${args[$i]}" ] || continue  # Only keep files.
-        [ -x "${args[$i]}" ] || starts-with? '#!' < "${args[$i]}" || continue  # Only keep script-likes.
+        [ -x "${args[$i]}" ] || { head -n1 "${args[$i]}" | grep --quiet '^#!.*\b(bash|sh)\b' ;} || continue  # Only keep script-likes.
       fi
 
       executables+=("${args[$i]}")
