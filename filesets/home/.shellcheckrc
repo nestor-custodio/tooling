@@ -21,3 +21,4 @@ disable=SC2155 # Allow simultaneous declaration and assignment.
 disable=SC2164
 disable=SC2197
 disable=SC2211 # Allow natural use of predicate tooling.
+disable=SC2239 # We want to allow shebangs for tools we know will be in our path.

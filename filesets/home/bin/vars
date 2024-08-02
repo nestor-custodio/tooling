@@ -38,7 +38,7 @@ source '/home/nestor/bin/std.lib'
 
 	var_separator_esc='\n'
 	interim_separator_esc='\xA0'
-	interim_separator_char="$( printf "$interim_separator_esc" )"
+	interim_separator_char=$'\xA0'
 
 	declare -A sed_scripts
 	sed_scripts[names_only]=''

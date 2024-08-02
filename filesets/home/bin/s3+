@@ -31,7 +31,9 @@ source '/home/nestor/bin/std.lib'
 
 	# Set defaults.
 
+	# shellcheck disable=SC2153
 	bucket="$BUCKET"
+
 	mount_point="${DEV_ROOT}/s3"
 	aws_profile='default'
 

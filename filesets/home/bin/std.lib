@@ -63,7 +63,8 @@ shopt -s lastpipe expand_aliases
 		case "$signal" in
 
 			ERR)
-				set +o | grep -P '\b(errexit|pipefail)\b' | store-as _pre_trap_flags[$signal]
+				# shellcheck disable=SC2016
+				set +o | grep -P '\b(errexit|pipefail)\b' | store-as '_pre_trap_flags["$signal"]'
 				set -o errexit
 				set -o pipefail
 				;;
@@ -71,6 +72,7 @@ shopt -s lastpipe expand_aliases
 		esac
 
 
+		# shellcheck disable=SC2064
 		trap "$processor" "$signal"
 	}
 
@@ -81,7 +83,7 @@ shopt -s lastpipe expand_aliases
 		local signal="$1" && shift
 
 		trap - "$signal"
-		eval "${_pre_trap_flags[$signal]}"; unset _pre_trap_flags[$signal]
+		eval "${_pre_trap_flags["$signal"]}"; unset '_pre_trap_flags["$signal"]'
 	}
 
 	# ---
