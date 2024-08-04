@@ -254,7 +254,7 @@ source '/home/nestor/bin/std.lib'
 				instance-is-stopped "$old_instance_name" || error-out 2 'cannot rename a running instance'
 
 
-			gcloud beta compute instances set-name "$old_instance_name" --new-name="$new_instance_name" \
+			gcloud compute instances set-name "$old_instance_name" --new-name="$new_instance_name" \
 			&& dns del --for="$old_instance_name" &> /dev/null
 			;;
 
