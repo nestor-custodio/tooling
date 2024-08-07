@@ -358,6 +358,11 @@ function mirror {
 # ---
 
 
+# Ensure a clean pane title when under `tmux`.
+#
+tmux select-pane -T '' &> /dev/null
+
+
 # Set the prompt.
 #
 prompt_setter="${HOME}/bin/set-prompt.src"

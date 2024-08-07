@@ -8,5 +8,8 @@
 # ------------------- #
 # BEGIN CUSTOMIZATION #
 
+# Ensure Byobu panes have no default title set.
+export BYOBU_NO_TITLE='1'
+
 # Wrap sessions in a Byobu container.
 _byobu_sourced='1' source /usr/bin/byobu-launch 2>/dev/null || true
