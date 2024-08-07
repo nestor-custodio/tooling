@@ -87,6 +87,9 @@ startup_log='/var/log/startup'
 			# Prevent apt-get from hanging on "unable to initialize front" errors ...
 			debconf-set-selections <<< 'debconf debconf/frontend select noninteractive'
 
+			# Prevent tmux server from being killed off, even on full user logout ...
+			sed -ri -e 's|^#KillUserProcesses=.*$|KillUserProcesses=no|' /etc/systemd/logind.conf
+
 
 		# Install global packages.
 		report 'installing global packages'
