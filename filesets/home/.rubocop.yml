@@ -1,5 +1,11 @@
 AllCops:
-  TargetRubyVersion: 3.0
+  TargetRubyVersion: 3.2
+  Exclude:
+    - '.git/**/*'
+    - 'log/**/*'
+    - 'node_modules/**/*'
+    - 'tmp/**/*'
+  NewCops: enable
   SuggestExtensions: false
 
 
