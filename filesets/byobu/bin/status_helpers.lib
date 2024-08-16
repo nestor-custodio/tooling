@@ -1,13 +1,10 @@
-#! /bin/bash
-#
-# NO SHOPT FOR lastpipe,
-# AS THIS IS INTENDED TO BE SOURCED.
-#
-# NOTE FOR PURPOSES OF SPACING: BYOBU ADDS A SPACE *AFTER*
-#                               ANY OUTPUT WE GENERATE HERE.
+#! /bin/env bash
+shopt -s lastpipe expand_aliases
 
 # ---
-# ---
+
+# NOTE FOR PURPOSES OF SPACING: BYOBU ADDS A SPACE *AFTER*
+#                               ANY OUTPUT WE GENERATE HERE.
 
 function unpiped() { echo -e "#[default]$( printf "$@" )#[default]" ;}
 

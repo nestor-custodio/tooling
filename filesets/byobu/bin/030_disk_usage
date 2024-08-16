@@ -1,18 +1,26 @@
-#! /bin/bash
-shopt -s lastpipe
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
 
 # ---
 
-source "$( dirname "$0" )/status_helpers"
-
-# ---
-# ---
+source "$( script-path )/status_helpers.lib"
 
 
-df --type=ext4 --human-readable --output=pcent,size --total | tail -n1 \
-| sed -r -e 's|^ *([0-9]+)% +([^ ]+).*$|\1 \2|' | read -r -d '' percent_used total_space
+df --type='ext4' --human-readable --output='pcent' --total | tail -n1 | tr -d -c '[:digit:]' | store-as percent_used
+df --type='ext4' --human-readable --output='size'  --total | tail -n1 | tr -d ' '            | store-as total_space
 
-### (( "$( calc "${percent_used} >= 70.0" )" )) && SET ALERT
+calc "floor(${percent_used} / 10)" | store-as tenths_used
+case "$tenths_used" in
+  0) left-piped " #[fg=green ]𝍖 #[default] / %s" "$total_space" ;;
+  1) left-piped " #[fg=green ]𝍕 #[default] / %s" "$total_space" ;;
+  2) left-piped " #[fg=green ]𝍔 #[default] / %s" "$total_space" ;;
+  3) left-piped " #[fg=green ]𝍑 #[default] / %s" "$total_space" ;;
+  4) left-piped " #[fg=green ]𝍎 #[default] / %s" "$total_space" ;;
+  5) left-piped " #[fg=yellow]𝍅 #[default] / %s" "$total_space" ;;
+  6) left-piped " #[fg=yellow]𝌼 #[default] / %s" "$total_space" ;;
+  7) left-piped " #[fg=yellow]𝌡 #[default] / %s" "$total_space" ;;
+  8) left-piped " #[fg=red   ]𝌡 #[default] / %s" "$total_space" ;;
+  *) left-piped " #[fg=red   ]▇ #[default] / %s" "$total_space" ;;
+esac
 
-
-left-piped " 📦 %i%%%% of %s" "$percent_used" "$total_space"
+# left-piped " %i%%%% of %s" "$percent_used" "$total_space"

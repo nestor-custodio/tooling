@@ -1,18 +1,75 @@
-#! /bin/bash
-shopt -s lastpipe
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
 
 # ---
 
-source "$( dirname "$0" )/status_helpers"
-
-# ---
-# ---
+source "$( script-path )/status_helpers.lib"
 
 
-cut --field=1 --delim=' ' < /proc/loadavg | read -r -d '' unweighted_load_average
-calc "${unweighted_load_average} / $( nproc ) * 100" | read -r -d '' load_percentage
+# Note we're producing string output where each character is one of:
+#
+full='⠿'  # (a "full" block)
+half='⠗'  # (a "half" block)
+null='⠒'  # (a "null" block)
+#
+# ... in colors G/Y/R, using the character counts given for each below:
+#
+g='5'
+y='3'
+r='2'
+#
+# All output here is driven by the above values. Customizing the bar text
+# and changing the number of characters in each color should take nothing else.
 
-# (( "$( calc "${load_percentage} >=  80.0" )" )) && SET ALERT
+
+# Additional helper values.
+#
+z='0'  # Zero. (For formula consistency.)
+calc "${g} + ${y} + ${r}" | store-as c  # Total character count.
 
 
-left-piped " 🏋  %04.1f%%%%" "$load_percentage"
+cut --field=1 --delim=' ' < /proc/loadavg | store-as unweighted_load_average
+calc "${unweighted_load_average} / $( nproc ) * 100" | store-as load_percentage
+
+calc "floor( ${load_percentage} * ${c} / 100)" | store-as num_full_blocks
+calc "floor(mod(${load_percentage}, ${c})) >= (100 / ${c} / 2)" | store-as num_half_blocks
+calc "${c} - ${num_full_blocks} - ${num_half_blocks}" | store-as num_null_blocks
+
+# Guard against load percentages over 100 (which can happen).
+# This gets a special display to call attention to the status.
+#
+if calc? "${num_full_blocks} > ${c}"; then
+  seq 1 "$c" | while read -r i; do full_bar+="$full"; done
+  exit-out "$( left-piped " #[fg=red]${full_bar}#[default]" )"
+fi
+
+
+calc "min(     ${num_full_blocks}                   , ${g})" | store-as num_full_g
+calc "min(max((${num_full_blocks} - ${g}       ), 0), ${y})" | store-as num_full_y
+calc "min(max((${num_full_blocks} - ${g} - ${y}), 0), ${r})" | store-as num_full_r
+
+calc "between((${z}       ), ${num_full_blocks}, (${g}               - 1)) && ${num_half_blocks}" | store-as num_half_g
+calc "between((${g}       ), ${num_full_blocks}, (${g} + ${y}        - 1)) && ${num_half_blocks}" | store-as num_half_y
+calc "between((${g} + ${y}), ${num_full_blocks}, (${g} + ${y} + ${r} - 1)) && ${num_half_blocks}" | store-as num_half_r
+
+calc "${g} - ${num_full_g} - ${num_half_g}" | store-as num_null_g
+calc "${y} - ${num_full_y} - ${num_half_y}" | store-as num_null_y
+calc "${r} - ${num_full_r} - ${num_half_r}" | store-as num_null_r
+
+
+seq 1 "$num_full_g" | while read -r i; do full_g+="$full"; done
+seq 1 "$num_half_g" | while read -r i; do half_g+="$half"; done
+seq 1 "$num_null_g" | while read -r i; do null_g+="$null"; done
+
+seq 1 "$num_full_y" | while read -r i; do full_y+="$full"; done
+seq 1 "$num_half_y" | while read -r i; do half_y+="$half"; done
+seq 1 "$num_null_y" | while read -r i; do null_y+="$null"; done
+
+seq 1 "$num_full_r" | while read -r i; do full_r+="$full"; done
+seq 1 "$num_half_r" | while read -r i; do half_r+="$half"; done
+seq 1 "$num_null_r" | while read -r i; do null_r+="$null"; done
+
+
+left-piped " #[fg=green]%s%s%s#[fg=yellow]%s%s%s#[fg=red]%s%s%s" "$full_g" "$half_g" "$null_g" \
+                                                                 "$full_y" "$half_y" "$null_y" \
+                                                                 "$full_r" "$half_r" "$null_r"

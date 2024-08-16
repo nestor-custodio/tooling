@@ -1,14 +1,11 @@
-#! /bin/bash
-shopt -s lastpipe
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
 
 # ---
 
-source "$( dirname "$0" )/status_helpers"
-
-# ---
-# ---
+source "$( script-path )/status_helpers.lib"
 
 
-wan-ip | read -r -d '' wan_ip
+wan-ip | store-as wan_ip
 
 left-piped " 🌐 ${wan_ip:-(NO WAN IP)}"
