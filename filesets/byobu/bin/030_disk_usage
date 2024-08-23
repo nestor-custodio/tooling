@@ -6,21 +6,27 @@ source '/home/nestor/bin/std.lib'
 source "$( script-path )/status_helpers.lib"
 
 
-df --type='ext4' --human-readable --output='pcent' --total | tail -n1 | tr -d -c '[:digit:]' | store-as percent_used
-df --type='ext4' --human-readable --output='size'  --total | tail -n1 | tr -d ' '            | store-as total_space
+df --type='ext4' --block-size='1' --output='used,size' --total | tail -n1 | store-as used total
 
-calc "floor(${percent_used} / 10)" | store-as tenths_used
+fscache_size=0
+fscache_root='/var/cache/fscache'
+[ -d "$fscache_root" ] && sudo du --bytes --summarize "$fscache_root" | cut -f1 | store-as fscache_size
+
+numfmt --to='iec' --format='%0.0f' "$total" | store-as display_total
+calc "floor((${used} - ${fscache_size}) / ${total} * 10)" | store-as tenths_used
+
+
 case "$tenths_used" in
-  0) left-piped " #[fg=green ]𝍖 #[default] / %s" "$total_space" ;;
-  1) left-piped " #[fg=green ]𝍕 #[default] / %s" "$total_space" ;;
-  2) left-piped " #[fg=green ]𝍔 #[default] / %s" "$total_space" ;;
-  3) left-piped " #[fg=green ]𝍑 #[default] / %s" "$total_space" ;;
-  4) left-piped " #[fg=green ]𝍎 #[default] / %s" "$total_space" ;;
-  5) left-piped " #[fg=yellow]𝍅 #[default] / %s" "$total_space" ;;
-  6) left-piped " #[fg=yellow]𝌼 #[default] / %s" "$total_space" ;;
-  7) left-piped " #[fg=yellow]𝌡 #[default] / %s" "$total_space" ;;
-  8) left-piped " #[fg=red   ]𝌡 #[default] / %s" "$total_space" ;;
-  *) left-piped " #[fg=red   ]▇ #[default] / %s" "$total_space" ;;
+  0) left-piped " #[fg=green ]𝍖 #[default] / %s" "$display_total" ;;
+  1) left-piped " #[fg=green ]𝍕 #[default] / %s" "$display_total" ;;
+  2) left-piped " #[fg=green ]𝍔 #[default] / %s" "$display_total" ;;
+  3) left-piped " #[fg=green ]𝍑 #[default] / %s" "$display_total" ;;
+  4) left-piped " #[fg=green ]𝍎 #[default] / %s" "$display_total" ;;
+  5) left-piped " #[fg=yellow]𝍅 #[default] / %s" "$display_total" ;;
+  6) left-piped " #[fg=yellow]𝌼 #[default] / %s" "$display_total" ;;
+  7) left-piped " #[fg=yellow]𝌡 #[default] / %s" "$display_total" ;;
+  8) left-piped " #[fg=red   ]☰ #[default] / %s" "$display_total" ;;
+  *) left-piped " #[fg=red   ]▇ #[default] / %s" "$display_total" ;;
 esac
 
 # left-piped " %i%%%% of %s" "$percent_used" "$total_space"
