@@ -110,4 +110,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-tsv- "$query_param" -- -e "$encoding" -b -T | bat --language='tsv' --wrap='never'
+tsv- "$query_param" -- -e "$encoding" -b -T | hbat --language='tsv' --wrap='never'
