@@ -118,7 +118,7 @@ function mirror {
     # Ensure we have a header-compatible `less`.
     #
     less_version="$( less --version | head -n1 | cut -d' ' -f2 | grep --only-matching '^[0-9]+' )"
-    [ "$less_version" -ge 645 ] || "${HOME}/bin/builds/less-645x/plug"
+    [ "$less_version" -ge 663 ] || "${HOME}/bin/builds/less-663/plug"
 
     local header_height='1'
     integer? "$1" && header_height="$1" && shift

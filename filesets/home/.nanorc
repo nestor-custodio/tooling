@@ -20,10 +20,8 @@ set emptyline
 ## Remember the used search/replace strings for the next session.
 set historylog
 
-## Don't show line numbers to the left of the text. This makes it easier
-## for us to copy stuff out of Nano unencumbered by stuff that makes it
-## hard to paste into command-line or, say, a rails console.
-unset linenumbers
+## Show line numbers to the left of the text.
+set linenumbers
 
 ## Disable vim-style lock-files.
 unset locking
