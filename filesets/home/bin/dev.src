@@ -270,7 +270,7 @@ shopt -s lastpipe
 
     function pending-migrations {
       local migration_file_list="$( ls -m --width=0 "${DEV_ROOT}/db/migrate"/??????????????_*.rb 2> /dev/null | sed -r -e "s|\S*/([0-9]{14})_[^,]*|'\1'|g" )"
-      usql "$( rails-db )" -Aqt --command="SELECT files.name FROM UNNEST(ARRAY[${migration_file_list}]) AS files(name) LEFT JOIN schema_migrations ON (name = version) WHERE (version IS NULL) ORDER BY 1"
+      usql "$( rails-db )" -Ct --command="SELECT files.name FROM UNNEST(ARRAY[${migration_file_list}]) AS files(name) LEFT JOIN schema_migrations ON (name = version) WHERE (version IS NULL) ORDER BY 1"
     }
     function pending-migrations? { [ -n "$( pending-migrations )" ] ;}
 
