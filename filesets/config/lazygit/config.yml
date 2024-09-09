@@ -156,7 +156,7 @@ keybinding:
         scrollDownMain-alt1: '<disabled>'
         scrollUpMain-alt2: '<disabled>'
         scrollDownMain-alt2: '<disabled>'
-        executeCustomCommand: '<disabled>'
+        executeShellCommand: '<disabled>'
         createRebaseOptionsMenu: '!'
         pushFiles: 'P'
         pullFiles: 'p'
