@@ -8,7 +8,10 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name )
 
-		Convenience tool for notifying of completion after long-running tasks.
+		Convenience tool for dead-simple event notification.
+		(Useful for alerting of completion after long-running tasks.)
+
+		Leverages 'notify' to push notifications (via the 'pushover' channel).
 
 
 		Mandatory arguments to long options are mandatory for short options too.

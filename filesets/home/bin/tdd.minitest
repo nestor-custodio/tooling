@@ -10,7 +10,7 @@ load-env 'test'
 
 # If one or more files are given, run just those.
 # If no files are given, recursively run everything under "./test/".
-
+#
 if [ -n "$*" ]
   then ruby "$@"
   else fd --glob '*.rb' ./test/ 2> /dev/null | map ruby

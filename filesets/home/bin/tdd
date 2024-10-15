@@ -56,7 +56,7 @@ source '/home/nestor/bin/std.lib'
 				;;
 
 			(--fail|--fails|--failures)
-				fails=( [rspe]='--only-failures' [js]='--onlyFailures' )
+				fails=( [rspec]='--only-failures' [js]='--onlyFailures' )
 				;;
 
 		esac

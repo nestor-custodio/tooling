@@ -333,7 +333,7 @@ shopt -s lastpipe
 
       # Install packages, if any.
       #
-      nearest --quiet 'package.json' && npm install "$@"
+      nearest --quiet 'package.json' && npm install "$@" 2>/dev/null
 
       true # Always move forward.
     }
