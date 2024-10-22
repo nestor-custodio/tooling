@@ -1,4 +1,4 @@
-relay: portal.custodio.app
+relay: portal.spatiumportae.com
 relay_serve_port: 8080
 verbose: false
 prompt_overwrite_files: true
