@@ -6,7 +6,7 @@
 
 {
   log {
-    output file "/var/log/https-status-log"
+    output file "{$STATUS_LOG}"
   }
 }
 
@@ -22,7 +22,7 @@
 
   log {
     format json
-    output file "/var/log/https-access-log::{$BINDING}"
+    output file "{$ACCESS_LOG}"
   }
 
 }

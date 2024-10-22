@@ -88,16 +88,17 @@ source '/home/nestor/bin/std.lib'
 
 	# Ensure defaults.
 
-	if has? ':' <<< "$binding"; then
+	if starts-with? ':' <<< "$binding"; then
+		# Binding is in ":PORT" form.
+		binding="localhost${binding}"
+	elif has? ':' <<< "$binding"; then
 		# Binding is in "HOST:PORT" form.
 		noop
+	elif [ -z "${binding//[0-9.]/}" ]; then
+		# Binding is a PORT.
+		binding="localhost:${binding}"
 	else
-		if [ -z "${binding//[0-9.]/}" ]; then
-			# Binding is a PORT.
-			binding="localhost:${binding}"
-		else
-			error-out 1 "unrecognizable binding: '${binding}'"
-		fi
+		error-out 1 "unrecognizable binding: '${binding}'"
 	fi
 
 }
@@ -122,8 +123,16 @@ function run_caddy() {
 	tempname | store-as stdout_storage
 	tempname | store-as stderr_storage
 
+	access_log="/var/log/https-access-log::${binding}"
+	status_log='/var/log/https-status-log'
+
+	# Launch the `caddy` process.
+	#
 	sudo BINDING="$binding"                 \
 	     HOSTNAME="$( hostname --short )"   \
+	                                        \
+	     ACCESS_LOG="$access_log"           \
+	     STATUS_LOG="$status_log"           \
 	                                        \
 	     "$caddy_bin" start "$@"            \
 	                  --config="$caddyfile" \
@@ -131,9 +140,16 @@ function run_caddy() {
 	                  --pidfile="$pidfile"  \
 	                  1> "$stdout_storage"  \
 	                  2> "$stderr_storage"
+	exit_code="$?"
 	rm "$caddyfile"
 
-	exit_code="$?"
+	# Ensure logs are easily readable.
+	#
+	sudo touch "$access_log" "$status_log"
+	sudo chmod a+r "$access_log" "$status_log"
+
+	# Process output.
+	#
 	if [ "$exit_code" != '0' ]; then
 		cat "$stderr_storage" 1>&2
 		cat "$stdout_storage"
@@ -188,9 +204,3 @@ case "$command" in
 		;;
 
 esac
-
-
-# Ensure logs are easily readable.
-#
-sudo touch /var/log/https-status-log
-sudo chmod a+r /var/log/https-access-log*
