@@ -101,7 +101,6 @@ startup_log='/var/log/startup'
 			                     links           \
 			                     nfs-common      \
 			                     qrencode        \
-			                     tree            \
 			                     zip unzip
 
 	}

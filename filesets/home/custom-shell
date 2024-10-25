@@ -168,6 +168,9 @@ function mirror {
 
   function a { f --almost-all --ignore-glob='|' "$@" ;}
 
+  function list  { f --tree --git-ignore "$@" ;}
+  function list+ { f --tree              "$@" ;}
+
 
   # fzf
 
@@ -348,11 +351,6 @@ function mirror {
 
     "$( real shellcheck )" "${executables[@]}"
   }
-
-
-  # tree
-
-  function list { tree -lR --dirsfirst --sort=version "$@" ;}
 
 
 # ---
