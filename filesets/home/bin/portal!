@@ -50,4 +50,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-https open :8080 && portal serve 2>&1 | jq . --compact-output --color-output
+https open :8080 && portal serve 2>&1 | tee "$( logfile )" | jq . --compact-output --color-output
