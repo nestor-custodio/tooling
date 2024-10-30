@@ -31,6 +31,21 @@ shopt -s lastpipe expand_aliases
 	TMPDIR="${TMPDIR:-/tmp}"
 	function tempname { mktemp --dry-run -t "$( script-name ).XXX" ;}
 
+
+	LOGDIR='/var/log'
+	function logfile {
+		local filename="$1" && shift
+		[ -n "$filename" ] || filename="${LOGDIR}/$( script-name )"
+
+		{
+			sudo touch                      "$filename" \
+			&& sudo chmod 666               "$filename" \
+			&& sudo chown "${USER}:${USER}" "$filename"
+		} || error-out 99 'unable to create logfile'
+
+		echo "$filename"
+	}
+
 }
 
 # ---
