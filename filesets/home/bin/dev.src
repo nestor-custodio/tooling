@@ -3,73 +3,6 @@ shopt -s lastpipe
 
 # ---
 
-# Lookup helpers.
-
-  function dev {
-    # Fuzzy-find-based dev location utility.
-    # - If no search term is given, `cd` into the dev root.
-    # - If a single match is found, `cd` into it or open it into the editor, as applicable.
-    # - If multiple matches are found, allow interactive selection and then process as above.
-
-    local search="$*"
-
-
-    # We want to be at $DEV_ROOT before the editor runs
-    # so file searches, etc are project-wide by default.
-    #
-    cd "$DEV_ROOT"
-
-
-    # Simpleton case: no params given.
-    #
-    [ "$search" == '' ] && return 0
-
-
-    # Compile list of all *possible* entries.
-    #
-    local directories_only list
-    [ "${search: -1}" == '/' ] && directories_only="--type=d"
-    list="$( fd "$directories_only" --hidden --exclude='.git/' --color='always' )"
-
-    # Find *matching* entries, asking interactively if necessary.
-    #
-    local matches
-    readarray -t matches < <( fzf --query="'${search} " --multi --select-1 --preview-window='default' <<< "$list" )
-
-
-    # Process matches...
-    #
-    case "${#matches[*]}" in
-      0)
-        return 1
-        ;;
-
-      1)
-        local match="${matches[0]}"
-        case "$( file-class --follow "$match" )" in
-          d) cd "./${match%/}" ;;
-          r) "$EDITOR" -- "$match" ;;
-        
-          *)
-            echo 'unexpected file class'
-            return 1
-            ;;
-        esac
-        ;;
-
-      *)
-        for (( i=0; i < "${#matches[*]}"; i++ )); do
-          [ "$( file-class --follow "${matches[$i]}" )" == 'r' ] || return 1
-        done
-
-        "$EDITOR" -- "${matches[@]}"
-        ;;
-    esac
-  }
-
-  function :? { dev "$@" ;}
-
-
 # Language helpers.
 
   # ruby
@@ -485,7 +418,7 @@ shopt -s lastpipe
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f :? @ ba bi br bx d db! db+ db- db: DB! dev development known-env-vars load-env   \
-          na ni node-tasks nr ns nt nx p pending-migrations pending-migrations? production \
-          rails-db rails-tasks rc rd release-gem rr rs rs1 rt rubocop rx r+ r- s set-env   \
+export -f @ ba bi br bx d db! db+ db- db: DB! development known-env-vars load-env na ni  \
+          node-tasks nr ns nt nx p pending-migrations pending-migrations? production     \
+          rails-db rails-tasks rc rd release-gem rr rs rs1 rt rubocop rx r+ r- s set-env \
           staging t testing unload-env ya yi yr yx
