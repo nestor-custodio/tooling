@@ -79,52 +79,72 @@ end
 ## -----------------------
 
 
-gem! :awesome_print
-
-AwesomePrint.defaults = {
-
-  # General formatting.
-  plain:         false ,  # B/W text only?
-  html:          false ,  # Use HTML instead of ANSI color codes?
-  multiline:     true  ,  # Display in multiple lines?
-  indent:        2     ,  # Number of spaces for indenting.
-  raw:           false ,  # Recursively format instance variables? (Warning: this does not do what you probably expect.)
-
-  # Identifiers.
-  object_id:     true  ,  # Show object ID (`#object_id`)?
-  class_name:    :class,  # Method name to `#send` for the instance class name. (e.g. `:to_s`)
-
-  # Enumeration.
-  ruby19_syntax: false ,  # Use Ruby 1.9 hash syntax in output?
-  index:         true  ,  # Display array indices?
-  sort_keys:     true  ,  # Sort hash keys?
-  sort_vars:     true  ,  # Sort instance variables?
-  limit:         100   ,  # Array/hash element limit.
+  ## --- AWESOMEPRINT ---
 
 
-  color: { args:       :pale     ,
-           array:      :white    ,
-           bigdecimal: :blue     ,
-           class:      :yellow   ,
-           date:       :greenish ,
-           falseclass: :red      ,
-           integer:    :blue     ,
-           float:      :blue     ,
-           hash:       :pale     ,
-           keyword:    :cyan     ,
-           method:     :purpleish,
-           nilclass:   :red      ,
-           rational:   :blue     ,
-           string:     :yellowish,
-           struct:     :pale     ,
-           symbol:     :cyanish  ,
-           time:       :greenish ,
-           trueclass:  :green    ,
-           variable:   :cyanish    }
+  gem! :awesome_print
 
-}
+  AwesomePrint.defaults = {
 
-AwesomePrint.send "#{Ruby.repl_engine}!"
+    # General formatting.
+    plain:         false ,  # B/W text only?
+    html:          false ,  # Use HTML instead of ANSI color codes?
+    multiline:     true  ,  # Display in multiple lines?
+    indent:        2     ,  # Number of spaces for indenting.
+    raw:           false ,  # Recursively format instance variables? (Warning: this does not do what you probably expect.)
+
+    # Identifiers.
+    object_id:     true  ,  # Show object ID (`#object_id`)?
+    class_name:    :class,  # Method name to `#send` for the instance class name. (e.g. `:to_s`)
+
+    # Enumeration.
+    ruby19_syntax: false ,  # Use Ruby 1.9 hash syntax in output?
+    index:         true  ,  # Display array indices?
+    sort_keys:     true  ,  # Sort hash keys?
+    sort_vars:     true  ,  # Sort instance variables?
+    limit:         100   ,  # Array/hash element limit.
+
+
+    color: { args:       :pale     ,
+             array:      :white    ,
+             bigdecimal: :blue     ,
+             class:      :yellow   ,
+             date:       :greenish ,
+             falseclass: :red      ,
+             integer:    :blue     ,
+             float:      :blue     ,
+             hash:       :pale     ,
+             keyword:    :cyan     ,
+             method:     :purpleish,
+             nilclass:   :red      ,
+             rational:   :blue     ,
+             string:     :yellowish,
+             struct:     :pale     ,
+             symbol:     :cyanish  ,
+             time:       :greenish ,
+             trueclass:  :green    ,
+             variable:   :cyanish    }
+
+  }
+
+  AwesomePrint.send "#{Ruby.repl_engine}!"
+
+
+  ## --- MONKEYPATCHES ---
+
+
+  def set_autocompletion(state)
+    return unless defined? Reline
+
+    case state
+      when :on , true  then Reline.autocompletion = true
+      when :off, false then Reline.autocompletion = false
+      else raise ArgumentError, "unexpected 'state': #{state.inspect}"
+    end
+  end
+
+  def auto = set_autocompletion :on
+  def noauto = set_autocompletion :off
 
 
 
