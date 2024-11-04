@@ -238,23 +238,16 @@ shopt -s lastpipe
 
       # Simpleton case: no "$procfile".
       #
-      [ -e "$procfile" ] || { rd server "$@"; return 0 ;}
+      [ -e "$procfile" ] || { rd server "$@"; return "$?" ;}
 
-      # Ensure we have a "$dev_runner".
+      # Delegate to the "$dev_runner", if one exists.
       #
-      [ -e "$dev_runner" ] || cat <<-'EOF' > "$dev_runner"
-				#!/usr/bin/env sh
+      [ -x "$dev_runner" ] && { "$dev_runner" "$@"; return "$?" ;}
 
-				if ! gem list foreman -i --silent; then
-					echo "Installing foreman..."
-					gem install foreman
-				fi
-
-				exec foreman start -f Procfile.dev "$@"
-			EOF
-			[ -x "$dev_runner" ] || chmod 755 "$dev_runner"
-
-      "$dev_runner" "$@"
+      # Ensure Foreman and trigger a "$procfile" `start`.
+      #
+      gem list foreman -i --silent || gem install foreman
+      foreman start -f "$procfile" "$@"
     }
     function rs1 { RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 rs "$@" ;}
 
