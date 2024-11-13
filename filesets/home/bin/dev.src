@@ -3,6 +3,11 @@ shopt -s lastpipe
 
 # ---
 
+# Navigation helpers.
+
+  function dev { cd "$DEV_ROOT" ;}
+
+
 # Language helpers.
 
   # ruby
