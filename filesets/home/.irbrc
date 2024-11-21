@@ -296,21 +296,15 @@ if defined? Rails
   if defined? FactoryBot
 
     def attributes_for(model, *args)
-      gem! :factory_bot
       FactoryBot.attributes_for model, *args
-    rescue LoadError
     end
 
     def build(model, *args)
-      gem! :factory_bot
       FactoryBot.build model, *args
-    rescue LoadError
     end
 
     def create(model, *args)
-      gem! :factory_bot
       FactoryBot.create model, *args
-    rescue LoadError
     end
 
   end
