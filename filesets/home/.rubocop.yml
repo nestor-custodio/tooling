@@ -1,6 +1,8 @@
 AllCops:
   TargetRubyVersion: 3.2
   Exclude:
+    - '*.local.*'
+    - '*.local/**/*'
     - '.git/**/*'
     - 'log/**/*'
     - 'node_modules/**/*'
