@@ -49,7 +49,7 @@ gui:
     showBottomLine: false
     showPanelJumps: false
 
-    nerdFontsVersion: ''
+    nerdFontsVersion: '3'
     commitHashLength: 8
     showBranchCommitHash: false
     filterMode: 'fuzzy'
