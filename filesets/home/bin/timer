@@ -11,8 +11,8 @@ source '/home/nestor/bin/std.lib'
 		Starts a timer. Tracking has nanosecond precision, but displays
 		with *second* granularity and only updates periodically.
 
-		Pressing <space> will continue the count on a new line, leaving
-		the old line as reference (useful for split timing); 'q' quits.
+		Pressing <space> will continue the count on a new line, (useful
+		for split timing); 'r' resets timer (on a new line); 'q' quits.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -53,13 +53,15 @@ source '/home/nestor/bin/std.lib'
 # ---
 # ---
 
-function clear-line { printf '\e[0K\e[1A\e[1G\e[0K' ;}
-
-function show-timer { printf '%02dh %02dm %02ds\n' "$1" "$2" "$3" ;}
+function show-timer { printf '%02dh %02dm %02ds' "$1" "$2" "$3" ;}
 
 # ---
 # ---
 
+
+# Initialize timer.
+#
+start_time="$SCRIPT_TIMESTAMP"
 
 # Initialize display.
 #
@@ -67,7 +69,7 @@ show-timer 0 0 0
 
 
 while true; do
-	calc "$( timestamp ) - ${SCRIPT_TIMESTAMP}" | store-as elapsed
+	calc "$( timestamp ) - ${start_time}" | store-as elapsed
 
 	calc "floor(${elapsed} / 3600)" | store-as h
 	calc "floor(${elapsed} /   60)" | store-as m
@@ -78,7 +80,20 @@ while true; do
 
 	read -r -s -t1 -N1 input
 	case "$input" in
-		' ') show-timer "$h" "$m" "$s" ;;
-		'q') exit 0 ;;
+
+		' ') # split timer
+			printf '\n'
+			;;
+
+		'r') # reset timer
+			printf '\n'
+			timestamp | store-as start_time
+			;;
+
+		'q') # quit
+			printf '\n'
+			exit 0
+			;;
+
 	esac
 done
