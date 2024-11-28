@@ -37,7 +37,7 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 
 ## Session Management
 
-  bind-key -n M-C-m    new-session
+  bind-key -n M-C-n    new-session
 
   bind-key -n M-,      switch-client -p
   bind-key -n M-.      switch-client -n
@@ -50,7 +50,6 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 
 ## Window Management
 
-  bind-key -n M-C-n    new-window -c "#{pane_current_path}" \; rename-window "" \; select-pane -T ""
   bind-key -n M-n      new-window -c "#{pane_current_path}" \; rename-window "" \; select-pane -T ""
 
   bind-key -n M-u      previous-window
