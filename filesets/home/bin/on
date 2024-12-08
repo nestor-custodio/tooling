@@ -119,10 +119,12 @@ case "$wait_type" in
 		;;
 
 	(files)
-		[ -n "$extensions" ] && extensions_arg="--exts='${extensions}'"
-		[ -n "$clear_screen" ] && clear_screen_arg="--clear='clear'"
+    args='--'
+		[ -n "$extensions" ] && args="--exts=${extensions} ${args}"
+		[ -n "$clear_screen" ] && args="--clear=clear ${args}"
 
-		eval "watchexec ${extensions_arg} ${clear_screen_arg} --debounce='500ms' --restart --quiet --shell='none' -- ${@}"
+		# shellcheck disable=SC2086
+		watchexec --debounce='500ms' --restart --quiet --shell='none' $args "$@"
 		;;
 
 	*) error-out 1 'must specify one of --time or --files' ;;
