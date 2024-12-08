@@ -63,7 +63,7 @@ cd "${HOME}/dev" &> /dev/null
 case "$language" in
 
 	(ruby)
-		rubocop --server --stdin source_file.rb --stderr --autocorrect --fail-level='fatal' < /dev/stdin
+		rubocop --stdin source_file.rb --stderr --autocorrect --fail-level='fatal' < /dev/stdin
 		;;
 
 

@@ -19,14 +19,35 @@ shopt -s lastpipe
 
     # Linting/Style tooling.
     #
-    export RUBOCOP_OPTS="--server --format='simple' --format='offenses' --color"
+    export RUBOCOP_OPTS="--server --format='simple' --format='offenses' --color --editor-mode"
     #
+    # shellcheck disable=SC2046
     function rubocop {
+      # We only want to let `fd` handle the file list if all of the following are true:
+      # - the user doesn't provide a filename (i.e. a non-flag argument)
+      # - there is no '-h'/'--help' argument
+      # - there is no '-s'/'--stdin' argument
+      #
+      declare -a args=("$@")
+      local skip_fd_call=''
+      for (( i=0; i < "${#args[*]}"; i++ )); do
+        if [ -z "$skip_fd_call" ]; then
+          [ "$( head -c1 <<< "${args[$i]}" )" != '-' ] && skip_fd_call='1'
+          for j in -h --help -s --stdin; do [ "${args[$i]}" == "$j" ] && skip_fd_call='1'; done
+        fi
+      done
+
       if nearest --read 'Gemfile.lock' 'Gemfile' | has? 'rubocop'; then
-        bx rubocop "$@"
+        if [ -n "$skip_fd_call" ];
+          then bx rubocop "$@"
+          else bx rubocop --force-exclusion $( fd '\.rb$' ) "$@"
+        fi
       else
         which rubocop &> /dev/null || gem install rubocop &> /dev/null
-        "$( real rubocop )" "$@"
+        if [ -n "$skip_fd_call" ];
+          then "$( real rubocop )" "$@"
+          else "$( real rubocop )" --force-exclusion $( fd '\.rb$' ) "$@"
+        fi
       fi
     }
 
