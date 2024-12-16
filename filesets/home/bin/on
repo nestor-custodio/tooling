@@ -124,7 +124,7 @@ case "$wait_type" in
 		[ -n "$clear_screen" ] && args="--clear=clear ${args}"
 
 		# shellcheck disable=SC2086
-		watchexec --debounce='500ms' --restart --quiet --shell='none' $args "$@"
+		watchexec --debounce='500ms' --restart --quiet --shell='/bin/env bash' $args "$@"
 		;;
 
 	*) error-out 1 'must specify one of --time or --files' ;;
