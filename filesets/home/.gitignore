@@ -24,6 +24,12 @@
 **/db/migrate/2021*
 **/db/migrate/2022*
 **/db/migrate/2023*
+**/db/migrate/202401*
+**/db/migrate/202402*
+**/db/migrate/202403*
+**/db/migrate/202404*
+**/db/migrate/202405*
+**/db/migrate/202406*
 
 
 # Rules for use in the "tooling" repo specifically.
