@@ -260,19 +260,17 @@ if defined? Rails
     module ModelSchema
       module ClassMethods
         def cols(*metadata)
-          metadata = [:type] unless metadata.present?
+          output = columns.index_by(&:name)
+                          .transform_values(&:as_json)
+                          .transform_values { |column| column.merge column.delete('sql_type_metadata').to_h }
+                          .indifferent
 
-          hash = columns.ewi { |column, out| out[column.name] = metadata.ewi { |md, out| out[md] = column.send(md.to_sym) } }
-          hash.transform_values! { |value| value.values.first } if metadata.length == 1
+          case metadata.length
+            when 1 then output.transform_values! { |column| column[metadata.first.to_s] }
+            when (2..) then output.transform_values! { |column| column.slice *metadata.map(&:to_s) }
+          end
 
-          hash
-        end
-
-        def col(name, *metadata)
-          name = name.to_s
-          name = attribute_aliases[name] if attribute_aliases.has_key? name
-
-          cols(*metadata)&.dig name
+          output
         end
       end
     end
