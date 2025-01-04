@@ -244,13 +244,6 @@ case "$tool_name" in
 		noop
 		;;
 
-	(redis-viewer)
-		# This tool provides no versioning info. 🤷.
-		# I've requested adding a `--version` option via:
-		# https://github.com/saltfishpr/redis-viewer/issues/7
-		noop
-		;;
-
 
 	# Unknown tooling.
 
