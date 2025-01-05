@@ -54,87 +54,19 @@ source '/home/nestor/bin/std.lib'
 
 	# ---
 	
-	function normalized-version {
-		version="$1" && shift
-
+	function normalized {
 		sed -r -e 's#^ +##'              \
 		       -e 's# +$##'              \
 		       -e 's#\b0+#0#g'           \
 		       -e 's#\b0([^0.])#\1#g'    \
-		       -e 's#\.$##' <<< "$version"
+		       -e 's#\.$##'
 	}
 
 	function check-version {
-
-		# --cmd            The option/command that causes the tool to report its version.
-		#                  (default: '--version')
-		#
-		# --puller         The regex that pulls an actual version number out of the tool's
-		#                  version output.
-		#                  (default: '.*')
-		#
-		# --local-version  The tool's current version number. When given, the executable is
-		#                  never queried as that's unnecessary.
-		#                  (default: '')
-
-		# ---
-
-		{ # -- Parameter Processing: Options -- #
-
-			# Set defaults.
-
-			cmd='--version'
-			puller='.*'
-			local_version=''
-
-			# ---
-			# ---
-
-			CHAR_OPTS=''
-			LONG_OPTS='cmd:,puller:,local-version:'
-
-			set-params
-			while true; do
-				option="$1" && shift
-				case "$option" in
-					(--) break ;;  # No more options.
-
-
-					(--cmd)
-						cmd="$1" && shift
-						;;
-
-					(--puller)
-						puller="$1" && shift
-						;;
-
-					(--local-version)
-						local_version="$1" && shift
-						;;
-
-				esac
-			done
-
-		}
-
-		{ # -- Parameter Processing: Positionals -- #
-
-			[ "$#" == 0 ] || error-out 1 'invalid option(s)'
-
-		}
-
-		# ---
-		# ---
-
-
-		[ -z "$local_version" ] && "$( executable )" "$cmd" 2>&1 | grep -P --only-matching "$puller" | store-as local_version
-		gh:release-version "$( github-repo )"                                                        | store-as release_version
-
-		normalized-version "$local_version"   | store-as local_version
-		normalized-version "$release_version" | store-as release_version
+		vendor.version "$tool_name" | store-as local_version
+		gh:release-version "$( github-repo )" | normalized | store-as release_version
 
 		[ "$local_version" == "$release_version" ] || exit-out 2 "${local_version} ➜ ${release_version}"
-
 	}
 
 }
@@ -174,36 +106,37 @@ source '/home/nestor/bin/std.lib'
 case "$tool_name" in
 
 
-	# Straight-forward `eget` pulls.
+	# Straight-forward checks.
 
-	(aws              ) check-version                  --puller='(?<=aws-cli/).*?(?= )'        ;;
-	(bat              ) check-version                  --puller='(?<=bat ).*?(?= )'            ;;
-	(btop             ) check-version                  --puller='(?<=btop version: ).*'        ;;
-	(caddy            ) check-version                  --puller='(?<=v).*?(?= )'               ;;
-	(circleci         ) check-version --cmd='version'  --puller='.*?(?=\+)'                    ;;
-	(delta            ) check-version                  --puller='(?<=delta ).*'                ;;
-	(eget             ) check-version                  --puller='(?<=eget version ).*'         ;;
-	(eza              ) check-version                  --puller='(?<=v).*(?= )'                ;;
-	(fd               ) check-version                  --puller='(?<=fd ).*'                   ;;
-	(fzf              ) check-version                  --puller='.*(?= )'                      ;;
-	(gh               ) check-version                  --puller='(?<=gh version ).*?(?= )'     ;;
-	(heroku           ) check-version                  --puller='(?<=heroku/).*?(?= )'         ;;
-	(hostctl          ) check-version                  --puller='(?<=hostctl version ).*'      ;;
-	(hx               ) check-version                  --puller='(?<=helix ).*?(?= )'          ;;
-	(jq               ) check-version                                                          ;;
-	(lazydocker       ) check-version                  --puller='(?<=Version: ).*'             ;;
-	(lazygit          ) check-version                  --puller='(?<=version=).*?(?=,)'        ;;
-	(n                ) check-version                  --puller='(?<=v).*'                     ;;
-	(portal           ) check-version --cmd='version'  --puller='(?<=v).*'                     ;;
-	(q                ) check-version                  --puller='(?<=q version ).*'            ;;
-	(rg               ) check-version                  --puller='(?<=ripgrep ).*?(?= )'        ;;
-	(ruby-install     ) check-version                  --puller='(?<=ruby-install: ).*'        ;;
-	(shellcheck       ) check-version                  --puller='(?<=version: ).*'             ;;
-	(static-web-server) check-version                  --puller='(?<=Version: ).*'             ;;
-	(unison           ) check-version --cmd='-version' --puller='(?<=unison version ).*?(?= )' ;;
-	(usql             ) check-version                  --puller='(?<=usql ).*'                 ;;
-	(watchexec        ) check-version                  --puller='(?<=release: ).*'             ;;
-	(yq               ) check-version                  --puller='(?<=version v).*'             ;;
+	(aws              )               ;&
+	(bat              )               ;&
+	(btop             )               ;&
+	(caddy            )               ;&
+	(chruby           )               ;&
+	(circleci         )               ;&
+	(delta            )               ;&
+	(eget             )               ;&
+	(eza              )               ;&
+	(fd               )               ;&
+	(fzf              )               ;&
+	(gh               )               ;&
+	(heroku           )               ;&
+	(hostctl          )               ;&
+	(hx               )               ;&
+	(jq               )               ;&
+	(lazydocker       )               ;&
+	(lazygit          )               ;&
+	(n                )               ;&
+	(portal           )               ;&
+	(q                )               ;&
+	(rg               )               ;&
+	(ruby-install     )               ;&
+	(shellcheck       )               ;&
+	(static-web-server)               ;&
+	(unison           )               ;&
+	(usql             )               ;&
+	(watchexec        )               ;&
+	(yq               ) check-version ;;
 
 
 	# Items requiring special handling.
@@ -212,7 +145,7 @@ case "$tool_name" in
 		# This tool's repo includes releases for multiple clients,
 		# so we can't just blindly look for the one tagged "latest".
 
-		bw --version | store-as local_version
+		vendor.version bw | store-as local_version
 
 		gh --repo="$( github-repo )" release list                 \
 		| grep --only-matching '(?<=cli-v)[[:print:]]+'           \
@@ -225,11 +158,6 @@ case "$tool_name" in
 		# This tool provides no versioning info. 🤷.
 		# Last update was back in 2020-11-24, however.
 		noop
-		;;
-
-	(chruby)
-		eval "$( head -n1 "${HOME}/bin/vendor/chruby-source" )"
-		check-version --local-version="$CHRUBY_VERSION"
 		;;
 
 	(osc52)

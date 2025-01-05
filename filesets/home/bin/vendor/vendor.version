@@ -1,0 +1,191 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) TOOL_NAME
+
+		Returns a sanitized version number for the given vendor tool.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Utility Functions -- #
+
+	function normalized {
+		sed -r -e 's#^ +##'              \
+		       -e 's# +$##'              \
+		       -e 's#\b0+#0#g'           \
+		       -e 's#\b0([^0.])#\1#g'    \
+		       -e 's#\.$##'
+	}
+
+	function get-version {
+
+		# --cmd            The option/command that causes the tool to report its version.
+		#                  (default: '--version')
+		#
+		# --puller         The regex that pulls an actual version number out of the tool's
+		#                  version output.
+		#                  (default: '.*')
+
+		# ---
+
+		{ # -- Parameter Processing: Options -- #
+
+			# Set defaults.
+
+			cmd='--version'
+			puller='.*'
+
+			# ---
+			# ---
+
+			CHAR_OPTS=''
+			LONG_OPTS='cmd:,puller:'
+
+			set-params
+			while true; do
+				option="$1" && shift
+				case "$option" in
+					(--) break ;;  # No more options.
+
+
+					(--cmd)
+						cmd="$1" && shift
+						;;
+
+					(--puller)
+						puller="$1" && shift
+						;;
+
+				esac
+			done
+
+		}
+
+		{ # -- Parameter Processing: Positionals -- #
+
+			[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+		}
+
+		# ---
+		# ---
+
+
+		"${HOME}/bin/vendor/${tool_name}" "$cmd" 2>&1 | grep -P --only-matching "$puller" | normalized
+
+	}
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	tool_name="$1" && shift
+	[ -n "$tool_name" ] || error-out 1 'no TOOL_NAME given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+case "$tool_name" in
+
+
+	# Pullable items.
+
+	(aws              ) get-version                  --puller='(?<=aws-cli/).*?(?= )'        ;;
+	(bat              ) get-version                  --puller='(?<=bat ).*?(?= )'            ;;
+	(btop             ) get-version                  --puller='(?<=btop version: ).*'        ;;
+	(bw               ) get-version                                                          ;;
+	(caddy            ) get-version                  --puller='(?<=v).*?(?= )'               ;;
+	(circleci         ) get-version --cmd='version'  --puller='.*?(?=\+)'                    ;;
+	(delta            ) get-version                  --puller='(?<=delta ).*'                ;;
+	(eget             ) get-version                  --puller='(?<=eget version ).*'         ;;
+	(eza              ) get-version                  --puller='(?<=v).*(?= )'                ;;
+	(fd               ) get-version                  --puller='(?<=fd ).*'                   ;;
+	(fzf              ) get-version                  --puller='.*(?= )'                      ;;
+	(gh               ) get-version                  --puller='(?<=gh version ).*?(?= )'     ;;
+	(heroku           ) get-version                  --puller='(?<=heroku/).*?(?= )'         ;;
+	(hostctl          ) get-version                  --puller='(?<=hostctl version ).*'      ;;
+	(hx               ) get-version                  --puller='(?<=helix ).*?(?= )'          ;;
+	(jq               ) get-version                                                          ;;
+	(lazydocker       ) get-version                  --puller='(?<=Version: ).*'             ;;
+	(lazygit          ) get-version                  --puller='(?<=version=).*?(?=,)'        ;;
+	(marksman         ) get-version                  --puller='.*(?=-)'                      ;;
+	(n                ) get-version                  --puller='(?<=v).*'                     ;;
+	(portal           ) get-version --cmd='version'  --puller='(?<=v).*'                     ;;
+	(q                ) get-version                  --puller='(?<=q version ).*'            ;;
+	(rg               ) get-version                  --puller='(?<=ripgrep ).*?(?= )'        ;;
+	(ruby-install     ) get-version                  --puller='(?<=ruby-install: ).*'        ;;
+	(shellcheck       ) get-version                  --puller='(?<=version: ).*'             ;;
+	(static-web-server) get-version                  --puller='(?<=Version: ).*'             ;;
+	(unison           ) get-version --cmd='-version' --puller='(?<=unison version ).*?(?= )' ;;
+	(usql             ) get-version                  --puller='(?<=usql ).*'                 ;;
+	(watchexec        ) get-version                  --puller='(?<=release: ).*'             ;;
+	(yq               ) get-version                  --puller='(?<=version v).*'             ;;
+
+
+	# Items requiring special handling.
+
+	(crypt)
+		# This tool provides no versioning info. 🤷.
+		# Last update was back in 2020-11-24, however.
+		echo '0'
+		;;
+
+	(chruby)
+	  source "chruby-source" &> /dev/null
+		echo "${CHRUBY_VERSION:-0.0.0}"
+		;;
+
+	(osc52)
+		# This tool provides no versioning info. 🤷.
+		# Last update was back in 2023-05-11, however.
+		echo '0'
+		;;
+
+
+	# Unknown tooling.
+
+	*)
+		error-out 1 "unknown tool '${tool_name}'"
+		;;
+esac
