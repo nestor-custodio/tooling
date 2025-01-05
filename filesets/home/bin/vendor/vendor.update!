@@ -99,7 +99,6 @@ source '/home/nestor/bin/std.lib'
 			(eza              ) update-tooling --asset='gnu.zip'                             ;;
 			(fd               ) update-tooling --asset='gnu'                                 ;;
 			(fzf              ) update-tooling                                               ;;
-			(hx               ) update-tooling                                               ;;
 			(jq               ) update-tooling --asset='amd64'                               ;;
 			(lazydocker       ) update-tooling                                               ;;
 			(lazygit          ) update-tooling                                               ;;
@@ -161,6 +160,24 @@ source '/home/nestor/bin/std.lib'
 
 				curl "$( executable-url )" --silent --location \
 				| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
+				;;
+
+			(hx)
+				# Archive the existing install.
+				#
+				if real hx &> /dev/null; then
+					archive="${HOME}/bin/vendor/hx.archives/$( vendor.version hx )"
+					if ! [ -d "$archive" ]; then
+						mkdir -p "${archive}/config"
+						cp "$( real hx )" "${archive}/hx"
+						mirror "${HOME}/.config/helix"/* "${archive}/config"
+					fi
+				fi
+
+				# Actually install newer release.
+				#
+				update-tooling
+				hx.setup!
 				;;
 
 			(osc52)
