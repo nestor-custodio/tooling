@@ -13,20 +13,20 @@ theme = "custom"
 
 [editor]
 
-auto-format          = false
-auto-pairs           = false
-auto-save            = false
-bufferline           = "multiple"
-color-modes          = true
-cursorline           = true
-insert-final-newline = false
-line-number          = "absolute"
-middle-click-paste   = false
-mouse                = true
-popup-border         = "all"
-scrolloff            = 4
-shell                = ["bash", "-c"]
-true-color           = true
+auto-format             = false
+auto-pairs              = false
+auto-save               = false
+bufferline              = "always"
+clipboard-provider      = "tmux"
+color-modes             = true
+cursorline              = true
+end-of-line-diagnostics = "warning"
+insert-final-newline    = false
+middle-click-paste      = false
+popup-border            = "all"
+scrolloff               = 4
+shell                   = ["bash", "-c"]
+true-color              = true
 
 
 [editor.cursor-shape]
@@ -45,6 +45,13 @@ hidden = false
 
 render    = true
 character = "│"
+
+
+[editor.inline-diagnostics]
+
+cursor-line = "hint"
+other-lines = "error"
+prefix-len  = 2
 
 
 [editor.lsp]
@@ -85,6 +92,7 @@ newline = "none"
 
 space   = "⸱"
 nbsp    = "_"
+tab     = "→"
 newline = "↲"
 
 
@@ -113,7 +121,6 @@ newline = "↲"
 "T" = "no_op"
 "U" = "no_op"
 "W" = "no_op"
-"X" = "no_op"
 "Y" = "no_op"
 "Z" = "no_op"
 
@@ -127,7 +134,6 @@ newline = "↲"
 ")" = "no_op"
 "_" = "no_op"
 "+" = "no_op"
-"," = "no_op"
 "." = "no_op"
 
 
@@ -191,19 +197,20 @@ newline = "↲"
 
 # Selection Management
 
-"minus"   = ["keep_primary_selection", "collapse_selection"]
+"-"       = ["keep_primary_selection", "collapse_selection"]
 
 
 # Editing
 
   # Clipboard
 
-  "c"         = [":clipboard-yank", ":pipe-to copy"]
-  "v"         = ":clipboard-paste-before"
-  "x"         = [":clipboard-yank", ":pipe-to copy", "delete_selection_noyank"]
+  "c"         = "yank"
+  "v"         = "paste_before"
+  "x"         = "delete_selection"
 
-  "C"         = ":pipe clip --pass"
-  "V"         = ":insert-output clip --out"
+  "C"         = "yank_to_clipboard"
+  "V"         = "paste_clipboard_before"
+  "X"         = ["yank_to_clipboard", "delete_selection_noyank"]
 
 
   # Modification
@@ -233,6 +240,7 @@ newline = "↲"
   "="         = "insert_newline"
   "#"         = "toggle_comments"
   "^"         = "align_selections"
+  ","         = "select_register"
   "%"         = "switch_case"
 
   "!"         = "shell_insert_output"
@@ -330,6 +338,8 @@ newline = "↲"
 "u" = "no_op"
 "z" = "no_op"
 
+"%" = "no_op"
+
 
 # Application Control
 
@@ -345,7 +355,7 @@ newline = "↲"
 "space" = "extend_to_line_bounds"
 "a"     = "select_all"
 "w"     = ["move_char_right", "move_prev_word_start", "collapse_selection", "extend_next_word_end"]
-"minus" = ["keep_primary_selection", "collapse_selection"]
+"-"     = ["keep_primary_selection", "collapse_selection"]
 "/"     = "select_regex"
 "="     = "split_selection_on_newline"
 
@@ -373,12 +383,13 @@ newline = "↲"
 
   # Clipboard
 
-  "c"         = [":clipboard-yank", ":pipe-to copy", "normal_mode"]
-  "v"         = [":clipboard-paste-replace", "normal_mode"]
-  "x"         = [":clipboard-yank", ":pipe-to copy", "delete_selection_noyank", "normal_mode"]
+  "c"         = ["yank", "normal_mode"]
+  "v"         = ["replace_with_yanked", "normal_mode"]
+  "x"         = ["delete_selection", "normal_mode"]
 
-  "C"         = [":pipe clip --pass", "normal_mode"]
-  "V"         = [":insert-output clip --out", "normal_mode"]
+  "C"         = ["yank_to_clipboard", "normal_mode"]
+  "V"         = ["replace_selections_with_clipboard", "normal_mode"]
+  "X"         = ["yank_to_clipboard", "delete_selection_noyank", "normal_mode"]
 
 
   # Modification
@@ -395,8 +406,7 @@ newline = "↲"
   "<"         = "unindent"
 
   "#"         = ["toggle_comments", "normal_mode"]
-  "^"         = "align_selections"
-  "%"         = "switch_case"
+  ","         = "select_register"
 
   "!"         = "shell_insert_output"
   "|"         = "shell_pipe"
