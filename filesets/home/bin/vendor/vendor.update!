@@ -33,13 +33,13 @@ source '/home/nestor/bin/std.lib'
 	_all_tools=''
 	function all-tools {
 		[ -n "$_all_tools" ] && echo "$_all_tools" && return
-	
+
 		ls -1 --literal "${HOME}/bin/vendor"/*.repo | map superbase | store-as _all_tools
 		echo "$_all_tools"
 	}
 
 	# ---
-	
+
 	_tool_name=''
 	function set-tool { _tool_name="$1" ;}
 	function tool-name { echo "$_tool_name" ;}
