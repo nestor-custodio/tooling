@@ -51,7 +51,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-pip?
+'pip?'
 case "$?" in
 	(0) exit-out 0 ;;
 
