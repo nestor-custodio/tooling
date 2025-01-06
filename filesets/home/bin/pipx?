@@ -57,7 +57,7 @@ source '/home/nestor/bin/std.lib'
 
 # Report if 'pypy3' or 'pip' are unavailable.
 #
-pip? || exit-out "$?"
+'pip?' || exit-out "$?"
 
 # Report if 'pipx' unavailable (via 'pypy3').
 #

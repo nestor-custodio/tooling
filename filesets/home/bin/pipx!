@@ -53,7 +53,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-pipx?
+'pipx?'
 case "$?" in
 	(0) exit-out 0 ;;
 
