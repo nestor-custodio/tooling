@@ -259,6 +259,12 @@ if defined? Rails
   module ActiveRecord
     module ModelSchema
       module ClassMethods
+        def any
+          find ids.sample
+        end
+        alias rnd any
+        alias rand any
+
         def cols(*metadata)
           output = columns.index_by(&:name)
                           .transform_values(&:as_json)
