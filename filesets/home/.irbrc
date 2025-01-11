@@ -1,4 +1,6 @@
 #! /bin/env ruby
+# rubocop:disable Layout,Metrics
+# rubocop:disable Naming/BlockForwarding,Style/ArgumentsForwarding # For older Ruby versions.
 
 
 ## --- KERNEL-LEVEL STUFF ---
@@ -13,8 +15,8 @@ Object.constants
 
 def Ruby.repl_engine
   @repl_engine ||= begin
-    engine = ([$0] & ['irb', 'pry']).pop
-    engine ||= (defined? Pry) ? 'pry' : 'irb'
+    engine = ([$PROGRAM_NAME] & %w[irb pry]).pop
+    engine ||= defined?(Pry) ? 'pry' : 'irb'
 
     engine.freeze
   end
@@ -64,7 +66,7 @@ gem! activesupport: %w[active_support active_support/core_ext] unless defined? A
 
 
 def timestamp
-  Time.now.to_f
+  Time.current.to_f
 end
 
 
@@ -133,18 +135,18 @@ end
   ## --- MONKEYPATCHES ---
 
 
-  def set_autocompletion(state)
+  def autocompletion(state)
     return unless defined? Reline
 
     case state
-      when :on , true  then Reline.autocompletion = true
-      when :off, false then Reline.autocompletion = false
-      else raise ArgumentError, "unexpected 'state': #{state.inspect}"
+    when :on , true  then Reline.autocompletion = true
+    when :off, false then Reline.autocompletion = false
+    else raise ArgumentError, "unexpected 'state': #{state.inspect}"
     end
   end
 
-  def auto = set_autocompletion :on
-  def noauto = set_autocompletion :off
+  def auto = autocompletion :on
+  def noauto = autocompletion :off
 
 
 
@@ -159,7 +161,7 @@ class Object
   end
 
   def real_methods
-    return public_methods if self.instance_of? Object
+    return public_methods if instance_of? Object
     public_methods - Object.methods
   end
 end
@@ -178,7 +180,7 @@ class String
   end
 
   def to_time(*args, **kwargs, &block)
-    Time.parse(self, *args, **kwargs, &block)
+    Time.zone.parse(self, *args, **kwargs, &block)
   end
 
   def to_datetime(*args, **kwargs, &block)
@@ -239,10 +241,10 @@ module Enumerable
     each_with_object(indifferent_hash, &block)
   end
 
-  alias :ewo :each_with_object
-  alias :ewa :each_with_array
-  alias :ewh :each_with_hash
-  alias :ewi :each_with_indifferent_hash
+  alias ewo each_with_object
+  alias ewa each_with_array
+  alias ewh each_with_hash
+  alias ewi each_with_indifferent_hash
 end
 
 
@@ -272,8 +274,8 @@ if defined? Rails
                           .indifferent
 
           case metadata.length
-            when 1 then output.transform_values! { |column| column[metadata.first.to_s] }
-            when (2..) then output.transform_values! { |column| column.slice *metadata.map(&:to_s) }
+          when 1 then output.transform_values! { |column| column[metadata.first.to_s] }
+          when (2..) then output.transform_values! { |column| column.slice(*metadata.map(&:to_s)) }
           end
 
           output
@@ -291,7 +293,7 @@ if defined? Rails
     LazyMigrate.run
   end
 
-  alias :db! :lazy_migrate
+  alias db! lazy_migrate
 
 
   ## --- FACTORYBOT HELPERS ---
@@ -344,4 +346,11 @@ if defined? Rails
   alias clear_db_cache! clear_cache!
 
 
+  def any(model_or_collection)
+    model_or_collection.find model_or_collection.ids.sample
+  end
+
+
 end
+# rubocop:enable Naming/BlockForwarding,Style/ArgumentsForwarding
+# rubocop:enable Layout,Metrics
