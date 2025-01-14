@@ -115,6 +115,7 @@ case "$tool_name" in
 	(chruby           )               ;&
 	(circleci         )               ;&
 	(delta            )               ;&
+	(duckdb           )               ;&
 	(eget             )               ;&
 	(eza              )               ;&
 	(fd               )               ;&

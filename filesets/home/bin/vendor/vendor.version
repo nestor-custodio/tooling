@@ -138,6 +138,7 @@ case "$tool_name" in
 	(caddy            ) get-version                  --puller='(?<=v).*?(?= )'               ;;
 	(circleci         ) get-version --cmd='version'  --puller='.*?(?=\+)'                    ;;
 	(delta            ) get-version                  --puller='(?<=delta ).*'                ;;
+	(duckdb           ) get-version                  --puller='(?<=v).*(?= )'                ;;
 	(eget             ) get-version                  --puller='(?<=eget version ).*'         ;;
 	(eza              ) get-version                  --puller='(?<=v).*(?= )'                ;;
 	(fd               ) get-version                  --puller='(?<=fd ).*'                   ;;
