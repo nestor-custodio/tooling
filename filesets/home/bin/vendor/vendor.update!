@@ -171,7 +171,7 @@ source '/home/nestor/bin/std.lib'
 					if ! [ -d "$archive" ]; then
 						mkdir -p "${archive}/config"
 						cp "$( real hx )" "${archive}/hx"
-						mirror "${HOME}/.config/helix"/* "${archive}/config"
+						mirror --exclude='.git/' "${HOME}/.config/helix"/* "${archive}/config"
 					fi
 				fi
 
