@@ -95,7 +95,7 @@ source '/home/nestor/bin/std.lib'
 			(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig'             ;;
 			(circleci         ) update-tooling                                               ;;
 			(delta            ) update-tooling --asset='gnu'                                 ;;
-			(duckdb           ) update-tooling --asset='^libduckdb'                          ;;
+			(duckdb           ) update-tooling --asset='cli'                                 ;;
 			(eget             ) update-tooling                                               ;;
 			(eza              ) update-tooling --asset='gnu.zip'                             ;;
 			(fd               ) update-tooling --asset='gnu'                                 ;;
