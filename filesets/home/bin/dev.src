@@ -195,11 +195,12 @@ shopt -s lastpipe
 
     function rd { bx rails "$@" ;}
 
-    function rc { rd console  "$@" ;}
     function r- { rd destroy  "$@" ;}
     function r+ { rd generate "$@" ;}
-    function rx { rd runner   "$@" ;}
-    function rr { rd runner   "$@" ;}
+
+    function rc { if spring? 2> /dev/null; then spring rails console "$@"; else rd console "$@"; fi ;}
+    function rx { if spring? 2> /dev/null; then spring rails runner  "$@"; else rd runner  "$@"; fi ;}
+    function rr { if spring? 2> /dev/null; then spring rails runner  "$@"; else rd runner  "$@"; fi ;}
 
     # ---
 
