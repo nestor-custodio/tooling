@@ -59,17 +59,13 @@ function show-timer { printf '%02dh %02dm %02ds' "$1" "$2" "$3" ;}
 # ---
 
 
-# Initialize timer.
-#
-start_time="$SCRIPT_TIMESTAMP"
-
 # Initialize display.
 #
 show-timer 0 0 0
 
 
 while true; do
-	calc "$( timestamp ) - ${start_time}" | store-as elapsed
+	script-duration | store-as elapsed
 
 	calc "floor(${elapsed} / 3600)" | store-as h
 	calc "floor(${elapsed} /   60)" | store-as m
@@ -87,7 +83,7 @@ while true; do
 
 		'r') # reset timer
 			printf '\n'
-			timestamp | store-as start_time
+			timestamp | store-as SCRIPT_TIMESTAMP
 			;;
 
 		'q') # quit

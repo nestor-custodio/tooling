@@ -20,6 +20,7 @@ end
 # -- Misc Helpers -- #
 
 SCRIPT_TIMESTAMP = Time.now.to_f
+def script_duration = (Time.now.to_f - SCRIPT_TIMESTAMP)
 
 def script_file = Pathname.new(__FILE__)
 
