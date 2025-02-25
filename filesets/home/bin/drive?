@@ -17,7 +17,7 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if mount is active,
-		  1  if no active mount.
+		  1  if no active mount (or invalid option).
 	EOF
 
 }
