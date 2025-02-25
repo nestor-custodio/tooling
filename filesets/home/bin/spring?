@@ -16,10 +16,8 @@ source '/home/nestor/bin/std.lib'
 
 
 		Exit Status:
-		  0  if OK,
-		  1  if invalid option,
-		  2  if spring binary not found,
-		  3  if command not invoked from valid location.
+		  0  if service is running,
+		  1  if service is not running (or invalid option).
 	EOF
 
 }
@@ -52,12 +50,5 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-command -v spring &> /dev/null || error-out 2 "'spring' binary not found"
-
-pwd | starts-with? "$DEV_ROOT" || error-out 3 "not currently within '${DEV_ROOT}'"
-cd "$DEV_ROOT"
-
-spring status | head -n1 | sed -e 's|:$|.|' | store-as status
-echo "$status"
-
-has? 'is running' <<< "$status" || exit 1
+command -v spring &> /dev/null || exit 1
+spring status | head -n1 | sed -e 's|:$|.|' | tee /dev/stderr | has? 'is running'

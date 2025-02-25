@@ -18,7 +18,7 @@ source '/home/nestor/bin/std.lib'
 		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  if spring binary not found,
+		  2  if unable to run spring,
 		  3  if command not invoked from valid location.
 	EOF
 
@@ -52,7 +52,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-command -v spring &> /dev/null || error-out 2 "'spring' binary not found"
+command -v spring &> /dev/null || gem install spring || error-out 2 "unable to find (or set up) 'spring'"
 
 pwd | starts-with? "$DEV_ROOT" || error-out 3 "not currently within '${DEV_ROOT}'"
 cd "$DEV_ROOT"
@@ -61,7 +61,5 @@ whoami | store-as username
 spring_log='/var/log/spring'
 sudo su -c "touch '${spring_log}' && chown '${username}:${username}' '${spring_log}'"
 
-# Note we can't `nohup bx ...`.
-#
 spring stop &> /dev/null
 nohup spring server &> "$spring_log" &
