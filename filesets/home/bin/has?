@@ -19,7 +19,7 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if TRUE,
-		  1  if FALSE or invalid option.
+		  1  if FALSE (or invalid option).
 	EOF
 
 }

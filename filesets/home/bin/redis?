@@ -19,7 +19,7 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if instance exists,
-		  1  if instance does not exist.
+		  1  if instance does not exist (or invalid option).
 	EOF
 
 }
