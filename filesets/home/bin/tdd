@@ -108,6 +108,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-timestamp | store-as now
-calc? "(${now} - ${SCRIPT_TIMESTAMP}) <= 300" || ding-me
-
+calc? "$( script-duration) <= 300" || ding-me

@@ -6,6 +6,7 @@ shopt -s lastpipe expand_aliases
 { # -- Misc Helpers -- #
 
 	SCRIPT_TIMESTAMP="$( date '+%s.%N' )"
+	function script-duration { bc --quiet --mathlib <<< "$( date '+%s.%N' ) - ${SCRIPT_TIMESTAMP}" ;}
 
 
 	alias store-as="read -r -d ''"
