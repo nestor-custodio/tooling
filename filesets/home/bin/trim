@@ -1,0 +1,85 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Trims whitespace off every line in STDIN.
+		By default, trims both left and right whitespace.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		  -b | --both               Trims whitespace off left and right.
+		  -l | --left               Trims whitespace off left only.
+		  -r | --right              Trims whitespace off right only.
+
+		Options are mutually exclusive; last one given overrides the others.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	trim_type='both'
+
+	# ---
+	# ---
+
+	CHAR_OPTS='blr'
+	LONG_OPTS='help,both,left,right'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(-b|--both)
+				trim_type='both'
+				;;
+
+			(-l|--left)
+				trim_type='left'
+				;;
+
+			(-r|--right)
+				trim_type='right'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+case "$trim_type" in
+	(both ) sed -r -e 's#^\s+##' -e 's#\s+$##' ;;
+	(left ) sed -r -e 's#^\s+##'               ;;
+	(right) sed -r               -e 's#\s+$##' ;;
+esac
