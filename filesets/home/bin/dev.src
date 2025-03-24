@@ -380,8 +380,8 @@ shopt -s lastpipe
   # Google App Scripts
 
   function gapps { clasp "$@" ;}
-  function gapps! { npm install -g @google/clasp ;}
   function gapps? { command -v clasp &> /dev/null ;}
+  function gapps! { gapps? || npm install -g @google/clasp; gapps "$@" ;}
 
 
 # ENV helpers.
