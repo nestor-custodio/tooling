@@ -239,12 +239,64 @@ shopt -s lastpipe
     function db- {                                  rd db:rollback "$@" ;}
 
     function db! {
-      rr "require 'bundler/inline'
-          gemfile {
-            source 'https://rubygems.org'
-            gem 'lazy_migrate'
-          }
-          LazyMigrate.run"
+      # Note most of this is a patch that allows using LazyMigrate v0.3.0 with Rails 7+.
+      # See: https://github.com/jesseduffield/lazy_migrate/issues/66
+      #
+      rr "$( cat <<- RUBY
+				require 'bundler/inline'
+				gemfile {
+				  source 'https://rubygems.org'
+				  gem 'sane_patch'
+				  gem 'lazy_migrate'
+				}
+
+				SanePatch.patch('lazy_migrate', '0.3.0') do
+				  module LazyMigrate
+				    class Client
+				      class << self
+				        def run
+				          migrator_adapter = MigratorAdapterFactory.create_migrator_adapter
+
+				          loop do
+				            catch(:done) do
+				              on_done = -> { throw(:done) }
+
+				              database_name = if ActiveRecord::Base.respond_to?(:connection_db_config)
+				                # Rails 7
+				                ActiveRecord::Base.connection_db_config.database
+				              else
+				                # Rails <=6
+				                ActiveRecord::Base.connection_config[:database]
+				              end
+				              prompt.ok("\nDatabase: #{database_name}\n")
+
+				              select_migration_prompt(on_done: on_done, migrator_adapter: migrator_adapter)
+				            end
+				          end
+				        rescue TTY::Reader::InputInterrupt
+				          puts
+				        end
+				      end
+				    end
+
+				    class MigratorAdapter
+				      # from 0.3.0
+				      def dump_schema
+				        return if !ActiveRecord.dump_schema_after_migration
+
+				        # ripped from https://github.com/rails/rails/blob/5-1-stable/activerecord/lib/active_record/railties/databases.rake
+				        filename = ENV["SCHEMA"] || File.join(ActiveRecord::Tasks::DatabaseTasks.db_dir, "schema.rb")
+				        File.open(filename, "w:utf-8") do |file|
+				          ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, file)
+				        end
+				      end
+				    end
+				  end
+				end
+
+				LazyMigrate.run
+			RUBY
+			)"
     }
 
     function DB! {
