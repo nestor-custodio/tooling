@@ -184,7 +184,7 @@ class String
   end
 
   def to_datetime(*args, **kwargs, &block)
-    DateTime.parse(self, *args, **kwargs, &block)
+    Time.zone.parse(self, *args, **kwargs, &block)
   end
 
   def is
