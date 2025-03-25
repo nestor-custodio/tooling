@@ -65,7 +65,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 # ---
 
-function unmount() {
+function unmount {
 	umount "$mount_point"         && return 0
 	umount "$mount_point" --force && return 0
 

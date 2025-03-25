@@ -6,8 +6,8 @@ shopt -s lastpipe expand_aliases
 # NOTE FOR PURPOSES OF SPACING: BYOBU ADDS A SPACE *AFTER*
 #                               ANY OUTPUT WE GENERATE HERE.
 
-function unpiped() { echo -e "#[default]$( printf "$@" )#[default]" ;}
+function unpiped      { echo -e "#[default]$( printf "$@" )#[default]" ;}
 
-function left-piped()  { echo -e "#[default]❘$( printf "$@" )#[default]" ;}
-function right-piped() { echo -e "#[default]$( printf "$@" )|#[default]" ;}
-function double-piped() { echo -e "#[default]|$( printf "$@" )|#[default]" ;}
+function left-piped   { echo -e "#[default]❘$( printf "$@" )#[default]" ;}
+function right-piped  { echo -e "#[default]$( printf "$@" )|#[default]" ;}
+function double-piped { echo -e "#[default]|$( printf "$@" )|#[default]" ;}
