@@ -266,6 +266,7 @@ if defined? Rails
         end
         alias rnd any
         alias rand any
+        alias random any
 
         def cols(*metadata)
           output = columns.index_by(&:name)
