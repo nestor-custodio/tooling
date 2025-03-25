@@ -96,6 +96,11 @@ function mirror {
 }
 
 
+# Make it easier to peek into a data stream as it's piped from one tool to another.
+#
+function peek { tee /dev/tty ;}
+
+
 # ---
 
 
