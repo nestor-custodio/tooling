@@ -106,7 +106,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 # ---
 
-function run_caddy() {
+function run_caddy {
 	# This expects:
 	# - $binding
 	# - $pidfile
