@@ -63,10 +63,10 @@ source '/home/nestor/bin/std.lib'
 	}
 
 	function check-version {
-		vendor.version "$tool_name" | store-as local_version
+		vendor.version "$tool_name" 2> /dev/null | store-as local_version
 		gh:release-version "$( github-repo )" | normalized | store-as release_version
 
-		[ "$local_version" == "$release_version" ] || exit-out 2 "${local_version} ➜ ${release_version}"
+		[ "$local_version" == "$release_version" ] || exit-out 2 "${local_version:-(?)} ➜ ${release_version}"
 	}
 
 }
