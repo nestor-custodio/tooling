@@ -45,7 +45,7 @@
 +		export PATH="$GEM_HOME/bin:$PATH"
  	fi
 +
-+	ruby --help | has? 'mjit' && RUBYOPT="${RUBYOPT} --enable-jit"
++	ruby --help | has? -- '--jit' && RUBYOPT="${RUBYOPT} --jit"
  }
  
  function chruby()
