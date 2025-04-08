@@ -66,6 +66,6 @@ source '/home/nestor/bin/std.lib'
 
 
 if [ -n "$regex" ]
-	then grep  --quiet -x "$lookup_string"
-	else fgrep --quiet -x "$lookup_string"
+	then grep  --quiet -x -- "$lookup_string"
+	else fgrep --quiet -x -- "$lookup_string"
 fi 
