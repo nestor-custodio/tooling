@@ -12,6 +12,11 @@ shopt -s lastpipe
 
   # ruby
 
+    # Console sanity.
+    # (This gives us a way to add exceptions for things like Pry, etc, in "Gemfile"s.)
+    #
+    export IRB='1'
+
     # Executable management.
     #
     source "${HOME}/bin/vendor/chruby-source"
@@ -424,7 +429,7 @@ shopt -s lastpipe
 
   # multi-language constructs
 
-    function @ { bi && ni ;}
+    function @ { IRB='' bi && ni ;}
 
 
 # Platform helpers.
