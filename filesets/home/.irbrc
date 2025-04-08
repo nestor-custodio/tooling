@@ -259,6 +259,9 @@ if defined? Rails
 
 
   module ActiveRecord
+    def Base.real_columns = (column_names - Array.wrap(primary_key) - %w[created_at updated_at]).map(&:to_sym)
+
+
     module ModelSchema
       module ClassMethods
         def any
