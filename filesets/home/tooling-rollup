@@ -52,4 +52,4 @@ source '/home/nestor/bin/std.lib'
 
 cd "${HOME}/links"
 [ -n "$( git status -s )" ] || exit-out
-git add --update && git commit --no-verify --message="rollup: $( date --iso-8601 )" && git push
+git add --update && git commit --no-verify --message="rnd: $( date --iso-8601 )" && git push
