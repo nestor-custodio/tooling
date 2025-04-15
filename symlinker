@@ -3,12 +3,20 @@ shopt -s lastpipe
 
 # ---
 
-IFS="$( printf '\t' )"
-data_file="$( realpath "$0" ).json"
+data_file="$( realpath "$0" ).data"
 source_home="$( dirname "$( realpath "$0" )" )/filesets"
-jq_executable="$( find "$source_home" -name jq -print -quit )"
 
-"$jq_executable" -r 'to_entries | map([.key, .value])[] | @tsv' < "$data_file" | while read -r source_dir symlink_dir; do
+# shellcheck disable=SC2002
+cat "$data_file" | while read -r source_dir symlink_dir; do
+	# Skip empty/incomplete lines.
+	#
+	[ -z "$source_dir" ] && continue
+	[ -z "$symlink_dir" ] && continue
+
+	# Skip comment lines.
+	#
+	[ "${source_dir:0:1}" == '#' ] && continue
+
 
 	source_dir="${source_home}/${source_dir}"
 	symlink_dir="${symlink_dir/'~'/${HOME}}"
