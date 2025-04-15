@@ -1,0 +1,8 @@
+# Maps "fileset/" entries with where they should be symlinked from.
+
+home         ~
+byobu        ~/.byobu
+config       ~/.config
+local:share  ~/.local/share
+nodes        ~/.nodes
+ssh          ~/.ssh

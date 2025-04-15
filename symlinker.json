@@ -1,8 +1,0 @@
-{
-  "home"       : "~"             ,
-  "byobu"      : "~/.byobu"      ,
-  "config"     : "~/.config"     ,
-  "local:share": "~/.local/share",
-  "nodes"      : "~/.nodes"      ,
-  "ssh"        : "~/.ssh"
-}
