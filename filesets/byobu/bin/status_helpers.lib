@@ -9,5 +9,5 @@ shopt -s lastpipe expand_aliases
 function unpiped      { echo -e "#[default]$( printf "$@" )#[default]" ;}
 
 function left-piped   { echo -e "#[default]❘$( printf "$@" )#[default]" ;}
-function right-piped  { echo -e "#[default]$( printf "$@" )|#[default]" ;}
-function double-piped { echo -e "#[default]|$( printf "$@" )|#[default]" ;}
+function right-piped  { echo -e "#[default]$( printf "$@" )#[default]|" ;}
+function double-piped { echo -e "#[default]|$( printf "$@" )#[default]|" ;}
