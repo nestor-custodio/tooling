@@ -1,0 +1,92 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) ITEM_TO_MOVE DESTINATION_DIR
+
+		Move the specified ITEM_TO_MOVE into the given DESTINATION_DIR, then
+		drops a symlink to the item's new location in place of the original.
+
+		$( script-name ) file.txt other/place  =>  mv ./file.txt other/place/file.txt
+		$( name-blanks )                           ln -sT other/place/file.txt ./file.txt
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if item not usable,
+		  3  if destination not writable
+		  4  if destination already exists.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	item_to_move="$1" && shift
+	[ -n "$item_to_move" ] || error-out 1 'no ITEM_TO_MOVE given'
+
+	destination_dir="$1" && shift
+	[ -n "$destination_dir" ] || error-out 1 'no DESTINATION_DIR given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Normalized paths.
+#
+realpath --logical "$item_to_move"    | store-as item_to_move
+realpath --logical "$destination_dir" | store-as destination_dir
+
+
+# Derived paths.
+#
+dirname  "$item_to_move" | store-as item_location
+basename "$item_to_move" | store-as item_basename
+destination_item="${destination_dir}/${item_basename}"
+
+
+# Sanity checks.
+#
+[ -e "$item_to_move" ] || error-out 2 'ITEM_TO_MOVE not found'
+[ -e "$destination_dir" ] || error-out 2 'DESTINATION_DIR not found'
+[ -d "$destination_dir" ] || error-out 2 'DESTINATION_DIR not a dir'
+[ -w "$destination_dir" ] || error-out 3 'DESTINATION_DIR not writable'
+[ -e "$destination_item" ] && error-out 4 "cannot overwrite existing '${destination_item}'"
+
+
+realpath --relative-base="$item_location" "$destination_item" | store-as symlink_path
+
+mv "$item_to_move" "$destination_item"
+ln -sT "$symlink_path" "$item_to_move"
