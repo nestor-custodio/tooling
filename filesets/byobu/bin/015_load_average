@@ -70,6 +70,6 @@ seq 1 "$num_half_r" | while read -r i; do half_r+="$half"; done
 seq 1 "$num_null_r" | while read -r i; do null_r+="$null"; done
 
 
-left-piped " #[fg=green]%s%s%s#[fg=yellow]%s%s%s#[fg=red]%s%s%s" "$full_g" "$half_g" "$null_g" \
-                                                                 "$full_y" "$half_y" "$null_y" \
-                                                                 "$full_r" "$half_r" "$null_r"
+left-piped " \ueb05 #[fg=green]%s%s%s#[fg=yellow]%s%s%s#[fg=red]%s%s%s" "$full_g" "$half_g" "$null_g" \
+                                                                        "$full_y" "$half_y" "$null_y" \
+                                                                        "$full_r" "$half_r" "$null_r"

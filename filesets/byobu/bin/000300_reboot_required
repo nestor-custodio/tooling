@@ -6,4 +6,4 @@ source '/home/nestor/bin/std.lib'
 source "$( script-path )/status_helpers.lib"
 
 
-[ -e /var/run/reboot-required ] && right-piped "⚡ "
+[ -e /var/run/reboot-required ] && right-piped "#[fg=yellow]!! "

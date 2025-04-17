@@ -38,6 +38,6 @@ calc "ceil ( (${user} + ${fscache}) / ${total} * ${length} )" | store-as data_bl
 calc "floor( ${free}                / ${total} * ${length} )" | store-as null_blocks
 
 
-left-piped " %s%s%s" "$( seq "$base_blocks" | map printf "$base" 2>/dev/null )" \
-                     "$( seq "$data_blocks" | map printf "$data" 2>/dev/null )" \
-                     "$( seq "$null_blocks" | map printf "$null" 2>/dev/null )"
+left-piped " \uf487 %s%s%s" "$( seq "$base_blocks" | map printf "$base" 2>/dev/null )" \
+                            "$( seq "$data_blocks" | map printf "$data" 2>/dev/null )" \
+                            "$( seq "$null_blocks" | map printf "$null" 2>/dev/null )"

@@ -6,4 +6,4 @@ source '/home/nestor/bin/std.lib'
 source "$( script-path )/status_helpers.lib"
 
 
-unpiped "⏻  $( puptime )"
+unpiped "\u23fb $( puptime )"
