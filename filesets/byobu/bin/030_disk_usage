@@ -6,27 +6,38 @@ source '/home/nestor/bin/std.lib'
 source "$( script-path )/status_helpers.lib"
 
 
-df --type='ext4' --block-size='1' --output='used,size' --total | tail -n1 | store-as used total
+# Note we're producing string output where each character is one of:
+#
+base='#[fg=green]⠿'   # (a "base" block)
+data='#[fg=yellow]⠿'  # (a "data" block)
+null='#[fg=red]⠒'     # (a "null" block)
+#
+# ... with a bar of length:
+#
+length='20'
+#
+# All output here is driven by the above values. Customizing the bar length
+# and the different characters and their formatting should take nothing else.
 
-fscache_size=0
+
+df --type='ext4' --block-size='1' --output='size,avail' --total | tail -n1 | store-as total free
+
+user=0
+user_root='/home'
+[ -d "$user_root" ] && sudo du --bytes --summarize --one-file-system "$user_root" | cut -f1 | store-as user
+
+fscache=0
 fscache_root='/var/cache/fscache'
-[ -d "$fscache_root" ] && sudo du --bytes --summarize "$fscache_root" | cut -f1 | store-as fscache_size
+[ -d "$fscache_root" ] && sudo du --bytes --summarize --one-file-system "$fscache_root" | cut -f1 | store-as fscache
 
-numfmt --to='iec' --format='%0.0f' "$total" | store-as display_total
-calc "floor((${used} - ${fscache_size}) / ${total} * 10)" | store-as tenths_used
+calc "${total} - (${user} + ${fscache} + ${free})" | store-as system
 
 
-case "$tenths_used" in
-  0) left-piped " #[fg=green ]𝍖 #[default] / %s" "$display_total" ;;
-  1) left-piped " #[fg=green ]𝍕 #[default] / %s" "$display_total" ;;
-  2) left-piped " #[fg=green ]𝍔 #[default] / %s" "$display_total" ;;
-  3) left-piped " #[fg=green ]𝍑 #[default] / %s" "$display_total" ;;
-  4) left-piped " #[fg=green ]𝍎 #[default] / %s" "$display_total" ;;
-  5) left-piped " #[fg=yellow]𝍅 #[default] / %s" "$display_total" ;;
-  6) left-piped " #[fg=yellow]𝌼 #[default] / %s" "$display_total" ;;
-  7) left-piped " #[fg=yellow]𝌡 #[default] / %s" "$display_total" ;;
-  8) left-piped " #[fg=red   ]☰ #[default] / %s" "$display_total" ;;
-  *) left-piped " #[fg=red   ]▇ #[default] / %s" "$display_total" ;;
-esac
+calc "ceil ( ${system}              / ${total} * ${length} )" | store-as base_blocks
+calc "ceil ( (${user} + ${fscache}) / ${total} * ${length} )" | store-as data_blocks
+calc "floor( ${free}                / ${total} * ${length} )" | store-as null_blocks
 
-# left-piped " %i%%%% of %s" "$percent_used" "$total_space"
+
+left-piped " %s%s%s" "$( seq "$base_blocks" | map printf "$base" 2>/dev/null )" \
+                     "$( seq "$data_blocks" | map printf "$data" 2>/dev/null )" \
+                     "$( seq "$null_blocks" | map printf "$null" 2>/dev/null )"
