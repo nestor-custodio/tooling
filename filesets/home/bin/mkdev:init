@@ -90,6 +90,15 @@ startup_log='/var/log/startup'
 			# Prevent tmux server from being killed off, even on full user logout ...
 			sed -ri -e 's|^#KillUserProcesses=.*$|KillUserProcesses=no|' /etc/systemd/logind.conf
 
+			# Schedule regular pruning of the journal log ...
+			crontab -l 2>/dev/null | awk '{print} END{ print "@daily journalctl --rotate --vacuum-time=2d" }' | crontab -
+
+			# Schedule regular pruning of the `snapd` cache ...
+			crontab -l 2>/dev/null | awk '{print} END{ print "@daily rm -f /var/lib/snapd/cache/*" }' | crontab -
+
+			# Retain the minimum possible number of old snap builds ...
+			snap set system refresh.retain=2
+
 
 		# Install global packages.
 		report 'installing global packages'
