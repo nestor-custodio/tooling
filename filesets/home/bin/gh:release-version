@@ -57,7 +57,14 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-gh --repo="$repo_id" release view --json='tagName' 2> /dev/null | json .tagName | store-as version_number
-[ -z "$version_number" ] && curl --silent "https://api.github.com/repos/${repo_id}/tags" | json '.[0].name' | store-as version_number
+# Get tag name for latest release.
+#
+gh --repo="$repo_id" release view --json='tagName' --jq='.tagName' 2> /dev/null | store-as version_number
+
+# Fall back to latest named tag in the repo.
+#
+[ -n "$version_number" ] || curl --silent --fail "https://api.github.com/repos/${repo_id}/tags" \
+                            | sed -rn -e 's#\s*"name": "([^"]*)",?#\1# p' | head -n1            \
+                            | store-as version_number
 
 sed -r -e 's|^v||' <<< "$version_number"
