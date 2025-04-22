@@ -142,10 +142,10 @@ source '/home/nestor/bin/std.lib'
 			(chruby)
 				tempname | store-as extract_dir
 				mkdir -p "$extract_dir"
-				eget --quiet "$( github-repo )" --source --file='chruby.*' --all --to="$extract_dir"
+				eget --quiet "$( github-repo )" --source --file='chruby' --all --to="$extract_dir"
 
-				patch "${extract_dir}/chruby.sh" "${HOME}/bin/vendor/chruby-source:patch"      --output="${HOME}/bin/vendor/chruby-source"
-				patch "${extract_dir}/auto.sh"   "${HOME}/bin/vendor/chruby-source.auto:patch" --output="${HOME}/bin/vendor/chruby-source.auto"
+				patch --quiet "${extract_dir}/chruby/chruby.sh" "${HOME}/bin/vendor/chruby-source:patch"      --output="${HOME}/bin/vendor/chruby-source"
+				patch --quiet "${extract_dir}/chruby/auto.sh"   "${HOME}/bin/vendor/chruby-source.auto:patch" --output="${HOME}/bin/vendor/chruby-source.auto"
 				chmod 644 "${HOME}/bin/vendor/chruby-source"*
 
 				rm -rf "$extract_dir"

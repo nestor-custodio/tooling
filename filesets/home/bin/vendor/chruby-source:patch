@@ -1,51 +1,55 @@
---- chruby-source.original	2024-07-31 18:18:54.986113896 -0500
-+++ chruby-source	2024-07-31 18:19:29.637397915 -0500
-@@ -14,18 +14,16 @@
+--- chruby-source.old	2025-04-22 11:52:19.744291970 -0500
++++ chruby-source.new	2025-04-22 11:59:58.495175539 -0500
+@@ -11,14 +11,12 @@
+ 	[[ -z "$RUBY_ROOT" ]] && return
  
- 	if (( $UID != 0 )); then
+ 	PATH=":$PATH:"; PATH="${PATH//:$RUBY_ROOT\/bin:/:}"
+-	[[ -n "$GEM_ROOT" ]] && PATH="${PATH//:$GEM_ROOT\/bin:/:}"
+ 
+ 	if (( UID != 0 )); then
  		[[ -n "$GEM_HOME" ]] && PATH="${PATH//:$GEM_HOME\/bin:/:}"
--		[[ -n "$GEM_ROOT" ]] && PATH="${PATH//:$GEM_ROOT\/bin:/:}"
  
  		GEM_PATH=":$GEM_PATH:"
  		[[ -n "$GEM_HOME" ]] && GEM_PATH="${GEM_PATH//:$GEM_HOME:/:}"
 -		[[ -n "$GEM_ROOT" ]] && GEM_PATH="${GEM_PATH//:$GEM_ROOT:/:}"
  		GEM_PATH="${GEM_PATH#:}"; GEM_PATH="${GEM_PATH%:}"
--		unset GEM_ROOT GEM_HOME
-+		unset GEM_HOME
- 		[[ -z "$GEM_PATH" ]] && unset GEM_PATH
+ 
+ 		unset GEM_HOME
+@@ -26,7 +24,7 @@
  	fi
  
  	PATH="${PATH#:}"; PATH="${PATH%:}"
--	unset RUBY_ROOT RUBY_ENGINE RUBY_VERSION RUBYOPT
+-	unset RUBY_ROOT RUBY_ENGINE RUBY_VERSION RUBYOPT GEM_ROOT
 +	unset RUBY_ROOT RUBY_ENGINE RUBY_VERSION RUBYOPT RUBYLIB
  	hash -r
  }
  
-@@ -40,20 +38,19 @@
+@@ -41,22 +39,20 @@
  
  	export RUBY_ROOT="$1"
  	export RUBYOPT="$2"
 +	export RUBYLIB="${HOME}/bin"
  	export PATH="$RUBY_ROOT/bin:$PATH"
  
--	eval "$("$RUBY_ROOT/bin/ruby" - <<EOF
--puts "export RUBY_ENGINE=#{defined?(RUBY_ENGINE) ? RUBY_ENGINE : 'ruby'};"
+-	eval "$(RUBYGEMS_GEMDEPS="" "$RUBY_ROOT/bin/ruby" - <<EOF
+-puts "export RUBY_ENGINE=#{Object.const_defined?(:RUBY_ENGINE) ? RUBY_ENGINE : 'ruby'};"
 -puts "export RUBY_VERSION=#{RUBY_VERSION};"
 -begin; require 'rubygems'; puts "export GEM_ROOT=#{Gem.default_dir.inspect};"; rescue LoadError; end
 -EOF
 -)"
+-	export PATH="${GEM_ROOT:+$GEM_ROOT/bin:}$PATH"
 +	export RUBY_ENGINE="$( "${RUBY_ROOT}/bin/ruby" --version | cut --delimiter=' ' --fields='1' )"
 +	export RUBY_VERSION="$( "${RUBY_ROOT}/bin/ruby" --version | cut --delimiter=' ' --fields='2' | sed -r -e 's#[^0-9.].*$##' )"
  
- 	if (( $UID != 0 )); then
+ 	if (( UID != 0 )); then
  		export GEM_HOME="$HOME/.gem/$RUBY_ENGINE/$RUBY_VERSION"
 -		export GEM_PATH="$GEM_HOME${GEM_ROOT:+:$GEM_ROOT}${GEM_PATH:+:$GEM_PATH}"
--		export PATH="$GEM_HOME/bin${GEM_ROOT:+:$GEM_ROOT/bin}:$PATH"
 +		export GEM_PATH="$GEM_HOME${GEM_PATH:+:$GEM_PATH}"
-+		export PATH="$GEM_HOME/bin:$PATH"
+ 		export PATH="$GEM_HOME/bin:$PATH"
  	fi
+ 
++	#ruby --help | has? -- '--jit' && RUBYOPT="${RUBYOPT} --jit"
 +
-+	ruby --help | has? -- '--jit' && RUBYOPT="${RUBYOPT} --jit"
+ 	hash -r
  }
  
- function chruby()
