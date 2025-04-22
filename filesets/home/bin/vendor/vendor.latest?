@@ -147,13 +147,13 @@ case "$tool_name" in
 		# This tool's repo includes releases for multiple clients,
 		# so we can't just blindly look for the one tagged "latest".
 
-		vendor.version bw | store-as local_version
+		vendor.version bw 2> /dev/null | store-as local_version
 
 		gh --repo="$( github-repo )" release list                 \
 		| grep --only-matching '(?<=cli-v)[[:print:]]+'           \
 		| sort --version-sort | tail -n1 | store-as release_version
 
-		[ "$local_version" == "$release_version" ] || exit-out 2 "${local_version} ➜ ${release_version}"
+		[ "$local_version" == "$release_version" ] || exit-out 2 "${local_version:-(?)} ➜ ${release_version}"
 		;;
 
 	(crypt)

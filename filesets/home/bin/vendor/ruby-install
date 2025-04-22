@@ -5,5 +5,22 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-"$( script-path )/ruby-install-runtime/bin/ruby-install" "$@" \
-&& rm -rf "${HOME}/src"
+# Verify runtime is available.
+#
+executable="$( script-path )/ruby-install-runtime/bin/ruby-install"
+[ -e "$executable" ] || exit-out 1
+
+
+# Pass the given command through to the runtime.
+#
+# Note `ruby-install` calls will sometimes leave behind a "src" dir.
+# We're cleaning up after the runtime by deleting it *if it wasn't already there*.
+#
+src_dir="${HOME}/src"
+[ -e "$src_dir" ] && src_already_present='1'
+if "$( script-path )/ruby-install-runtime/bin/ruby-install" "$@"; then
+  [ -z "$src_already_present" ] && [ -e "$src_dir" ] && rm -rf "$src_dir"
+  exit 0
+else
+  exit "$?"
+fi

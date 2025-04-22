@@ -89,7 +89,7 @@ source '/home/nestor/bin/std.lib'
 		# ---
 
 
-		local executable="${HOME}/bin/vendor/${tool_name}"
+		local executable="$( script-path )/${tool_name}"
 
 		command -v "$executable" &> /dev/null || error-out 2 'binary not found'
 		"$executable" "$cmd" 2>&1 | grep -P --only-matching "$puller" | normalized
@@ -160,7 +160,6 @@ case "$tool_name" in
 	(portal           ) get-version --cmd='version'  --puller='(?<=v).*'                     ;;
 	(q                ) get-version                  --puller='(?<=q version ).*'            ;;
 	(rg               ) get-version                  --puller='(?<=ripgrep ).*?(?= )'        ;;
-	(ruby-install     ) get-version                  --puller='(?<=ruby-install: ).*'        ;;
 	(shellcheck       ) get-version                  --puller='(?<=version: ).*'             ;;
 	(static-web-server) get-version                  --puller='(?<=Version: ).*'             ;;
 	(unison           ) get-version --cmd='-version' --puller='(?<=unison version ).*?(?= )' ;;
@@ -178,14 +177,19 @@ case "$tool_name" in
 		;;
 
 	(chruby)
-	  source "chruby-source" &> /dev/null
-		echo "${CHRUBY_VERSION:-0.0.0}"
+		source "$( script-path )/chruby-source" &> /dev/null || error-out 2 'binary not found'
+		echo "$CHRUBY_VERSION"
 		;;
 
 	(osc52)
 		# This tool provides no versioning info. 🤷.
 		# Last update was back in 2023-05-11, however.
 		echo '0'
+		;;
+
+	(ruby-install)
+		ruby-install &> /dev/null || error-out 2 'binary not found'
+		get-version --puller='(?<=ruby-install: ).*'
 		;;
 
 
