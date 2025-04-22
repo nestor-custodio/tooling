@@ -71,7 +71,7 @@ source '/home/nestor/bin/std.lib'
 
 	function os-releases {
 		local filter='(licenses[] ~ "/'"${image_project}"'/") AND (family !~ "minimal|arm64")'
-		gcloud compute images list --filter="$filter" --format='value(family)' | sort
+		gcloud compute images list --filter="$filter" --format='value(family)' | grep '^ubuntu-[0-9]' | sort
 	}
 
 }
