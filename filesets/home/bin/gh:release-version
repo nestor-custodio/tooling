@@ -57,6 +57,14 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+# Ensure a `gh` login.
+#
+# `gh` API request throttling can prevent us from asking
+# for "latest release version" data if we're not logged in.
+#
+{ gh auth status --active || project attributes/gh_token | gh auth login --with-token ;} &> /dev/null
+
+
 # Get tag name for latest release.
 #
 gh --repo="$repo_id" release view --json='tagName' --jq='.tagName' 2> /dev/null | store-as version_number
