@@ -156,22 +156,10 @@ case "$tool_name" in
 		[ "$local_version" == "$release_version" ] || exit-out 2 "${local_version:-(?)} ➜ ${release_version}"
 		;;
 
-	(crypt)
-		# This tool provides no versioning info. 🤷.
-		# Last update was back in 2020-11-24, however.
-		noop
-		;;
-
-	(osc52)
-		# This tool provides no versioning info. 🤷.
-		# Last update was back in 2023-05-11, however.
-		noop
-		;;
-
-	(marksman)
-		# The Github release tags for this tool do not match
-		# the release version numbers. 🤷.
-		noop
+	(crypt   ) ;&  # These tools provide no versioning info,
+	(osc52   ) ;&  # or their Github release tags just do not match
+	(marksman)     # the reported version numbers in any parseable way.
+		command -V "$tool_name" &> /dev/null || exit-out 2 "(?) ➜ (release)"
 		;;
 
 
