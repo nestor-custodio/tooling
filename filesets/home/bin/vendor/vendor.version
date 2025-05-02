@@ -160,6 +160,7 @@ case "$tool_name" in
 	(portal           ) get-version --cmd='version'  --puller='(?<=v).*'                     ;;
 	(q                ) get-version                  --puller='(?<=q version ).*'            ;;
 	(rg               ) get-version                  --puller='(?<=ripgrep ).*?(?= )'        ;;
+	(ruff             ) get-version                  --puller='(?<=ruff ).*'                 ;;
 	(shellcheck       ) get-version                  --puller='(?<=version: ).*'             ;;
 	(static-web-server) get-version                  --puller='(?<=Version: ).*'             ;;
 	(unison           ) get-version --cmd='-version' --puller='(?<=unison version ).*?(?= )' ;;

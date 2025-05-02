@@ -73,3 +73,9 @@ if command -V npm &> /dev/null; then
 	                                  @vue/language-server         \
 	                                  yaml-language-server
 fi
+
+# Install Python-based language servers.
+#
+if command -V python3 &> /dev/null; then
+  command -V pylsp &> /dev/null || sudo apt-get -qqy install python3-pylsp
+fi

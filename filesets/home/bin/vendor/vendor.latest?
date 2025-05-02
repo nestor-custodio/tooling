@@ -133,6 +133,7 @@ case "$tool_name" in
 	(q                )               ;&
 	(rg               )               ;&
 	(ruby-install     )               ;&
+	(ruff             )               ;&
 	(shellcheck       )               ;&
 	(static-web-server)               ;&
 	(unison           )               ;&

@@ -108,6 +108,7 @@ source '/home/nestor/bin/std.lib'
 			(n                ) update-tooling --source                                      ;;
 			(q                ) update-tooling                                               ;;
 			(rg               ) update-tooling                                               ;;
+			(ruff             ) update-tooling --asset='gnu'                                 ;;
 			(shellcheck       ) update-tooling                                               ;;
 			(static-web-server) update-tooling --asset='gnu'                                 ;;
 			(unison           ) update-tooling --asset='static'                              ;;
