@@ -8,7 +8,7 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name )
 
-		Ensures 'pipx' is available (via 'pypy3').
+		Ensures 'pipx' is available.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -17,8 +17,7 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid option,
-		  2  if unable to install.
+		  1  if invalid option.
 	EOF
 
 }
@@ -53,18 +52,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-'pipx?'
-case "$?" in
-	(0) exit-out 0 ;;
-
-	(2|3)
-		pip!
-		# Note this falls through to (4) below.
-		;&
-
-	(4)
-		pypy3 -m pip install --user pipx
-		;;
-
-	*) exit-out 2 ;;
-esac
+command -V pipx &> /dev/null || sudo apt-get -qqy install pipx
