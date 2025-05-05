@@ -93,7 +93,6 @@ source '/home/nestor/bin/std.lib'
 			(btop             ) update-tooling                                               ;;
 			(bw               ) update-tooling --asset='bw-linux' --asset='.zip' --tag='cli' ;;
 			(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig'             ;;
-			(circleci         ) update-tooling                                               ;;
 			(csview           ) update-tooling --asset='gnu'                                 ;;
 			(delta            ) update-tooling --asset='gnu'                                 ;;
 			(duckdb           ) update-tooling --asset='cli' --asset='.zip'                  ;;

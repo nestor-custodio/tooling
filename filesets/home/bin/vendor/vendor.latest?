@@ -113,7 +113,6 @@ case "$tool_name" in
 	(btop             )               ;&
 	(caddy            )               ;&
 	(chruby           )               ;&
-	(circleci         )               ;&
 	(csview           )               ;&
 	(delta            )               ;&
 	(duckdb           )               ;&

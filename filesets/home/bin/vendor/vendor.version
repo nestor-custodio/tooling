@@ -140,7 +140,6 @@ case "$tool_name" in
 	(btop             ) get-version                  --puller='(?<=btop version: ).*'        ;;
 	(bw               ) get-version                                                          ;;
 	(caddy            ) get-version                  --puller='(?<=v).*?(?= )'               ;;
-	(circleci         ) get-version --cmd='version'  --puller='.*?(?=\+)'                    ;;
 	(csview           ) get-version                  --puller='(?<=csview ).*'               ;;
 	(delta            ) get-version                  --puller='(?<=delta ).*'                ;;
 	(duckdb           ) get-version                  --puller='(?<=v).*(?= )'                ;;
