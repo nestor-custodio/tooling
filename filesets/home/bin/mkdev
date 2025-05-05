@@ -23,6 +23,9 @@ source '/home/nestor/bin/std.lib'
 		  --os-release              Ubuntu release image to build atop.
 		  --list-os-releases        List available images for the "Ubuntu OS Cloud" family.
 
+		  --standalone | --no-sync  Creates a "stand-alone" VM, without mounting the "sync"
+		                            shares, and instead cloning the repo into "~/links".
+
 		  --help                    Show this help text.
 
 
@@ -102,6 +105,7 @@ source '/home/nestor/bin/std.lib'
 	machine_type_family='n2d'
 	machine_type_suffix=''
 	os_release='latest'
+	startup_script_file="$( script-real ):init"
 
 	# ---
 	# ---
@@ -122,6 +126,7 @@ source '/home/nestor/bin/std.lib'
 	LONG_OPTS="${LONG_OPTS},os-release:,os:,release:"
 	LONG_OPTS="${LONG_OPTS},lts,latest"
 	LONG_OPTS="${LONG_OPTS},list-os-releases,list-os-images,list-releases,list-images,releases,images"
+	LONG_OPTS="${LONG_OPTS},standalone,stand-alone,nosync,no-sync"
 
 	set-params
 	while true; do
@@ -197,6 +202,10 @@ source '/home/nestor/bin/std.lib'
 				exit-out
 				;;
 
+			(--stand-alone|--standalone|--no-sync|--nosync)
+			  startup_script_file="$( script-real ):standalone-init"
+			  ;;
+
 		esac
 	done
 
@@ -224,6 +233,11 @@ source '/home/nestor/bin/std.lib'
 # Sanity check: --dev and --repo are mutually exclusive.
 #
 [ -n "$dev_dir" ] && [ -n "$git_repo" ] && error-out 1 'cannot specify both --dev and --repo'
+
+
+# Sanity check: stand-alone VMs can't clone repos as "git@github.com".
+#
+[ -n "$git_repo" ] && git_repo="${git_repo/#'git@github.com:'/'https://github.com/'}"
 
 
 # ---
@@ -262,11 +276,6 @@ case "$os_release" in
 		;;
 esac
 [ -n "$image_family" ] || error-out 1 'requested os release not found'
-
-
-# Startup script.
-#
-startup_script_file="$( script-real ):init"
 
 
 # Create the Instance VM.
