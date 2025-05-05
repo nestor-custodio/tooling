@@ -92,7 +92,7 @@ source '/home/nestor/bin/std.lib'
 		local executable="$( script-path )/${tool_name}"
 
 		command -v "$executable" &> /dev/null || error-out 2 'binary not found'
-		"$executable" "$cmd" 2>&1 | grep -P --only-matching "$puller" | normalized
+		"$executable" "$cmd" 2>&1 | ansifilter | grep -P --only-matching "$puller" | normalized
 
 	}
 
