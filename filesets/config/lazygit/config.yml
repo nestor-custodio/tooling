@@ -11,6 +11,17 @@ gui:
         'staging': 'green'
         'nlc': 'yellow'
         '*': 'white'
+    branchColorPatterns: {}
+    customIcons:
+        filenames: {}
+        extensions: {}
+
+    scrollHeight: 2
+    scrollPastBottom: true
+    scrollOffMargin: 2
+    scrollOffBehavior: 'margin'
+    tabWidth: 4
+    mouseEvents: true
 
     skipDiscardChangeWarning: false
     skipStashWarning: true
@@ -19,8 +30,13 @@ gui:
 
     sidePanelWidth: 0.3333
     expandFocusedSidePanel: true
+    expandedSidePanelWeight: 2
     mainPanelSplitMode: 'flexible'
     enlargedSideViewLocation: 'top'
+    wrapLinesInStagingView: false
+    language: 'auto'
+    timeFormat: '2006-01-02'
+    shortTimeFormat: '15:04'
 
     theme:
         activeBorderColor:
@@ -34,20 +50,47 @@ gui:
 
     showListFooter: false
     showFileTree: true
+    showNumstatInFilesView: false
     showRandomTip: false
     showCommandLog: false
     showBottomLine: false
     showPanelJumps: false
-
+    # showIcons: false  <-- deprecated in favor of `showFileIcons`
     nerdFontsVersion: '3'
+    showFileIcons: true
+    commitAuthorShortLength: 2
+    commitAuthorLongLength: 17
     commitHashLength: 8
     showBranchCommitHash: false
+    showDivergenceFromBaseBranch: 'arrowAndNumber'
+    commandLogSize: 8
+    splitDiff: 'auto'
+    screenMode: 'normal'
+    border: 'rounded'
+    animateExplosion: true
+    portraitMode: 'auto'
     filterMode: 'fuzzy'
 
     spinner:
-        frames: ['⠏', '⠏', '⠛', '⠛', '⠹', '⠹', '⠼', '⠼', '⠶', '⠶', '⠧', '⠧']
+        frames:
+            - '⠏'
+            - '⠏'
+            - '⠛'
+            - '⠛'
+            - '⠹'
+            - '⠹'
+            - '⠼'
+            - '⠼'
+            - '⠶'
+            - '⠶'
+            - '⠧'
+            - '⠧'
+        rate: 50
 
     statusPanelView: 'allBranchesLog'
+    switchToFilesAfterStashPop: true
+    switchToFilesAfterStashApply: true
+    switchTabsWithPanelJumpKeys: true
 
 
 os:
@@ -60,18 +103,56 @@ git:
 
     paging:
         colorArg: 'always'
+        pager: ''
         useConfig: true
+        externalDiffCommand: ''
 
+    commit:
+        signOff: false
+        autoWrapCommitMessage: true
+        autoWrapWidth: 72
+        
     merging:
         manualCommit: false
         args: ''
+        squashMergeMessage: 'squash: {{selectedRef}} -> {{currentBranch}}'
 
+    mainBranches:
+        - 'main'
+        - 'master'
+
+    skipHookPrefix: 'WIP'
+    autoFetch: true
+    autoRefresh: true
+    autoForwardBranches: 'allBranches'
+    fetchAll: true
+    autoStageResolvedConflicts: true
     branchLogCmd: 'git log --color=always --decorate --graph {{branchName}} --'
-    allBranchesLogCmd: 'git log --color=always --decorate --graph --all --oneline --'
+    # allBranchesLogCmd: '...'  <-- deprecated in favor of `allBranchesLogCmds`
+    allBranchesLogCmds: ['git log --color=always --decorate --graph --all --oneline --']
+    overrideGpg: false
+    disableForcePushing: false
+    commitPrefix: []
+    commitPrefixes: {}
+    branchPrefix: ''
+    parseEmoji: false
+
+    log:
+        order: 'topo-order'
+        showGraph: 'always'
+        showWholeGraph: false
+
+    truncateCopiedCommitHashesTo: 12
 
 
 update:
     method: 'never'
+    days: 14
+
+
+refresher:
+    refreshInterval: 10
+    fetchInterval: 60
 
 
 confirmOnQuit: false
@@ -79,6 +160,7 @@ quitOnTopLevelReturn: false
 disableStartupPopups: true
 customCommands: []
 services: {}
+notARepository: 'quit'
 promptToReturnFromSubprocess: false
 
 
@@ -123,6 +205,8 @@ keybinding:
         scrollRight: 'l'
         gotoTop: '['
         gotoBottom: ']'
+        gotoTop-alt: '<disabled>'
+        gotoBottom-alt: '<disabled>'
         toggleRangeSelect: '.'
         rangeSelectDown: '<disabled>'
         rangeSelectUp: '<disabled>'
@@ -132,7 +216,13 @@ keybinding:
         nextBlock-alt: '<disabled>'
         nextBlock-alt2: '<disabled>'
         prevBlock-alt2: '<disabled>'
-        jumpToBlock: ['1', '2', '3', '4', '5']
+        jumpToBlock:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+            - '5'
+        focusMainView: '6'
         nextMatch: 'n'
         prevMatch: 'N'
         startSearch: '/'
@@ -174,6 +264,8 @@ keybinding:
         toggleWhitespaceInDiffView: '<disabled>'
         increaseContextInDiffView: '}'
         decreaseContextInDiffView: '{'
+        increaseRenameSimilarityThreshold: '<disabled>'
+        decreaseRenameSimilarityThreshold: '<disabled>'
         openDiffTool: '<disabled>'
 
     status:
@@ -190,7 +282,7 @@ keybinding:
         confirmDiscard: '<disabled>'
         ignoreFile: 'x'
         refreshFiles: '<disabled>'
-        stashAllChanges: '<disabled>'
+        stashAllChanges: 'S'
         viewStashOptions: 's'
         toggleStagedAll: '*'
         viewResetOptions: 'r'
@@ -199,6 +291,8 @@ keybinding:
         openMergeTool: '<disabled>'
         openStatusFilter: 'f'
         copyFileInfoToClipboard: '<disabled>'
+        collapseAll: '-'
+        expandAll: '+'
 
     branches:
         createPullRequest: '<disabled>'
@@ -209,6 +303,7 @@ keybinding:
         rebaseBranch: 'R'
         renameBranch: 'r'
         mergeIntoCurrentBranch: '<disabled>'
+        moveCommitsToNewBranch: '<disabled>'
         viewGitFlowOptions: '<disabled>'
         fastForward: 'f'
         createTag: 't'
@@ -229,22 +324,23 @@ keybinding:
         createFixupCommit: '<disabled>'
         squashAboveCommits: '<disabled>'
         moveDownCommit: '<c-k>'
-        moveUpCommit: '<tab>' # Really a mapping to '<c-i>'.
+        moveUpCommit: '<tab>'  # <-- really a mapping to '<c-i>'
         amendToCommit: 'a'
         resetCommitAuthor: '<disabled>'
         pickCommit: 'p'
-        revertCommit: 'b'
+        revertCommit: 'x'
         cherryPickCopy: 'c'
         pasteCommits: 'v'
-        markCommitAsBaseForRebase: '<disabled>'
+        markCommitAsBaseForRebase: 'b'
         tagCommit: 't'
         checkoutCommit: '<enter>'
         resetCherryPick: '<esc>'
         copyCommitAttributeToClipboard: '<disabled>'
-        openLogMenu: 'g'
+        openLogMenu: '<disabled>'
         openInBrowser: '<disabled>'
         viewBisectOptions: '<disabled>'
-        startInteractiveRebase: '<disabled>'
+        startInteractiveRebase: 'i'
+        selectCommitsOfCurrentBranch: '*'
 
     amendAttribute:
         resetAuthor: '<disabled>'
