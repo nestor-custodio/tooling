@@ -1,22 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
 
-notARepository: 'skip'
-disableStartupPopups: true
-
-services: {}
-customCommands: []
-promptToReturnFromSubprocess: false
-
-quitOnTopLevelReturn: false
-confirmOnQuit: false
-
-update:
-    method: 'never'
-
-
-# ---
-
-
 gui:
 
     authorColors:
@@ -39,6 +22,13 @@ gui:
     mainPanelSplitMode: 'flexible'
     enlargedSideViewLocation: 'top'
 
+    theme:
+        activeBorderColor:
+            - 'red'
+            - 'bold'
+        optionsTextColor:
+            - 'cyan'
+
     commitLength:
         show: true
 
@@ -53,17 +43,11 @@ gui:
     commitHashLength: 8
     showBranchCommitHash: false
     filterMode: 'fuzzy'
-    statusPanelView: 'allBranchesLog'
 
     spinner:
         frames: ['⠏', '⠏', '⠛', '⠛', '⠹', '⠹', '⠼', '⠼', '⠶', '⠶', '⠧', '⠧']
 
-    theme:
-        activeBorderColor:
-            - 'red'
-            - 'bold'
-        optionsTextColor:
-            - 'cyan'
+    statusPanelView: 'allBranchesLog'
 
 
 os:
@@ -75,8 +59,8 @@ os:
 git:
 
     paging:
-        useConfig: true
         colorArg: 'always'
+        useConfig: true
 
     merging:
         manualCommit: false
@@ -84,6 +68,18 @@ git:
 
     branchLogCmd: 'git log --color=always --decorate --graph {{branchName}} --'
     allBranchesLogCmd: 'git log --color=always --decorate --graph --all --oneline --'
+
+
+update:
+    method: 'never'
+
+
+confirmOnQuit: false
+quitOnTopLevelReturn: false
+disableStartupPopups: true
+customCommands: []
+services: {}
+promptToReturnFromSubprocess: false
 
 
 # ---
