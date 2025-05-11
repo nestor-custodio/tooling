@@ -176,7 +176,7 @@ function vm-zone { echo "$vm_zone" ;}
 # no need to clean up DNS entries for the existing VM when
 # we're about to create a new VM that'll set its DNS on init.
 #
-ssh sync 'sudo service nfs stop ; sync' &> /dev/null
+ssh sync 'sudo service nfs-kernel-server stop ; sync' &> /dev/null
 yes | gcloud compute instances delete "$instance_name" --quiet &> /dev/null
 
 
