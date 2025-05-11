@@ -106,6 +106,7 @@ source '/home/nestor/bin/std.lib'
 			(marksman         ) update-tooling                                               ;;
 			(n                ) update-tooling --source                                      ;;
 			(q                ) update-tooling                                               ;;
+			(rclone           ) update-tooling --asset='zip'                                 ;;
 			(rg               ) update-tooling                                               ;;
 			(ruff             ) update-tooling --asset='gnu'                                 ;;
 			(shellcheck       ) update-tooling                                               ;;

@@ -158,6 +158,7 @@ case "$tool_name" in
 	(n                ) get-version                  --puller='(?<=v).*'                     ;;
 	(portal           ) get-version --cmd='version'  --puller='(?<=v).*'                     ;;
 	(q                ) get-version                  --puller='(?<=q version ).*'            ;;
+	(rclone           ) get-version --cmd='version'  --puller='(?<=rclone v).*'              ;;
 	(rg               ) get-version                  --puller='(?<=ripgrep ).*?(?= )'        ;;
 	(ruff             ) get-version                  --puller='(?<=ruff ).*'                 ;;
 	(shellcheck       ) get-version                  --puller='(?<=version: ).*'             ;;

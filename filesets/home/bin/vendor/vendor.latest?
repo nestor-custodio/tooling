@@ -130,6 +130,7 @@ case "$tool_name" in
 	(n                )               ;&
 	(portal           )               ;&
 	(q                )               ;&
+	(rclone           )               ;&
 	(rg               )               ;&
 	(ruby-install     )               ;&
 	(ruff             )               ;&
