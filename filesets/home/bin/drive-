@@ -56,7 +56,7 @@ drive_mount="${HOME}/drive"
 
 if 'drive?'; then
 	sync "$drive_mount"
-	umount "$drive_mount" || exit_code='2'
+	fusermount -u "$drive_mount" || exit_code='2'
 fi
 
 [ -d "$drive_mount" ] && rmdir "$drive_mount" &> /dev/null
