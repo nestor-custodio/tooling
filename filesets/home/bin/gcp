@@ -253,10 +253,6 @@ source '/home/nestor/bin/std.lib'
 
 			# Run sanity checks.
 
-				# Check for current-instance request.
-				#
-				is-localhost "$old_instance_name" && error-out 2 'cannot rename localhost'
-
 				# Check that instance in question is currently *stopped*.
 				#
 				instance-is-stopped "$old_instance_name" || error-out 2 'cannot rename a running instance'
@@ -284,10 +280,6 @@ source '/home/nestor/bin/std.lib'
 				# This is a noop if the requested machine type is already set.
 				#
 				[ "$machine_type" == "$( instance machine-type --short )" ] && exit 0
-
-				# Check for current-instance request.
-				#
-				is-localhost "$instance_name" && error-out 2 'cannot set scaling for localhost'
 
 				# Check that instance in question is currently *stopped*.
 				#
