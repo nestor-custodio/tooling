@@ -5,9 +5,8 @@ source '/home/nestor/bin/std.lib'
 
 # Due to the Sync stores being temporarily unavailable,
 # it's important that this runs from a local temp location.
-# Ideally, this should happen before any parameter processing.
 #
-# Note this is an issue with `mksync` only and not `mkdev`/`mkvm`.
+# Note this is an issue with `mksync` only and not `mkvm`/`mkdev`.
 
 if [ "$( script-path )" != '/tmp' ]; then
 	cp "$( script-file )" "$( script-file ):init" /tmp/
@@ -26,7 +25,23 @@ fi
 
 
 		Mandatory arguments to long options are mandatory for short options too.
+		  --os-release              Ubuntu release image to build atop.
+		  --list-os-releases        List available images for the "Ubuntu OS Cloud" family.
+
 		  --help                    Show this help text.
+
+
+		OS Release
+		  The Ubuntu OS release to use as a base image. This is either a release version
+		  (e.g. "22.10" or "2210"), or the string "lts" (for the latest LTS release), or
+		  the string "latest" (for the latest release). Default is "latest".
+
+		  Note this selects an entry from GCP's list of "Ubuntu OS Cloud" images, and it
+		  is possible that no available image exists for the requested "--os-release".
+
+		  The "--lts" and "--latest" boolean flags are also available as shortcuts.
+
+		  See '$( script-name ) --list-os-releases' for a list of available images.
 
 
 		Exit Status:
@@ -39,10 +54,39 @@ fi
 
 # ---
 
+{ # -- Utility Functions -- #
+
+	image_project='ubuntu-os-cloud'
+
+	function os-releases {
+		local filter='(licenses[] ~ "/'"${image_project}"'/") AND (family !~ "minimal|arm64|accelerator")'
+		gcloud compute images list --filter="$filter" --format='value(family)' | sort
+	}
+
+}
+
+# ---
+
 { # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	disk_size='10GB'
+	instance_name='sync'
+	machine_type_family='e2'
+	machine_type_suffix='small'
+	os_release='latest'
+	startup_script_file="$( script-real ):init"
+
+	# ---
+	# ---
 
 	CHAR_OPTS=''
 	LONG_OPTS='help'
+
+	LONG_OPTS="${LONG_OPTS},os-release:,os:,release:"
+	LONG_OPTS="${LONG_OPTS},lts,latest"
+	LONG_OPTS="${LONG_OPTS},list-os-releases,list-os-images,list-releases,list-images,releases,images"
 
 	set-params
 	while true; do
@@ -50,6 +94,25 @@ fi
 		case "$option" in
 			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
+
+
+			(--os-release|--os|--release)
+			  os_release="$1" && shift
+				;;
+
+			(--lts)
+				os_release='lts'
+				;;
+
+			(--latest)
+				os_release='latest'
+				;;
+
+			(--list-os-releases|--list-os-images|--list-releases|--list-images|--releases|--images)
+				os-releases | sed -r -e 's|^ubuntu-||' -e 's|-lts$| (lts)|' -e 's|-.*$||'
+				exit-out
+				;;
+
 		esac
 	done
 
@@ -67,48 +130,63 @@ fi
 
 # This can't run ON the sync instance.
 #
-[ "$( vm-name )" == 'sync' ] && error-out 2 'cannot replace current instance'
+[ "$instance_name" == "$( vm-name )" ] && error-out 2 'cannot replace current instance'
+
+
+# ---
+
+
+# Convert the given "os_release" value into an actual image "family" name.
+#
+case "$os_release" in
+	latest)
+		os-releases | tail -n1 | store-as image_family
+		;;
+
+	lts)
+	  os-releases | fgrep 'lts' | tail -n1 | store-as image_family
+		;;
+
+	*)
+		matches-line? '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
+		os-releases | fgrep "${os_release//./}" | tail -n1 | store-as image_family
+		;;
+esac
+[ -n "$image_family" ] || error-out 1 'requested os release not found'
 
 
 # ---
 
 
 # Tooling isn't available once the "sync" instance is killed,
-# so we have to store a few values now.
+# so we need to pre-fetch values and replace tools with functions.
 #
+# shellcheck disable=SC2218
 vm-project | store-as vm_project
-vm-zone    | store-as vm_zone
+function vm-project { echo "$vm_project" ;}
+#
+# shellcheck disable=SC2218
+vm-zone | store-as vm_zone
+function vm-zone { echo "$vm_zone" ;}
 
 
-# Remove old instance (if any) *without calling `gcp`*.
+# Remove old instance (if any).
+#
+# Note we're not calling `gcp destroy`, as there's
+# no need to clean up DNS entries for the existing VM when
+# we're about to create a new VM that'll set its DNS on init.
 #
 ssh sync 'sudo service nfs stop ; sync' &> /dev/null
-yes | gcloud compute instances delete 'sync' --quiet
+yes | gcloud compute instances delete "$instance_name" --quiet &> /dev/null
 
 
-# ---
-
-
-# Note we're not specifying a boot image by name -- we're giving only the "project" and "family".
-# See `gcloud compute images list` for a complete list of all available images.
+# Create the Instance VM.
 #
-image_project='ubuntu-os-cloud'
-image_list_filter='(licenses[] ~ "/'"${image_project}"'/") AND (family !~ "minimal|arm64|accelerator") AND (family ~ "lts")'
-gcloud compute images list --filter="$image_list_filter" --format='value(family)' | sort | tail -n1 | store-as image_family
-
-
-# Startup script.
-#
-startup_script_file="$( script-real ):init"
-
-
-# Create the Sync VM.
-#
-gcloud compute instances create 'sync'                                 \
-       --project="$vm_project" --zone="$vm_zone"                       \
+gcloud compute instances create "$instance_name"                       \
+       --project="$( vm-project )" --zone="$( vm-zone )"               \
                                                                        \
-       --machine-type=e2-medium                                        \
-       --boot-disk-type=pd-standard --boot-disk-size=10GB              \
+       --machine-type="${machine_type_family}-${machine_type_suffix}"  \
+       --boot-disk-type=pd-standard --boot-disk-size="$disk_size"      \
        --image-project="$image_project" --image-family="$image_family" \
                                                                        \
        --metadata="created-at=${SCRIPT_TIMESTAMP}"                     \

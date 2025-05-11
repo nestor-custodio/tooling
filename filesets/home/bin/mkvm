@@ -108,6 +108,7 @@ source '/home/nestor/bin/std.lib'
 	LONG_OPTS="${LONG_OPTS},os-release:,os:,release:"
 	LONG_OPTS="${LONG_OPTS},lts,latest"
 	LONG_OPTS="${LONG_OPTS},list-os-releases,list-os-images,list-releases,list-images,releases,images"
+
 	LONG_OPTS="${LONG_OPTS},standalone,stand-alone,nosync,no-sync"
 
 	set-params
@@ -164,6 +165,7 @@ source '/home/nestor/bin/std.lib'
 				exit-out
 				;;
 
+
 			(--stand-alone|--standalone|--no-sync|--nosync)
 			  startup_script_file="$( script-real ):standalone-init"
 			  ;;
@@ -195,14 +197,6 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-# Remove old instance (if any).
-#
-gcp destroy "$instance_name" &> /dev/null
-
-
-# ---
-
-
 # Set the default machine type suffix, if necessary.
 #
 [ -z "$machine_type_suffix" ] && case "$machine_type_family" in
@@ -228,6 +222,18 @@ case "$os_release" in
 		;;
 esac
 [ -n "$image_family" ] || error-out 1 'requested os release not found'
+
+
+# ---
+
+
+# Remove old instance (if any).
+#
+# Note we're not calling `gcp destroy`, as there's
+# no need to clean up DNS entries for the existing VM when
+# we're about to create a new VM that'll set its DNS on init.
+#
+yes | gcloud compute instances delete "$instance_name" --quiet &> /dev/null
 
 
 # Create the Instance VM.
