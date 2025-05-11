@@ -8,7 +8,7 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name )
 
-		Unmounts the Google Drive "shell-transfers" directory from "~/drive".
+		Unmounts the Google Drive location currently mounted onto "~/drive".
 
 
 		Mandatory arguments to long options are mandatory for short options too.

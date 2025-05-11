@@ -6,9 +6,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name )
+		Usage: $( script-name ) [LOCATION]
 
-		Mounts the Google Drive "shell-transfers" directory as "~/drive".
+		Mounts the given Google Drive LOCATION onto "~/drive".
+		If no LOCATION is given, mounts "/shell-transfers/" by default.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -42,6 +43,11 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
+	location='shell-transfers'
+	[ "$#" -ge 1 ] && location="$1" && shift
+	[ -n "$location" ] || error-out 1 'empty LOCATION'
+
+
 	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
 
 }
@@ -51,4 +57,4 @@ source '/home/nestor/bin/std.lib'
 
 
 drive_mount="${HOME}/drive"
-'drive?' || { mkdir -p "$drive_mount" && rclone mount drive:/shell-transfers "$drive_mount" --daemon --vfs-cache-mode='full' ;}
+'drive?' || { mkdir -p "$drive_mount" && rclone mount "drive:/${location}/" "$drive_mount" --daemon --vfs-cache-mode='full' ;}
