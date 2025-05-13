@@ -28,20 +28,11 @@ z='0'  # Zero. (For formula consistency.)
 calc "${g} + ${y} + ${r}" | store-as c  # Total character count.
 
 
-cut --field=1 --delim=' ' < /proc/loadavg | store-as unweighted_load_average
-calc "${unweighted_load_average} / $( nproc ) * 100" | store-as load_percentage
+cat /var/opt/1s-cpu-load | store-as load_percentage
 
 calc "floor( ${load_percentage} * ${c} / 100)" | store-as num_full_blocks
 calc "floor(mod(${load_percentage}, ${c})) >= (100 / ${c} / 2)" | store-as num_half_blocks
 calc "${c} - ${num_full_blocks} - ${num_half_blocks}" | store-as num_null_blocks
-
-# Guard against load percentages over 100 (which can happen).
-# This gets a special display to call attention to the status.
-#
-if calc? "${num_full_blocks} > ${c}"; then
-  seq 1 "$c" | while read -r i; do full_bar+="$full"; done
-  exit-out "$( left-piped " #[fg=red]${full_bar}#[default]" )"
-fi
 
 
 calc "min(     ${num_full_blocks}                   , ${g})" | store-as num_full_g
