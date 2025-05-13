@@ -96,6 +96,9 @@ startup_log='/var/log/startup'
 			# Schedule regular pruning of the `snapd` cache ...
 			crontab -l 2>/dev/null | awk '{print} END{ print "@daily rm -f /var/lib/snapd/cache/*" }' | crontab -
 
+			# Schedule continuous writing of "instantaneous CPU load" out to /var/opt/ ...
+			crontab -l 2>/dev/null | awk '{print} END{ print "@reboot /home/nestor/bin/1s-cpu-load" }' | crontab -
+
 			# Retain the minimum possible number of old snap builds ...
 			snap set system refresh.retain=2
 
@@ -184,6 +187,12 @@ startup_log='/var/log/startup'
 
 			apt-get -qqy install -f  # Resolve possible dependency issues.
 			apt-get -qqy autoremove  # Remove unnecessary leftover packages.
+
+
+		# Trigger the "@reboot 1s-cpu-load" cron job.
+		report 'triggering 1s-cpu-load cron job'
+
+			nohup /home/nestor/bin/1s-cpu-load &> /dev/null &
 
 
 		# Notify of init completion.

@@ -1,0 +1,62 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Makes the "instantaneous CPU load" available via "/var/opt/$( script-name )".
+		Must run as *root*. Does not exit.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if not run as root user.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help,option_a,option_b'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+[ "$( id -u )" == 0 ] || error-out 2 'command must run as root'
+
+
+output_file="/var/opt/$( script-name )"
+
+mpstat 1 --dec=0 -u -P all                                             \
+| grep -P --only-matching '[0-9]+$' --line-buffered                    \
+| while read idle; do echo "$(( 100 - "$idle" ))" > "$output_file"; done
