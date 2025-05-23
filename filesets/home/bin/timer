@@ -67,9 +67,9 @@ show-timer 0 0 0
 while true; do
 	script-duration | store-as elapsed
 
-	calc "floor(${elapsed} / 3600)" | store-as h
-	calc "floor(${elapsed} /   60)" | store-as m
-	calc "floor(${elapsed}       )" | store-as s
+	calc "    floor(${elapsed} / 3600)     " | store-as h
+	calc "mod(floor(${elapsed} /   60), 60)" | store-as m
+	calc "mod(floor(${elapsed}       ), 60)" | store-as s
 
 	clear-line
 	show-timer "$h" "$m" "$s"
