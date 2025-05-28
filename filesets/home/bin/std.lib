@@ -47,6 +47,9 @@ shopt -s lastpipe expand_aliases
 		echo "$filename"
 	}
 
+
+	TAB="$( printf '\t' )"
+
 }
 
 # ---

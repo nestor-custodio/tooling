@@ -6,8 +6,8 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [--FILE_ENCODING] QUERY
-		       $( name-blanks ) [--FILE_ENCODING] --fields[=]DATAFILE
+		Usage: $( script-name ) [--FILE_ENCODING] [--raw] QUERY [-- Q OPTIONS]
+		       $( name-blanks ) [--FILE_ENCODING] --fields=DATAFILE
 
 		No-thoughts CSV query runner (via 'q'); presents legible output.
 		If QUERY begins with '@' or ends in '.sql', it's taken as a
@@ -16,9 +16,23 @@ source '/home/nestor/bin/std.lib'
 		If called with '--fields', field names (and types) for the given
 		DATAFILE are reported.
 
+		Presents pretty output in a scrollable view, unless '--raw' is given.
+
 
 		Mandatory arguments to long options are mandatory for short options too.
+		  --raw                     Outputs raw data (for storage or piping).
 		  --help                    Show this help text.
+
+
+		Delimiter Options
+		  Data is assumed to be comma-delimited by default, but different
+		  input and output delimiters can be specified.
+
+		  --delimiter=[CHAR]        Sets '--delimiter-in' and '--delimiter-out'.
+		  --delimiter-in=[CHAR]     Specifies the input delimiter.
+		  --delimiter-out=[CHAR]    Specifies the ('--raw') output delimiter.
+		  --csv                     Shortcut for '--delimiter=","'.
+		  --tsv                     Shortcut for '--delimiter="<tab>"'.
 
 
 		File Encodings
@@ -48,13 +62,23 @@ source '/home/nestor/bin/std.lib'
 
 	# Set defaults.
 
+	raw=''
 	encoding='utf-8'
+	delimiter_in=','
+	delimiter_out=','
 
 	# ---
 	# ---
 
 	CHAR_OPTS=''
-	LONG_OPTS='help,fields:,names:,types:'
+	LONG_OPTS='help'
+	LONG_OPTS="${LONG_OPTS},fields:,names:,types:"
+	LONG_OPTS="${LONG_OPTS},raw,plain,output"
+	LONG_OPTS="${LONG_OPTS},delimiter:,delimiters:"
+	LONG_OPTS="${LONG_OPTS},delimiter-in:,in:"
+	LONG_OPTS="${LONG_OPTS},delimiter-out:,out:"
+	LONG_OPTS="${LONG_OPTS},csv,comma,commas"
+	LONG_OPTS="${LONG_OPTS},tsv,tab,tabs"
 	LONG_OPTS="${LONG_OPTS},utf-8"
 	LONG_OPTS="${LONG_OPTS},utf-16"
 	LONG_OPTS="${LONG_OPTS},utf-bom"
@@ -85,6 +109,38 @@ source '/home/nestor/bin/std.lib'
 				;;
 
 
+			(--raw|--plain|--output) raw='1' ;;
+
+
+			(--delimiter|--delimiters)
+				delimiter="$1" && shift
+				[ -n "$delimiter" ] || error-out 1 'no delimiter CHAR given'
+				[ "${#delimiter}" == 1 ] || error-out 1 'delimiter CHAR must be a single character'
+
+				delimiter_in="$delimiter"
+				delimiter_out="$delimiter"
+				;;
+
+			(--delimiter-in|--in)
+				delimiter="$1" && shift
+				[ -n "$delimiter" ] || error-out 1 'no delimiter-in CHAR given'
+				[ "${#delimiter}" == 1 ] || error-out 1 'delimiter-in CHAR must be a single character'
+
+				delimiter_in="$delimiter"
+				;;
+
+			(--delimiter-out|--out)
+				delimiter="$1" && shift
+				[ -n "$delimiter" ] || error-out 1 'no delimiter-out CHAR given'
+				[ "${#delimiter}" == 1 ] || error-out 1 'delimiter-out CHAR must be a single character'
+
+				delimiter_out="$delimiter"
+				;;
+
+			(--csv|--comma|--commas) delimiter_in=','    && delimiter_out="$delimiter_in" ;;
+			(--tsv|--tab|--tabs)     delimiter_in="$TAB" && delimiter_out="$delimiter_in" ;;
+
+
 			(--utf-8                          ) encoding='utf-8'        ;;
 			(--utf-16                         ) encoding='utf-16'       ;;
 			(--utf-bom                        ) encoding='utf-8-sig'    ;;
@@ -101,13 +157,47 @@ source '/home/nestor/bin/std.lib'
 	query_param="$1" && shift
 	[ -n "$query_param" ] || error-out 1 'no QUERY given'
 
-
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
-
 }
 
 # ---
 # ---
 
 
-csv- "$query_param" -- -e "$encoding" -b -T | hbat --language='tsv' --wrap='never'
+# Sort out the querytext.
+#
+if starts-with? '@' <<< "$query_param"; then
+	# We've been given a query *file*.
+	#
+	store-as querytext < "${query_param:1}"
+elif ends-with? '.sql' <<< "$query_param"; then
+	# We've been given a query *file*.
+	#
+	store-as querytext < "$query_param"
+else
+	# We've been given the raw querytext.
+	#
+	querytext="$query_param"
+fi
+
+
+# Run the query.
+
+function run_query() {
+	q --skip-header                       \
+	  --output-header                     \
+	  --encoding="$encoding"              \
+	  --delimiter="$delimiter_in"         \
+	  --output-delimiter="$delimiter_out" \
+	  "$querytext"                        \
+	  "$@"
+}
+
+if [ -n "$raw" ]; then
+	run_query "$@"
+else
+	# Enforce TSV output so we can get a pretty-printed table.
+	#
+	delimiter_out="$TAB"
+
+	run_query --beautify "$@" | hbat --language='tsv' --wrap='never'
+fi
