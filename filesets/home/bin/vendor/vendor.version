@@ -155,7 +155,7 @@ case "$tool_name" in
 	(lazydocker       ) get-version                  --puller='(?<=Version: ).*'             ;;
 	(lazygit          ) get-version                  --puller='(?<=version=).*?(?=,)'        ;;
 	(marksman         ) get-version                  --puller='.*(?=-)'                      ;;
-	(n                ) get-version                  --puller='(?<=v).*'                     ;;
+	(n                ) get-version                                                          ;;
 	(portal           ) get-version --cmd='version'  --puller='(?<=v).*'                     ;;
 	(q                ) get-version                  --puller='(?<=q version ).*'            ;;
 	(rclone           ) get-version --cmd='version'  --puller='(?<=rclone v).*'              ;;
