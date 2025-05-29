@@ -126,20 +126,6 @@ source '/home/nestor/bin/std.lib'
 
 			# Items requiring special handling.
 
-			(aws)
-				target="${HOME}/bin/vendor/aws-runtime"
-				mkdir -p "$target" && rm -rf "${target:?}"/*
-
-				tempname | store-as zip_file
-				curl "$( executable-url )" --silent --location > "$zip_file" || error-out 2 'unable to fetch release'
-
-				tempname | store-as extract_dir
-				{ mkdir -p "$extract_dir" && unzip -q "$zip_file" -d "$extract_dir" ;} || error-out 2 'unable to extract release'
-
-				mv "${extract_dir}/aws/dist"/* "${target}/"
-				rm -rf "$zip_file" "$extract_dir"
-				;;
-
 			(chruby)
 				tempname | store-as extract_dir
 				mkdir -p "$extract_dir"

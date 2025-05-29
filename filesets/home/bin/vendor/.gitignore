@@ -1,12 +1,10 @@
 # Runtimes.
 #
-/aws-runtime/
 /heroku-runtime/
 /ruby-install-runtime/
 
 # Binaries.
 #
-/aws
 /bat
 /btop
 /bw

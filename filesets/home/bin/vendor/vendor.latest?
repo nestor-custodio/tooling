@@ -108,7 +108,6 @@ case "$tool_name" in
 
 	# Straight-forward checks.
 
-	(aws              )               ;&
 	(bat              )               ;&
 	(btop             )               ;&
 	(caddy            )               ;&

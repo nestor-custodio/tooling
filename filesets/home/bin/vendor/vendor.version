@@ -135,7 +135,6 @@ case "$tool_name" in
 
 	# Pullable items.
 
-	(aws              ) get-version                  --puller='(?<=aws-cli/).*?(?= )'        ;;
 	(bat              ) get-version                  --puller='(?<=bat ).*?(?= )'            ;;
 	(btop             ) get-version                  --puller='(?<=btop version: ).*'        ;;
 	(bw               ) get-version                                                          ;;

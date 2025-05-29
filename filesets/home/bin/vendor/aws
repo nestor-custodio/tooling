@@ -1,0 +1,14 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+# ---
+
+
+# Ensure the "aws-cli" snap is installed.
+#
+snap list 'aws-cli' &> /dev/null || sudo snap install 'aws-cli' --classic
+
+# Pass the request through to the snap binary.
+#
+exec snap run 'aws-cli'.'aws' "$@"
