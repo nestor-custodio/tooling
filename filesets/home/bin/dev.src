@@ -383,9 +383,16 @@ shopt -s lastpipe
         *) has? "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
       esac
 
-      # Install packages, if any.
+      # Bail if there's nothing to do.
       #
-      nearest --quiet 'package.json' && npm install "$@" 2>/dev/null
+      nearest --quiet 'package.json' || return 0
+
+      # Install packages (as quietly as possible, if invoked as just `ni`).
+      #
+      if [ "$#" == 0 ]
+        then npm install --ignore-scripts | head --lines=-2
+        else npm install "$@"
+      fi
 
       true # Always move forward.
     }
