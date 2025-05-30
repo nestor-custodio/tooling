@@ -93,9 +93,17 @@ shopt -s lastpipe
           gem list bundler --silent --installed || gem install bundler
         fi
 
-        # Install gemset, if necessary.
+        # Bail if there's nothing to do.
         #
-        { [ -n "$gemfile" ] || [ -n "$lockfile" ] ;} && { bundle check &> /dev/null || bundle install --jobs="$( nproc )" "$@" ;}
+        [ -n "$gemfile" ] || [ -n "$lockfile" ] || return 0
+        bundle check &> /dev/null && return 0
+
+        # Install gemset (as quietly as possible, if invoked as just `bi`).
+        #
+        if [ "$#" == 0 ]
+          then bundle install | grep -P -v '^(?:Using|Bundle complete!|Use `bundle info \[gemname\]`) '
+          else bundle install "$@"
+        fi
 
         true # Always move forward.
       }
