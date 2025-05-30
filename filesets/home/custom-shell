@@ -168,7 +168,7 @@ function peek { tee /dev/tty ;}
     #
     local hide_globs="$( cat "${HOME}/.hidden" 2> /dev/null | paste -s --delimiters='|' )"
 
-    eza --icons --long --color='always' --group-directories-first --group --smart-group --time-style='long-iso' --no-quotes --ignore-glob="${hide_globs:-|}" "$@"
+    eza --icons --long --color='always' --group-directories-first --group --smart-group --time-style='long-iso' --show-symlinks --no-quotes --ignore-glob="${hide_globs:-|}" "$@"
   }
 
   function a { f --almost-all --ignore-glob='|' "$@" ;}
