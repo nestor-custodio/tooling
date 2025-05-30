@@ -111,7 +111,7 @@ function peek { tee /dev/tty ;}
   # It's nice to have a 1-char name for something
   # that will properly page/colorize help/manpage text.
   #
-  function h { "$@" --help | bat --plain --language='help' ;}
+  function h { "$@" --help | bat --plain --language='help' --chop-long-lines ;}
   function m { MANPAGER='cat' man "$@" | bat --plain --language='man' ;}
 
   # Paging while retaining header lines is a common
