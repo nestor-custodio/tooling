@@ -85,8 +85,19 @@ source '/home/nestor/bin/std.lib'
 
 	# Run the tests ...
 
-		[ -n "$rspec"    ] && tdd.rspec    "${next[rspec]}"    "${fails[rspec]}"    "$@"
-		[ -n "$minitest" ] && tdd.minitest "${next[minitest]}" "${fails[minitest]}" "$@"
+		if [ -n "$rspec" ]; then
+			opts=("$@")
+			[ -n "${next[rspec]}"  ] && opts+=("${next[rspec]}")
+			[ -n "${fails[rspec]}" ] && opts+=("${fails[rspec]}")
+			tdd.rspec "${opts[@]}"
+		fi
+
+		if [ -n "$minitest" ]; then
+			opts=("$@")
+			[ -n "${next[minitest]}"  ] && opts+=("${next[minitest]}")
+			[ -n "${fails[minitest]}" ] && opts+=("${fails[minitest]}")
+			tdd.minitest "${opts[@]}"
+		fi
 
 
 # ---
@@ -102,7 +113,12 @@ source '/home/nestor/bin/std.lib'
 
 	# Run the tests ...
 
-		[ -n "$javascript" ] && tdd.javascript "${next[js]}" "${fails[js]}" "$@"
+		if [ -n "$javascript" ]; then
+			opts=("$@")
+			[ -n "${next[js]}"  ] && opts+=("${next[js]}")
+			[ -n "${fails[js]}" ] && opts+=("${fails[js]}")
+			tdd.javascript "${opts[@]}"
+		fi
 
 
 # ---
