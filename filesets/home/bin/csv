@@ -195,9 +195,10 @@ function run_query() {
 if [ -n "$raw" ]; then
 	run_query "$@"
 else
-	# Enforce TSV output so we can get a pretty-printed table.
-	#
-	delimiter_out="$TAB"
+	delimiter_out=','
 
-	run_query --beautify "$@" | hbat --language='tsv' --wrap='never'
+	run_query "$@"                                                                               \
+	| awk -v OFS="$delimiter_out" '(NR == 1) { print "#", $0 }; (NR >= 2) { print NR, $0 };'     \
+	| csview --delimiter="$delimiter_out" --disable-pager --style='ascii2' --header-align='left' \
+	| hbat 2 --plain --chop-long-lines
 fi
