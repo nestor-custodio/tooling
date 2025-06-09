@@ -112,6 +112,7 @@ shopt -s lastpipe
     # Gem Release Tooling
 
       function release-gem {
+        [ "$1" == '--help' ] && echo 'Usage: release-gem [ --major | --minor | --patch | VERSION ]' && return 0
 
         local option bump
         local gem_name repo_id old_version
@@ -124,6 +125,8 @@ shopt -s lastpipe
           (--major) bump='major' ;;
           (--minor) bump='minor' ;;
           (--patch) bump='patch' ;;
+
+          *) new_version="$option"
         esac
 
         [ "$#" == 0 ] || return 1
@@ -145,46 +148,33 @@ shopt -s lastpipe
         # Determine new version number and prompt for confirmation ...
 
         IFS='.-' read -r -a parts <<< "$old_version"
-        major="${parts[0]}"
-        minor="${parts[1]}"
-        patch="${parts[2]}"
+        major="${parts[0]:-0}"
+        minor="${parts[1]:-0}"
+        patch="${parts[2]:-0}"
 
-        case "$bump" in
-          (major)
-            major="$( calc "${major} + 1" )"
-            new_version="${major}.0.0"
+        if [ -n "$bump" ]; then
+          case "$bump" in
+            (major) major="$( calc "${major} + 1" )"; minor='0';                        patch='0'                        ;;
+            (minor)                                   minor="$( calc "${minor} + 1" )"; patch='0'                        ;;
+            (patch)                                                                     patch="$( calc "${patch} + 1" )" ;;
+          esac
 
-            printf "Last release was '%s'.\nPublish new release as (%s):" "$old_version" "$new_version"
-            read -r -p ' '; [ -n "$REPLY" ] && new_version="$REPLY"
-            ;;
+          new_version="${major}.${minor}.${patch}"
+        fi
 
-          (minor)
-            minor="$( calc "${minor} + 1" )"
-            new_version="${major}.${minor}.0"
-
-            printf "Last release was '%s'.\nPublish new release as (%s):" "$old_version" "$new_version"
-            read -r -p ' '; [ -n "$REPLY" ] && new_version="$REPLY"
-            ;;
-
-          (patch)
-            patch="$( calc "${patch} + 1" )"
-            new_version="${major}.${minor}.${patch}"
-
-            printf "Last release was '%s'.\nPublish new release as (%s):" "$old_version" "$new_version"
-            read -r -p ' '; [ -n "$REPLY" ] && new_version="$REPLY"
-            ;;
-
-          *)
-            printf "Last release was '%s'.\nPublish new release as:" "$old_version"
-            read -r -p ' ' new_version
-            [ -n "$new_version" ] || return 4
-           ;;
-        esac
+        if [ -n "$new_version" ]; then
+          printf "Last release was '%s'.\nPublish new release as: [%s] " "$old_version" "$new_version"
+          read -r -p ' '; [ -n "$REPLY" ] && new_version="$REPLY"
+        else
+          printf "Last release was '%s'.\nPublish new release as:" "$old_version"
+          read -r -p ' ' new_version
+          [ -n "$new_version" ] || return 4
+        fi
 
 
         # Repackage gem ...
 
-        fd --exclude 'Gemfile*' | xargs -I '{}' -- sed -i -e "s|${old_version}|${new_version}|" '{}'
+        fd --type='file' --exclude='Gemfile*' | map sed -i -e "s|${old_version}|${new_version}|"
         yard doc
         gem build
         bundle install
