@@ -62,7 +62,7 @@ gui:
     commitAuthorLongLength: 17
     commitHashLength: 8
     showBranchCommitHash: false
-    showDivergenceFromBaseBranch: 'arrowAndNumber'
+    showDivergenceFromBaseBranch: 'none'
     commandLogSize: 8
     splitDiff: 'auto'
     screenMode: 'normal'
