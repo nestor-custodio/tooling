@@ -45,13 +45,13 @@ shopt -s lastpipe
       if nearest --read 'Gemfile.lock' 'Gemfile' | has? 'rubocop'; then
         if [ -n "$skip_fd_call" ];
           then bx rubocop "$@"
-          else bx rubocop --force-exclusion $( fd '\.rb$' ) "$@"
+          else bx rubocop --force-exclusion $( fd '\.(?:rake|rb)$' ) "$@"
         fi
       else
         which rubocop &> /dev/null || gem install rubocop &> /dev/null
         if [ -n "$skip_fd_call" ];
           then "$( real rubocop )" "$@"
-          else "$( real rubocop )" --force-exclusion $( fd '\.rb$' ) "$@"
+          else "$( real rubocop )" --force-exclusion $( fd '\.(?:rake|rb)$' ) "$@"
         fi
       fi
     }
