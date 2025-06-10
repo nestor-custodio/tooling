@@ -79,8 +79,12 @@ shopt -s lastpipe
         #
         local ruby_version
         if ruby_version="$( nearest --read '.ruby-version' )"; then
-          ruby --version 2> /dev/null | has? "$ruby_version" || chruby "$ruby_version"                 \
-          || { ruby-install "$ruby_version" && RUBIES=("${HOME}/.rubies"/*) && chruby "$ruby_version" ;}
+          ruby --version 2> /dev/null | has? "$ruby_version"              \
+          || chruby "$ruby_version"                                       \
+          || ( set -o pipefail                                            \
+               && ruby-install "$ruby_version" 2> /dev/null | fgrep '>>>' \
+               && RUBIES=("${HOME}/.rubies"/*) && chruby "$ruby_version"  \
+             )
         fi
 
         # Ensure specific bundler.
