@@ -125,7 +125,7 @@ git:
     autoFetch: true
     autoRefresh: true
     autoForwardBranches: 'allBranches'
-    fetchAll: true
+    fetchAll: false
     autoStageResolvedConflicts: true
     branchLogCmd: 'git log --color=always --decorate --graph {{branchName}} --'
     # allBranchesLogCmd: '...'  <-- deprecated in favor of `allBranchesLogCmds`
@@ -309,7 +309,7 @@ keybinding:
         createTag: 't'
         pushTag: 'T'
         setUpstream: 'u'
-        fetchRemote: '<disabled>'
+        fetchRemote: 'f'
         sortOrder: '<disabled>'
 
     worktrees:
