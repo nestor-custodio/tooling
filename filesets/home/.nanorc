@@ -30,8 +30,8 @@ unset locking
 ## a separate buffer).
 set multibuffer
 
-## Don't display the helpful shortcut lists at the bottom of the screen.
-set nohelp
+## Display the helpful shortcut lists at the bottom of the screen.
+unset nohelp
 
 ## Remember the cursor position in each file for the next editing session.
 set positionlog
