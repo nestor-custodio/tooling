@@ -24,7 +24,7 @@ shopt -s lastpipe
 
     # Linting/Style tooling.
     #
-    export RUBOCOP_OPTS="--server --format='simple' --format='offenses' --color --editor-mode"
+    export RUBOCOP_OPTS="--server --format='simple' --format='offenses' --color"
     #
     # shellcheck disable=SC2046
     function rubocop {

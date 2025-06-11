@@ -2,6 +2,7 @@
 
 **/:*
 **/node_modules/
+**/.solargraph.yml
 
 # Allow local overrides.
 #
