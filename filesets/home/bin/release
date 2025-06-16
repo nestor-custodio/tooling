@@ -1,0 +1,95 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Provides the requested release info,
+		in a cleaner format than 'lsb_release'.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		  --distro                  Gives the "distributor ID".
+		  --version                 Gives the "release number".
+		  --codename                Gives the "code name".
+		  --description             Gives the "description".
+
+		Note the "--version" here is NOT equivalent to 'lsb_release --version'.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	output=''
+
+	# ---
+	# ---
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	LONG_OPTS="${LONG_OPTS},distro"
+	LONG_OPTS="${LONG_OPTS},version,number"
+	LONG_OPTS="${LONG_OPTS},name,code,codename"
+	LONG_OPTS="${LONG_OPTS},description,full,long"
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--distro)
+				lsb_release --id | store-as output
+				;;
+
+			(--version|--number)
+				lsb_release --release | store-as output
+				;;
+
+			(--name|--code|--codename)
+				lsb_release --codename | store-as output
+				;;
+
+			(--description|--full|--long)
+				lsb_release --description | store-as output
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Give the "description" by default.
+#
+[ -n "$output" ] || lsb_release --description | store-as output
+
+sed -r -e 's|^[^:]*:\s*||' <<< "$output"
