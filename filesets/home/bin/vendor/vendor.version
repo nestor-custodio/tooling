@@ -92,7 +92,7 @@ source '/home/nestor/bin/std.lib'
 		local executable="$( script-path )/${tool_name}"
 
 		command -v "$executable" &> /dev/null || error-out 2 'binary not found'
-		"$executable" "$cmd" 2>&1 | ansifilter | grep -P --only-matching "$puller" | normalized
+		"$executable" "$cmd" 2>&1 | ansifilter | grep -P --only-matching "$puller" | head -n1 | normalized
 
 	}
 
@@ -141,7 +141,7 @@ case "$tool_name" in
 	(caddy            ) get-version                  --puller='(?<=v).*?(?= )'               ;;
 	(csview           ) get-version                  --puller='(?<=csview ).*'               ;;
 	(delta            ) get-version                  --puller='(?<=delta ).*'                ;;
-	(duckdb           ) get-version                  --puller='(?<=v).*(?= )'                ;;
+	(duckdb           ) get-version                  --puller='(?<=v).*?(?= )'               ;;
 	(eget             ) get-version                  --puller='(?<=eget version ).*'         ;;
 	(eza              ) get-version                  --puller='(?<=v).*(?= )'                ;;
 	(fd               ) get-version                  --puller='(?<=fd ).*'                   ;;
