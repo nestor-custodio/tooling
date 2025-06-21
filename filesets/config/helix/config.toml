@@ -156,7 +156,6 @@ newline = "↲"
 # File Operations
 
 "S"       = ":update"
-"C-n"     = ":new"
 
 "f"       = "file_picker"
 "F"       = "file_picker_in_current_directory"
@@ -183,9 +182,11 @@ newline = "↲"
 "N"       = "search_prev"
 
 "g"       = "goto_line"
-"C-j"     = "save_selection"
-"C-u"     = "jump_backward"
-"C-o"     = "jump_forward"
+
+"C-u"     = "expand_selection"     # Syntax Tree Traversal
+"C-o"     = "shrink_selection"     #
+"C-j"     = "select_prev_sibling"  #
+"C-l"     = "select_next_sibling"  #
 
 
 # Tab/Pane Management
@@ -248,19 +249,75 @@ newline = "↲"
 
 
 [keys.normal."space"]
-"b"   = "no_op"
-"c"   = "no_op"
-"f"   = "no_op"
-"k"   = "no_op"
-"p"   = "no_op"
-"y"   = "no_op"
-"C"   = "no_op"
-"F"   = "no_op"
-"P"   = "no_op"
-"R"   = "no_op"
-"Y"   = "no_op"
-"?"   = "no_op"
-"A-c" = "no_op"
+"b"     = "no_op"
+"c"     = "no_op"
+"f"     = "no_op"
+"j"     = "no_op"
+"p"     = "no_op"
+"y"     = "no_op"
+"C"     = "no_op"
+"F"     = "no_op"
+"P"     = "no_op"
+"R"     = "no_op"
+"Y"     = "no_op"
+"?"     = "no_op"
+"A-c"   = "no_op"
+
+"n"     = ":new"
+"i"     = "align_view_top"
+"k"     = "align_view_bottom"
+"space" = "align_view_center"
+
+
+[keys.normal."space".w]
+"f"     = "no_op"
+"F"     = "no_op"
+"h"     = "no_op"
+"H"     = "no_op"
+"o"     = "no_op"
+"q"     = "no_op"
+"s"     = "no_op"
+"v"     = "no_op"
+"w"     = "no_op"
+"C-h"   = "no_op"
+"C-j"   = "no_op"
+"C-k"   = "no_op"
+"C-l"   = "no_op"
+"C-o"   = "no_op"
+"C-q"   = "no_op"
+"C-s"   = "no_op"
+"C-t"   = "no_op"
+"C-v"   = "no_op"
+"C-w"   = "no_op"
+"up"    = "no_op"
+"down"  = "no_op"
+"left"  = "no_op"
+"right" = "no_op"
+
+"-" = ":hsplit"
+"|" = ":vsplit"
+'\' = ":vsplit"
+
+"i" = "jump_view_up"
+"k" = "jump_view_down"
+"j" = "jump_view_left"
+"l" = "jump_view_right"
+
+"I" = "swap_view_up"
+"K" = "swap_view_down"
+"J" = "swap_view_left"
+"L" = "swap_view_right"
+
+
+[keys.normal."space".w.n]
+"s"     = "no_op"
+"v"     = "no_op"
+"C-s"   = "no_op"
+"C-v"   = "no_op"
+
+"-" = ":hsplit-new"
+"|" = ":vsplit-new"
+'\' = ":vsplit-new"
 
 
 [keys.normal.q]
@@ -334,7 +391,6 @@ newline = "↲"
 
 "f" = "no_op"
 "o" = "no_op"
-"s" = "no_op"
 "u" = "no_op"
 "z" = "no_op"
 
@@ -357,6 +413,7 @@ newline = "↲"
 "w"     = ["move_char_right", "move_prev_word_start", "collapse_selection", "extend_next_word_end"]
 "-"     = ["keep_primary_selection", "collapse_selection"]
 "/"     = "select_regex"
+"s"     = "split_selection"
 "="     = "split_selection_on_newline"
 
 
