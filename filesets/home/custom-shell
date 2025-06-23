@@ -151,6 +151,48 @@ function peek { tee /dev/tty ;}
   export CDPATH=".:${HOME}:${HOME}/docs"
 
 
+  # docker
+
+  # Lazy-install `docker` and `docker compose`.
+  #
+  function docker {
+    # Ensure `docker`.
+    #
+    real docker &> /dev/null || { sudo apt install -qqy docker.io || return; echo ;}
+
+    # Process commands (so we can lazy-install plugins as needed and process custom aliases).
+    #
+    local command="$1" && shift
+    case "$command" in
+
+      # Lazy installers.
+
+      (compose)
+        # Ensure the "docker-compose" plugin is available.
+        # See: https://docs.docker.com/compose/install/linux/
+        #
+        local docker_compose_binary="${HOME}/.docker/cli-plugins/docker-compose"
+        [ -x "$docker_compose_binary" ] || eget --quiet 'docker/compose' --asset='^.json' --to="$docker_compose_binary"
+
+        "$( real docker )" compose "$@"
+        ;;
+
+      # Aliases.
+
+      (c ) "$( real docker )" container    "$@" ;;
+      (i ) "$( real docker )" image        "$@" ;;
+      (n ) "$( real docker )" network      "$@" ;;
+      (v ) "$( real docker )" volume       "$@" ;;
+
+      (ls) "$( real docker )" container ls "$@" ;;
+
+      # Everything else passes through unaltered.
+      #
+      *) "$( real docker )" "$command" "$@" ;;
+    esac
+  }
+
+
   # eget
 
   # Make sure `eget` knows where to download binaries to
@@ -287,7 +329,10 @@ function peek { tee /dev/tty ;}
   # lazydocker
 
   function lazydocker {
-    command -v docker &> /dev/null || sudo apt install -qqy docker.io
+    # Ensure `docker` (via our own shim, define above).
+    #
+    docker version &> /dev/null
+
     "$( real lazydocker )" "$@"
   }
 
@@ -398,11 +443,11 @@ dev_helpers="${HOME}/bin/dev.src"
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f ... .... ..... ::                                                               \
-          a break-out-of-links bw f g gadd gblame gbranch gbranch? gcheckout gcherrypick  \
-          gclone gcommit gconfig gdeploy gdiff gfetch ggraph ginit gitignored glog gmerge \
-          gmove gmv gpatch gpop gpull gpush grebase gremote grep greset gstage gstash     \
-          gstatus gtag gtrack gunchange gundelete gunstage guntrack h hbat helix k        \
+export -f ... .... ..... ::                                                                \
+          a break-out-of-links bw f docker g gadd gblame gbranch gbranch? gcheckout        \
+          gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph ginit gitignored  \
+          glog gmerge gmove gmv gpatch gpop gpull gpush grebase gremote grep greset gstage \
+          gstash gstatus gtag gtrack gunchange gundelete gunstage guntrack h hbat helix k  \
           lazydocker less list list+ m mirror mkcd peek pgcli real rg shellcheck
 
 
