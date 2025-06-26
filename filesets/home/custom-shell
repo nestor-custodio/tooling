@@ -153,19 +153,28 @@ function peek { tee /dev/tty ;}
 
   # docker
 
-  # Lazy-install `docker` and `docker compose`.
+  # Make `docker` easier to use by:
+  # - lazy-installing the `docker` binary
+  # - lazy-installing plugins (eg `compose`)
+  # - supporting custom subcommand aliases (eg `ls`)
+  # - providing an interactive console (as `docker console`)
   #
   function docker {
     # Ensure `docker`.
     #
     real docker &> /dev/null || { sudo apt install -qqy docker.io || return; echo ;}
+    local docker_binary="$( real docker )"
 
-    # Process commands (so we can lazy-install plugins as needed and process custom aliases).
+    # Pass empty requests through to the binary.
     #
-    local command="$1" && shift
-    case "$command" in
+    [ "$#" == 0 ] && { "$docker_binary"; return ;}
 
-      # Lazy installers.
+    # Process subcommand (so we can lazy-install plugins as needed and process custom aliases).
+    #
+    local subcommand="$1" && shift
+    case "$subcommand" in
+
+      # Lazy installers for plugins.
 
       (compose)
         # Ensure the "docker-compose" plugin is available.
@@ -174,21 +183,39 @@ function peek { tee /dev/tty ;}
         local docker_compose_binary="${HOME}/.docker/cli-plugins/docker-compose"
         [ -x "$docker_compose_binary" ] || eget --quiet 'docker/compose' --asset='^.json' --to="$docker_compose_binary"
 
-        "$( real docker )" compose "$@"
+        "$docker_binary" compose "$@"
         ;;
 
       # Aliases.
 
-      (c ) "$( real docker )" container    "$@" ;;
-      (i ) "$( real docker )" image        "$@" ;;
-      (n ) "$( real docker )" network      "$@" ;;
-      (v ) "$( real docker )" volume       "$@" ;;
+      (c ) "$docker_binary" container    "$@" ;;
+      (i ) "$docker_binary" image        "$@" ;;
+      (n ) "$docker_binary" network      "$@" ;;
+      (v ) "$docker_binary" volume       "$@" ;;
 
-      (ls) "$( real docker )" container ls "$@" ;;
+      (ls) "$docker_binary" container ls "$@" ;;
+
+      # Interactive console.
+      #
+      (console)
+        while read -r -p '(docker) > ' -a line; do
+          # Allow for empty lines.
+          #
+          [ -n "${line[*]}" ] || continue
+
+          case "${line[0]}" in
+            (exit) break ;;
+            (console) echo '* Already in console mode.' ;;
+
+            *) docker "${line[@]}" ;;
+          esac
+          echo
+        done
+        ;;
 
       # Everything else passes through unaltered.
       #
-      *) "$( real docker )" "$command" "$@" ;;
+      *) "$docker_binary" "$subcommand" "$@" ;;
     esac
   }
 
