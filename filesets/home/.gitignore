@@ -34,6 +34,7 @@
 #
 /.aws/
 /.bundle/
+/.docker/
 /.gem/
 /.rubies/
 
