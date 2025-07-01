@@ -198,7 +198,7 @@ function peek { tee /dev/tty ;}
       # Interactive console.
       #
       (console)
-        while read -r -p '(docker) > ' -a line; do
+        while read -e -r -p '(docker) > ' -a line; do
           # Allow for empty lines.
           #
           [ -n "${line[*]}" ] || continue
