@@ -74,6 +74,15 @@ startup_log='/var/log/startup'
 			# Set sudo password appearance ...
 			echo 'Defaults pwfeedback' >> /etc/sudoers
 
+			# Set `sudo su` prompt apperance ...
+			cat <<-'EOF' >> /root/.bashrc
+
+				# Set the prompt.
+				#
+				prompt_setter="/home/nestor/bin/set-prompt.src"
+				[ -r "$prompt_setter" ] && source "$prompt_setter"
+			EOF
+
 			# Increase inotify watcher count ...
 			echo 'fs.inotify.max_user_watches=524288' >> /etc/sysctl.conf && sysctl -p
 
