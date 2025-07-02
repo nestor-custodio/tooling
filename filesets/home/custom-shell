@@ -198,6 +198,8 @@ function peek { tee /dev/tty ;}
       # Interactive console.
       #
       (console)
+        local docker_history="${HOME}/.docker_history"
+        history -w && history -c && history -r "$docker_history"
         while read -e -r -p '(docker) > ' -a line; do
           # Allow for empty lines.
           #
@@ -207,10 +209,15 @@ function peek { tee /dev/tty ;}
             (exit) break ;;
             (console) echo '* Already in console mode.' ;;
 
-            *) docker "${line[@]}" ;;
+            *)
+              echo "${line[*]}" >> "$docker_history"
+              history -n "$docker_history"
+              docker "${line[@]}"
+              ;;
           esac
           echo
         done
+        history -c && history -r
         ;;
 
       # Everything else passes through unaltered.
