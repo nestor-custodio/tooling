@@ -23,6 +23,7 @@ gui:
     tabWidth: 4
     mouseEvents: true
 
+    skipAmendWarning: false
     skipDiscardChangeWarning: false
     skipStashWarning: true
     skipNoStagedFilesWarning: false
@@ -34,6 +35,7 @@ gui:
     mainPanelSplitMode: 'flexible'
     enlargedSideViewLocation: 'top'
     wrapLinesInStagingView: false
+    useHunkModeInStagingView: true
     language: 'auto'
     timeFormat: '2006-01-02'
     shortTimeFormat: '15:04'
@@ -42,6 +44,8 @@ gui:
         activeBorderColor:
             - 'red'
             - 'bold'
+        inactiveBorderColor:
+            - 'white'
         optionsTextColor:
             - 'cyan'
 
@@ -50,19 +54,19 @@ gui:
 
     showListFooter: false
     showFileTree: true
+    showRootItemInFileTree: true
     showNumstatInFilesView: false
     showRandomTip: false
     showCommandLog: false
     showBottomLine: false
     showPanelJumps: false
-    # showIcons: false  <-- deprecated in favor of `showFileIcons`
     nerdFontsVersion: '3'
     showFileIcons: true
     commitAuthorShortLength: 2
     commitAuthorLongLength: 17
     commitHashLength: 8
     showBranchCommitHash: false
-    showDivergenceFromBaseBranch: 'none'
+    showDivergenceFromBaseBranch: 'arrowAndNumber'
     commandLogSize: 8
     splitDiff: 'auto'
     screenMode: 'normal'
@@ -124,11 +128,10 @@ git:
     skipHookPrefix: 'WIP'
     autoFetch: true
     autoRefresh: true
-    autoForwardBranches: 'allBranches'
-    fetchAll: false
+    autoForwardBranches: 'onlyMainBranches'
+    fetchAll: true
     autoStageResolvedConflicts: true
     branchLogCmd: 'git log --color=always --decorate --graph {{branchName}} --'
-    # allBranchesLogCmd: '...'  <-- deprecated in favor of `allBranchesLogCmds`
     allBranchesLogCmds: ['git log --color=always --decorate --graph --all --oneline --']
     overrideGpg: false
     disableForcePushing: false
@@ -232,6 +235,7 @@ keybinding:
         goInto: '<space>'
         confirm: '<enter>'
         confirmInEditor: '<disabled>'
+        confirmInEditor-alt: '<disabled>'
         remove: 'd'
         new: 'n'
         edit: 'e'
