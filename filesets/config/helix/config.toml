@@ -71,9 +71,9 @@ wrap-indicator = "↳"
 
 [editor.statusline]
 
-left   = ["spinner", "spacer", "mode", "spacer", "spacer", "file-name", "file-modification-indicator"]
-center = ["version-control"]
-right  = ["diagnostics", "spacer", "position", "spacer", "file-type", "spacer"]
+left   = ["spinner", "spacer", "mode", "spacer", "spacer", "file-name", "file-modification-indicator", "spacer", "diagnostics"]
+center = []
+right  = ["version-control", "spacer", "spacer", "position", "spacer", "file-type", "spacer"]
 
 mode.normal = "NORMAL"
 mode.insert = "INSERT"
