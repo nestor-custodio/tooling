@@ -163,7 +163,7 @@ startup_log='/var/log/startup'
 		# Install additional dev tooling.
 		report 'installing additional dev tooling'
 
-			apt-get -qqy install litecli mycli pgcli postgresql-client  # Additional dev tooling.
+			apt-get -qqy install libyaml-dev litecli mycli pgcli postgresql-client  # Additional dev tooling.
 
 
 		# Prepare the dev root.
