@@ -7,14 +7,14 @@ source '/home/nestor/bin/std.lib'
 
 	cat <<-EOF | store-as usage
 		Usage: $( script-name ) [--FILE_ENCODING] [--raw] QUERY [-- Q OPTIONS]
-		       $( name-blanks ) [--FILE_ENCODING] --fields=DATAFILE
+		       $( name-blanks ) [--FILE_ENCODING] --fields[=DATAFILE]
 
 		No-thoughts CSV query runner (via 'q'); presents legible output.
 		If QUERY begins with '@' or ends in '.sql', it's taken as a
 		filename and its *content* is used as the querytext.
 
-		If called with '--fields', field names (and types) for the given
-		DATAFILE are reported.
+		If called with '--fields', gives field names (and types) for the
+		DATAFILE. If no '--fields' DATAFILE is given, '-' (STDIN) is assumed.
 
 		Presents pretty output in a scrollable view, unless '--raw' is given.
 
@@ -72,7 +72,7 @@ source '/home/nestor/bin/std.lib'
 
 	CHAR_OPTS=''
 	LONG_OPTS='help'
-	LONG_OPTS="${LONG_OPTS},fields:,names:,types:"
+	LONG_OPTS="${LONG_OPTS},fields::,names::,types::"
 	LONG_OPTS="${LONG_OPTS},raw,plain,output"
 	LONG_OPTS="${LONG_OPTS},delimiter:,delimiters:"
 	LONG_OPTS="${LONG_OPTS},delimiter-in:,in:"
@@ -97,7 +97,7 @@ source '/home/nestor/bin/std.lib'
 				mode='fields'
 
 				datafile="$1" && shift
-				[ -n "$datafile" ] || error-out 1 'no DATAFILE given'
+				[ -n "$datafile" ] || datafile='-'
 				[ "$datafile" == '-' ] || [ -r "$datafile" ] || error-out 2 'DATAFILE not readable'
 
 				# shellcheck disable=SC2016
