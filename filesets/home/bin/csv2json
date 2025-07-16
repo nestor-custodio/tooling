@@ -98,7 +98,6 @@ csv_stream = case csv_source
 # ---
 
 dataset = CSV.parse csv_stream, headers: true,
-                                converters: :numeric,
                                 header_converters: :symbol
 
 if options[:lines] || options[:jsonl]
