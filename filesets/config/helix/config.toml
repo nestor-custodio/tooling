@@ -13,20 +13,20 @@ theme = "custom"
 
 [editor]
 
-auto-format             = false
-auto-pairs              = false
-auto-save               = false
-bufferline              = "always"
-clipboard-provider      = "tmux"
-color-modes             = true
-cursorline              = true
-end-of-line-diagnostics = "warning"
-insert-final-newline    = false
-middle-click-paste      = false
-popup-border            = "all"
-scrolloff               = 4
-shell                   = ["bash", "-c"]
-true-color              = true
+auto-save                = false
+bufferline               = "always"
+clipboard-provider       = "tmux"
+color-modes              = true
+cursorline               = true
+end-of-line-diagnostics  = "warning"
+insert-final-newline     = true
+middle-click-paste       = false
+popup-border             = "all"
+scrolloff                = 4
+shell                    = ["bash", "-c"]
+trim-final-newlines      = true
+trim-trailing-whitespace = true
+true-color               = true
 
 
 [editor.cursor-shape]
@@ -38,7 +38,8 @@ select = "block"
 
 [editor.file-picker]
 
-hidden = false
+hidden            = false
+deduplicate-links = false
 
 
 [editor.indent-guides]
@@ -49,9 +50,10 @@ character = "│"
 
 [editor.inline-diagnostics]
 
-cursor-line = "hint"
-other-lines = "error"
-prefix-len  = 2
+cursor-line     = "hint"
+other-lines     = "error"
+prefix-len      = 2
+max-diagnostics = 2
 
 
 [editor.lsp]
@@ -113,13 +115,10 @@ newline = "↲"
 "A" = "no_op"
 "B" = "no_op"
 "E" = "no_op"
-"G" = "no_op"
 "M" = "no_op"
-"O" = "no_op"
 "P" = "no_op"
 "Q" = "no_op"
 "T" = "no_op"
-"U" = "no_op"
 "W" = "no_op"
 "Y" = "no_op"
 "Z" = "no_op"
@@ -182,11 +181,10 @@ newline = "↲"
 "N"       = "search_prev"
 
 "g"       = "goto_line"
+"G"       = "goto_word"
 
-"C-u"     = "expand_selection"     # Syntax Tree Traversal
-"C-o"     = "shrink_selection"     #
-"C-j"     = "select_prev_sibling"  #
-"C-l"     = "select_next_sibling"  #
+"U"       = "expand_selection"  # Syntax Tree Traversal
+"O"       = "shrink_selection"  #
 
 
 # Tab/Pane Management
@@ -277,6 +275,7 @@ newline = "↲"
 "o"     = "no_op"
 "q"     = "no_op"
 "s"     = "no_op"
+"t"     = "no_op"
 "v"     = "no_op"
 "w"     = "no_op"
 "C-h"   = "no_op"
@@ -330,6 +329,7 @@ newline = "↲"
 "ret" = ":buffer-close"
 "S"   = ":write-buffer-close"
 "!"   = ":buffer-close!"
+"o"   = ":buffer-close-others"
 "p"   = "wclose"  # Close pane.
 "P"   = "wonly"   # Close other panes.
 
@@ -450,7 +450,7 @@ newline = "↲"
 
 
   # Modification
-  
+
   "r"         = ["delete_selection_noyank", "insert_mode"]
   "R"         = "replace"
 

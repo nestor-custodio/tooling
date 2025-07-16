@@ -6,9 +6,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) LANGUAGE
+		Usage: $( script-name ) LANGUAGE [FILENAME]
 
 		Runs a specialized linting process for the given LANGUAGE.
+		If given, the FILENAME is passed through to the underlying formatter.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -45,35 +46,55 @@ source '/home/nestor/bin/std.lib'
 	language="$1" && shift
 	[ -n "$language" ] || error-out 1 'no LANGUAGE given'
 
+	filename="$1" && shift
+
 
 	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
 
 }
 
 # ---
-# ---
 
-
-# Since Helix can't give us a `pwd`,
-# we have to assume "~/dev" for sanity's sake.
+# CD's into project root (per the given files),
+# if that's the relative path for the "$filename".
 #
-cd "${HOME}/dev" &> /dev/null
+function cd-to-project-root() {
+	[ -n "$filename" ] || return
+	! [ -e "$filename" ] || return
+
+	nearest "$@" | store-as root_file
+	[ -n "$root_file" ] || return
+
+  dirname "$root_file" | store-as root_dir
+  [ -e "${root_dir}/${filename}" ] && cd "$root_dir"
+}
+
+# ---
+# ---
 
 
 case "$language" in
 
 	(ruby)
-		rubocop --stdin source_file.rb --stderr --autocorrect --fail-level='fatal' < /dev/stdin
+		# Tweak CWD, if necessary.
+		#
+		cd-to-project-root '.ruby-version' 'Gemfile' 'Gemfile.lock'
+
+		rubocop --server --stdin "${filename:-source_file.rb}" --stderr --autocorrect --fail-level='fatal' < /dev/stdin
 		;;
 
 
 	(javascript|jsx)
+		# Tweak CWD, if necessary.
+		#
+		cd-to-project-root 'package.json'
+
 		if nearest --read 'package.json' | json '(.dependencies // {}),(.devDependencies // {}) | keys[]' | has-line? 'prettier'; then
 			npx prettier --version &> /dev/null || npm install prettier
-			npx prettier --stdin-filepath='source_file.jsx' --parser='typescript' --log-level='error' < /dev/stdin
+			npx prettier --stdin-filepath="${filename:-source_file.jsx}" --parser='typescript' --log-level='error' < /dev/stdin
 		else
 			command -v prettier &> /dev/null || npm install --global --production prettier
-			prettier --stdin-filepath='source_file.jsx' --parser='typescript' --log-level='error' < /dev/stdin
+			prettier --stdin-filepath="${filename:-source_file.jsx}" --parser='typescript' --log-level='error' < /dev/stdin
 		fi
 		;;
 

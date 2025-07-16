@@ -10,19 +10,19 @@ roots = [".ruby-version", "Gemfile", "Gemfile.lock"]
 [[language]]
 name = "javascript"
 auto-format = true
-formatter = { command = "hx.formatter", args = ["javascript"] }
+formatter = { command = "hx.formatter", args = ["javascript", "%{buffer_name}"] }
 roots = [".node-version", "package.json", "yarn.lock"]
 
 [[language]]
 name = "jsx"
 auto-format = true
-formatter = { command = "hx.formatter", args = ["jsx"] }
+formatter = { command = "hx.formatter", args = ["jsx", "%{buffer_name}"] }
 roots = [".node-version", "package.json", "yarn.lock"]
 
 [[language]]
 name = "ruby"
 auto-format = true
-formatter = { command = "hx.formatter", args = ["ruby"] }
+formatter = { command = "hx.formatter", args = ["ruby", "%{buffer_name}"] }
 roots = [".ruby-version", "Gemfile", "Gemfile.lock"]
 
 [[language]]
