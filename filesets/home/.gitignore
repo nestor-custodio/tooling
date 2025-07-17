@@ -36,6 +36,7 @@
 /.bundle/
 /.docker/
 /.gem/
+/.gemini/
 /.rubies/
 
 # dotfiles
