@@ -450,6 +450,11 @@ shopt -s lastpipe
 
 # Platform helpers.
 
+  # Gemini CLI
+
+  function gemini? { real gemini &> /dev/null ;}
+  function gemini  { gemini? || npm install -g @google/gemini-cli; "$( real gemini )" "$@" ;}
+
   # Google App Scripts
 
   function gapps? { command -v clasp &> /dev/null ;}
@@ -537,7 +542,7 @@ shopt -s lastpipe
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f @ ba bi br bx d db! db+ db- db: DB! dev development gapps gapps? known-env-vars           \
-          load-env na ni node-tasks nr ns nt nx p pending-migrations pending-migrations? production \
-          r+ r- rails-db rails-tasks rc rd release-gem rr rs rs1 rt rubocop rx s set-env staging t  \
-          testing unload-env ya yi yr yx
+export -f @ ba bi br bx d db! db+ db- db: DB! dev development gapps gapps? gemini gemini? known-env-vars \
+          load-env na ni node-tasks nr ns nt nx p pending-migrations pending-migrations? production r+   \
+          r- rails-db rails-tasks rc rd release-gem rr rs rs1 rt rubocop rx s set-env staging t testing  \
+          unload-env ya yi yr yx
