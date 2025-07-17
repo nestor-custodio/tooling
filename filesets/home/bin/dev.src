@@ -194,7 +194,7 @@ shopt -s lastpipe
 
         gh release create "v${new_version}" --latest
         gem push "${gem_name}-${new_version}.gem"
-        
+
       }
 
 
@@ -240,7 +240,7 @@ shopt -s lastpipe
 
       local sql=()
       sql+=('CREATE TEMPORARY TABLE files (name TEXT)')
-      while read name; do sql+=("INSERT INTO files VALUES ('${name}')"); done <<< "$migration_files"
+      while read -r name; do sql+=("INSERT INTO files VALUES ('${name}')"); done <<< "$migration_files"
       sql+=('SELECT files.name FROM files LEFT JOIN schema_migrations ON (name = version) WHERE (version IS NULL) ORDER BY 1')
 
       local IFS=';'
