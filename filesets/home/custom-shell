@@ -176,6 +176,16 @@ function peek { tee /dev/tty ;}
 
       # Lazy installers for plugins.
 
+      (buildx|build)
+        # Ensure the "docker-buildx" plugin is available.
+        # See: https://github.com/docker/buildx#manual-download
+        #
+        local docker_buildx_binary="${HOME}/.docker/cli-plugins/docker-buildx"
+        [ -x "$docker_buildx_binary" ] || eget --quiet 'docker/buildx' --asset='^.json' --to="$docker_buildx_binary"
+
+        "$docker_binary" "$subcommand" "$@"
+        ;;
+
       (compose)
         # Ensure the "docker-compose" plugin is available.
         # See: https://docs.docker.com/compose/install/linux/
