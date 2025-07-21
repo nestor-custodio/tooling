@@ -128,8 +128,6 @@ newline = "↲"
 "@" = "no_op"
 "$" = "no_op"
 "&" = "no_op"
-"*" = "no_op"
-"(" = "no_op"
 ")" = "no_op"
 "_" = "no_op"
 "+" = "no_op"
@@ -183,8 +181,10 @@ newline = "↲"
 "g"       = "goto_line"
 "G"       = "goto_word"
 
-"U"       = "expand_selection"  # Syntax Tree Traversal
-"O"       = "shrink_selection"  #
+"*"       = "expand_selection"     # Syntax Tree Traversal
+"("       = "shrink_selection"     #
+"U"       = "select_prev_sibling"  #
+"O"       = "select_next_sibling"  #
 
 
 # Tab/Pane Management
