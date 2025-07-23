@@ -217,6 +217,7 @@ function peek { tee /dev/tty ;}
 
           case "${line[0]}" in
             (exit) break ;;
+            (h|help) h docker "${line[@]:1}" ;;
             (console) echo '* Already in console mode.' ;;
 
             *)
