@@ -14,6 +14,7 @@ source '/home/nestor/bin/std.lib'
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
+		  --regex                   Interpret the LOOKUP_STRING as a regex.
 
 
 		Exit Status:
@@ -68,4 +69,4 @@ source '/home/nestor/bin/std.lib'
 if [ -n "$regex" ]
 	then grep  --quiet -x -- "$lookup_string"
 	else fgrep --quiet -x -- "$lookup_string"
-fi 
+fi
