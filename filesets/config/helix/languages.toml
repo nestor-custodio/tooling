@@ -2,6 +2,36 @@
 # See the languages documentation: https://docs.helix-editor.com/master/languages.html
 # Source new blocks from the base language config: https://github.com/helix-editor/helix/blob/master/languages.toml
 
+
+# Omit certain grammars from the --fetch / --build process.
+#
+# Why fetch/build "large" grammars (>= 30MB of source)
+# for languages that we're not likely to ever even see?
+#
+# https://docs.helix-editor.com/master/languages.html#choosing-grammars
+# For a list of source sizes: `du --summarize ${HELIX_RUNTIME}/sources/* | sort -n`
+#
+[use-grammars]
+except = [
+  "latex",
+  "c-sharp",
+  "koto",
+  "kotlin",
+  "tlaplus",
+  "ponylang",
+  # "crystal",
+  "swift",
+  "verilog",
+  "ocaml",
+  "ocaml-interface",
+  "nim",
+  "julia",
+  "lean"
+]
+
+
+# Language (`[[language]]`) and Grammar (`[[grammar]]`) blocks below here.
+
 [[language]]
 name = "erb"
 file-types = ["erb", "inky"]
