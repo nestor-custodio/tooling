@@ -99,13 +99,6 @@ webroot="$( realpath "$webroot" )"
 webroot_url="https://$( hostname --short ).custodio.app/"
 
 
-sudo lsof -i -P -n | grep -P '(?<=:)[0-9]+\b' --only-matching | store-as unavailable_ports
-while true; do
-	shuf -n1 --input-range='3001-3999' | store-as port
-	has-line? "$port" <<< "$unavailable_ports" || break
-done
-
-
 echo
 echo "Serving \"${webroot}\" on:"
 echo "${webroot_url} ..."
@@ -113,6 +106,7 @@ echo
 qr "$webroot_url"
 
 
+available-port | store-as port
 https "$https_safety" "$port" &> /dev/null
 static-web-server --root="$webroot" --port="$port" --compression='true' --directory-listing='true' --directory-listing-order='0'
 https stop
