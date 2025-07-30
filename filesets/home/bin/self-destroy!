@@ -1,0 +1,57 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Fully tears down the running VM!
+		You are given 10 seconds to quit out (via Ctrl-C) before PNR.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+echo 'Destroying VM in 10s.'
+echo 'Use Ctrl-C to cancel.'
+
+sleep 10 && gcp destroy "$( instance name )"
