@@ -13,6 +13,7 @@ theme = "custom"
 
 [editor]
 
+auto-pairs               = false
 auto-save                = false
 bufferline               = "always"
 clipboard-provider       = "tmux"
