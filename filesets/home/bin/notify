@@ -19,7 +19,7 @@ source '/home/nestor/bin/std.lib'
 		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  on invalid CHANNEL,
+		  2  if invalid CHANNEL,
 		  3  if message failed to send.
 	EOF
 
