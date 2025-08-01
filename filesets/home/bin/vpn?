@@ -1,0 +1,63 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) NETWORK
+
+		Reports whether an active VPN connection to the given NETWORK exists.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if TRUE,
+		  1  if FALSE (or invalid option / unknown NETWORK).
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	network="$1" && shift
+	[ -n "$network" ] || error-out 1 'no NETWORK given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Ensure the given NETWORK exists.
+#
+network_bins="${HOME}/vm-scripts/vpn/bin/${network}"
+[ -d "$network_bins" ] || error-out 2 "unknown NETWORK: '${network}'"
+
+
+ssh nestor@vpn -- "${network_bins}/connected?"
