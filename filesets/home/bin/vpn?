@@ -54,6 +54,11 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+# Bail if there is no VPN host.
+#
+[ "$( gcp state vpn )" == "RUNNING" ] || exit-out 1
+
+
 # Ensure the given NETWORK exists.
 #
 network_bins="${HOME}/vm-scripts/vpn/bin/${network}"

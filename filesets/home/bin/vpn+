@@ -55,6 +55,11 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+# Ensure the VPN host is running.
+#
+[ "$( gcp state vpn )" == "RUNNING" ] || gcp start vpn
+
+
 # Ensure the given NETWORK exists.
 #
 network_bins="${HOME}/vm-scripts/vpn/bin/${network}"
