@@ -48,6 +48,19 @@ shopt -s lastpipe expand_aliases
 	}
 
 
+	function pause {
+		# Note this is NOT the same as `local prompt="${1:-...}"`.
+		#
+		local prompt
+		if [ "$#" == 0 ]
+			then prompt='Press any key to continue ...'
+			else prompt="$1" && shift
+		fi
+
+		read -r -n1 -s -p "$prompt" && echo
+	}
+
+
 	TAB="$( printf '\t' )"
 
 }
