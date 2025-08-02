@@ -155,7 +155,7 @@ source '/home/nestor/bin/std.lib'
 			[ "$#" == 1 ] || error-out 1 'no instance name given'
 			instance_name="$1" && shift
 
-			gcloud compute instances list --sort-by='status,name' --filter="(name:'${instance_name}')" "$@"
+			gcloud compute instances list --filter="(name:'${instance_name}')" "$@"
 			;;
 
 		# ---
