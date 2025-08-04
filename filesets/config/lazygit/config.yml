@@ -100,7 +100,7 @@ gui:
 os:
 
     editPreset: 'helix'
-    copyToClipboardCmd: 'copy "{{text}}"'
+    copyToClipboardCmd: 'copy {{text}}'
 
 
 git:
