@@ -73,4 +73,4 @@ calc "min(3.00, max(0.75, ${#text} * 0.05))" | store-as timeout
 tmux display-popup -E                       \
                    -S "$style" -s "$style"  \
                    -w "$width" -h "$height" \
-                   "echo -en '\e[?25l' ; echo -n '${text}' | sed -e 's|^| |' ; read -s -N 1 -t '${timeout}' ; exit"
+                   "echo -en '\e[?25l' ; echo -n '${text}' | sed -e 's|^| |' ; read -s -N 1 -t '${timeout}' || true ; exit"
