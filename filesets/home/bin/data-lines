@@ -9,7 +9,7 @@ source '/home/nestor/bin/std.lib'
 		Usage: $( script-name ) [FILE]
 
 		Gives the number of (non-empty) lines in the given FILE (or STDIN).
-		
+
 		This tool replaces 'wc -l' for counting lines of data, since that counts
 		empty input as "1" line and also counts whitespace-only lines, making it
 		too unreliable for our liking.
@@ -65,4 +65,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-tr -d '[:blank:]' < "${filename:-/dev/stdin}" | /bin/grep -c '.'
+tr -d '[:blank:]' < "${filename:-/dev/stdin}" | grep -Pc '.'

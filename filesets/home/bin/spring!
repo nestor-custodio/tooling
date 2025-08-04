@@ -54,7 +54,7 @@ source '/home/nestor/bin/std.lib'
 
 command -v spring &> /dev/null || gem install spring || error-out 2 "unable to find (or set up) 'spring'"
 
-pwd | starts-with? "$DEV_ROOT" || error-out 3 "not currently within '${DEV_ROOT}'"
+pwd | 'starts-with?' "$DEV_ROOT" || error-out 3 "not currently within '${DEV_ROOT}'"
 cd "$DEV_ROOT"
 
 whoami | store-as username

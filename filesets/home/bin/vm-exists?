@@ -54,4 +54,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-gcp vms -- --format='value(name)' | has-line? "$instance_name"
+gcp vms -- --format='value(name)' | 'has-line?' "$instance_name"

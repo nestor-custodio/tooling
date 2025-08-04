@@ -69,6 +69,6 @@ mycli_exec="$( command -v mycli )"
 
 # Ensure we have a URL.
 #
-matches? '://' <<< "$database" || database="mysql://${USER}@mysql/${database}"
+'matches?' '://' <<< "$database" || database="mysql://${USER}@mysql/${database}"
 
 "$mycli_exec" --myclirc="~/.config/mycli/config" "$database" "$@"

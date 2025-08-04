@@ -51,4 +51,4 @@ source '/home/nestor/bin/std.lib'
 
 
 command -v spring &> /dev/null || exit 1
-spring status | head -n1 | sed -e 's|:$|.|' | tee /dev/stderr | has? 'is running'
+spring status | head -n1 | sed -e 's|:$|.|' | tee /dev/stderr | 'has?' 'is running'

@@ -91,7 +91,7 @@ source '/home/nestor/bin/std.lib'
 function filter_for_all_vars {
 	if [ -n "$all_vars" ]
 		then cat
-		else grep -v '^CLEAN_'
+		else grep -Pv '^CLEAN_'
 	fi
 } # function filter_for_all_vars
 

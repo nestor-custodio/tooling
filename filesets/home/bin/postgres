@@ -69,6 +69,6 @@ pgcli_exec="$( command -v pgcli )"
 
 # Ensure we have a URL.
 #
-matches? '://' <<< "$database" || database="postgres://${USER}@postgres/${database}"
+'matches?' '://' <<< "$database" || database="postgres://${USER}@postgres/${database}"
 
 "$pgcli_exec" --pgclirc="~/.config/pgcli/config" "$database" "$@"

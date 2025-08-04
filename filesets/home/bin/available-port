@@ -47,7 +47,7 @@ source '/home/nestor/bin/std.lib'
 
 	port_range="$1" && shift
 	[ -n "$port_range" ] || port_range='3001-3999'
-	has-line? --regex '\d+-\d+' <<< "$port_range" || error-out 1 'invalid PORT_RANGE'
+	'has-line?' --regex '\d+-\d+' <<< "$port_range" || error-out 1 'invalid PORT_RANGE'
 
 
 	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
@@ -59,8 +59,8 @@ source '/home/nestor/bin/std.lib'
 
 
 sudo lsof -i -P -n | grep -P '(?<=:)[0-9]+\b' --only-matching | store-as unavailable_ports
-shuf -n1 --input-range="$port_range" | while read port; do
-	has-line? "$port" <<< "$unavailable_ports" || exit-out 0 "$port"
+shuf -n1 --input-range="$port_range" | while read -r port; do
+	'has-line?' "$port" <<< "$unavailable_ports" || exit-out 0 "$port"
 done
 
 exit 2

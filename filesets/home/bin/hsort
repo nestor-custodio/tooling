@@ -46,7 +46,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	header_line_count='1'
-	integer? "$1" && header_line_count="$1" && shift
+	'integer?' "$1" && header_line_count="$1" && shift
 
 }
 

@@ -89,7 +89,7 @@ case "$language" in
 		#
 		cd-to-project-root 'package.json'
 
-		if nearest --read 'package.json' | json '(.dependencies // {}),(.devDependencies // {}) | keys[]' | has-line? 'prettier'; then
+		if nearest --read 'package.json' | json '(.dependencies // {}),(.devDependencies // {}) | keys[]' | 'has-line?' 'prettier'; then
 			npx prettier --version &> /dev/null || npm install prettier
 			npx prettier --stdin-filepath="${filename:-source_file.jsx}" --parser='typescript' --log-level='error' < /dev/stdin
 		else

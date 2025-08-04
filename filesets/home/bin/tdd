@@ -75,7 +75,7 @@ source '/home/nestor/bin/std.lib'
 
 		# Check for RSpec usage.
 
-		nearest --read 'Gemfile.lock' 'Gemfile' | has? rspec && rspec='1'
+		nearest --read 'Gemfile.lock' 'Gemfile' | 'has?' rspec && rspec='1'
 
 
 		# Check for Minitest files.
@@ -124,4 +124,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-calc? "$( script-duration) <= 300" || ding-me
+'calc?' "$( script-duration) <= 300" || ding-me

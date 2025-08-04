@@ -165,11 +165,11 @@ source '/home/nestor/bin/std.lib'
 
 # Sort out the querytext.
 #
-if starts-with? '@' <<< "$query_param"; then
+if 'starts-with?' '@' <<< "$query_param"; then
 	# We've been given a query *file*.
 	#
 	store-as querytext < "${query_param:1}"
-elif ends-with? '.sql' <<< "$query_param"; then
+elif 'ends-with?' '.sql' <<< "$query_param"; then
 	# We've been given a query *file*.
 	#
 	store-as querytext < "$query_param"

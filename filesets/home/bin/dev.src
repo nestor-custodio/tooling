@@ -42,7 +42,7 @@ shopt -s lastpipe
         fi
       done
 
-      if nearest --read 'Gemfile.lock' 'Gemfile' | has? 'rubocop'; then
+      if nearest --read 'Gemfile.lock' 'Gemfile' | 'has?' 'rubocop'; then
         if [ -n "$skip_fd_call" ];
           then bx rubocop "$@"
           else bx rubocop --force-exclusion $( fd '\.(?:rake|rb)$' ) "$@"
@@ -79,11 +79,11 @@ shopt -s lastpipe
         #
         local ruby_version
         if ruby_version="$( nearest --read '.ruby-version' )"; then
-          ruby --version 2> /dev/null | has? "$ruby_version"              \
-          || chruby "$ruby_version"                                       \
-          || ( set -o pipefail                                            \
-               && ruby-install "$ruby_version" 2> /dev/null | fgrep '>>>' \
-               && RUBIES=("${HOME}/.rubies"/*) && chruby "$ruby_version"  \
+          ruby --version 2> /dev/null | 'has?' "$ruby_version"              \
+          || chruby "$ruby_version"                                         \
+          || ( set -o pipefail                                              \
+               && ruby-install "$ruby_version" 2> /dev/null | grep -F '>>>' \
+               && RUBIES=("${HOME}/.rubies"/*) && chruby "$ruby_version"    \
              )
         fi
 
@@ -105,7 +105,7 @@ shopt -s lastpipe
         # Install gemset (as quietly as possible, if invoked as just `bi`).
         #
         if [ "$#" == 0 ]
-          then bundle install | grep -P -v '^(?:Using|Bundle complete!|Use `bundle info \[gemname\]`) '
+          then bundle install | grep -Pv '^(?:Using|Bundle complete!|Use `bundle info \[gemname\]`) '
           else bundle install "$@"
         fi
 
@@ -137,13 +137,13 @@ shopt -s lastpipe
 
         # ---
 
-        pushd "$DEV_ROOT"
+        cd "$DEV_ROOT" || return 2
 
         gem_name="$( superbase ./*.gemspec )"
-        [ -n "$gem_name" ] || return 2
+        [ -n "$gem_name" ] || return 3
 
         repo_id="$( gh repo set-default --view 2> /dev/null )"
-        [ -n "$repo_id" ] || return 3
+        [ -n "$repo_id" ] || return 4
 
         old_version="$( gh:release-version "$repo_id" 2> /dev/null )"
         [ -n "$old_version" ] || old_version='0.0.0'
@@ -172,7 +172,7 @@ shopt -s lastpipe
         else
           printf "Last release was '%s'.\nPublish new release as:" "$old_version"
           read -r -p ' ' new_version
-          [ -n "$new_version" ] || return 4
+          [ -n "$new_version" ] || return 5
         fi
 
 
@@ -205,9 +205,9 @@ shopt -s lastpipe
     function r- { rd destroy  "$@" ;}
     function r+ { rd generate "$@" ;}
 
-    function rc { if spring? 2> /dev/null; then spring rails console "$@"; else rd console "$@"; fi ;}
-    function rx { if spring? 2> /dev/null; then spring rails runner  "$@"; else rd runner  "$@"; fi ;}
-    function rr { if spring? 2> /dev/null; then spring rails runner  "$@"; else rd runner  "$@"; fi ;}
+    function rc { if 'spring?' 2> /dev/null; then spring rails console "$@"; else rd console "$@"; fi ;}
+    function rx { if 'spring?' 2> /dev/null; then spring rails runner  "$@"; else rd runner  "$@"; fi ;}
+    function rr { if 'spring?' 2> /dev/null; then spring rails runner  "$@"; else rd runner  "$@"; fi ;}
 
     # ---
 
@@ -222,7 +222,7 @@ shopt -s lastpipe
 
       # Ensure we have a URL.
       #
-      if ! matches? '://' <<< "$database"; then
+      if ! 'matches?' '://' <<< "$database"; then
         case "$( yaml ".${RAILS_ENV}.adapter" < "$db_config" 2> /dev/null )" in
           (postgresql) database="postgres://${USER}@postgres/${database}" ;;
           (mysql     ) database="mysql://${USER}@mysql/${database}" ;;
@@ -236,7 +236,7 @@ shopt -s lastpipe
     }
 
     function pending-migrations {
-      local migration_files="$( ls -1 "${DEV_ROOT}/db/migrate"/??????????????_*.rb 2> /dev/null | grep -P --only-matching '(?<=/)[0-9]{14}(?=_)' )"
+      local migration_files="$( ls -1 "${DEV_ROOT}/db/migrate"/[0-9]*_*.rb 2> /dev/null | sed -r -e 's|^.*/([0-9]+)_[^/]+\.rb$|\1|' )"
 
       local sql=()
       sql+=('CREATE TEMPORARY TABLE files (name TEXT)')
@@ -248,9 +248,9 @@ shopt -s lastpipe
     }
     function pending-migrations? { [ -n "$( pending-migrations )" ] ;}
 
-    function db: {                                  r+ migration   "$@" ;}
-    function db+ { pending-migrations? || return 0; rd db:migrate  "$@" ;}
-    function db- {                                  rd db:rollback "$@" ;}
+    function db: {                                    r+ migration   "$@" ;}
+    function db+ { 'pending-migrations?' || return 0; rd db:migrate  "$@" ;}
+    function db- {                                    rd db:rollback "$@" ;}
 
     function db! {
       # Note most of this is a patch that allows using LazyMigrate v0.3.0 with Rails 7+.
@@ -374,7 +374,7 @@ shopt -s lastpipe
         (latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
         (''|node) [ -n "$current_version" ] || n lts ;;
 
-        *) has? "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
+        *) 'has?' "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
       esac
 
       # Bail if there's nothing to do.
@@ -428,7 +428,7 @@ shopt -s lastpipe
         (latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
         (''|node) [ -n "$current_version" ] || n lts ;;
 
-        *) has? "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
+        *) 'has?' "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
       esac
 
       # Ensure (any) yarn.
@@ -453,12 +453,12 @@ shopt -s lastpipe
   # Gemini CLI
 
   function gemini? { real gemini &> /dev/null ;}
-  function gemini  { gemini? || npm install -g @google/gemini-cli; "$( real gemini )" "$@" ;}
+  function gemini  { 'gemini?' || npm install -g @google/gemini-cli; "$( real gemini )" "$@" ;}
 
   # Google App Scripts
 
   function gapps? { command -v clasp &> /dev/null ;}
-  function gapps  { gapps? || npm install -g @google/clasp; clasp "$@" ;}
+  function gapps  { 'gapps?' || npm install -g @google/clasp; clasp "$@" ;}
 
 
 # ENV helpers.
@@ -517,7 +517,7 @@ shopt -s lastpipe
     local clean_vars_file="$( mktemp --dry-run -t 'unload-env.XXX' )"
     echo -n "${CLEAN_ENV_VARS}" > "$clean_vars_file"
 
-    for new_env_var in $( known-env-vars | fgrep -vx --file="$clean_vars_file" ); do unset "$new_env_var"; done
+    for new_env_var in $( known-env-vars | grep -Fvx --file="$clean_vars_file" ); do unset "$new_env_var"; done
     rm "$clean_vars_file"
   }
 

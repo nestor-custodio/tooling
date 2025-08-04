@@ -52,7 +52,7 @@ source '/home/nestor/bin/std.lib'
 
 			(-n|--count|--parts)
 				part_count="$1" && shift
-				integer? "$part_count" || error-out 1 "non-integer PART_COUNT: '${part_count}'"
+				'integer?' "$part_count" || error-out 1 "non-integer PART_COUNT: '${part_count}'"
 				;;
 
 		esac
@@ -86,5 +86,5 @@ for i in $( seq "$part_count" ); do
 
 	# Sometimes we don't need as many parts as were requested.
 	#
-	calc? "( ${start} + ${part_length} ) >= ${#data}" && break
+	'calc?' "( ${start} + ${part_length} ) >= ${#data}" && break
 done

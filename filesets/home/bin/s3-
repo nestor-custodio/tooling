@@ -71,9 +71,9 @@ function unmount {
 
 	# Note we can't give `pkill` a full regex for the mount
 	# (there is a 15-character limit to the match expression)
-	# so we have to two-step with a `pgrep | fgrep` and THEN `kill`.
+	# so we have to two-step with a `pgrep | grep -F` and THEN `kill`.
 	#
-	pgrep -a s3fs | fgrep "$mount_point" | cut --fields='1' --delimiter=' ' | store-as pid
+	pgrep -a s3fs | grep -F "$mount_point" | cut --fields='1' --delimiter=' ' | store-as pid
 	kill "$pid"
 }
 

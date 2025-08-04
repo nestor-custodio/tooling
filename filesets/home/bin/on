@@ -73,7 +73,7 @@ source '/home/nestor/bin/std.lib'
 				time_spec="$1" && shift
 				wait_type='time'
 
-				matches-line? '[0-9]*\.?[0-9]+[smh]?' <<< "$time_spec" || error-out 1 "unparseable TIME_SPEC: '${time_spec}'"
+				'matches-line?' '[0-9]*\.?[0-9]+[smh]?' <<< "$time_spec" || error-out 1 "unparseable TIME_SPEC: '${time_spec}'"
 				tr -d 'smh'  <<< "$time_spec" | store-as duration
 				tr -d '0-9.' <<< "$time_spec" | store-as duration_unit
 

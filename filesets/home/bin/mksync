@@ -144,12 +144,12 @@ case "$os_release" in
 		;;
 
 	lts)
-	  os-releases | fgrep 'lts' | tail -n1 | store-as image_family
+	  os-releases | grep -F 'lts' | tail -n1 | store-as image_family
 		;;
 
 	*)
-		matches-line? '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
-		os-releases | fgrep "${os_release//./}" | tail -n1 | store-as image_family
+		'matches-line?' '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
+		os-releases | grep -F "${os_release//./}" | tail -n1 | store-as image_family
 		;;
 esac
 [ -n "$image_family" ] || error-out 1 'requested os release not found'
@@ -159,15 +159,23 @@ esac
 
 
 # Tooling isn't available once the "sync" instance is killed,
-# so we need to pre-fetch values and replace tools with functions.
-#
-# shellcheck disable=SC2218
-vm-project | store-as vm_project
-function vm-project { echo "$vm_project" ;}
-#
-# shellcheck disable=SC2218
-vm-zone | store-as vm_zone
-function vm-zone { echo "$vm_zone" ;}
+# so we need to shadow some of our scripts with local functions.
+
+function metadata {
+	local metadata_key="$1" && shift
+
+	# Set the GCP Metadata API's base URI.
+	# (https://cloud.google.com/compute/docs/storing-retrieving-metadata)
+	#
+	local gcp_metadata_api='http://metadata.google.internal/computeMetadata/v1'
+
+	# We're tacking on an `echo` because the metadata response is "too clean" (i.e. has no "\n").
+	#
+	curl "${gcp_metadata_api}/${metadata_key}" --silent --header 'Metadata-Flavor: Google' --fail && echo
+}
+
+function vm-project { metadata 'project/project-id'                    ;}
+function vm-zone    { metadata 'instance/zone'      | sed -e 's|.*/||' ;}
 
 
 # Remove old instance (if any).

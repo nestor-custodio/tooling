@@ -33,7 +33,6 @@ startup_log='/var/log/startup'
 		#
 		local gcp_metadata_api='http://metadata.google.internal/computeMetadata/v1'
 
-
 		# We're tacking on an `echo` because the metadata response is "too clean" (i.e. has no "\n").
 		#
 		curl "${gcp_metadata_api}/${metadata_key}" --silent --header 'Metadata-Flavor: Google' --fail && echo

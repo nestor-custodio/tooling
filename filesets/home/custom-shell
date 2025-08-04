@@ -72,7 +72,7 @@ export PGHOST='postgres'
 function break-out-of-links {
   local pwd="$( pwd -P )"
   local link_root="${HOME}/links/filesets/home/"
-  starts-with? "$link_root" <<< "$pwd" && cd "${pwd//${link_root}/${HOME}/}"
+  'starts-with?' "$link_root" <<< "$pwd" && cd "${pwd//${link_root}/${HOME}/}"
 }
 
 
@@ -122,11 +122,11 @@ function peek { tee /dev/tty ;}
 
     # Ensure we have a header-compatible `less`.
     #
-    less_version="$( less --version | head -n1 | cut -d' ' -f2 | grep --only-matching '^[0-9]+' )"
+    less_version="$( less --version | head -n1 | cut -d' ' -f2 | grep -P --only-matching '^[0-9]+' )"
     [ "$less_version" -ge 663 ] || "${HOME}/bin/builds/less-663/plug"
 
     local header_height='1'
-    integer? "$1" && header_height="$1" && shift
+    'integer?' "$1" && header_height="$1" && shift
     LESS="${LESS} --header=${header_height}" bat "$@"
   }
 
@@ -268,8 +268,8 @@ function peek { tee /dev/tty ;}
 
   fzf_keybinding_spec="ctrl-i:up,ctrl-k:down,space:toggle,ctrl-space:toggle"
 
-  fzf_preview_command="file --brief --mime-type -- {} | starts-with? 'text/'  \
-                       && bat --force-colorization --line-range='1:200' -- {} \
+  fzf_preview_command="file --brief --mime-type -- {} | 'starts-with?' 'text/' \
+                       && bat --force-colorization --line-range='1:200' -- {}  \
                        || echo '(non-text content)'"
 
   export FZF_DEFAULT_COMMAND="fd --hidden --exclude='.git/' --color='always'"
@@ -341,7 +341,7 @@ function peek { tee /dev/tty ;}
     local remote="${1:-production}"
     local branch="$( gbranch --show-current )"
 
-    gremote 2> /dev/null | has-line? "$remote" || return 1
+    gremote 2> /dev/null | 'has-line?' "$remote" || return 1
 
     local confirmation
     printf 'Deploy branch "\e[33;1m%s\e[0m" to remote "\e[31;1m%s\e[0m"? (y/N) ' "$branch" "$remote"; read -r confirmation
@@ -355,11 +355,6 @@ function peek { tee /dev/tty ;}
   # the repo file, and any other .gitignore's within specific subdirectories.
   #
   function gitignored { git ls-files --others --ignored --directory --exclude-standard "$@" ;}
-
-
-  # grep
-
-  function grep { "$( real grep )" -P --color=auto "$@" ;}
 
 
   # heroku
@@ -438,7 +433,7 @@ function peek { tee /dev/tty ;}
 
       if [ "$( head -c1 <<< "${args[$i]}" )" != '-' ]; then
         [ -f "${args[$i]}" ] || continue  # Only keep files.
-        [ -x "${args[$i]}" ] || { head -n1 "${args[$i]}" | grep --quiet '^#!.*\b(bash|sh)\b' ;} || continue  # Only keep script-likes.
+        [ -x "${args[$i]}" ] || { head -n1 "${args[$i]}" | grep -P --quiet '^#!.*\b(bash|sh)\b' ;} || continue  # Only keep script-likes.
       fi
 
       executables+=("${args[$i]}")
@@ -488,11 +483,11 @@ dev_helpers="${HOME}/bin/dev.src"
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f ... .... ..... ::                                                                \
-          a break-out-of-links bw f docker g gadd gblame gbranch gbranch? gcheckout        \
-          gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph ginit gitignored  \
-          glog gmerge gmove gmv gpatch gpop gpull gpush grebase gremote grep greset gstage \
-          gstash gstatus gtag gtrack gunchange gundelete gunstage guntrack h hbat helix k  \
+export -f ... .... ..... ::                                                               \
+          a break-out-of-links bw f docker g gadd gblame gbranch gbranch? gcheckout       \
+          gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph ginit gitignored \
+          glog gmerge gmove gmv gpatch gpop gpull gpush grebase gremote greset gstage     \
+          gstash gstatus gtag gtrack gunchange gundelete gunstage guntrack h hbat helix k \
           lazydocker less list list+ m mirror mkcd peek pgcli real rg shellcheck
 
 

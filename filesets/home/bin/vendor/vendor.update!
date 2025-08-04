@@ -240,7 +240,7 @@ if [ -n "$checks_only" ]; then
 		set-tool "$tool_name"
 
 		printf "\e[1m%s\e[0m: ..." "$tool_name"
-		vendor.latest? "$tool_name" | store-as update_report
+		'vendor.latest?' "$tool_name" | store-as update_report
 		[ -z "$update_report" ] && clear-line && continue
 
 		backspace 3 && echo "$update_report"
@@ -269,7 +269,7 @@ else
 		tool_name="$1" && shift
 
 		printf "\e[1m%s\e[0m: ..." "$tool_name"
-		vendor.latest? "$tool_name" | store-as update_report
+		'vendor.latest?' "$tool_name" | store-as update_report
 		[ -z "$update_report" ] && clear-line && continue
 
 		backspace 3

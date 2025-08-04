@@ -11,14 +11,13 @@ external-sources=true
 #
 disable=SC1071 # Don't complain about scripts targetting shells not supported by Shellcheck.
 disable=SC1090 # Allow `source`ing from variables.
+disable=SC1091 # Allow `source`ing from files across filesystem boundaries.
 disable=SC2012 # Allow use of `ls`.
+disable=SC2016 # Regexes will frequently generate false positives for this.
 disable=SC2034 # std.lib usage generates a lot of false positives for this.
 disable=SC2119 # std.lib usage generates a lot of false positives for this.
 disable=SC2120 # Allow functions with optional params.
 disable=SC2148 # Disregard files of unknown type.
 disable=SC2154 # std.lib usage generates a lot of false positives for this.
 disable=SC2155 # Allow simultaneous declaration and assignment.
-disable=SC2164
-disable=SC2197
-disable=SC2211 # Allow natural use of predicate tooling.
-disable=SC2239 # We want to allow shebangs for tools we know will be in our path.
+disable=SC2164 # Don't *require* `|| return`/`|| exit` after `cd`.

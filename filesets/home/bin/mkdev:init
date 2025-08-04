@@ -33,7 +33,6 @@ startup_log='/var/log/startup'
 		#
 		local gcp_metadata_api='http://metadata.google.internal/computeMetadata/v1'
 
-
 		# We're tacking on an `echo` because the metadata response is "too clean" (i.e. has no "\n").
 		#
 		curl "${gcp_metadata_api}/${metadata_key}" --silent --header 'Metadata-Flavor: Google' --fail && echo
@@ -190,7 +189,7 @@ startup_log='/var/log/startup'
 					# - "https://github.com/username/repo.git" => "github.com/username/repo"
 
 					dev_dir="$( sed -r -e 's|^.*://||' -e 's|^.*@||' -e 's|:|/|' -e 's|\.git$||' <<< "$git_repo" )"
-				
+
 				}
 
 				dev_remote_path="/export/dev/${dev_dir}/"
@@ -198,7 +197,7 @@ startup_log='/var/log/startup'
 
 
 				# Mount the persisted store into the dev root.
-				
+
 				report '... mounting dev dir from sync'
 
 				dev_mount_path="sync:/dev/${dev_dir}"

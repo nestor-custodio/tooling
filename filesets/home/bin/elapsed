@@ -146,12 +146,12 @@ calc "floor( mod(${delta}, ${sec_per_m}) / ${sec_per_s} )" | store-as s
 
 
 output=''
-(( "$y" > 0 )) && matches? 'y|w|d|h|m|s' <<< "$precision" && output="${output} ${y}y"
-(( "$w" > 0 )) && matches?   'w|d|h|m|s' <<< "$precision" && output="${output} ${w}w"
-(( "$d" > 0 )) && matches?     'd|h|m|s' <<< "$precision" && output="${output} ${d}d"
-(( "$h" > 0 )) && matches?       'h|m|s' <<< "$precision" && output="${output} ${h}h"
-(( "$m" > 0 )) && matches?         'm|s' <<< "$precision" && output="${output} ${m}m"
-(( "$s" > 0 )) && matches?           's' <<< "$precision" && output="${output} ${s}s"
+(( "$y" > 0 )) && 'matches?' 'y|w|d|h|m|s' <<< "$precision" && output="${output} ${y}y"
+(( "$w" > 0 )) && 'matches?'   'w|d|h|m|s' <<< "$precision" && output="${output} ${w}w"
+(( "$d" > 0 )) && 'matches?'     'd|h|m|s' <<< "$precision" && output="${output} ${d}d"
+(( "$h" > 0 )) && 'matches?'       'h|m|s' <<< "$precision" && output="${output} ${h}h"
+(( "$m" > 0 )) && 'matches?'         'm|s' <<< "$precision" && output="${output} ${m}m"
+(( "$s" > 0 )) && 'matches?'           's' <<< "$precision" && output="${output} ${s}s"
 
 
 output="${output/ }"

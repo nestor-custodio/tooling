@@ -181,7 +181,7 @@ source '/home/nestor/bin/std.lib'
 				gcloud compute machine-types list | store-as machine_types
 				function machine-type-columns { cut --characters='1-18,46-' ;}
 				head -n1 <<< "$machine_types" | machine-type-columns
-				fgrep "$( vm-zone )" <<< "$machine_types" | sort --field-separator='-' --key='1,1' --key='2,2' --key='3,3n' | machine-type-columns
+				grep -F "$( vm-zone )" <<< "$machine_types" | sort --field-separator='-' --key='1,1' --key='2,2' --key='3,3n' | machine-type-columns
 				exit-out
 				;;
 
@@ -261,12 +261,12 @@ case "$os_release" in
 		;;
 
 	lts)
-	  os-releases | fgrep 'lts' | tail -n1 | store-as image_family
+	  os-releases | grep -F 'lts' | tail -n1 | store-as image_family
 		;;
 
 	*)
-		matches-line? '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
-		os-releases | fgrep "${os_release//./}" | tail -n1 | store-as image_family
+		'matches-line?' '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
+		os-releases | grep -F "${os_release//./}" | tail -n1 | store-as image_family
 		;;
 esac
 [ -n "$image_family" ] || error-out 1 'requested os release not found'

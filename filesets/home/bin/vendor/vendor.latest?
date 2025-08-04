@@ -31,7 +31,7 @@ source '/home/nestor/bin/std.lib'
 	_executable=''
 	function executable {
 		[ -n "$_executable" ] && echo "$_executable" && return
-	
+
 		echo "${HOME}/bin/vendor/${tool_name}" | store-as _executable
 		echo "$_executable"
 	}
@@ -39,7 +39,7 @@ source '/home/nestor/bin/std.lib'
 	_github_repo=''
 	function github-repo {
 		[ -n "$_github_repo" ] && echo "$_github_repo" && return
-	
+
 		store-as _github_repo < "$( executable ).repo"
 		echo "$_github_repo"
 	}
@@ -47,13 +47,13 @@ source '/home/nestor/bin/std.lib'
 	_executable_url=''
 	function executable-url {
 		[ -n "$_executable_url" ] && echo "$_executable_url" && return
-	
+
 		store-as _executable_url < "$( executable ).url"
 		echo "$_executable_url"
 	}
 
 	# ---
-	
+
 	function normalized {
 		sed -r -e 's#^ +##'              \
 		       -e 's# +$##'              \
@@ -150,7 +150,7 @@ case "$tool_name" in
 		vendor.version bw 2> /dev/null | store-as local_version
 
 		gh --repo="$( github-repo )" release list                 \
-		| grep --only-matching '(?<=cli-v)[[:print:]]+'           \
+		| grep -P --only-matching '(?<=cli-v)[[:print:]]+'        \
 		| sort --version-sort | tail -n1 | store-as release_version
 
 		[ "$local_version" == "$release_version" ] || exit-out 2 "${local_version:-(?)} ➜ ${release_version}"

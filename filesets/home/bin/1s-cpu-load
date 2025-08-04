@@ -57,6 +57,6 @@ source '/home/nestor/bin/std.lib'
 
 output_file="/var/opt/$( script-name )"
 
-mpstat 1 --dec=0 -u -P all                                             \
-| grep -P --only-matching '[0-9]+$' --line-buffered                    \
-| while read idle; do echo "$(( 100 - "$idle" ))" > "$output_file"; done
+mpstat 1 --dec=0 -u -P all                                                \
+| grep -P --only-matching '[0-9]+$' --line-buffered                       \
+| while read -r idle; do echo "$(( 100 - "$idle" ))" > "$output_file"; done

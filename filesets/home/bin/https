@@ -88,10 +88,10 @@ source '/home/nestor/bin/std.lib'
 
 	# Ensure defaults.
 
-	if starts-with? ':' <<< "$binding"; then
+	if 'starts-with?' ':' <<< "$binding"; then
 		# Binding is in ":PORT" form.
 		binding="localhost${binding}"
-	elif has? ':' <<< "$binding"; then
+	elif 'has?' ':' <<< "$binding"; then
 		# Binding is in "HOST:PORT" form.
 		noop
 	elif [ -z "${binding//[0-9.]/}" ]; then

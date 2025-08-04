@@ -41,4 +41,4 @@ source '/home/nestor/bin/std.lib'
 
 
 "$@"
-calc? "$( script-duration ) <= ${DING_IF_SLOW_TIMEOUT:-60}" || ding-me
+'calc?' "$( script-duration ) <= ${DING_IF_SLOW_TIMEOUT:-60}" || ding-me
