@@ -6,10 +6,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) TEXT
+		Usage: $( script-name ) [TEXT]
 
-		Displays a 'tmux' toast for the given TEXT.
-		The toast duration is based on the length of TEXT.
+		Displays a 'tmux' toast for the given TEXT (or STDIN).
+		The toast duration is based on the length of text to display.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -43,11 +43,21 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	text="$1" && shift
-	[ -n "$text" ] || error-out 1 'no TEXT given'
+	case "$#" in
 
+		0)
+			cat - | store-as text
+			;;
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+		1)
+			text="$1" && shift
+			;;
+
+		*)
+			error-out 1 'invalid option(s)'
+			;;
+
+	esac
 
 }
 
