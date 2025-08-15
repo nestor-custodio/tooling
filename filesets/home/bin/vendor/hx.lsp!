@@ -66,10 +66,12 @@ fi
 # Install Node-based language servers.
 #
 if command -V npm &> /dev/null; then
-	npm install --global --omit='dev' bash-language-server         \
-	                                  typescript                   \
-	                                  typescript-language-server   \
-	                                  vscode-langservers-extracted \
-	                                  @vue/language-server         \
+	npm install --global --omit='dev' bash-language-server                \
+	                                  dockerfile-language-server-nodejs   \
+	                                  @microsoft/compose-language-service \
+	                                  typescript                          \
+	                                  typescript-language-server          \
+	                                  vscode-langservers-extracted        \
+	                                  @vue/language-server                \
 	                                  yaml-language-server
 fi
