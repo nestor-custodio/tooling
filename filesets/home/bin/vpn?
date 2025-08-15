@@ -56,13 +56,13 @@ source '/home/nestor/bin/std.lib'
 
 # Bail if there is no VPN host.
 #
-[ "$( gcp state vpn )" == "RUNNING" ] || exit-out 1
+[ "$( gcp state tunnel )" == "RUNNING" ] || exit-out 1
 
 
 # Ensure the given NETWORK exists.
 #
-network_bins="${HOME}/vm-scripts/vpn/bin/${network}"
+network_bins="${HOME}/vm-scripts/tunnel/bin/${network}"
 [ -d "$network_bins" ] || error-out 2 "unknown NETWORK: '${network}'"
 
 
-ssh nestor@vpn -- "${network_bins}/connected?"
+ssh nestor@tunnel -- "${network_bins}/connected?"
