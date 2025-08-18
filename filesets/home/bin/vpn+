@@ -57,13 +57,13 @@ source '/home/nestor/bin/std.lib'
 
 # Ensure the VPN host is running.
 #
-[ "$( gcp state tunnel )" == "RUNNING" ] || gcp start tunnel
+[ "$( gcp state vpn )" == "RUNNING" ] || gcp start vpn
 
 
 # Ensure the given NETWORK exists.
 #
-network_bins="${HOME}/vm-scripts/tunnel/bin/${network}"
+network_bins="${HOME}/vm-scripts/vpn/bin/${network}"
 [ -d "$network_bins" ] || error-out 2 "unknown NETWORK: '${network}'"
 
 
-ssh nestor@tunnel -- "${network_bins}/connect" --detach
+ssh nestor@vpn -- "${network_bins}/connect" --detach
