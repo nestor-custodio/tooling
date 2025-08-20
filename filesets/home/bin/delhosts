@@ -6,13 +6,22 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) PROFILE
+		Usage: $( script-name ) [ PROFILE | HOSTFILE ]
 
-		Wrapper for 'hostctl' that removes all entries for the given profile.
+		Wrapper for 'hostctl' that removes a profile by name or reference.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
+
+
+		Examples:
+
+		  # Drop profile "sample":
+		  $( script-name ) sample
+
+		  # Drop the profile defined by "~/hostfiles/group/sample":
+		  $( script-name) group/sample
 
 
 		Exit Status:
@@ -42,8 +51,8 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	profile="$1" && shift
-	[ -n "$profile" ] || error-out 1 'no profile name given'
+	profile_or_hostfile_reference="$1" && shift
+	[ -n "$profile_or_hostfile_reference" ] || error-out 1 'no profile name given'
 
 
 	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
@@ -53,5 +62,13 @@ source '/home/nestor/bin/std.lib'
 # ---
 # ---
 
+
+hostfile_store="${HOME}/hostfiles"
+
+hostfile="${hostfile_store}/${profile_or_hostfile_reference}"
+if [ -e "$hostfile" ]
+  then profile="${hostfile##*/}"
+  else profile="$profile_or_hostfile_reference"
+fi
 
 hostctl remove "$profile"
