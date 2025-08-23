@@ -66,11 +66,12 @@ source '/home/nestor/bin/std.lib'
 #       being *sourced*. The outer SSH_CONNECTION will continue to hold
 #       an incorrect value.
 #
-export "$( tmux show-environment SSH_CONNECTION )"
+#       (The `tmux status` guard prevents errors if we're not in tmux.)
+#
+tmux status &> /dev/null && eval "$( tmux show-environment SSH_CONNECTION )"
 
 
 CLIENT_IP="${SSH_CONNECTION%% *}"
-[ -n "$CLIENT_IP" ] || CLIENT_IP="$( wan-ip 2> /dev/null )"
 [ -n "$CLIENT_IP" ] || error-out 2 'unable to determine client ip'
 
 echo "$CLIENT_IP"
