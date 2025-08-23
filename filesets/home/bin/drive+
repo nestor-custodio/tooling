@@ -9,7 +9,7 @@ source '/home/nestor/bin/std.lib'
 		Usage: $( script-name ) [LOCATION]
 
 		Mounts the given Google Drive LOCATION onto "~/drive".
-		If no LOCATION is given, mounts "/shell-transfers/" by default.
+		If no LOCATION is given, mounts "/Development/" by default.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -43,7 +43,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	location='shell-transfers'
+	location='Development'
 	[ "$#" -ge 1 ] && location="$1" && shift
 	[ -n "$location" ] || error-out 1 'empty LOCATION'
 
