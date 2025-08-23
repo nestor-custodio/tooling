@@ -142,15 +142,14 @@ startup_log='/var/log/startup'
 			service cachefilesd --full-restart
 
 
-		# Set up NFS mount for "docs" and "links".
-		report 'setting up NFS mount for "docs" and "links"'
+		# Set up NFS mount for "links".
+		report 'setting up NFS mount for "links"'
 
 			cat <<-'EOF' >> /etc/fstab
-				sync:/docs  /home/nestor/docs  nfs _netdev,auto,fg,fsc 0 0
 				sync:/links /home/nestor/links nfs _netdev,auto,fg,fsc 0 0
 			EOF
 
-			sudo --user='nestor' mkdir /home/nestor/docs /home/nestor/links && mount -a
+			sudo --user='nestor' mkdir /home/nestor/links && mount -a
 			sudo --user='nestor' /home/nestor/links/symlinker
 
 	}
