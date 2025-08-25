@@ -8,7 +8,7 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name )
 
-		Creates a Redis Memorystore instance named 'redis'.
+		Ensures a Redis Memorystore instance named 'redis'.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -17,8 +17,7 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid option,
-		  2  if instance already exists.
+		  1  if invalid option.
 	EOF
 
 }
@@ -51,8 +50,11 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-'redis?' &> /dev/null && error-out 2 'redis instance already exits'
+'redis?' | store-as redis_state
+if [ -z "$redis_state" ]; then
+  gcloud redis instances create redis --tier='basic' --size='1' --connect-mode='private-service-access' --zone="$( vm-zone )" --quiet
+  'redis?' | store-as redis_state
+fi
 
-gcloud redis instances create redis --tier='basic' --size='1' --connect-mode='private-service-access' --zone="$( vm-zone )" --quiet
-'redis?' | json '.host' | store-as redis_ip
-addhost redis "$redis_ip"
+json '.host' <<< "$redis_state" | store-as redis_ip
+addhost redis "$redis_ip" &> /dev/null

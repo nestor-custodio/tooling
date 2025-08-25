@@ -13,7 +13,6 @@ source '/home/nestor/bin/std.lib'
 
 
 		Mandatory arguments to long options are mandatory for short options too.
-		  --any-status              Show instance even if not "RUNNING".
 		  --help                    Show this help text.
 
 
@@ -36,7 +35,7 @@ source '/home/nestor/bin/std.lib'
 	# ---
 
 	CHAR_OPTS=''
-	LONG_OPTS='help,any-status'
+	LONG_OPTS='help'
 
 	set-params
 	while true; do
@@ -44,11 +43,6 @@ source '/home/nestor/bin/std.lib'
 		case "$option" in
 			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
-
-
-			(--any-status|--any-state|--any)
-				any_status='1'
-				;;
 		esac
 	done
 
@@ -65,9 +59,7 @@ source '/home/nestor/bin/std.lib'
 
 
 filter='(name ~ "/instances/redis$")'
-[ -z "$any_status" ] && filter="${filter} AND (state:'READY')"
-
 gcloud redis instances list --filter="$filter" --format='json' 2> /dev/null | json '.[0]' | store-as instance_data
-[ -n "$instance_data" ] || exit 1
 
+[ -n "$instance_data" ] || exit 1
 echo "$instance_data"
