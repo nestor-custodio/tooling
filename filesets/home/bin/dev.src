@@ -453,7 +453,7 @@ shopt -s lastpipe
   # Gemini CLI
 
   function gemini? { real gemini &> /dev/null ;}
-  function gemini  { 'gemini?' || npm install -g @google/gemini-cli; "$( real gemini )" "$@" ;}
+  function gemini  { 'gemini?' || npm install -g @google/gemini-cli; GEMINI_API_KEY="$( creds gemini/api-key )" "$( real gemini )" "$@" ;}
 
   # Google App Scripts
 
