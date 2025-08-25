@@ -1,0 +1,65 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Ensures a Valkey Memorystore instance named 'valkey'.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+'valkey?' | store-as valkey_state
+if [ -z "$valkey_state" ]; then
+  gcloud alpha memorystore instances create valkey \
+         --engine-version=VALKEY_8_0 --mode=cluster_disabled --shard-count=1 --replica-count=0 \
+         --project=portable-shell --node-type=shared-core-nano --location="$( vm-region )" \
+         --zone-distribution-config-mode=SINGLE_ZONE --zone-distribution-config="$( vm-zone )" \
+         --psc-auto-connections="network=projects/portable-shell/global/networks/default,projectId=portable-shell" --transit-encryption-mode=server-authentication
+
+  'valkey?' | store-as valkey_state
+fi
+
+json '.endpoints[].connections[] | select(.pscAutoConnection.connectionType == "CONNECTION_TYPE_PRIMARY") | .pscAutoConnection.ipAddress' <<< "$valkey_state" | store-as valkey_ip
+addhost valkey "$valkey_ip" &> /dev/null

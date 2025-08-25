@@ -1,0 +1,65 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Reports on the status of a Valkey Memorystore instance named 'valkey'.
+		If instance exists, its metadata is also given via STDOUT.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if instance exists,
+		  1  if instance does not exist (or invalid option).
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	any_status=''
+
+	# ---
+	# ---
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+filter='(name ~ "/instances/valkey$")'
+gcloud alpha memorystore instances list --location="$( vm-region )" --filter="$filter" --format='json' 2> /dev/null | json '.[0]' | store-as instance_data
+
+[ -n "$instance_data" ] || exit 1
+echo "$instance_data"

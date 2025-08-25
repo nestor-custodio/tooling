@@ -1,0 +1,54 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Destroys the Valkey Memorystore instance named 'valkey'.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+'valkey?' &> /dev/null && yes | gcloud alpha memorystore instances delete 'valkey' --location="$( vm-region )" --async --quiet
+delhost valkey &> /dev/null
