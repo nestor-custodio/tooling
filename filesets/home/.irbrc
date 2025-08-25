@@ -264,8 +264,9 @@ if defined? Rails
 
     module ModelSchema
       module ClassMethods
-        def any
-          find ids.sample
+        def any(count = nil)
+          return where id: ids.sample(count.to_i) if count.present?
+          find ids.sample rescue nil
         end
         alias rnd any
         alias rand any
