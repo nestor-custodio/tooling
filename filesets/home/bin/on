@@ -6,8 +6,8 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) --time TIME_SPEC COMMAND [ARGS]
-		       $( name-blanks ) --files [EXTENSIONS] COMMAND [ARGS]
+		Usage: $( script-name ) --time TIME_SPEC COMMAND [-- ARGS]
+		       $( name-blanks ) --files [EXTENSIONS] COMMAND [-- ARGS]
 
 		Executes the given COMMAND either based on a timer ('--time') or when
 		a file changes ('--files'). When watching for file changes, a list of

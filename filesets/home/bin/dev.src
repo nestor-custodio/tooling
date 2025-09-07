@@ -180,7 +180,7 @@ shopt -s lastpipe
 
         # Repackage gem ...
 
-        fd --type='file' --exclude='Gemfile*' | map sed -i -e "s|${old_version}|${new_version}|"
+        fd --type='file' --exclude='Gemfile*' | map -- sed -i -e "s|${old_version}|${new_version}|"
         yard doc
         gem build
         bundle install

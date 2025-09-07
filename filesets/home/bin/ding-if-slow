@@ -6,13 +6,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) COMMAND [ARGS]
+		Usage: $( script-name ) COMMAND [-- ARGS]
 
 		Runs the given COMMAND (passing all ARGS), then calls 'ding-me' if the
 		command runs for more than DING_IF_SLOW_TIMEOUT seconds (default is 60).
-
-		NOTE: To prevent breaking expected behaviour, the '--help' flag will
-		      output this help text *only* when it is the only argument given.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -28,9 +25,23 @@ source '/home/nestor/bin/std.lib'
 
 # ---
 
-{ # -- Parameter Processing: Positionals -- #
+{ # -- Parameter Processing: Options -- #
 
-	[ "$*" == '--help' ] && exit-out "$usage"
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
 
 	[ "$#" == 0 ] && error-out 1 'no COMMAND given'
 

@@ -347,7 +347,7 @@ function peek { tee /dev/tty ;}
     printf 'Deploy branch "\e[33;1m%s\e[0m" to remote "\e[31;1m%s\e[0m"? (y/N) ' "$branch" "$remote"; read -r confirmation
     [ "$( tr '[:upper:]' '[:lower:]' <<< "$confirmation" )" == 'y' ] || return 2
 
-    ding-if-slow gpush --force "$remote" "${branch}:main"
+    ding-if-slow -- gpush --force "$remote" "${branch}:main"
   }
 
   # Lists all .gitignore'd files/directories.

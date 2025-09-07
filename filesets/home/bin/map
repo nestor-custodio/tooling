@@ -6,15 +6,12 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) COMMAND [ARGS]
+		Usage: $( script-name ) COMMAND [-- ARGS]
 
 		A simpler form of "xargs", this invokes COMMAND (passing all ARGS) for
 		every line of STDIN, passing output through to STDOUT. Input is quoted
 		and used as the *final* argument to the given command. If this doesn't
 		meet your needs, then you'll need "xargs".
-
-		NOTE: To prevent breaking expected behaviour, the '--help' flag will
-		      output this help text *only* when it is the only argument given.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -27,7 +24,7 @@ source '/home/nestor/bin/std.lib'
 		  fd '*.big' | $( script-name ) gzip
 
 		  # Delete all files/dirs from a list.
-		  $( script-name ) rm -rf < the-list.txt
+		  $( script-name ) -- rm -rf < the-list.txt
 
 
 		Exit Status:
@@ -39,9 +36,23 @@ source '/home/nestor/bin/std.lib'
 
 # ---
 
-{ # -- Parameter Processing: Positionals -- #
+{ # -- Parameter Processing: Options -- #
 
-	[ "$*" == '--help' ] && exit-out "$usage"
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
 
 	[ "$#" == 0 ] && error-out 1 'no COMMAND given'
 
