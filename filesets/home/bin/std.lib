@@ -118,6 +118,12 @@ shopt -s lastpipe expand_aliases
 		eval "${_pre_trap_flags["$signal"]}"; unset '_pre_trap_flags["$signal"]'
 	}
 
+	# Allow for a rudimentary debug mode, where every command is printed to STDERR as it runs,
+	# and then waits for user input (<enter>) before continuing to the next line in the script.
+	#
+	alias DEBUG!='printf "\nSwitching to DEBUG.\nPress <ENTER> to continue..."; set-trap debug "read -u1"; set -x'
+	alias DEBUG-='set +x; clear-trap debug'
+
 	# ---
 
 	# Prints a "clean" message (as given) to STDOUT, then exits.
