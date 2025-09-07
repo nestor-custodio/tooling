@@ -80,7 +80,7 @@ case "$language" in
 		#
 		cd-to-project-root '.ruby-version' 'Gemfile' 'Gemfile.lock'
 
-		rubocop --server --stdin "${filename:-source_file.rb}" --stderr --autocorrect --fail-level='fatal' < /dev/stdin
+		rubocop --stdin "${filename:-source_file.rb}" --stderr --autocorrect --fail-level='fatal' < /dev/stdin
 		;;
 
 
