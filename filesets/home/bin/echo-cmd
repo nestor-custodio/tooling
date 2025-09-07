@@ -30,14 +30,13 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-  printf '%q' "$0"
-	while [ "$#" != 0 ]; do
-		param="$1" && shift
-		[ "$param" == '--help' ] && echo "$usage" >&2
+  # Output command + params.
+  #
+  printf ' %q' "$0" "$@" | trim --left | clean
 
-		printf ' %q' "$param"
-	done
-  printf '\n'
+  # Output help text if requested.
+  #
+  printf '%s\n' "$@" | grep -x --quiet -- '--help' && echo "$usage" >&2 && exit
 
 }
 
