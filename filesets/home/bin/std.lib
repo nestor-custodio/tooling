@@ -203,8 +203,15 @@ shopt -s lastpipe expand_aliases
 # ---
 
 # shellcheck disable=SC2142
-{ # -- Parameter Pre-Processing -- #
+{ # -- Parameter Processing -- #
 
+	# Blind check for a '--help' param.
+	# Note this DOES NOT MODIFY THE PARAM LIST.
+	#
+	alias help-param?='printf "%s\n" -- "$@" | grep -x --quiet -- "--help"'
+
+	# Modifies the param list to facilitate processing.
+	#
 	alias set-params='{
 
 		# (https://stackoverflow.com/a/29754866/4905941)

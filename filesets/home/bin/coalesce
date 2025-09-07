@@ -12,7 +12,7 @@ source '/home/nestor/bin/std.lib'
 
 		NOTE: To prevent breaking expected behaviour,
 		      the '--help' flag will output this help text via STDERR
-		      *in addition to* producing the expected non-empty output via STDOUT.
+		      *in addition to* producing the otherwise expected output.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -32,15 +32,7 @@ source '/home/nestor/bin/std.lib'
 
 	[ "$#" == 0 ] && error-out 1 'no string(s) given'
 
-
-	while [ "$#" != 0 ]; do
-		string="$1" && shift
-		[ -n "$string" ] || continue
-
-		[ "$string" == '--help' ] && echo "$usage" >&2
-		echo "$string"
-		break
-	done
+	help-param? && echo "$usage" >&2
 
 }
 
@@ -48,4 +40,9 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-noop  # Positional parameter processing has already taken care of everything.
+for string in "$@"; do
+	[ -n "$string" ] || continue
+
+	echo "$string"
+	break
+done

@@ -8,10 +8,11 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name ) TEST_VALUE
 
-		Convenience tool for determining whether the value provided is an intger.
+		Convenience tool for determining whether the value provided is an integer.
 
-		NOTE: To prevent breaking expected behaviour, the '--help' flag will
-		      output this text *in addition to* generating an exit code of 1.
+		NOTE: To prevent breaking expected behaviour,
+		      the '--help' flag will output this help text via STDERR
+		      *in addition to* producing the otherwise expected output.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -29,7 +30,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$*" == '--help' ] && echo "$usage"
+	help-param? && echo "$usage" >&2
 
 }
 

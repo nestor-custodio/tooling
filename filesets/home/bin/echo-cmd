@@ -13,7 +13,7 @@ source '/home/nestor/bin/std.lib'
 
 		NOTE: To prevent breaking expected behaviour,
 		      the '--help' flag will output this help text via STDERR
-		      *in addition to* producing the expected output via STDOUT.
+		      *in addition to* producing the otherwise expected output.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -30,13 +30,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-  # Output command + params.
-  #
-  printf ' %q' "$0" "$@" | trim --left | clean
-
-  # Output help text if requested.
-  #
-  printf '%s\n' "$@" | grep -x --quiet -- '--help' && echo "$usage" >&2 && exit
+  help-param? && echo "$usage" >&2
 
 }
 
@@ -44,4 +38,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-noop  # Positional parameter processing has already taken care of everything.
+printf ' %q' "$0" "$@" | trim --left | clean
