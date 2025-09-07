@@ -107,9 +107,9 @@ git:
 
     paging:
         colorArg: 'always'
-        pager: ''
-        useConfig: true
+        pager: "delta --true-color='never' --dark --line-numbers --line-numbers-left-format='{nm:^4}:' --hunk-header-style='syntax' --paging='never'"
         externalDiffCommand: ''
+        useExternalDiffGitConfig: false
 
     commit:
         signOff: false
@@ -133,6 +133,9 @@ git:
     autoStageResolvedConflicts: true
     branchLogCmd: 'git log --color=always --decorate --graph {{branchName}} --'
     allBranchesLogCmds: ['git log --color=always --decorate --graph --all --oneline --']
+    ignoreWhitespaceInDiffView: false
+    diffContextSize: 3
+    renameSimilarityThreshold: 50
     overrideGpg: false
     disableForcePushing: false
     commitPrefix: []
@@ -145,6 +148,8 @@ git:
         showGraph: 'always'
         showWholeGraph: false
 
+    localBranchSortOrder: 'date'
+    remoteBranchSortOrder: 'date'
     truncateCopiedCommitHashesTo: 12
 
 
@@ -195,6 +200,7 @@ keybinding:
     universal:
         quit: 'q'
         quit-alt1: '<disabled>'
+        suspendApp: '<c-z>'
         return: '<esc>'
         quitWithoutChangingDirectory: '<disabled>'
         togglePanel: '<tab>'
@@ -234,6 +240,8 @@ keybinding:
         select: '<enter>'
         goInto: '<space>'
         confirm: '<enter>'
+        confirmMenu: '<enter>'
+        confirmSuggestion: '<enter>'
         confirmInEditor: '<disabled>'
         confirmInEditor-alt: '<disabled>'
         remove: 'd'
@@ -304,6 +312,7 @@ keybinding:
         copyPullRequestURL: '<disabled>'
         checkoutBranchByName: 'c'
         forceCheckoutBranch: '<disabled>'
+        checkoutPreviousBranch: '<disabled>'
         rebaseBranch: 'R'
         renameBranch: 'r'
         mergeIntoCurrentBranch: '<disabled>'
