@@ -1,0 +1,48 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [...]
+
+		Blindly outputs the command as invoked.
+		(Useful for debugging of externally-invoked tooling.)
+
+		NOTE: To prevent breaking expected behaviour,
+		      the '--help' flag will output this help text via STDERR
+		      *in addition to* producing the expected output via STDOUT.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Positionals -- #
+
+  printf '%q' "$0"
+	while [ "$#" != 0 ]; do
+		param="$1" && shift
+		[ "$param" == '--help' ] && echo "$usage" >&2
+
+		printf ' %q' "$param"
+	done
+  printf '\n'
+
+}
+
+# ---
+# ---
+
+
+noop  # Positional parameter processing has already taken care of everything.
