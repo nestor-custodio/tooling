@@ -542,11 +542,51 @@ shopt -s lastpipe
   set-env 'development'
 
 
+# Mail Helpers
+
+  # Per https://github.com/estelora/docker-mailcatcher-imap ...
+  #
+  # Container runs standard ports:
+  # - Web UI              on :80
+  # - SMTP                on :25
+  # - IMAP                on :143
+  # - Secure IMAP (IMAPS) on :993
+  #
+  function mailcatcher? { docker ls | 'has?' mailcatcher ;}
+  #
+  function mailcatcher+ {
+    'mailcatcher?' || docker container run --name='mailcatcher' --detach --rm \
+                                           --env 'MAILCATCHER_USERNAME=user'  \
+                                           --env 'MAILCATCHER_PASSWORD=pass'  \
+                                           --publish 127.0.0.1:1080:80        \
+                                           --publish 127.0.0.1:1025:25        \
+                                           --publish 127.0.0.1:143:143        \
+                                           estelora/mailcatcher-imap
+
+    # Do not return until the service is ready for use.
+    #
+    while true; do timeout 0.2 nc 127.0.0.1 1025 | 'has?' 220 && break; sleep 0.1s; done
+  }
+  #
+  function mailcatcher- { 'mailcatcher?' && docker container stop 'mailcatcher' &> /dev/null; return 0 ;}
+
+  # Checks mailcatcher mail.
+  #
+  function mail {
+    # Ensure `aerc`.
+    #
+    real aerc &> /dev/null || sudo apt install -qqy aerc
+
+    mailcatcher+ &> /dev/null && aerc
+  }
+
+
 
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
 export -f @ ba bi br bx d db! db+ db- db: DB! dev development gapps gapps? gemini gemini? known-env-vars \
-          load-env na ni node-tasks nr ns nt nx p pending-migrations pending-migrations? production r+   \
-          r- rails-db rails-tasks rc rd release-gem rr rs rs1 rt rubocop rubocop? rubocop+ rubocop- rx s \
-          set-env staging t testing unload-env ya yi yr yx
+          load-env mail mailcatcher? mailcatcher+ mailcatcher- na ni node-tasks nr ns nt nx p            \
+          pending-migrations pending-migrations? production r+ r- rails-db rails-tasks rc rd release-gem \
+          rr rs rs1 rt rubocop rubocop? rubocop+ rubocop- rx s set-env staging t testing unload-env ya   \
+          yi yr yx
