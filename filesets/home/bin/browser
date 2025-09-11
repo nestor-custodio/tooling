@@ -18,9 +18,9 @@ source '/home/nestor/bin/std.lib'
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
 
-			--new                     Force creation of a new browsing instance.
-			--newest                  Replace the *newest* running 'links' instance.
-			--oldest                  Replace the *oldest* running 'links' instance.
+		  --new                     Force creation of a new browsing instance.
+		  --newest                  Replace the *newest* running 'links' instance.
+		  --oldest                  Replace the *oldest* running 'links' instance.
 
 
 		Exit Status:
