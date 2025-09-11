@@ -56,7 +56,9 @@ shopt -s lastpipe
       fi
     }
     #
-    function rubocop- { RUBOCOP_OPTS='' "$( real rubocop )" --stop-server ;}
+    function rubocop? { RUBOCOP_OPTS='' "$( real rubocop )" --server-status ;}
+    function rubocop+ { RUBOCOP_OPTS='' "$( real rubocop )" --start-server  ;}
+    function rubocop- { RUBOCOP_OPTS='' "$( real rubocop )" --stop-server   ;}
 
 
     # Bundle/Gemfile management.
@@ -546,5 +548,5 @@ shopt -s lastpipe
 #
 export -f @ ba bi br bx d db! db+ db- db: DB! dev development gapps gapps? gemini gemini? known-env-vars \
           load-env na ni node-tasks nr ns nt nx p pending-migrations pending-migrations? production r+   \
-          r- rails-db rails-tasks rc rd release-gem rr rs rs1 rt rubocop rubocop- rx s set-env staging t \
-          testing unload-env ya yi yr yx
+          r- rails-db rails-tasks rc rd release-gem rr rs rs1 rt rubocop rubocop? rubocop+ rubocop- rx s \
+          set-env staging t testing unload-env ya yi yr yx
