@@ -9,9 +9,9 @@ source '/home/nestor/bin/std.lib'
 		Usage: $( script-name ) [--FILE_ENCODING] [--raw] QUERY [-- Q OPTIONS]
 		       $( name-blanks ) [--FILE_ENCODING] --fields[=DATAFILE]
 
-		No-thoughts CSV query runner (via 'q'); presents legible output.
-		If QUERY begins with '@' or ends in '.sql', it's taken as a
-		filename and its *content* is used as the querytext.
+		No-thoughts CSV query runner (via 'q').
+		If QUERY begins with '@' or ends in '.sql', it's taken
+		as a filename and its *content* is used as the querytext.
 
 		If called with '--fields', gives field names (and types) for the
 		DATAFILE. If no '--fields' DATAFILE is given, '-' (STDIN) is assumed.
