@@ -52,4 +52,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-grep -P --quiet "$lookup_string"
+grep -P --quiet -- "$lookup_string"
