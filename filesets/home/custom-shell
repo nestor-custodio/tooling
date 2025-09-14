@@ -118,7 +118,7 @@ function peek { tee /dev/tty ;}
   # (So we can easily `tail -f [FILE]` into `bat`.)
   #
   function fbat {
-    [ "$1" == '--help' ] && echo 'Usage: fbat [LANGUAGE] [BAT_OPTIONS]' && return 0
+    printf '%s\n' -- "$@" | grep -x --quiet -- '--help' && echo 'Usage: fbat [LANGUAGE] [BAT_OPTIONS]' && return 0
 
     local language='txt'
     'starts-with?' -- '--' <<< "$1" || { language="$1" && shift ;}
@@ -129,7 +129,7 @@ function peek { tee /dev/tty ;}
   # enough need that we want to accomodate it easily.
   #
   function hbat {
-    [ "$1" == '--help' ] && echo 'Usage: hbat [HEADER_HEIGHT] [BAT_OPTIONS]' && return 0
+    printf '%s\n' -- "$@" | grep -x --quiet -- '--help' && echo 'Usage: hbat [HEADER_HEIGHT] [BAT_OPTIONS]' && return 0
 
     # Ensure we have a header-compatible `less`.
     #
@@ -347,7 +347,7 @@ function peek { tee /dev/tty ;}
   # Prompts for confirmation (y/N) before pushing to target.
   #
   function gdeploy {
-    [ "$1" == '--help' ] && echo 'Usage: gdeploy [REMOTE_NAME]' && return 0
+    printf '%s\n' -- "$@" | grep -x --quiet -- '--help' && echo 'Usage: gdeploy [REMOTE_NAME]' && return 0
 
     local remote="${1:-production}"
     local branch="$( gbranch --show-current )"

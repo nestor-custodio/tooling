@@ -120,7 +120,7 @@ shopt -s lastpipe
     # Gem Release Tooling
 
       function release-gem {
-        [ "$1" == '--help' ] && echo 'Usage: release-gem [ --major | --minor | --patch | VERSION ]' && return 0
+        printf '%s\n' -- "$@" | grep -x --quiet -- '--help' && echo 'Usage: release-gem [ --major | --minor | --patch | VERSION ]' && return 0
 
         local option bump
         local gem_name repo_id old_version
