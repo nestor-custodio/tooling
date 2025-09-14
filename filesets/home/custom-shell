@@ -114,6 +114,17 @@ function peek { tee /dev/tty ;}
   function h { "$@" --help | bat --plain --language='help' --chop-long-lines ;}
   function m { MANPAGER='cat' man "$@" | bat --plain --language='man' ;}
 
+  # Allow for easy STDIN tailing with highlighting.
+  # (So we can easily `tail -f [FILE]` into `bat`.)
+  #
+  function fbat {
+    [ "$1" == '--help' ] && echo 'Usage: fbat [LANGUAGE] [BAT_OPTIONS]' && return 0
+
+    local language='txt'
+    'starts-with?' -- '--' <<< "$1" || { language="$1" && shift ;}
+    bat --paging='never' --language="$language" "$@"
+  }
+
   # Paging while retaining header lines is a common
   # enough need that we want to accomodate it easily.
   #
@@ -484,7 +495,7 @@ dev_helpers="${HOME}/bin/dev.src"
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
 export -f ... .... ..... ::                                                               \
-          a break-out-of-links bw f docker g gadd gblame gbranch gbranch? gcheckout       \
+          a break-out-of-links bw docker f fbat g gadd gblame gbranch gbranch? gcheckout  \
           gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph ginit gitignored \
           glog gmerge gmove gmv gpatch gpop gpull gpush grebase gremote greset gstage     \
           gstash gstatus gtag gtrack gunchange gundelete gunstage guntrack h hbat helix k \
