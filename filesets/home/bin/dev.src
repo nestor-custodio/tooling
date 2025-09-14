@@ -33,14 +33,8 @@ shopt -s lastpipe
       # - there is no '-h'/'--help' argument
       # - there is no '-s'/'--stdin' argument
       #
-      declare -a args=("$@")
       local skip_fd_call=''
-      for (( i=0; i < "${#args[*]}"; i++ )); do
-        if [ -z "$skip_fd_call" ]; then
-          [ "$( head -c1 <<< "${args[$i]}" )" != '-' ] && skip_fd_call='1'
-          for j in -h --help -s --stdin; do [ "${args[$i]}" == "$j" ] && skip_fd_call='1'; done
-        fi
-      done
+      printf '%s\n' "$@" | grep -P --quiet -- '^[^-]|^(-h|--help|-s|--stdin)$' && skip_fd_call='1'
 
       if nearest --read 'Gemfile.lock' 'Gemfile' | 'has?' 'rubocop'; then
         if [ -n "$skip_fd_call" ];
