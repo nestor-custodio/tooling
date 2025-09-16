@@ -50,9 +50,9 @@ shopt -s lastpipe
       fi
     }
     #
-    function rubocop? { RUBOCOP_OPTS='' "$( real rubocop )" --server-status ;}
-    function rubocop+ { RUBOCOP_OPTS='' "$( real rubocop )" --start-server  ;}
-    function rubocop- { RUBOCOP_OPTS='' "$( real rubocop )" --stop-server   ;}
+    function rubocop? { "$( real rubocop )" --server-status ;}
+    function rubocop+ { "$( real rubocop )" --start-server  ;}
+    function rubocop- { "$( real rubocop )" --stop-server   ;}
 
 
     # Bundle/Gemfile management.
