@@ -18,10 +18,20 @@ n        repeat-search
 N        reverse-search
 \e       undo-hilite
 
-fgrep\   filter
+filter\  filter
 tail\r   forw-forever
 \        forw-screen
 \b       back-screen
+
+=        status
+-        toggle-option
+
+# Remember marks are not visible by default.
+# You'll need to enable the `--status-column` (or `-J`) option first.
+#
+m        set-mark
+'        goto-mark
+M        clear-mark
 
 0        digit
 1        digit
@@ -34,7 +44,6 @@ tail\r   forw-forever
 8        digit
 9        digit
 
-?        help
 q        quit
 w        quit
 
