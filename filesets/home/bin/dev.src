@@ -567,11 +567,34 @@ shopt -s lastpipe
   # Checks mailcatcher mail.
   #
   function mail {
+    # Function-scope helper functions.
+    #
+    trap 'unset -f _pane_count _window_name' RETURN
+    function _pane_count { tmux display-message -p '#{window_panes}' ;}
+    function _window_name { tmux display-message -p '#{window_name}' ;}
+
     # Ensure `aerc`.
     #
     real aerc &> /dev/null || sudo apt install -qqy aerc
 
-    mailcatcher+ &> /dev/null && aerc
+    # We *need* an active mailcatcher for this.
+    #
+    mailcatcher+ &> /dev/null || return 1
+
+    # Rename the window (to "mail"), if it's not overly aggressive.
+    #
+    local original_window_name="$( _window_name )"
+    [ "$( _pane_count )" = 1 ] && tmux rename-window 'mail'
+
+    aerc
+
+    # Restore the original window name,
+    # IF it was changed and is now "mail".
+    #
+    local current_window_name="$( _window_name )"
+    [ "$current_window_name" != "$original_window_name" ] || return
+    [ "$current_window_name" = 'mail' ] || return
+    tmux rename-window "$original_window_name"
   }
 
 
