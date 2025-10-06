@@ -32,9 +32,10 @@ shopt -s lastpipe
       # - the user doesn't provide a filename (i.e. a non-flag argument)
       # - there is no '-h'/'--help' argument
       # - there is no '-s'/'--stdin' argument
+      # - there are no server control arguments (start/restart/stop-server or server-status)
       #
       local skip_fd_call=''
-      printf '%s\n' "$@" | grep -P --quiet -- '^[^-]|^(-h|--help|-s|--stdin)$' && skip_fd_call='1'
+      printf '%s\n' "$@" | grep -P --quiet -- '^[^-]|^(-h|--help|-s|--stdin|--(start|restart|stop)-server|--server-status)$' && skip_fd_call='1'
 
       if nearest --read 'Gemfile.lock' 'Gemfile' | 'has?' 'rubocop'; then
         if [ -n "$skip_fd_call" ];
@@ -50,9 +51,9 @@ shopt -s lastpipe
       fi
     }
     #
-    function rubocop? { "$( real rubocop )" --server-status ;}
-    function rubocop+ { "$( real rubocop )" --start-server  ;}
-    function rubocop- { "$( real rubocop )" --stop-server   ;}
+    function rubocop? { rubocop --server-status ;}
+    function rubocop+ { rubocop --start-server  ;}
+    function rubocop- { rubocop --stop-server   ;}
 
 
     # Bundle/Gemfile management.
