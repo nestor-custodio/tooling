@@ -6,17 +6,17 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) POSTGRES_URL
+		Usage: $( script-name ) DATABASE_URL
 		       $( name-blanks ) --heroku-app NAME [--config-var VARIABLE]
 
-		Dumps the entirety of the given Postgres database to STDOUT as SQL.
+		Dumps the entirety of the given database to STDOUT as SQL.
 		Any options given after the '--' delimiter will be passed through as-is
-		to the underlying 'pg_dump' call.
+		to the underlying tooling.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
-		  --heroku-app              Heroku app name to query for a Postgres URL.
-		  --config-var              App config variable holding the Postgres URL.
+		  --heroku-app              Heroku app name to query for a database URL.
+		  --config-var              App config variable holding the database URL.
 		                            (Default is "DATABASE_URL".)
 
 		  --help                    Show this help text.
@@ -25,7 +25,8 @@ source '/home/nestor/bin/std.lib'
 		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  if no source system given.
+		  2  if no source system given
+		  3  if unable to determine source engine.
 	EOF
 
 }
@@ -36,7 +37,7 @@ source '/home/nestor/bin/std.lib'
 
 	# Set defaults.
 
-	postgres_url=''
+	database_url=''
 
 	heroku_app_name=''
 	heroku_config_var='DATABASE_URL'
@@ -72,15 +73,15 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	# Set $postgres_url from either the explicit parameter or the Heroku option set.
+	# Set $database_url from either the explicit parameter or the Heroku option set.
 	#
 	if [ "$#" == 1 ]; then
-		postgres_url="$1" && shift
+		database_url="$1" && shift
 	else
 		[ -n "$heroku_app_name" ] && [ -n "$heroku_config_var" ] \
-		&& postgres_url="$( heroku config:get "$heroku_config_var" --app="$heroku_app_name" 2> /dev/null )"
+		&& database_url="$( heroku config:get "$heroku_config_var" --app="$heroku_app_name" 2> /dev/null )"
 	fi
-	[ -n "$postgres_url" ] || error-out 2 'no source system given'
+	[ -n "$database_url" ] || error-out 2 'no source system given'
 
 }
 
@@ -88,4 +89,22 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-pg_dump "$postgres_url" --format=plain --no-acl --no-owner "$@"
+'has?' '://' <<< "$database_url" || error-out 3 'unable to determine source engine'
+
+sed -r -e 's|://.*$||' <<< "$database_url" | store-as engine
+case "$engine" in
+
+  (pg|postgres|postgresql)
+    # Ensure pg_dump.
+    #
+    dpkg --get-selections | 'has?' 'postgresql-client' || sudo apt-get -qqy install postgresql-client
+
+    pg_dump "$database_url" --format=plain --no-acl --no-owner "$@"
+    ;;
+
+  (my|maria|aurora|mariadb|percona)
+    noop # TODO
+    ;;
+
+  *) error-out 3 'unexpected source engine'
+esac
