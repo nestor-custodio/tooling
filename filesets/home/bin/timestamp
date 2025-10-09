@@ -12,7 +12,7 @@ source '/home/nestor/bin/std.lib'
 
 		The DATE defaults to 'now' and is parsed by the coreutils parser.
 		For additional info on the GNU coreutils date parser, see command:
-		  info '(coreutils) date invocation'
+		  info '(coreutils) Date input formats'
 
 
 		Mandatory arguments to long options are mandatory for short options too.

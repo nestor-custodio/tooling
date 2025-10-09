@@ -30,7 +30,7 @@ source '/home/nestor/bin/std.lib'
 
 		All dates must be given in a coreutils-parseable format.
 		For additional info on the GNU coreutils date parser, see command:
-		  info '(coreutils) date invocation'
+		  info '(coreutils) Date input formats'
 
 
 		Exit Status:
