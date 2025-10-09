@@ -69,7 +69,7 @@ enable = false
 
 [editor.soft-wrap]
 
-wrap-indicator = "↳"
+wrap-indicator = "↳ "
 
 
 [editor.statusline]
