@@ -5,257 +5,256 @@ shopt -s lastpipe
 
 # Navigation helpers.
 
-  function dev { cd "$DEV_ROOT" ;}
+	function dev { cd "$DEV_ROOT" ;}
 
 
 # Language helpers.
 
-  # ruby
+	# ruby
 
-    # Console sanity.
-    # (This gives us a way to add exceptions for things like Pry, etc, in "Gemfile"s.)
-    #
-    export IRB='1'
+		# Console sanity.
+		# (This gives us a way to add exceptions for things like Pry, etc, in "Gemfile"s.)
+		#
+		export IRB='1'
 
-    # Executable management.
-    #
-    source "${HOME}/bin/vendor/chruby-source"
-    source "${HOME}/bin/vendor/chruby-source.auto"
+		# Executable management.
+		#
+		source "${HOME}/bin/vendor/chruby-source"
+		source "${HOME}/bin/vendor/chruby-source.auto"
 
-    # Linting/Style tooling.
-    #
-    export RUBOCOP_OPTS="--format='simple' --format='offenses' --color"
-    #
-    # shellcheck disable=SC2046
-    function rubocop {
-      # We only want to let `fd` handle the file list if all of the following are true:
-      # - the user doesn't provide a filename (i.e. a non-flag argument)
-      # - there is no '-h'/'--help' argument
-      # - there is no '-s'/'--stdin' argument
-      # - there are no server control arguments (start/restart/stop-server or server-status)
-      #
-      local skip_fd_call=''
-      printf '%s\n' "$@" | grep -P --quiet -- '^[^-]|^(-h|--help|-s|--stdin|--(start|restart|stop)-server|--server-status)$' && skip_fd_call='1'
+		# Linting/Style tooling.
+		#
+		export RUBOCOP_OPTS="--format='simple' --format='offenses' --color"
+		#
+		# shellcheck disable=SC2046
+		function rubocop {
+			# We only want to let `fd` handle the file list if all of the following are true:
+			# - the user doesn't provide a filename (i.e. a non-flag argument)
+			# - there is no '-h'/'--help' argument
+			# - there is no '-s'/'--stdin' argument
+			# - there are no server control arguments (start/restart/stop-server or server-status)
+			#
+			local skip_fd_call=''
+			printf '%s\n' "$@" | grep -P --quiet -- '^[^-]|^(-h|--help|-s|--stdin|--(start|restart|stop)-server|--server-status)$' && skip_fd_call='1'
 
-      if nearest --read 'Gemfile.lock' 'Gemfile' | 'has?' 'rubocop'; then
-        if [ -n "$skip_fd_call" ];
-          then bx rubocop "$@"
-          else bx rubocop --force-exclusion $( fd '\.(?:jbuilder|rake|rb)$' ) "$@"
-        fi
-      else
-        which rubocop &> /dev/null || gem install rubocop &> /dev/null
-        if [ -n "$skip_fd_call" ];
-          then "$( real rubocop )" "$@"
-          else "$( real rubocop )" --force-exclusion $( fd '\.(?:jbuider|rake|rb)$' ) "$@"
-        fi
-      fi
-    }
-    #
-    function rubocop? { rubocop --server-status ;}
-    function rubocop+ { rubocop --start-server  ;}
-    function rubocop- { rubocop --stop-server   ;}
-
-
-    # Bundle/Gemfile management.
-
-      function bx { bundle exec "$@" ;}
-      function br { bundle exec "$@" ;}
-
-      # ---
-
-      function ba {
-        gem list bundler-audit --installed || gem install bundler-audit &> /dev/null
-        bundle-audit check --update "$@"
-      }
-
-      # ---
-
-      function bi {
-        local gemfile="$( nearest 'Gemfile' )"
-        local lockfile="$( nearest 'Gemfile.lock' )"
-
-        # Ensure specific ruby.
-        #
-        local ruby_version
-        if ruby_version="$( nearest --read '.ruby-version' )"; then
-          ruby --version 2> /dev/null | 'has?' "$ruby_version"              \
-          || chruby "$ruby_version"                                         \
-          || ( set -o pipefail                                              \
-               && ruby-install "$ruby_version" 2> /dev/null | grep -F '>>>' \
-               && RUBIES=("${HOME}/.rubies"/*) && chruby "$ruby_version"    \
-             )
-        fi
-
-        # Ensure specific bundler.
-        #
-        local bundler_version
-        if [ -n "$lockfile" ]; then
-          bundler_version="$( tail -n1 "$lockfile" | tr -d ' ' )"
-          gem list bundler --silent --installed --version="$bundler_version" || gem install "bundler:${bundler_version}"
-        else
-          gem list bundler --silent --installed || gem install bundler
-        fi
-
-        # Bail if there's nothing to do.
-        #
-        [ -n "$gemfile" ] || [ -n "$lockfile" ] || return 0
-        bundle check &> /dev/null && return 0
-
-        # Install gemset (as quietly as possible, if invoked as just `bi`).
-        #
-        if [ "$#" == 0 ]
-          then bundle install | grep -Pv '^(?:Using|Bundle complete!|Use `bundle info \[gemname\]`) '
-          else bundle install "$@"
-        fi
-
-        true # Always move forward.
-      }
+			if nearest --read 'Gemfile.lock' 'Gemfile' | 'has?' 'rubocop'; then
+				if [ -n "$skip_fd_call" ];
+					then bx rubocop "$@"
+					else bx rubocop --force-exclusion $( fd '\.(?:jbuilder|rake|rb)$' ) "$@"
+				fi
+			else
+				which rubocop &> /dev/null || gem install rubocop &> /dev/null
+				if [ -n "$skip_fd_call" ];
+					then "$( real rubocop )" "$@"
+					else "$( real rubocop )" --force-exclusion $( fd '\.(?:jbuider|rake|rb)$' ) "$@"
+				fi
+			fi
+		}
+		#
+		function rubocop? { rubocop --server-status ;}
+		function rubocop+ { rubocop --start-server  ;}
+		function rubocop- { rubocop --stop-server   ;}
 
 
-    # Gem Release Tooling
+		# Bundle/Gemfile management.
 
-      function release-gem {
-        printf '%s\n' -- "$@" | grep -x --quiet -- '--help' && echo 'Usage: release-gem [ --major | --minor | --patch | VERSION ]' && return 0
+			function bx { bundle exec "$@" ;}
+			function br { bundle exec "$@" ;}
 
-        local option bump
-        local gem_name repo_id old_version
-        local parts major minor patch new_version
+			# ---
 
-        # ---
+			function ba {
+				gem list bundler-audit --installed || gem install bundler-audit &> /dev/null
+				bundle-audit check --update "$@"
+			}
 
-        option="$1" && shift
-        case "$option" in
-          (--major) bump='major' ;;
-          (--minor) bump='minor' ;;
-          (--patch) bump='patch' ;;
+			# ---
 
-          *) new_version="$option"
-        esac
+			function bi {
+				local gemfile="$( nearest 'Gemfile' )"
+				local lockfile="$( nearest 'Gemfile.lock' )"
 
-        [ "$#" == 0 ] || return 1
+				# Ensure specific ruby.
+				#
+				local ruby_version
+				if ruby_version="$( nearest --read '.ruby-version' )"; then
+					ruby --version 2> /dev/null | 'has?' "$ruby_version"              \
+					|| chruby "$ruby_version"                                         \
+					|| ( set -o pipefail                                              \
+					     && ruby-install "$ruby_version" 2> /dev/null | grep -F '>>>' \
+					     && RUBIES=("${HOME}/.rubies"/*) && chruby "$ruby_version" ;)
+				fi
 
-        # ---
+				# Ensure specific bundler.
+				#
+				local bundler_version
+				if [ -n "$lockfile" ]; then
+					bundler_version="$( tail -n1 "$lockfile" | tr -d ' ' )"
+					gem list bundler --silent --installed --version="$bundler_version" || gem install "bundler:${bundler_version}"
+				else
+					gem list bundler --silent --installed || gem install bundler
+				fi
 
-        cd "$DEV_ROOT" || return 2
+				# Bail if there's nothing to do.
+				#
+				[ -n "$gemfile" ] || [ -n "$lockfile" ] || return 0
+				bundle check &> /dev/null && return 0
 
-        gem_name="$( superbase ./*.gemspec )"
-        [ -n "$gem_name" ] || return 3
+				# Install gemset (as quietly as possible, if invoked as just `bi`).
+				#
+				if [ "$#" == 0 ]
+					then bundle install | grep -Pv '^(?:Using|Bundle complete!|Use `bundle info \[gemname\]`) '
+					else bundle install "$@"
+				fi
 
-        repo_id="$( gh repo set-default --view 2> /dev/null )"
-        [ -n "$repo_id" ] || return 4
-
-        old_version="$( gh:release-version "$repo_id" 2> /dev/null )"
-        [ -n "$old_version" ] || old_version='0.0.0'
-
-
-        # Determine new version number and prompt for confirmation ...
-
-        IFS='.-' read -r -a parts <<< "$old_version"
-        major="${parts[0]:-0}"
-        minor="${parts[1]:-0}"
-        patch="${parts[2]:-0}"
-
-        if [ -n "$bump" ]; then
-          case "$bump" in
-            (major) major="$( calc "${major} + 1" )"; minor='0';                        patch='0'                        ;;
-            (minor)                                   minor="$( calc "${minor} + 1" )"; patch='0'                        ;;
-            (patch)                                                                     patch="$( calc "${patch} + 1" )" ;;
-          esac
-
-          new_version="${major}.${minor}.${patch}"
-        fi
-
-        if [ -n "$new_version" ]; then
-          printf "Last release was '%s'.\nPublish new release as: [%s] " "$old_version" "$new_version"
-          read -r -p ' '; [ -n "$REPLY" ] && new_version="$REPLY"
-        else
-          printf "Last release was '%s'.\nPublish new release as:" "$old_version"
-          read -r -p ' ' new_version
-          [ -n "$new_version" ] || return 5
-        fi
+				true # Always move forward.
+			}
 
 
-        # Repackage gem ...
+		# Gem Release Tooling
 
-        fd --type='file' --exclude='Gemfile*' | map -- sed -i -e "s|${old_version}|${new_version}|"
-        yard doc
-        gem build
-        bundle install
+			function release-gem {
+				printf '%s\n' -- "$@" | grep -x --quiet -- '--help' && echo 'Usage: release-gem [ --major | --minor | --patch | VERSION ]' && return 0
+
+				local option bump
+				local gem_name repo_id old_version
+				local parts major minor patch new_version
+
+				# ---
+
+				option="$1" && shift
+				case "$option" in
+					(--major) bump='major' ;;
+					(--minor) bump='minor' ;;
+					(--patch) bump='patch' ;;
+
+					*) new_version="$option"
+				esac
+
+				[ "$#" == 0 ] || return 1
+
+				# ---
+
+				cd "$DEV_ROOT" || return 2
+
+				gem_name="$( superbase ./*.gemspec )"
+				[ -n "$gem_name" ] || return 3
+
+				repo_id="$( gh repo set-default --view 2> /dev/null )"
+				[ -n "$repo_id" ] || return 4
+
+				old_version="$( gh:release-version "$repo_id" 2> /dev/null )"
+				[ -n "$old_version" ] || old_version='0.0.0'
 
 
-        # Commit changes ...
+				# Determine new version number and prompt for confirmation ...
 
-        gcommit -am "version: release v${new_version}"
-        gpush
+				IFS='.-' read -r -a parts <<< "$old_version"
+				major="${parts[0]:-0}"
+				minor="${parts[1]:-0}"
+				patch="${parts[2]:-0}"
+
+				if [ -n "$bump" ]; then
+					case "$bump" in
+						(major) major="$( calc "${major} + 1" )"; minor='0';                        patch='0'                        ;;
+						(minor)                                   minor="$( calc "${minor} + 1" )"; patch='0'                        ;;
+						(patch)                                                                     patch="$( calc "${patch} + 1" )" ;;
+					esac
+
+					new_version="${major}.${minor}.${patch}"
+				fi
+
+				if [ -n "$new_version" ]; then
+					printf "Last release was '%s'.\nPublish new release as: [%s] " "$old_version" "$new_version"
+					read -r -p ' '; [ -n "$REPLY" ] && new_version="$REPLY"
+				else
+					printf "Last release was '%s'.\nPublish new release as:" "$old_version"
+					read -r -p ' ' new_version
+					[ -n "$new_version" ] || return 5
+				fi
 
 
-        # Publish release ...
+				# Repackage gem ...
 
-        gh release create "v${new_version}" --latest
-        gem push "${gem_name}-${new_version}.gem"
+				fd --type='file' --exclude='Gemfile*' | map -- sed -i -e "s|${old_version}|${new_version}|"
+				yard doc
+				gem build
+				bundle install
 
-      }
+
+				# Commit changes ...
+
+				gcommit -am "version: release v${new_version}"
+				gpush
 
 
-  # rails
+				# Publish release ...
 
-    function rd { bx rails "$@" ;}
+				gh release create "v${new_version}" --latest
+				gem push "${gem_name}-${new_version}.gem"
 
-    function r- { rd destroy  "$@" ;}
-    function r+ { rd generate "$@" ;}
+			}
 
-    function rc { if 'spring?' 2> /dev/null; then spring rails console "$@"; else rd console "$@"; fi ;}
-    function rx { if 'spring?' 2> /dev/null; then spring rails runner  "$@"; else rd runner  "$@"; fi ;}
-    function rr { if 'spring?' 2> /dev/null; then spring rails runner  "$@"; else rd runner  "$@"; fi ;}
 
-    # ---
+	# rails
 
-    function rails-db {
-      local database="$DATABASE_URL"
-      local db_config="${DEV_ROOT}/config/database.yml"
+		function rd { bx rails "$@" ;}
 
-    	# Pull from Rails DB config, if no $DATABASE_URL was available.
-    	#
-    	[ -n "$database" ] || database="$( yaml ".${RAILS_ENV}.database" < "$db_config" 2> /dev/null )"
-    	[ -n "$database" ] || return 1
+		function r- { rd destroy  "$@" ;}
+		function r+ { rd generate "$@" ;}
 
-      # Ensure we have a URL.
-      #
-      if ! 'matches?' '://' <<< "$database"; then
-        case "$( yaml ".${RAILS_ENV}.adapter" < "$db_config" 2> /dev/null )" in
-          (postgresql) database="postgres://${USER}@postgres/${database}" ;;
-          (mysql     ) database="mysql://${USER}@mysql/${database}" ;;
-          (sqlite3   ) database="sqlite3://${database}" ;;
+		function rc { if 'spring?' 2> /dev/null; then spring rails console "$@"; else rd console "$@"; fi ;}
+		function rx { if 'spring?' 2> /dev/null; then spring rails runner  "$@"; else rd runner  "$@"; fi ;}
+		function rr { if 'spring?' 2> /dev/null; then spring rails runner  "$@"; else rd runner  "$@"; fi ;}
 
-          *) return 2 ;;
-        esac
-      fi
+		# ---
 
-      echo "$database"
-    }
+		function rails-db {
+			local database="$DATABASE_URL"
+			local db_config="${DEV_ROOT}/config/database.yml"
 
-    function pending-migrations {
-      local migration_files="$( ls -1 "${DEV_ROOT}/db/migrate"/[0-9]*_*.rb 2> /dev/null | sed -r -e 's|^.*/([0-9]+)_[^/]+\.rb$|\1|' )"
+			# Pull from Rails DB config, if no $DATABASE_URL was available.
+			#
+			[ -n "$database" ] || database="$( yaml ".${RAILS_ENV}.database" < "$db_config" 2> /dev/null )"
+			[ -n "$database" ] || return 1
 
-      local sql=()
-      sql+=('CREATE TEMPORARY TABLE files (name TEXT)')
-      while read -r name; do sql+=("INSERT INTO files VALUES ('${name}')"); done <<< "$migration_files"
-      sql+=('SELECT files.name FROM files LEFT JOIN schema_migrations ON (name = version) WHERE (version IS NULL) ORDER BY 1')
+			# Ensure we have a URL.
+			#
+			if ! 'matches?' '://' <<< "$database"; then
+				case "$( yaml ".${RAILS_ENV}.adapter" < "$db_config" 2> /dev/null )" in
+					(postgresql) database="postgres://${USER}@postgres/${database}" ;;
+					(mysql     ) database="mysql://${USER}@mysql/${database}" ;;
+					(sqlite3   ) database="sqlite3://${database}" ;;
 
-      local IFS=';'
-      usql "$( rails-db )" -Ct --quiet --command="${sql[*]}"
-    }
-    function pending-migrations? { [ -n "$( pending-migrations )" ] ;}
+					*) return 2 ;;
+				esac
+			fi
 
-    function db: {                                    r+ migration   "$@" ;}
-    function db+ { 'pending-migrations?' || return 0; rd db:migrate  "$@" ;}
-    function db- {                                    rd db:rollback "$@" ;}
+			echo "$database"
+		}
 
-    function db! {
-      # Note most of this is a patch that allows using LazyMigrate v0.3.0 with Rails 7+.
-      # See: https://github.com/jesseduffield/lazy_migrate/issues/66
-      #
-      rr "$( cat <<- RUBY
+		function pending-migrations {
+			local migration_files="$( ls -1 "${DEV_ROOT}/db/migrate"/[0-9]*_*.rb 2> /dev/null | sed -r -e 's|^.*/([0-9]+)_[^/]+\.rb$|\1|' )"
+
+			local sql=()
+			sql+=('CREATE TEMPORARY TABLE files (name TEXT)')
+			while read -r name; do sql+=("INSERT INTO files VALUES ('${name}')"); done <<< "$migration_files"
+			sql+=('SELECT files.name FROM files LEFT JOIN schema_migrations ON (name = version) WHERE (version IS NULL) ORDER BY 1')
+
+			local IFS=';'
+			usql "$( rails-db )" -Ct --quiet --command="${sql[*]}"
+		}
+		function pending-migrations? { [ -n "$( pending-migrations )" ] ;}
+
+		function db: {                                    r+ migration   "$@" ;}
+		function db+ { 'pending-migrations?' || return 0; rd db:migrate  "$@" ;}
+		function db- {                                    rd db:rollback "$@" ;}
+
+		function db! {
+			# Note most of this is a patch that allows using LazyMigrate v0.3.0 with Rails 7+.
+			# See: https://github.com/jesseduffield/lazy_migrate/issues/66
+			#
+			rr "$( cat <<- RUBY
 				require 'bundler/inline'
 				gemfile {
 				  source 'https://rubygems.org'
@@ -310,293 +309,293 @@ shopt -s lastpipe
 				LazyMigrate.run
 			RUBY
 			)"
-    }
+		}
 
-    function DB! {
-      gem update  --silent sorbet-runtime
-      gem cleanup --silent sorbet-runtime
-      db!
-    }
+		function DB! {
+			gem update  --silent sorbet-runtime
+			gem cleanup --silent sorbet-runtime
+			db!
+		}
 
-    # ---
+		# ---
 
-    function rs {
-      local procfile="${DEV_ROOT}/Procfile.dev"
-      local dev_runner="${DEV_ROOT}/bin/dev"
+		function rs {
+			local procfile="${DEV_ROOT}/Procfile.dev"
+			local dev_runner="${DEV_ROOT}/bin/dev"
 
-      # Run any pending migrations.
-      #
-      db+ || return 1
+			# Run any pending migrations.
+			#
+			db+ || return 1
 
-      # Simpleton case: no "$procfile".
-      #
-      [ -e "$procfile" ] || { rd server "$@"; return "$?" ;}
+			# Simpleton case: no "$procfile".
+			#
+			[ -e "$procfile" ] || { rd server "$@"; return "$?" ;}
 
-      # Delegate to the "$dev_runner", if one exists.
-      #
-      [ -x "$dev_runner" ] && { "$dev_runner" "$@"; return "$?" ;}
+			# Delegate to the "$dev_runner", if one exists.
+			#
+			[ -x "$dev_runner" ] && { "$dev_runner" "$@"; return "$?" ;}
 
-      # Ensure Foreman and trigger a "$procfile" `start`.
-      #
-      gem list foreman -i --silent || gem install foreman
-      foreman start -f "$procfile" "$@"
-    }
-    function rs1 { RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 rs "$@" ;}
+			# Ensure Foreman and trigger a "$procfile" `start`.
+			#
+			gem list foreman -i --silent || gem install foreman
+			foreman start -f "$procfile" "$@"
+		}
+		function rs1 { RAILS_MAX_THREADS=1 WEB_CONCURRENCY=1 rs "$@" ;}
 
-    function rails-tasks { nearest --quiet 'Gemfile' && rd --tasks="$1" --all ;}
-    function rt { rails-tasks "$@" ;}
-
-
-  # node
-
-    # Executable management.
-    #
-    export N_PREFIX="${HOME}/.nodes"
-
-    # Don't run Husky installer, and disable its
-    # git hooks if `husky install` has already run.
-    #
-    export HUSKY='0'
-
-    # Package helpers.
-
-    function nx { npx       "$@" ;}
-    function na { npm audit "$@" ;}
-
-    function ni {
-      # Ensure specific node/npm.
-      #
-      local current_version="$( node --version 2> /dev/null )"
-      local requested_version="$( nearest --read '.node-version' )"
-      case "$requested_version" in
-        (lts) [ "$current_version" == "v$( n --lts )" ] || n lts ;;
-        (latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
-        (''|node) [ -n "$current_version" ] || n lts ;;
-
-        *) 'has?' "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
-      esac
-
-      # Bail if there's nothing to do.
-      #
-      nearest --quiet 'package.json' || return 0
-
-      # Install packages (as quietly as possible, if invoked as just `ni`).
-      #
-      if [ "$#" == 0 ]
-        then npm install --ignore-scripts | head --lines=-2
-        else npm install "$@"
-      fi
-
-      true # Always move forward.
-    }
+		function rails-tasks { nearest --quiet 'Gemfile' && rd --tasks="$1" --all ;}
+		function rt { rails-tasks "$@" ;}
 
 
-    # Command helpers.
+	# node
 
-      function nr { npm run       "$@" ;}
-      function ns { npm run start "$@" ;}
+		# Executable management.
+		#
+		export N_PREFIX="${HOME}/.nodes"
 
-      # ---
+		# Don't run Husky installer, and disable its
+		# git hooks if `husky install` has already run.
+		#
+		export HUSKY='0'
 
-      function node-tasks {
-        local lookup="$1" && shift
-        [ -z "$lookup" ] && lookup='^' || lookup='^.*'"$lookup"'.*$'
-        nearest --quiet 'package.json' && npm run | grep -P "$lookup" --context='1000' --color='always'
-      }
-      function nt { node-tasks "$@" ;}
+		# Package helpers.
 
+		function nx { npx       "$@" ;}
+		function na { npm audit "$@" ;}
 
-  # yarn
+		function ni {
+			# Ensure specific node/npm.
+			#
+			local current_version="$( node --version 2> /dev/null )"
+			local requested_version="$( nearest --read '.node-version' )"
+			case "$requested_version" in
+				(lts) [ "$current_version" == "v$( n --lts )" ] || n lts ;;
+				(latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
+				(''|node) [ -n "$current_version" ] || n lts ;;
 
-    # Package helpers.
+				*) 'has?' "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
+			esac
 
-    function yx { yarn "$@" ;}
-    function yr { yarn "$@" ;}
+			# Bail if there's nothing to do.
+			#
+			nearest --quiet 'package.json' || return 0
 
-    function ya { yarn audit "$@" ;}
+			# Install packages (as quietly as possible, if invoked as just `ni`).
+			#
+			if [ "$#" == 0 ]
+				then npm install --ignore-scripts | head --lines=-2
+				else npm install "$@"
+			fi
 
-    # ---
-
-    function yi {
-      # Ensure specific node/npm.
-      #
-      local current_version="$( node --version 2> /dev/null )"
-      local requested_version="$( nearest --read '.node-version' )"
-      case "$requested_version" in
-        (lts) [ "$current_version" == "v$( n --lts )" ] || n lts ;;
-        (latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
-        (''|node) [ -n "$current_version" ] || n lts ;;
-
-        *) 'has?' "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
-      esac
-
-      # Ensure (any) yarn.
-      #
-      command -v yarn &> /dev/null || npm install -g yarn
-
-      # Install packages, if any.
-      #
-      nearest --quiet 'package.json' 'yarn.lock' && yarn install 2> /dev/null
-
-      true # Always move forward.
-    }
+			true # Always move forward.
+		}
 
 
-  # multi-language constructs
+		# Command helpers.
 
-    function @ { IRB='' bi && ni ;}
+			function nr { npm run       "$@" ;}
+			function ns { npm run start "$@" ;}
+
+			# ---
+
+			function node-tasks {
+				local lookup="$1" && shift
+				[ -z "$lookup" ] && lookup='^' || lookup='^.*'"$lookup"'.*$'
+				nearest --quiet 'package.json' && npm run | grep -P "$lookup" --context='1000' --color='always'
+			}
+			function nt { node-tasks "$@" ;}
+
+
+	# yarn
+
+		# Package helpers.
+
+		function yx { yarn "$@" ;}
+		function yr { yarn "$@" ;}
+
+		function ya { yarn audit "$@" ;}
+
+		# ---
+
+		function yi {
+			# Ensure specific node/npm.
+			#
+			local current_version="$( node --version 2> /dev/null )"
+			local requested_version="$( nearest --read '.node-version' )"
+			case "$requested_version" in
+				(lts) [ "$current_version" == "v$( n --lts )" ] || n lts ;;
+				(latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
+				(''|node) [ -n "$current_version" ] || n lts ;;
+
+				*) 'has?' "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
+			esac
+
+			# Ensure (any) yarn.
+			#
+			command -v yarn &> /dev/null || npm install -g yarn
+
+			# Install packages, if any.
+			#
+			nearest --quiet 'package.json' 'yarn.lock' && yarn install 2> /dev/null
+
+			true # Always move forward.
+		}
+
+
+	# multi-language constructs
+
+		function @ { IRB='' bi && ni ;}
 
 
 # Platform helpers.
 
-  # Gemini CLI
+	# Gemini CLI
 
-  function gemini? { real gemini &> /dev/null ;}
-  function gemini  { 'gemini?' || npm install -g @google/gemini-cli; GEMINI_API_KEY="$( creds gemini/api-key )" "$( real gemini )" "$@" ;}
+	function gemini? { real gemini &> /dev/null ;}
+	function gemini  { 'gemini?' || npm install -g @google/gemini-cli; GEMINI_API_KEY="$( creds gemini/api-key )" "$( real gemini )" "$@" ;}
 
-  # Google App Scripts
+	# Google App Scripts
 
-  function gapps? { command -v clasp &> /dev/null ;}
-  function gapps  { 'gapps?' || npm install -g @google/clasp; clasp "$@" ;}
+	function gapps? { command -v clasp &> /dev/null ;}
+	function gapps  { 'gapps?' || npm install -g @google/clasp; clasp "$@" ;}
 
 
 # ENV helpers.
 # Note we want to define this stuff last so when we store the starting ("clean") list
 # of ENV vars (as "${ENV_VARS[clean]}") it includes all of the variables defined above.
 
-  function known-env-vars { export -p | sed -r -e 's|=.*$||' -e 's|^.* ||' | sort ;}
-  export CLEAN_ENV_VARS; CLEAN_ENV_VARS="$( known-env-vars )"
+	function known-env-vars { export -p | sed -r -e 's|=.*$||' -e 's|^.* ||' | sort ;}
+	export CLEAN_ENV_VARS; CLEAN_ENV_VARS="$( known-env-vars )"
 
-  function set-env {
-    local env_name="$1" && shift
-    [ -n "$env_name" ] || return 1
+	function set-env {
+		local env_name="$1" && shift
+		[ -n "$env_name" ] || return 1
 
-    # Allow shortcuts.
-    #
-    case "$env_name" in
-      (d|dev|development) env_name='development' ;;
-      (t|test|testing)    env_name='test'        ;;
-      (s|staging)         env_name='staging'     ;;
-      (p|prod|production) env_name='production'  ;;
-    esac
+		# Allow shortcuts.
+		#
+		case "$env_name" in
+			(d|dev|development) env_name='development' ;;
+			(t|test|testing)    env_name='test'        ;;
+			(s|staging)         env_name='staging'     ;;
+			(p|prod|production) env_name='production'  ;;
+		esac
 
-    export RUBY_ENV="$env_name"
-    export RAILS_ENV="$env_name"
-    export RACK_ENV="$env_name"
-    export NODE_ENV="$env_name"
-  }
+		export RUBY_ENV="$env_name"
+		export RAILS_ENV="$env_name"
+		export RACK_ENV="$env_name"
+		export NODE_ENV="$env_name"
+	}
 
-  function load-env {
-    local env_name="$1" && shift
-    declare -a env_list=()
+	function load-env {
+		local env_name="$1" && shift
+		declare -a env_list=()
 
-    # Allow shortcuts.
-    #
-    case "$env_name" in
-      (d|dev|development) env_name='development' ;;
-      (t|test|testing)    env_name='test'        ;;
-      (s|staging)         env_name='staging'     ;;
-      (p|prod|production) env_name='production'  ;;
-    esac
+		# Allow shortcuts.
+		#
+		case "$env_name" in
+			(d|dev|development) env_name='development' ;;
+			(t|test|testing)    env_name='test'        ;;
+			(s|staging)         env_name='staging'     ;;
+			(p|prod|production) env_name='production'  ;;
+		esac
 
-    unload-env
-    set-env "$env_name"
+		unload-env
+		set-env "$env_name"
 
-    # Check (and load) .env files in the same order as the 'dotenv' gem.
-    # (https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use)
-    #
-                          env_list+=('.env')
-    [ -n "$env_name" ] && env_list+=(".env.${env_name}")
-                          env_list+=('.env.local')
-    [ -n "$env_name" ] && env_list+=(".env.${env_name}.local")
-    for env_file in "${env_list[@]}"; do source "${DEV_ROOT}/${env_file}" 2> /dev/null; done
-  }
+		# Check (and load) .env files in the same order as the 'dotenv' gem.
+		# (https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use)
+		#
+		                      env_list+=('.env')
+		[ -n "$env_name" ] && env_list+=(".env.${env_name}")
+		                      env_list+=('.env.local')
+		[ -n "$env_name" ] && env_list+=(".env.${env_name}.local")
+		for env_file in "${env_list[@]}"; do source "${DEV_ROOT}/${env_file}" 2> /dev/null; done
+	}
 
-  function unload-env {
-    local clean_vars_file="$( mktemp --dry-run -t 'unload-env.XXX' )"
-    echo -n "${CLEAN_ENV_VARS}" > "$clean_vars_file"
+	function unload-env {
+		local clean_vars_file="$( mktemp --dry-run -t 'unload-env.XXX' )"
+		echo -n "${CLEAN_ENV_VARS}" > "$clean_vars_file"
 
-    for new_env_var in $( known-env-vars | grep -Fvx --file="$clean_vars_file" ); do unset "$new_env_var"; done
-    rm "$clean_vars_file"
-  }
+		for new_env_var in $( known-env-vars | grep -Fvx --file="$clean_vars_file" ); do unset "$new_env_var"; done
+		rm "$clean_vars_file"
+	}
 
-  # ---
+	# ---
 
-  function development { set-env 'development'; "$@" ;}
-  function testing     { set-env 'test'       ; "$@" ;}
-  function staging     { set-env 'staging'    ; "$@" ;}
-  function production  { set-env 'production' ; "$@" ;}
+	function development { set-env 'development'; "$@" ;}
+	function testing     { set-env 'test'       ; "$@" ;}
+	function staging     { set-env 'staging'    ; "$@" ;}
+	function production  { set-env 'production' ; "$@" ;}
 
-  function d { development "$@" ;}
-  function t { testing     "$@" ;}
-  function s { staging     "$@" ;}
-  function p { production  "$@" ;}
+	function d { development "$@" ;}
+	function t { testing     "$@" ;}
+	function s { staging     "$@" ;}
+	function p { production  "$@" ;}
 
-  # Default to "development".
-  #
-  set-env 'development'
+	# Default to "development".
+	#
+	set-env 'development'
 
 
 # Mail Helpers
 
-  # Per https://github.com/estelora/docker-mailcatcher-imap ...
-  #
-  # Container runs standard ports:
-  # - Web UI              on :80
-  # - SMTP                on :25
-  # - IMAP                on :143
-  # - Secure IMAP (IMAPS) on :993
-  #
-  function mailcatcher? { docker ls | 'has?' mailcatcher ;}
-  #
-  function mailcatcher+ {
-    'mailcatcher?' || docker container run --name='mailcatcher' --detach --rm \
-                                           --env 'MAILCATCHER_USERNAME=user'  \
-                                           --env 'MAILCATCHER_PASSWORD=pass'  \
-                                           --publish 127.0.0.1:1080:80        \
-                                           --publish 127.0.0.1:1025:25        \
-                                           --publish 127.0.0.1:143:143        \
-                                           estelora/mailcatcher-imap
+	# Per https://github.com/estelora/docker-mailcatcher-imap ...
+	#
+	# Container runs standard ports:
+	# - Web UI              on :80
+	# - SMTP                on :25
+	# - IMAP                on :143
+	# - Secure IMAP (IMAPS) on :993
+	#
+	function mailcatcher? { docker ls | 'has?' mailcatcher ;}
+	#
+	function mailcatcher+ {
+		'mailcatcher?' || docker container run --name='mailcatcher' --detach --rm \
+		                                       --env 'MAILCATCHER_USERNAME=user'  \
+		                                       --env 'MAILCATCHER_PASSWORD=pass'  \
+		                                       --publish 127.0.0.1:1080:80        \
+		                                       --publish 127.0.0.1:1025:25        \
+		                                       --publish 127.0.0.1:143:143        \
+		                                       estelora/mailcatcher-imap
 
-    # Do not return until the service is ready for use.
-    #
-    while true; do timeout 0.2 nc 127.0.0.1 1025 | 'has?' 220 && break; sleep 0.1s; done
-  }
-  #
-  function mailcatcher- { 'mailcatcher?' && docker container stop 'mailcatcher' &> /dev/null; return 0 ;}
+		# Do not return until the service is ready for use.
+		#
+		while true; do timeout 0.2 nc 127.0.0.1 1025 | 'has?' 220 && break; sleep 0.1s; done
+	}
+	#
+	function mailcatcher- { 'mailcatcher?' && docker container stop 'mailcatcher' &> /dev/null; return 0 ;}
 
-  # Checks mailcatcher mail.
-  #
-  function mail {
-    # Function-scope helper functions.
-    #
-    trap 'unset -f _pane_count _window_name' RETURN
-    function _pane_count { tmux display-message -p '#{window_panes}' ;}
-    function _window_name { tmux display-message -p '#{window_name}' ;}
+	# Checks mailcatcher mail.
+	#
+	function mail {
+		# Function-scope helper functions.
+		#
+		trap 'unset -f _pane_count _window_name' RETURN
+		function _pane_count { tmux display-message -p '#{window_panes}' ;}
+		function _window_name { tmux display-message -p '#{window_name}' ;}
 
-    # Ensure `aerc`.
-    #
-    real aerc &> /dev/null || sudo apt install -qqy aerc
+		# Ensure `aerc`.
+		#
+		real aerc &> /dev/null || sudo apt install -qqy aerc
 
-    # We *need* an active mailcatcher for this.
-    #
-    mailcatcher+ &> /dev/null || return 1
+		# We *need* an active mailcatcher for this.
+		#
+		mailcatcher+ &> /dev/null || return 1
 
-    # Rename the window (to "mail"), if it's not overly aggressive.
-    #
-    local original_window_name="$( _window_name )"
-    [ "$( _pane_count )" = 1 ] && tmux rename-window 'mail'
+		# Rename the window (to "mail"), if it's not overly aggressive.
+		#
+		local original_window_name="$( _window_name )"
+		[ "$( _pane_count )" = 1 ] && tmux rename-window 'mail'
 
-    aerc
+		aerc
 
-    # Restore the original window name,
-    # IF it was changed and is now "mail".
-    #
-    local current_window_name="$( _window_name )"
-    [ "$current_window_name" != "$original_window_name" ] || return
-    [ "$current_window_name" = 'mail' ] || return
-    tmux rename-window "$original_window_name"
-  }
+		# Restore the original window name,
+		# IF it was changed and is now "mail".
+		#
+		local current_window_name="$( _window_name )"
+		[ "$current_window_name" != "$original_window_name" ] || return
+		[ "$current_window_name" = 'mail' ] || return
+		tmux rename-window "$original_window_name"
+	}
 
 
 

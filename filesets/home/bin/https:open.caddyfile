@@ -5,27 +5,27 @@
 
 
 {
-  log {
-    output file "{$STATUS_LOG}"
-  }
+	log {
+		output file "{$STATUS_LOG}"
+	}
 }
 
 
 "{$HOSTNAME}.custodio.app" {
 
-  @ip_blacklist { #IP_BLACKLIST# }
-  abort @ip_blacklist
+	@ip_blacklist { #IP_BLACKLIST# }
+	abort @ip_blacklist
 
-  @uri_blacklist path #URI_BLACKLIST#
-  abort @uri_blacklist
+	@uri_blacklist path #URI_BLACKLIST#
+	abort @uri_blacklist
 
 
-  respond "/ping" "pong"
-  reverse_proxy "{$BINDING}"
+	respond "/ping" "pong"
+	reverse_proxy "{$BINDING}"
 
-  log {
-    format json
-    output file "{$ACCESS_LOG}"
-  }
+	log {
+		format json
+		output file "{$ACCESS_LOG}"
+	}
 
 }

@@ -52,13 +52,13 @@ source '/home/nestor/bin/std.lib'
 
 'valkey?' | store-as valkey_state
 if [ -z "$valkey_state" ]; then
-  gcloud alpha memorystore instances create valkey \
-         --engine-version=VALKEY_8_0 --mode=cluster_disabled --shard-count=1 --replica-count=0 \
-         --project=portable-shell --node-type=shared-core-nano --location="$( vm-region )" \
-         --zone-distribution-config-mode=SINGLE_ZONE --zone-distribution-config="$( vm-zone )" \
-         --psc-auto-connections="network=projects/portable-shell/global/networks/default,projectId=portable-shell" --transit-encryption-mode=server-authentication
+	gcloud alpha memorystore instances create valkey \
+	       --engine-version=VALKEY_8_0 --mode=cluster_disabled --shard-count=1 --replica-count=0 \
+	       --project=portable-shell --node-type=shared-core-nano --location="$( vm-region )" \
+	       --zone-distribution-config-mode=SINGLE_ZONE --zone-distribution-config="$( vm-zone )" \
+	       --psc-auto-connections="network=projects/portable-shell/global/networks/default,projectId=portable-shell" --transit-encryption-mode=server-authentication
 
-  'valkey?' | store-as valkey_state
+	'valkey?' | store-as valkey_state
 fi
 
 json '.endpoints[].connections[] | select(.pscAutoConnection.connectionType == "CONNECTION_TYPE_PRIMARY") | .pscAutoConnection.ipAddress' <<< "$valkey_state" | store-as valkey_ip

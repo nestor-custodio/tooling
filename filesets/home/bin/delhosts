@@ -67,8 +67,8 @@ hostfile_store="${HOME}/hostfiles"
 
 hostfile="${hostfile_store}/${profile_or_hostfile_reference}"
 if [ -e "$hostfile" ]
-  then profile="${hostfile##*/}"
-  else profile="$profile_or_hostfile_reference"
+	then profile="${hostfile##*/}"
+	else profile="$profile_or_hostfile_reference"
 fi
 
 hostctl remove "$profile"

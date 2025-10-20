@@ -119,7 +119,7 @@ case "$wait_type" in
 		;;
 
 	(files)
-    args='--'
+		args='--'
 		[ -n "$extensions" ] && args="--exts=${extensions} ${args}"
 		[ -n "$clear_screen" ] && args="--clear=clear ${args}"
 

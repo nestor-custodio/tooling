@@ -5,117 +5,117 @@ epsilon = 0.00000000000000000001
 /* ------------------------------------------------------------------------- */
 
 define abs (x) {
-  in_scale = scale;
+	in_scale = scale;
 
-  if (x >= 0) output = x
-  if (x <  0) output = x * -1
+	if (x >= 0) output = x
+	if (x <  0) output = x * -1
 
-  scale = in_scale; return output;
+	scale = in_scale; return output;
 }
 
 define sign (x) {
-  in_scale = scale;
+	in_scale = scale;
 
-  if (x >= 0) output =  1
-  if (x <  0) output = -1
+	if (x >= 0) output =  1
+	if (x <  0) output = -1
 
-  scale = in_scale; return output;
+	scale = in_scale; return output;
 }
 
 /* ------------------------------------------------------------------------- */
 
 define min (a, b) {
-  in_scale = scale;
+	in_scale = scale;
 
-  output = a
-  if (a > b) output = b
+	output = a
+	if (a > b) output = b
 
-  scale = in_scale; return output;
+	scale = in_scale; return output;
 }
 
 define max (a, b) {
-  in_scale = scale;
+	in_scale = scale;
 
-  output = a
-  if (a < b) output = b
+	output = a
+	if (a < b) output = b
 
-  scale = in_scale; return output;
+	scale = in_scale; return output;
 }
 
 /* ------------------------------------------------------------------------- */
 
 define truncate (x) {
-  in_scale = scale;
+	in_scale = scale;
 
-  scale = 0;
-  output = x / 1;
+	scale = 0;
+	output = x / 1;
 
-  scale = in_scale; return output;
+	scale = in_scale; return output;
 }
 
 define floor (x) {
-  in_scale = scale;
+	in_scale = scale;
 
-  if (x < 0) {
-    output = truncate(x - 1 + epsilon)
-  } else if (x == 0) {
-    output = 0
-  } else if (x > 0) {
-    output = truncate(x)
-  }
+	if (x < 0) {
+		output = truncate(x - 1 + epsilon)
+	} else if (x == 0) {
+		output = 0
+	} else if (x > 0) {
+		output = truncate(x)
+	}
 
-  scale = in_scale; return output;
+	scale = in_scale; return output;
 }
 
 define ceil (x) {
-  in_scale = scale;
+	in_scale = scale;
 
-  if (x < 0) {
-    output = truncate(x)
-  } else if (x == 0) {
-    output = 0
-  } else if (x > 0) {
-    output = truncate(x + 1 - epsilon)
-  }
+	if (x < 0) {
+		output = truncate(x)
+	} else if (x == 0) {
+		output = 0
+	} else if (x > 0) {
+		output = truncate(x + 1 - epsilon)
+	}
 
-  scale = in_scale; return output;
+	scale = in_scale; return output;
 }
 
 /* ------------------------------------------------------------------------- */
 
 define mod (x, y) {
-  in_scale = scale;
+	in_scale = scale;
 
-  scale = 0;
-  output = x % y;
+	scale = 0;
+	output = x % y;
 
-  scale = in_scale; return output;
+	scale = in_scale; return output;
 }
 
 /* ------------------------------------------------------------------------- */
 
 define compare (x, y) {
-  in_scale = scale;
+	in_scale = scale;
 
-  if (x < (y - epsilon)) {
-    output = -1
-  } else if (x > (y + epsilon)) {
-    output = 1
-  } else {
-    output = 0
-  }
+	if (x < (y - epsilon)) {
+		output = -1
+	} else if (x > (y + epsilon)) {
+		output = 1
+	} else {
+		output = 0
+	}
 
-  scale = in_scale; return output;
+	scale = in_scale; return output;
 }
 
 define between (lower_limit, test, upper_limit) {
-  in_scale = scale;
+	in_scale = scale;
 
-  if (((lower_limit - epsilon) <= test) && (test <= (upper_limit + epsilon))) {
-    output = 1
-  } else {
-    output = 0
-  }
+	if (((lower_limit - epsilon) <= test) && (test <= (upper_limit + epsilon))) {
+		output = 1
+	} else {
+		output = 0
+	}
 
-  scale = in_scale; return output;
+	scale = in_scale; return output;
 }

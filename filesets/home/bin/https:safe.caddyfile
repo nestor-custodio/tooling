@@ -5,24 +5,24 @@
 
 
 {
-  log {
-    output file "{$STATUS_LOG}"
-  }
+	log {
+		output file "{$STATUS_LOG}"
+	}
 }
 
 
 "{$HOSTNAME}.custodio.app" {
 
-  @not_me not remote_ip #CLIENT_IP#
-  abort @not_me
+	@not_me not remote_ip #CLIENT_IP#
+	abort @not_me
 
 
-  respond "/ping" "pong"
-  reverse_proxy "{$BINDING}"
+	respond "/ping" "pong"
+	reverse_proxy "{$BINDING}"
 
-  log {
-    format json
-    output file "{$ACCESS_LOG}"
-  }
+	log {
+		format json
+		output file "{$ACCESS_LOG}"
+	}
 
 }

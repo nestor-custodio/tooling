@@ -65,8 +65,8 @@ function cd-to-project-root() {
 	nearest "$@" | store-as root_file
 	[ -n "$root_file" ] || return
 
-  dirname "$root_file" | store-as root_dir
-  [ -e "${root_dir}/${filename}" ] && cd "$root_dir"
+	dirname "$root_file" | store-as root_dir
+	[ -e "${root_dir}/${filename}" ] && cd "$root_dir"
 }
 
 # ---

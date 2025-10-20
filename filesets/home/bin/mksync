@@ -97,7 +97,7 @@ fi
 
 
 			(--os-release|--os|--release)
-			  os_release="$1" && shift
+				os_release="$1" && shift
 				;;
 
 			(--lts)
@@ -144,7 +144,7 @@ case "$os_release" in
 		;;
 
 	lts)
-	  os-releases | grep -F 'lts' | tail -n1 | store-as image_family
+		os-releases | grep -F 'lts' | tail -n1 | store-as image_family
 		;;
 
 	*)

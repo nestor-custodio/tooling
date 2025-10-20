@@ -149,7 +149,7 @@ source '/home/nestor/bin/std.lib'
 
 
 			(--os-release|--os|--release)
-			  os_release="$1" && shift
+				os_release="$1" && shift
 				;;
 
 			(--lts)
@@ -167,8 +167,8 @@ source '/home/nestor/bin/std.lib'
 
 
 			(--stand-alone|--standalone|--no-sync|--nosync)
-			  startup_script_file="$( script-real ):standalone-init"
-			  ;;
+				startup_script_file="$( script-real ):standalone-init"
+				;;
 
 		esac
 	done
@@ -213,7 +213,7 @@ case "$os_release" in
 		;;
 
 	lts)
-	  os-releases | grep -F 'lts' | tail -n1 | store-as image_family
+		os-releases | grep -F 'lts' | tail -n1 | store-as image_family
 		;;
 
 	*)

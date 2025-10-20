@@ -44,8 +44,8 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-  engine="$1" && shift
-  [ -n "$engine" ] || error-out 2 'no ENGINE given'
+	engine="$1" && shift
+	[ -n "$engine" ] || error-out 2 'no ENGINE given'
 
 	database_name="$1" && shift
 	[ -n "$database_name" ] || error-out 2 'no DATABASE_NAME given'
@@ -61,21 +61,21 @@ source '/home/nestor/bin/std.lib'
 
 case "$engine" in
 
-  (pg|postgres|postgresql)
-    # Ensure pg_dump.
-    #
-    dpkg --get-selections | 'has?' 'postgresql-client' || sudo apt-get -qqy install postgresql-client
+	(pg|postgres|postgresql)
+		# Ensure pg_dump.
+		#
+		dpkg --get-selections | 'has?' 'postgresql-client' || sudo apt-get -qqy install postgresql-client
 
-    dropdb "$database_name" --if-exists --force
-    createdb "$database_name"
+		dropdb "$database_name" --if-exists --force
+		createdb "$database_name"
 
-    sed -r -e 's#^((CREATE EXTENSION|COMMENT ON EXTENSION) .*\bplpgsql\b)#-- \1#g' \
-    | psql --dbname="postgres://${USER}@postgres/${database_name}"
-    ;;
+		sed -r -e 's#^((CREATE EXTENSION|COMMENT ON EXTENSION) .*\bplpgsql\b)#-- \1#g' \
+		| psql --dbname="postgres://${USER}@postgres/${database_name}"
+		;;
 
-  (my|maria|aurora|mariadb|percona)
-    noop # TODO
-    ;;
+	(my|maria|aurora|mariadb|percona)
+		noop # TODO
+		;;
 
-  *) error-out 3 'unexpected source engine'
+	*) error-out 3 'unexpected source engine'
 esac

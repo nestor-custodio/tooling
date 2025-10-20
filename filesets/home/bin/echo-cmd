@@ -30,7 +30,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-  help-param? && echo "$usage" >&2
+	help-param? && echo "$usage" >&2
 
 }
 

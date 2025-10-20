@@ -94,17 +94,17 @@ source '/home/nestor/bin/std.lib'
 sed -r -e 's|://.*$||' <<< "$database_url" | store-as engine
 case "$engine" in
 
-  (pg|postgres|postgresql)
-    # Ensure pg_dump.
-    #
-    dpkg --get-selections | 'has?' 'postgresql-client' || sudo apt-get -qqy install postgresql-client
+	(pg|postgres|postgresql)
+		# Ensure pg_dump.
+		#
+		dpkg --get-selections | 'has?' 'postgresql-client' || sudo apt-get -qqy install postgresql-client
 
-    pg_dump "$database_url" --format=plain --no-acl --no-owner "$@"
-    ;;
+		pg_dump "$database_url" --format=plain --no-acl --no-owner "$@"
+		;;
 
-  (my|maria|aurora|mariadb|percona)
-    noop # TODO
-    ;;
+	(my|maria|aurora|mariadb|percona)
+		noop # TODO
+		;;
 
-  *) error-out 3 'unexpected source engine'
+	*) error-out 3 'unexpected source engine'
 esac

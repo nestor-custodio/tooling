@@ -52,8 +52,8 @@ source '/home/nestor/bin/std.lib'
 
 'redis?' | store-as redis_state
 if [ -z "$redis_state" ]; then
-  gcloud redis instances create redis --tier='basic' --size='1' --connect-mode='private-service-access' --zone="$( vm-zone )" --quiet
-  'redis?' | store-as redis_state
+	gcloud redis instances create redis --tier='basic' --size='1' --connect-mode='private-service-access' --zone="$( vm-zone )" --quiet
+	'redis?' | store-as redis_state
 fi
 
 json '.host' <<< "$redis_state" | store-as redis_ip

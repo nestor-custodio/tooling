@@ -65,8 +65,8 @@ source '/home/nestor/bin/std.lib'
 
 
 case "$param_type" in
-  (file) diff -Naru "$original" "$modified" ;;
-  (dirs) diff -crB  "$original" "$modified" ;;
+	(file) diff -Naru "$original" "$modified" ;;
+	(dirs) diff -crB  "$original" "$modified" ;;
 
-  *) exit-out 2 'mismatched (or unexpected) param types'
+	*) exit-out 2 'mismatched (or unexpected) param types'
 esac
