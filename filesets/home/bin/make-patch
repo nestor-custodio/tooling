@@ -60,7 +60,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-[ -f "$original" ] && [ -f "$modified" ] && param_type='file' 
+[ -f "$original" ] && [ -f "$modified" ] && param_type='file'
 [ -d "$original" ] && [ -d "$modified" ] && param_type='dirs'
 
 

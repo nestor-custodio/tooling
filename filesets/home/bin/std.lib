@@ -208,7 +208,7 @@ shopt -s lastpipe expand_aliases
 	# Blind check for a '--help' param.
 	# Note this DOES NOT MODIFY THE PARAM LIST.
 	#
-	alias help-param?='printf "%s\n" -- "$@" | grep -x --quiet -- "--help"'
+	alias 'help-param?'='printf "%s\n" -- "$@" | grep -x --quiet -- "--help"'
 
 	# Modifies the param list to facilitate processing.
 	#
