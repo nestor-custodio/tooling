@@ -478,10 +478,16 @@ completion_loader='/usr/share/bash-completion/bash_completion'
 #
 vm_customization_home="${HOME}/vm-scripts/$( hostname --short )"
 if [ -d "$vm_customization_home" ]; then
-  export PATH="${vm_customization_home}/bin:${PATH}"
-
   vm_customization_file="${vm_customization_home}/custom-shell"
   [ -r "$vm_customization_file" ] && source "$vm_customization_file"
+
+  vm_customization_bins="${vm_customization_home}/bin"
+  if [ -e "$vm_customization_bins" ]; then
+    export PATH="${vm_customization_bins}:${PATH}"
+
+    vm_bins_shortcut="${HOME}/vm-bin"
+    [ ! -e "$vm_bins_shortcut" ] && ln -sT "$vm_customization_bins" "$vm_bins_shortcut"
+  fi
 fi
 
 
