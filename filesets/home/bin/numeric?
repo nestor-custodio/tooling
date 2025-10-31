@@ -38,5 +38,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-[ -z "${*//[-0-9. ]/}" ] || exit-out 1
-'calc?' -- "${*} == ${*}" 2> /dev/null || exit-out 1
+'has-line?' --regex -- '-?\d+(\.\d+)?' <<< "$*" || exit-out 1
