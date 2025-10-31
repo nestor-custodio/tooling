@@ -6,9 +6,11 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [PORT_RANGE]
+		Usage: $( script-name ) [ PORT | RANGE ]
 
-		Finds an available port in the given PORT_RANGE (defaults to 3001-3999).
+		Reports whether the given PORT is available, or (if a RANGE is given)
+		finds *and prints* an available port within the given RANGE. If no value
+		is given, defaults to a RANGE of '3001-3999'.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -45,9 +47,8 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	port_range="$1" && shift
-	[ -n "$port_range" ] || port_range='3001-3999'
-	'has-line?' --regex '\d+-\d+' <<< "$port_range" || error-out 1 'invalid PORT_RANGE'
+	port_or_range="$1" && shift
+	[ -n "$port_or_range" ] || port_or_range='3001-3999'
 
 
 	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
@@ -58,9 +59,27 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-sudo lsof -i -P -n | grep -P '(?<=:)[0-9]+\b' --only-matching | store-as unavailable_ports
-shuf -n1 --input-range="$port_range" | while read -r port; do
-	'has-line?' "$port" <<< "$unavailable_ports" || exit-out 0 "$port"
-done
+ss --all --ipv4 --numeric --no-header | awk '{ print $5 }' | cut -d':' -f2 | store-as ports_in_use
 
-exit 2
+# We've been given a PORT.
+#
+if 'numeric?' "$port_or_range"; then
+	if 'has-line?' "$port_or_range" <<< "$ports_in_use"
+		then exit-out 1
+		else exit-out 0
+	fi
+
+# We've been given a RANGE.
+#
+elif 'has-line?' --regex '\d+-\d+' <<< "$port_or_range"; then
+	shuf -n1 --input-range="$port_or_range" | while read -r port; do
+		'has-line?' "$port" <<< "$ports_in_use" || exit-out 0 "$port"
+	done
+
+	exit-out 2
+
+# Unexpected param formatting.
+#
+else
+	error-out 1 'unexpected param formatting'
+fi
