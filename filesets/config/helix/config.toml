@@ -243,7 +243,6 @@ newline = "↲"
   "+"         = "switch_to_uppercase"
   "%"         = "switch_case"
 
-  "!"         = "shell_insert_output"
   "|"         = "shell_pipe"
 
 
@@ -381,6 +380,15 @@ newline = "↲"
 "l" = "goto_last_line"
 
 
+# Popups
+[keys.normal."!"]
+
+# Popups -> git
+[keys.normal."!".g]
+"b" = ":sh gblame '%{buffer_name}' -L '%{selection_line_start},%{selection_line_end}' --date='short' | ansifilter | cut -c1-110"
+"l" = ":sh glog '%{buffer_name}' | ansifilter"
+
+
 # ---
 # ---
 
@@ -396,6 +404,7 @@ newline = "↲"
 "z" = "no_op"
 
 "%" = "no_op"
+"!" = "no_op"
 
 
 # Application Control
@@ -466,7 +475,6 @@ newline = "↲"
   "#"         = ["toggle_comments", "normal_mode"]
   ","         = "select_register"
 
-  "!"         = "shell_insert_output"
   "|"         = "shell_pipe"
 
 
