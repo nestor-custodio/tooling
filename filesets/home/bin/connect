@@ -1,0 +1,104 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) --my PORT --to HOST:PORT --through CONNECTOR
+
+		Sets up *the creation of an SSH tunnel* between the given local PORT and
+		the remote HOST:PORT, through the given CONNECTOR service. If a username
+		is required for the CONNECTOR serrvice, it should be part of the param:
+
+		  $( script-name ) --my 1234 --to remote:4321 --through user@ssh-server
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Reminders On SSH Tunnels
+		  - An attempt to connect to the local port will *then* establish the
+		    tunnel. No connection to the given HOST:PORT is actually made until
+		    it is needed.
+
+		  - The given HOST name must be resolvable only by the SS_SERVER. No
+		    name resolution attempt for it is made on this host.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  unable to set up tunnel.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	local_port=''
+	remote_host_port=''
+	connector_service=''
+
+	# ---
+	# ---
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+	LONG_OPTS="${LONG_OPTS},my:,local:,from:"
+	LONG_OPTS="${LONG_OPTS},to:,remote:,target:"
+	LONG_OPTS="${LONG_OPTS},through:,connector:,server:"
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--my|--local|--from)
+				local_port="$1" && shift;
+				;;
+
+			(--to|--remote|--target)
+				remote_host_port="$1" && shift
+				;;
+
+			(--through|--connector|--server)
+				connector_service="$1" && shift
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Sanity checks ...
+
+'numeric?' "$local_port" || error-out 1 'non-numeric PORT'
+
+[ -n "$remote_host_port" ] || error-out 1 'no HOST:PORT given'
+'has-line?' --regex '[^:]+:[0-9]+' <<< "$remote_host_port" || error-out 1 'malformed HOST:PORT'
+
+[ -n "$connector_service" ] || error-out 1 'no CONNECTOR given'
+
+
+available-port "$local_port" || error-out 2 'PORT already in use'
+ssh -f -T -N -L "${local_port}:${remote_host_port}" "$connector_service" || error-out 2 'failed to set up SSH tunnel'
