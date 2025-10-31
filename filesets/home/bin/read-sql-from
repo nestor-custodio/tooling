@@ -75,11 +75,10 @@ source '/home/nestor/bin/std.lib'
 
 	# Set $database_url from either the explicit parameter or the Heroku option set.
 	#
-	if [ "$#" == 1 ]; then
+	if [ -n "$heroku_app_name" ] && [ -n "$heroku_config_var" ]; then
+		heroku config:get "$heroku_config_var" --app="$heroku_app_name" 2> /dev/null | store-as database_url
+	elif [ -n "$1" ] && ! 'starts-with?' -- '-' <<< "$1"; then
 		database_url="$1" && shift
-	else
-		[ -n "$heroku_app_name" ] && [ -n "$heroku_config_var" ] \
-		&& database_url="$( heroku config:get "$heroku_config_var" --app="$heroku_app_name" 2> /dev/null )"
 	fi
 	[ -n "$database_url" ] || error-out 2 'no source system given'
 
