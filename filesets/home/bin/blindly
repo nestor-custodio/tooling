@@ -62,14 +62,16 @@ if [ "$#" == 1 ]; then
 
 	cat <<-EOF > "$executable"
 		#! /bin/env bash
-		${1} ; rm -f '${executable}'
+		trap 'rm -f "${executable}"' EXIT
+		${1}
 	EOF
 
 else
 
 	cat <<-EOF > "$executable"
 		#! /bin/env bash
-		${@@Q} ; rm -f '${executable}'
+		trap 'rm -f "${executable}"' EXIT
+		${@@Q}
 	EOF
 
 	# Unquote pipes + redirectors.
