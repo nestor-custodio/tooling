@@ -94,8 +94,8 @@ source '/home/nestor/bin/std.lib'
 
 		function dns-transaction { gcloud --format='none' --verbosity='error' dns record-sets transaction "$@" --zone="$dns_zone" &> /dev/null ;}
 
-		function catch-transaction-errors { set -e && trap 'dns-transaction abort ; error-out 3 "transaction error"' ERR ;}
-		function ignore-transaction-errors { trap - ERR && set +e ;}
+		function catch-transaction-errors { set -e && set-trap ERR 'dns-transaction abort ; error-out 3 "transaction error"' ;}
+		function ignore-transaction-errors { clear-trap ERR && set +e ;}
 
 	}
 

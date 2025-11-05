@@ -569,7 +569,7 @@ shopt -s lastpipe
 	function mail {
 		# Function-scope helper functions.
 		#
-		trap 'unset -f _pane_count _window_name' RETURN
+		set-trap RETURN 'unset -f _pane_count _window_name'
 		function _pane_count { tmux display-message -p '#{window_panes}' ;}
 		function _window_name { tmux display-message -p '#{window_name}' ;}
 
