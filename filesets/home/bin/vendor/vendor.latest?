@@ -135,7 +135,6 @@ case "$tool_name" in
 	(ruff             )               ;&
 	(shellcheck       )               ;&
 	(static-web-server)               ;&
-	(unison           )               ;&
 	(usql             )               ;&
 	(watchexec        )               ;&
 	(yq               ) check-version ;;

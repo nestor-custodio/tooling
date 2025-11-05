@@ -162,7 +162,6 @@ case "$tool_name" in
 	(ruff             ) get-version                  --puller='(?<=ruff ).*'                 ;;
 	(shellcheck       ) get-version                  --puller='(?<=version: ).*'             ;;
 	(static-web-server) get-version                  --puller='(?<=Version: ).*'             ;;
-	(unison           ) get-version --cmd='-version' --puller='(?<=unison version ).*?(?= )' ;;
 	(usql             ) get-version                  --puller='(?<=usql ).*'                 ;;
 	(watchexec        ) get-version                  --puller='(?<=release: ).*'             ;;
 	(yq               ) get-version                  --puller='(?<=version v).*'             ;;

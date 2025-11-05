@@ -33,7 +33,6 @@
 /ruff
 /shellcheck
 /static-web-server
-/unison
 /usql
 /watchexec
 /yq
