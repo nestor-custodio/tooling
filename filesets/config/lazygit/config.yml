@@ -2,165 +2,165 @@
 
 gui:
 
-    authorColors:
-        'Nestor Custodio': 'yellow'
-        '*': 'white'
-    branchColors:
-        'main': 'red'
-        'master': 'red'
-        'staging': 'green'
-        'nlc': 'yellow'
-        '*': 'white'
-    branchColorPatterns: {}
-    customIcons:
-        filenames: {}
-        extensions: {}
+  authorColors:
+    'Nestor Custodio': 'yellow'
+    '*': 'white'
+  branchColors:
+    'main': 'red'
+    'master': 'red'
+    'staging': 'green'
+    'nlc': 'yellow'
+    '*': 'white'
+  branchColorPatterns: {}
+  customIcons:
+    filenames: {}
+    extensions: {}
 
-    scrollHeight: 2
-    scrollPastBottom: true
-    scrollOffMargin: 2
-    scrollOffBehavior: 'margin'
-    tabWidth: 4
-    mouseEvents: true
+  scrollHeight: 2
+  scrollPastBottom: true
+  scrollOffMargin: 2
+  scrollOffBehavior: 'margin'
+  tabWidth: 4
+  mouseEvents: true
 
-    skipAmendWarning: false
-    skipDiscardChangeWarning: false
-    skipStashWarning: true
-    skipNoStagedFilesWarning: false
-    skipRewordInEditorWarning: true
+  skipAmendWarning: false
+  skipDiscardChangeWarning: false
+  skipStashWarning: true
+  skipNoStagedFilesWarning: false
+  skipRewordInEditorWarning: true
 
-    sidePanelWidth: 0.3333
-    expandFocusedSidePanel: true
-    expandedSidePanelWeight: 2
-    mainPanelSplitMode: 'flexible'
-    enlargedSideViewLocation: 'top'
-    wrapLinesInStagingView: false
-    useHunkModeInStagingView: true
-    language: 'auto'
-    timeFormat: '2006-01-02'
-    shortTimeFormat: '15:04'
+  sidePanelWidth: 0.3333
+  expandFocusedSidePanel: true
+  expandedSidePanelWeight: 2
+  mainPanelSplitMode: 'flexible'
+  enlargedSideViewLocation: 'top'
+  wrapLinesInStagingView: false
+  useHunkModeInStagingView: true
+  language: 'auto'
+  timeFormat: '2006-01-02'
+  shortTimeFormat: '15:04'
 
-    theme:
-        activeBorderColor:
-            - 'red'
-            - 'bold'
-        inactiveBorderColor:
-            - 'white'
-        optionsTextColor:
-            - 'cyan'
+  theme:
+    activeBorderColor:
+      - 'red'
+      - 'bold'
+    inactiveBorderColor:
+      - 'white'
+    optionsTextColor:
+      - 'cyan'
 
-    commitLength:
-        show: true
+  commitLength:
+    show: true
 
-    showListFooter: false
-    showFileTree: true
-    showRootItemInFileTree: true
-    showNumstatInFilesView: false
-    showRandomTip: false
-    showCommandLog: false
-    showBottomLine: false
-    showPanelJumps: false
-    nerdFontsVersion: '3'
-    showFileIcons: true
-    commitAuthorShortLength: 2
-    commitAuthorLongLength: 17
-    commitHashLength: 8
-    showBranchCommitHash: false
-    showDivergenceFromBaseBranch: 'arrowAndNumber'
-    commandLogSize: 8
-    splitDiff: 'auto'
-    screenMode: 'normal'
-    border: 'rounded'
-    animateExplosion: true
-    portraitMode: 'auto'
-    filterMode: 'fuzzy'
+  showListFooter: false
+  showFileTree: true
+  showRootItemInFileTree: true
+  showNumstatInFilesView: false
+  showRandomTip: false
+  showCommandLog: false
+  showBottomLine: false
+  showPanelJumps: false
+  nerdFontsVersion: '3'
+  showFileIcons: true
+  commitAuthorShortLength: 2
+  commitAuthorLongLength: 17
+  commitHashLength: 8
+  showBranchCommitHash: false
+  showDivergenceFromBaseBranch: 'arrowAndNumber'
+  commandLogSize: 8
+  splitDiff: 'auto'
+  screenMode: 'normal'
+  border: 'rounded'
+  animateExplosion: true
+  portraitMode: 'auto'
+  filterMode: 'fuzzy'
 
-    spinner:
-        frames:
-            - '⠏'
-            - '⠏'
-            - '⠛'
-            - '⠛'
-            - '⠹'
-            - '⠹'
-            - '⠼'
-            - '⠼'
-            - '⠶'
-            - '⠶'
-            - '⠧'
-            - '⠧'
-        rate: 50
+  spinner:
+    frames:
+      - '⠏'
+      - '⠏'
+      - '⠛'
+      - '⠛'
+      - '⠹'
+      - '⠹'
+      - '⠼'
+      - '⠼'
+      - '⠶'
+      - '⠶'
+      - '⠧'
+      - '⠧'
+    rate: 50
 
-    statusPanelView: 'allBranchesLog'
-    switchToFilesAfterStashPop: true
-    switchToFilesAfterStashApply: true
-    switchTabsWithPanelJumpKeys: true
+  statusPanelView: 'allBranchesLog'
+  switchToFilesAfterStashPop: true
+  switchToFilesAfterStashApply: true
+  switchTabsWithPanelJumpKeys: true
 
 
 os:
 
-    editPreset: 'helix'
-    copyToClipboardCmd: 'copy {{text}}'
+  editPreset: 'helix'
+  copyToClipboardCmd: 'copy {{text}}'
 
 
 git:
 
-    paging:
-        colorArg: 'always'
-        pager: "delta --true-color='never' --dark --line-numbers --line-numbers-left-format='{nm:^4}:' --hunk-header-style='syntax' --paging='never'"
-        externalDiffCommand: ''
-        useExternalDiffGitConfig: false
+  paging:
+    colorArg: 'always'
+    pager: "delta --true-color='never' --dark --line-numbers --line-numbers-left-format='{nm:^4}:' --hunk-header-style='syntax' --paging='never'"
+    externalDiffCommand: ''
+    useExternalDiffGitConfig: false
 
-    commit:
-        signOff: false
-        autoWrapCommitMessage: true
-        autoWrapWidth: 72
+  commit:
+    signOff: false
+    autoWrapCommitMessage: true
+    autoWrapWidth: 72
 
-    merging:
-        manualCommit: false
-        args: ''
-        squashMergeMessage: 'squash: {{selectedRef}} -> {{currentBranch}}'
+  merging:
+    manualCommit: false
+    args: ''
+    squashMergeMessage: 'squash: {{selectedRef}} -> {{currentBranch}}'
 
-    mainBranches:
-        - 'main'
-        - 'master'
+  mainBranches:
+    - 'main'
+    - 'master'
 
-    skipHookPrefix: 'WIP'
-    autoFetch: true
-    autoRefresh: true
-    autoForwardBranches: 'onlyMainBranches'
-    fetchAll: false
-    autoStageResolvedConflicts: true
-    branchLogCmd: 'git log --color=always --decorate --graph {{branchName}} --'
-    allBranchesLogCmds: ['git log --color=always --decorate --graph --all --oneline --']
-    ignoreWhitespaceInDiffView: false
-    diffContextSize: 3
-    renameSimilarityThreshold: 50
-    overrideGpg: false
-    disableForcePushing: false
-    commitPrefix: []
-    commitPrefixes: {}
-    branchPrefix: ''
-    parseEmoji: false
+  skipHookPrefix: 'WIP'
+  autoFetch: true
+  autoRefresh: true
+  autoForwardBranches: 'onlyMainBranches'
+  fetchAll: false
+  autoStageResolvedConflicts: true
+  branchLogCmd: 'git log --color=always --decorate --graph {{branchName}} --'
+  allBranchesLogCmds: ['git log --color=always --decorate --graph --all --oneline --']
+  ignoreWhitespaceInDiffView: false
+  diffContextSize: 3
+  renameSimilarityThreshold: 50
+  overrideGpg: false
+  disableForcePushing: false
+  commitPrefix: []
+  commitPrefixes: {}
+  branchPrefix: ''
+  parseEmoji: false
 
-    log:
-        order: 'topo-order'
-        showGraph: 'always'
-        showWholeGraph: false
+  log:
+    order: 'topo-order'
+    showGraph: 'always'
+    showWholeGraph: false
 
-    localBranchSortOrder: 'date'
-    remoteBranchSortOrder: 'date'
-    truncateCopiedCommitHashesTo: 12
+  localBranchSortOrder: 'date'
+  remoteBranchSortOrder: 'date'
+  truncateCopiedCommitHashesTo: 12
 
 
 update:
-    method: 'never'
-    days: 14
+  method: 'never'
+  days: 14
 
 
 refresher:
-    refreshInterval: 10
-    fetchInterval: 60
+  refreshInterval: 10
+  fetchInterval: 60
 
 
 confirmOnQuit: false
@@ -197,185 +197,185 @@ promptToReturnFromSubprocess: false
 #
 keybinding:
 
-    universal:
-        quit: 'q'
-        quit-alt1: '<disabled>'
-        suspendApp: '<c-z>'
-        return: '<esc>'
-        quitWithoutChangingDirectory: '<disabled>'
-        togglePanel: '<tab>'
-        prevItem: 'i'
-        nextItem: 'k'
-        prevItem-alt: '<disabled>'
-        nextItem-alt: '<disabled>'
-        prevPage: 'I'
-        nextPage: 'K'
-        scrollLeft: 'j'
-        scrollRight: 'l'
-        gotoTop: '['
-        gotoBottom: ']'
-        gotoTop-alt: '<disabled>'
-        gotoBottom-alt: '<disabled>'
-        toggleRangeSelect: '.'
-        rangeSelectDown: '<disabled>'
-        rangeSelectUp: '<disabled>'
-        prevBlock: '<disabled>'
-        nextBlock: '<disabled>'
-        prevBlock-alt: '<disabled>'
-        nextBlock-alt: '<disabled>'
-        nextBlock-alt2: '<disabled>'
-        prevBlock-alt2: '<disabled>'
-        jumpToBlock:
-            - '1'
-            - '2'
-            - '3'
-            - '4'
-            - '5'
-        focusMainView: '6'
-        nextMatch: 'n'
-        prevMatch: 'N'
-        startSearch: '/'
-        optionMenu: 'm'
-        optionMenu-alt1: '<disabled>'
-        select: '<enter>'
-        goInto: '<space>'
-        confirm: '<enter>'
-        confirmMenu: '<enter>'
-        confirmSuggestion: '<enter>'
-        confirmInEditor: '<disabled>'
-        confirmInEditor-alt: '<disabled>'
-        remove: 'd'
-        new: 'n'
-        edit: 'e'
-        openFile: '<disabled>'
-        scrollUpMain: '<up>'
-        scrollDownMain: '<down>'
-        scrollUpMain-alt1: '<disabled>'
-        scrollDownMain-alt1: '<disabled>'
-        scrollUpMain-alt2: '<disabled>'
-        scrollDownMain-alt2: '<disabled>'
-        executeShellCommand: '<disabled>'
-        createRebaseOptionsMenu: '!'
-        pushFiles: 'P'
-        pullFiles: 'p'
-        refresh: '<c-r>'
-        createPatchOptionsMenu: '<disabled>'
-        nextTab: 'o'
-        prevTab: 'u'
-        nextScreenMode: '='
-        prevScreenMode: '-'
-        undo: 'z'
-        redo: 'y'
-        filteringMenu: '?'
-        diffingMenu: '<disabled>'
-        diffingMenu-alt: '<disabled>'
-        copyToClipboard: '<c-c>'
-        openRecentRepos: '<disabled>'
-        submitEditorText: '<enter>'
-        extrasMenu: '@'
-        toggleWhitespaceInDiffView: '<disabled>'
-        increaseContextInDiffView: '}'
-        decreaseContextInDiffView: '{'
-        increaseRenameSimilarityThreshold: '<disabled>'
-        decreaseRenameSimilarityThreshold: '<disabled>'
-        openDiffTool: '<disabled>'
+  universal:
+    quit: 'q'
+    quit-alt1: '<disabled>'
+    suspendApp: '<c-z>'
+    return: '<esc>'
+    quitWithoutChangingDirectory: '<disabled>'
+    togglePanel: '<tab>'
+    prevItem: 'i'
+    nextItem: 'k'
+    prevItem-alt: '<disabled>'
+    nextItem-alt: '<disabled>'
+    prevPage: 'I'
+    nextPage: 'K'
+    scrollLeft: 'j'
+    scrollRight: 'l'
+    gotoTop: '['
+    gotoBottom: ']'
+    gotoTop-alt: '<disabled>'
+    gotoBottom-alt: '<disabled>'
+    toggleRangeSelect: '.'
+    rangeSelectDown: '<disabled>'
+    rangeSelectUp: '<disabled>'
+    prevBlock: '<disabled>'
+    nextBlock: '<disabled>'
+    prevBlock-alt: '<disabled>'
+    nextBlock-alt: '<disabled>'
+    nextBlock-alt2: '<disabled>'
+    prevBlock-alt2: '<disabled>'
+    jumpToBlock:
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+    focusMainView: '6'
+    nextMatch: 'n'
+    prevMatch: 'N'
+    startSearch: '/'
+    optionMenu: 'm'
+    optionMenu-alt1: '<disabled>'
+    select: '<enter>'
+    goInto: '<space>'
+    confirm: '<enter>'
+    confirmMenu: '<enter>'
+    confirmSuggestion: '<enter>'
+    confirmInEditor: '<disabled>'
+    confirmInEditor-alt: '<disabled>'
+    remove: 'd'
+    new: 'n'
+    edit: 'e'
+    openFile: '<disabled>'
+    scrollUpMain: '<up>'
+    scrollDownMain: '<down>'
+    scrollUpMain-alt1: '<disabled>'
+    scrollDownMain-alt1: '<disabled>'
+    scrollUpMain-alt2: '<disabled>'
+    scrollDownMain-alt2: '<disabled>'
+    executeShellCommand: '<disabled>'
+    createRebaseOptionsMenu: '!'
+    pushFiles: 'P'
+    pullFiles: 'p'
+    refresh: '<c-r>'
+    createPatchOptionsMenu: '<disabled>'
+    nextTab: 'o'
+    prevTab: 'u'
+    nextScreenMode: '='
+    prevScreenMode: '-'
+    undo: 'z'
+    redo: 'y'
+    filteringMenu: '?'
+    diffingMenu: '<disabled>'
+    diffingMenu-alt: '<disabled>'
+    copyToClipboard: '<c-c>'
+    openRecentRepos: '<disabled>'
+    submitEditorText: '<enter>'
+    extrasMenu: '@'
+    toggleWhitespaceInDiffView: '<disabled>'
+    increaseContextInDiffView: '}'
+    decreaseContextInDiffView: '{'
+    increaseRenameSimilarityThreshold: '<disabled>'
+    decreaseRenameSimilarityThreshold: '<disabled>'
+    openDiffTool: '<disabled>'
 
-    status:
-        checkForUpdate: '<disabled>'
-        recentRepos: '<disabled>'
-        allBranchesLogGraph: '<disabled>'
+  status:
+    checkForUpdate: '<disabled>'
+    recentRepos: '<disabled>'
+    allBranchesLogGraph: '<disabled>'
 
-    files:
-        commitChanges: 'c'
-        commitChangesWithoutHook: '<disabled>'
-        amendLastCommit: 'a'
-        commitChangesWithEditor: 'C'
-        findBaseCommitForFixup: 'b'
-        confirmDiscard: '<disabled>'
-        ignoreFile: 'x'
-        refreshFiles: '<disabled>'
-        stashAllChanges: 'S'
-        viewStashOptions: 's'
-        toggleStagedAll: '*'
-        viewResetOptions: 'r'
-        fetch: '<disabled>'
-        toggleTreeView: 't'
-        openMergeTool: '<disabled>'
-        openStatusFilter: 'f'
-        copyFileInfoToClipboard: '<disabled>'
-        collapseAll: '-'
-        expandAll: '+'
+  files:
+    commitChanges: 'c'
+    commitChangesWithoutHook: '<disabled>'
+    amendLastCommit: 'a'
+    commitChangesWithEditor: 'C'
+    findBaseCommitForFixup: 'b'
+    confirmDiscard: '<disabled>'
+    ignoreFile: 'x'
+    refreshFiles: '<disabled>'
+    stashAllChanges: 'S'
+    viewStashOptions: 's'
+    toggleStagedAll: '*'
+    viewResetOptions: 'r'
+    fetch: '<disabled>'
+    toggleTreeView: 't'
+    openMergeTool: '<disabled>'
+    openStatusFilter: 'f'
+    copyFileInfoToClipboard: '<disabled>'
+    collapseAll: '-'
+    expandAll: '+'
 
-    branches:
-        createPullRequest: '<disabled>'
-        viewPullRequestOptions: 'g'
-        copyPullRequestURL: '<disabled>'
-        checkoutBranchByName: 'c'
-        forceCheckoutBranch: '<disabled>'
-        checkoutPreviousBranch: '<disabled>'
-        rebaseBranch: 'R'
-        renameBranch: 'r'
-        mergeIntoCurrentBranch: '<disabled>'
-        moveCommitsToNewBranch: '<disabled>'
-        viewGitFlowOptions: '<disabled>'
-        fastForward: 'f'
-        createTag: 't'
-        pushTag: 'T'
-        setUpstream: 'u'
-        fetchRemote: 'f'
-        sortOrder: '<disabled>'
+  branches:
+    createPullRequest: '<disabled>'
+    viewPullRequestOptions: 'g'
+    copyPullRequestURL: '<disabled>'
+    checkoutBranchByName: 'c'
+    forceCheckoutBranch: '<disabled>'
+    checkoutPreviousBranch: '<disabled>'
+    rebaseBranch: 'R'
+    renameBranch: 'r'
+    mergeIntoCurrentBranch: '<disabled>'
+    moveCommitsToNewBranch: '<disabled>'
+    viewGitFlowOptions: '<disabled>'
+    fastForward: 'f'
+    createTag: 't'
+    pushTag: 'T'
+    setUpstream: 'u'
+    fetchRemote: 'f'
+    sortOrder: '<disabled>'
 
-    worktrees:
-        viewWorktreeOptions: '<disabled>'
+  worktrees:
+    viewWorktreeOptions: '<disabled>'
 
-    commits:
-        squashDown: 's'
-        renameCommit: 'r'
-        renameCommitWithEditor: 'R'
-        viewResetOptions: '<disabled>'
-        markCommitAsFixup: 'f'
-        createFixupCommit: '<disabled>'
-        squashAboveCommits: '<disabled>'
-        moveDownCommit: '<c-k>'
-        moveUpCommit: '<tab>'  # <-- really a mapping to '<c-i>'
-        amendToCommit: 'a'
-        resetCommitAuthor: '<disabled>'
-        pickCommit: 'p'
-        revertCommit: 'x'
-        cherryPickCopy: 'c'
-        pasteCommits: 'v'
-        markCommitAsBaseForRebase: 'b'
-        tagCommit: 't'
-        checkoutCommit: '<enter>'
-        resetCherryPick: '<esc>'
-        copyCommitAttributeToClipboard: '<disabled>'
-        openLogMenu: '<disabled>'
-        openInBrowser: '<disabled>'
-        viewBisectOptions: '<disabled>'
-        startInteractiveRebase: 'i'
-        selectCommitsOfCurrentBranch: '*'
+  commits:
+    squashDown: 's'
+    renameCommit: 'r'
+    renameCommitWithEditor: 'R'
+    viewResetOptions: '<disabled>'
+    markCommitAsFixup: 'f'
+    createFixupCommit: '<disabled>'
+    squashAboveCommits: '<disabled>'
+    moveDownCommit: '<c-k>'
+    moveUpCommit: '<tab>'  # <-- really a mapping to '<c-i>'
+    amendToCommit: 'a'
+    resetCommitAuthor: '<disabled>'
+    pickCommit: 'p'
+    revertCommit: 'x'
+    cherryPickCopy: 'c'
+    pasteCommits: 'v'
+    markCommitAsBaseForRebase: 'b'
+    tagCommit: 't'
+    checkoutCommit: '<enter>'
+    resetCherryPick: '<esc>'
+    copyCommitAttributeToClipboard: '<disabled>'
+    openLogMenu: '<disabled>'
+    openInBrowser: '<disabled>'
+    viewBisectOptions: '<disabled>'
+    startInteractiveRebase: 'i'
+    selectCommitsOfCurrentBranch: '*'
 
-    amendAttribute:
-        resetAuthor: '<disabled>'
-        setAuthor: '<disabled>'
-        addCoAuthor: '<disabled>'
+  amendAttribute:
+    resetAuthor: '<disabled>'
+    setAuthor: '<disabled>'
+    addCoAuthor: '<disabled>'
 
-    stash:
-        popStash: 'p'
-        renameStash: 'r'
+  stash:
+    popStash: 'p'
+    renameStash: 'r'
 
-    commitFiles:
-        checkoutCommitFile: '<enter>'
+  commitFiles:
+    checkoutCommitFile: '<enter>'
 
-    main:
-        toggleSelectHunk: 'g'
-        pickBothHunks: 'b'
-        editSelectHunk: 'e'
+  main:
+    toggleSelectHunk: 'g'
+    pickBothHunks: 'b'
+    editSelectHunk: 'e'
 
-    submodules:
-        init: '<disabled>'
-        update: '<disabled>'
-        bulkMenu: '<disabled>'
+  submodules:
+    init: '<disabled>'
+    update: '<disabled>'
+    bulkMenu: '<disabled>'
 
-    commitMessage:
-        commitMenu: '<disabled>'
+  commitMessage:
+    commitMenu: '<disabled>'
