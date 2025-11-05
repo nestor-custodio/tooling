@@ -105,12 +105,12 @@ os:
 
 git:
 
-  paging:
-    colorArg: 'always'
-    pager: "delta --true-color='never' --dark --line-numbers --line-numbers-left-format='{nm:^4}:' --hunk-header-style='syntax' --paging='never'"
-    externalDiffCommand: ''
-    useExternalDiffGitConfig: false
 
+  pagers:
+    - colorArg: 'always'
+      pager: "delta --true-color='never' --dark --line-numbers --line-numbers-left-format='{nm:^4}:' --hunk-header-style='syntax' --paging='never'"
+      externalDiffCommand: ''
+      useExternalDiffGitConfig: false
   commit:
     signOff: false
     autoWrapCommitMessage: true
@@ -300,7 +300,7 @@ keybinding:
     viewResetOptions: 'r'
     fetch: '<disabled>'
     toggleTreeView: 't'
-    openMergeTool: '<disabled>'
+    openMergeOptions: '<disabled>'
     openStatusFilter: 'f'
     copyFileInfoToClipboard: '<disabled>'
     collapseAll: '-'
@@ -337,7 +337,7 @@ keybinding:
     createFixupCommit: '<disabled>'
     squashAboveCommits: '<disabled>'
     moveDownCommit: '<c-k>'
-    moveUpCommit: '<tab>'  # <-- really a mapping to '<c-i>'
+    moveUpCommit: '<tab>' # <-- really a mapping to '<c-i>'
     amendToCommit: 'a'
     resetCommitAuthor: '<disabled>'
     pickCommit: 'p'
