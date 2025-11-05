@@ -61,6 +61,10 @@ source '/home/nestor/bin/std.lib'
 #       have to ask `tmux` for the current connection info ourselves,
 #       and then update the local environment variable before use.
 #
+#       If called from within an SSH session *from another VM*, the IP
+#       reported will be *the internal IP of the calling VM*, not that
+#       of the externally-connected client.
+#
 #       Also note despite the "export" call below, this update does not
 #       actually bubble out to the calling shell, as this script is not
 #       being *sourced*. The outer SSH_CONNECTION will continue to hold
