@@ -65,4 +65,4 @@ network_bins="${HOME}/vm-scripts/vpn/bin/${network}"
 [ -d "$network_bins" ] || error-out 2 "unknown NETWORK: '${network}'"
 
 
-ssh nestor@vpn -- "${network_bins}/connected?"
+ssh -n nestor@vpn -- "${network_bins}/connected?"
