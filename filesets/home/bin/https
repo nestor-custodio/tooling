@@ -123,8 +123,11 @@ function run_caddy {
 	tempname | store-as stdout_storage
 	tempname | store-as stderr_storage
 
-	access_log="/var/log/https-access-log::${binding}"
+	access_log='/var/log/https-access-log'
 	status_log='/var/log/https-status-log'
+
+	sudo "$( real rotate )" "$access_log" --max=5 --chmod=666
+	sudo "$( real rotate )" "$status_log" --max=5 --chmod=666
 
 	# Launch the `caddy` process.
 	#
@@ -142,11 +145,6 @@ function run_caddy {
 	                  2> "$stderr_storage"
 	exit_code="$?"
 	rm "$caddyfile"
-
-	# Ensure logs are easily readable.
-	#
-	sudo touch "$access_log" "$status_log"
-	sudo chmod a+r "$access_log" "$status_log"
 
 	# Process output.
 	#
