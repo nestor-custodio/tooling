@@ -102,13 +102,13 @@ startup_log='/var/log/startup'
 			sed -ri -e 's|^#$nrconf\{verbosity\} =.*;$|$nrconf{verbosity} = 0;|' /etc/needrestart/needrestart.conf
 
 			# Schedule regular pruning of the journal log ...
-			crontab -l 2>/dev/null | awk '{print} END{ print "@daily journalctl --rotate --vacuum-time=2d" }' | crontab -
+			crontab -l 2> /dev/null | awk '{print} END{ print "@daily journalctl --rotate --vacuum-time=2d" }' | crontab -
 
 			# Schedule regular pruning of the `snapd` cache ...
-			crontab -l 2>/dev/null | awk '{print} END{ print "@daily rm -f /var/lib/snapd/cache/*" }' | crontab -
+			crontab -l 2> /dev/null | awk '{print} END{ print "@daily rm -f /var/lib/snapd/cache/*" }' | crontab -
 
 			# Schedule continuous writing of "instantaneous CPU load" out to /var/opt/ ...
-			crontab -l 2>/dev/null | awk '{print} END{ print "@reboot /home/nestor/bin/1s-cpu-load" }' | crontab -
+			crontab -l 2> /dev/null | awk '{print} END{ print "@reboot /home/nestor/bin/1s-cpu-load" }' | crontab -
 
 			# Retain the minimum possible number of old snap builds ...
 			snap set system refresh.retain=2

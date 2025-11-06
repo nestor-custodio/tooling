@@ -101,7 +101,7 @@ source '/home/nestor/bin/std.lib'
 				[ "$datafile" == '-' ] || [ -r "$datafile" ] || error-out 2 'DATAFILE not readable'
 
 				# shellcheck disable=SC2016
-				q -d',' -H "SELECT * FROM ${datafile}" -A 2>/dev/null                       \
+				q -d',' -H "SELECT * FROM ${datafile}" -A 2> /dev/null                      \
 				| tail --lines=+5 | sed -r -e 's#^ *`(.*)` - (.*)$#\1|\2#'                  \
 				| q -p "SELECT c1 as name, c2 as type FROM -" -b -O -T | bat --language='tsv'
 
