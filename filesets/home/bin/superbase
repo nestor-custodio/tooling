@@ -9,6 +9,7 @@ source '/home/nestor/bin/std.lib'
 		Usage: $( script-name ) FILE
 
 		Returns a basename for FILE, sans any extensions.
+		Errors out if FILE has a basename consisting of only "." characters.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -17,7 +18,8 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid option.
+		  1  if invalid option,
+		  2  unable to determine.
 	EOF
 
 }
@@ -54,4 +56,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-sed -r -e 's|^(.*/)?([^.]+)(\..*)?|\2|' <<< "$file"
+basename "$file" | store-as file
+'has-line?' --regex '\.*' <<< "$file" && error-out 2 'invalid FILE given'
+
+sed -r -e 's|^(\.?[^.]+).*$|\1|' <<< "$file"
