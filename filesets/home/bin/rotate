@@ -1,0 +1,161 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) FILESET
+
+		Rotates the given FILESET in much the way 'logrotate' does, but without
+		the need for a config file.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+		  --chmod=MODE              Ensure MODE for all files in the set.
+		  --gzip                    Compresses old files in the set.
+		  --max=MAX_LOGS            The max number of files to keep *in total*.
+		  --no-touch                Does not create a "current" file in the set.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	max=''
+	mode=''
+	gzip=''
+	no_touch=''
+
+	# ---
+	# ---
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+	LONG_OPTS="${LONG_OPTS},chmod:,mode:,perm:,perms:"
+	LONG_OPTS="${LONG_OPTS},gzip,zip,gz,compress"
+	LONG_OPTS="${LONG_OPTS},max:,keep:"
+	LONG_OPTS="${LONG_OPTS},no-touch"
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--chmod|--mode|--perm|--perms)
+				mode="$1" && shift;
+				[ -n "$mode" ] || error-out 1 'no MODE given'
+
+				# NOTE: the below "non-octal MODE regex" comes from the GNU `chmod` man page.
+				#
+				octal_mode_regex='[0-7]{3}'
+				non_octal_mode_regex='[ugoa]*([-+=]([rwxXst]*|[ugo]))+|[-+=][0-7]+'
+				'has-line?' --regex "${octal_mode_regex}|${non_octal_mode_regex}" <<< "$mode" || error-out 1 'invalid MODE given'
+				;;
+
+			(--gzip|--zip|--gz|--compress)
+				gzip='1'
+				;;
+
+			(--max|--keep)
+				max="$1" && shift;
+				'numeric?' "$max" || error-out 1 'non-numeric MAX_LOGS given'
+				;;
+
+			(--no-touch)
+				no_touch='1'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	fileset="$1" && shift
+	[ -n "$fileset" ] || error-out 1 'no FILESET given'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+dirname "$fileset" 2> /dev/null | store-as fileset_dir
+basename "$fileset" 2> /dev/null | store-as fileset_name
+{ [ -n "$fileset_dir" ] && [ -n "$fileset_name" ] ;} || error-out 1 'invalid FILESET given'
+
+function files_in_set() { ls -1 "${fileset_dir}/${fileset_name}" "${fileset_dir}/${fileset_name}".* --sort=version 2> /dev/null ;}
+
+
+# Adjust the "max" if we're doing no-touch.
+#
+[ -n "$no_touch" ] && calc "${max} + 1" | store-as max
+
+
+# Drop files over the requested max (if any).
+#
+[ -n "$max" ] && files_in_set | tail "+${max}" | map -- rm -f
+
+
+# Process remaining files in set.
+#
+files_in_set | readarray -t -O1 files
+[ -n "${files[*]}" ] && for index in $( seq "${#files[@]}" | tac ); do
+	old_file="${files[$index]}"
+	new_file="${fileset_dir}/${fileset_name}.${index}"
+
+	# Roll the source down.
+	#
+	[ "$old_file" != "$new_file" ] && mv "$old_file" "$new_file"
+
+	# Handle compression.
+	#
+	if [ -n "$gzip" ]; then
+		# Ensure compression.
+
+		if gzip -t "$new_file" &> /dev/null
+			then mv "$new_file" "${new_file}.gz"
+			else gzip "$new_file"
+		fi
+	else
+		# Ensure uncompressed.
+
+		if gzip -t "$new_file" &> /dev/null
+			then mv "$new_file" "${new_file}.gz" && gunzip "${new_file}.gz"
+			else noop
+		fi
+	fi
+done
+
+
+# Handle "current" file.
+#
+[ -z "$no_touch" ] && touch "${fileset_dir}/${fileset_name}"
+
+
+# Set MODE, if one has been given.
+#
+[ -n "$mode" ] && chmod "$mode" "${fileset_dir}/${fileset_name}"*
+
+
+exit 0
