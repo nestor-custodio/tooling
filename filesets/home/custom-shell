@@ -476,13 +476,8 @@ completion_loader='/usr/share/bash-completion/bash_completion'
 
 # Load additional VM-specific customizations.
 #
-vm_customization_home="${HOME}/vm-scripts/$( hostname --short )"
-if [ -d "$vm_customization_home" ]; then
-  export PATH="${vm_customization_home}/bin:${PATH}"
-
-  vm_customization_file="${vm_customization_home}/custom-shell"
-  [ -r "$vm_customization_file" ] && source "$vm_customization_file"
-fi
+vm_customization_file="${HOME}/vm-scripts/$( hostname --short )/custom-shell"
+[ -r "$vm_customization_file" ] && source "$vm_customization_file"
 
 
 # Load Dev-specific tooling (ENV/language helpers).
