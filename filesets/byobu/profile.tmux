@@ -24,7 +24,7 @@ set -g destroy-unattached off
 
 ## Fix an issue with status bar left spacing,
 ## and date/time always showing on the right.
-set -g status-left ' #[fg=white,bold]#( hostname --short | tr a-z A-Z )#[default] #(byobu-status tmux_left) '
+set -g status-left ' #[fg=white,bold]#( hostname --short | tr "[:lower:]" "[:upper:]" )#( session="$( tmux list-sessions | grep -P "\(attached\)$" | cut -d":" -f1 | tr "[:lower:]" "[:upper:]" )"; case "$session" in (.*|-|DEFAULT|[0-9]*) noop ;; (*) echo " (#[fg=orange]${session}#[default])" ;; esac )#[default] #(byobu-status tmux_left) '
 set -g status-right '#(byobu-status tmux_right) '
 
 ## As of tmux 3.3a, copy-paste and OSC-52 support are a bit wonky.

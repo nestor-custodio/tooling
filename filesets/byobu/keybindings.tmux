@@ -38,6 +38,7 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 ## Session Management
 
   bind-key -n M-C-n    new-session
+  bind-key -n M-C-s    command-prompt -p "#[bold] (rename-session)" "rename-session '%%'"
 
   bind-key -n M-,      switch-client -p
   bind-key -n M-.      switch-client -n
