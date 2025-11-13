@@ -124,6 +124,7 @@ startup_log='/var/log/startup'
 			                     links           \
 			                     nfs-common      \
 			                     qrencode        \
+			                     socat           \
 			                     zip unzip
 
 	}
