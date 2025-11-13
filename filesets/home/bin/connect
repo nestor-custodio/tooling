@@ -24,7 +24,7 @@ source '/home/nestor/bin/std.lib'
 		    tunnel. No connection to the given HOST:PORT is actually made until
 		    it is needed.
 
-		  - The given HOST name must be resolvable only by the SS_SERVER. No
+		  - The given HOST name must be resolvable only by the CONNECTOR. No
 		    name resolution attempt for it is made on this host.
 
 
