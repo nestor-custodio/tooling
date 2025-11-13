@@ -1,0 +1,72 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) PORT
+
+		Releases the given PORT. For safety, a PORT can only be released if it
+		is (a) a *listening* PORT, (b) was opened via 'ssh' or 'nc', and (c) is
+		owned by a current-user process.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  unqualified process,
+		  3  unable to release PORT.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	port="$1" && shift
+	'numeric?' "$port" || error-out 1 'non-numeric PORT'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Simpleton case: port not in use.
+#
+available-port "$port" && exit-out 0
+
+
+ss -ltnp | awk '$4 ~ '"/:${port}\$/"' { print $6 }' | grep -P --only-matching '(?<=pid=)[0-9]+' | store-as pid
+'numeric?' "$pid" || error-out 2 'PORT in use by another user'
+
+ps --format='comm=' "$pid" | store-as process
+'has-line?' --regex 'ssh|nc' <<< "$process" || error-out 2 'non-ssh/nc PORT'
+
+kill "$pid" || error-out 3 'unable to release PORT'
