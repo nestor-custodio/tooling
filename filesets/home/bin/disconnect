@@ -9,7 +9,7 @@ source '/home/nestor/bin/std.lib'
 		Usage: $( script-name ) PORT
 
 		Releases the given PORT. For safety, a PORT can only be released if it
-		is (a) a *listening* PORT, (b) was opened via 'ssh' or 'nc', and (c) is
+		is (a) a *listening* PORT, (b) was opened via ssh/nc/socat, and (c) is
 		owned by a current-user process.
 
 
@@ -67,6 +67,6 @@ ss -ltnp | awk '$4 ~ '"/:${port}\$/"' { print $6 }' | grep -P --only-matching '(
 'numeric?' "$pid" || error-out 2 'PORT in use by another user'
 
 ps --format='comm=' "$pid" | store-as process
-'has-line?' --regex 'ssh|nc' <<< "$process" || error-out 2 'non-ssh/nc PORT'
+'has-line?' --regex 'ssh|nc|socat' <<< "$process" || error-out 2 'non-ssh/nc/socat PORT'
 
 kill "$pid" || error-out 3 'unable to release PORT'
