@@ -72,7 +72,7 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
   bind-key -n M-p      confirm-before -p "#[bold] Pop Out This Pane (Into Its Own Window)?" break-pane
 
   bind-key -n M--      select-pane -m
-  bind-key -n M-=      swap-pane
+  bind-key -n M-=      swap-pane \; select-pane -M
 
   bind-key -n M-i      select-pane -U
   bind-key -n M-k      select-pane -D
