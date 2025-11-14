@@ -10,10 +10,13 @@ source '/home/nestor/bin/std.lib'
 
 		Convenience wrapper for connecting to Postgres using 'pgcli'.
 
-		When a DATABASE *name* is given, it is assumed to be available on the
-		CloudSQL 'postgres' instance. When a DATABASE *url* is given, it will
-		be used as-is. If no DATABASE is given and the 'rails-db' function is
-		available, that will be used to determine the database to connect to.
+		The DATABASE param may be:
+		  - a Postgres connection URL (or "URL-like")
+		  - a lookup path within the VM credentials store
+		  - the name of a database within CloudSQL 'postgres' instance
+
+		If no DATABASE is given but the 'rails-db' function is available,
+		that will be used to determine the database to connect to.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -49,9 +52,6 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	database="$1" && shift
-
-	# Fall back to 'rails-db', if necessary (and available).
-	#
 	[ -z "$database" ] && command -v rails-db > /dev/null && database="$( rails-db )"
 	[ -n "$database" ] || error-out 1 'no DATABASE given or available via ENV or Rails config'
 
@@ -64,11 +64,24 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+# DATABASE param processing.
+
+if 'matches?' '://' <<< "$database"; then
+	# We'll take a URL-like as-is.
+	#
+	database_url="$database"
+else
+	# Use the given value to query the credentials store.
+	#
+	creds "databases/${database}" | store-as database_url
+
+	# Fall back to assuming it's a database name within our cloud instance.
+	#
+	[ -n "$database_url" ] || database_url="postgres://${USER}@postgres/${database}"
+fi
+
+
 pgcli_exec="$( command -v pgcli )"
 [ -n "$pgcli_exec" ] || error-out 2 'pgcli executable not found'
 
-# Ensure we have a URL.
-#
-'matches?' '://' <<< "$database" || database="postgres://${USER}@postgres/${database}"
-
-"$pgcli_exec" --pgclirc="~/.config/pgcli/config" "$database" "$@"
+"$pgcli_exec" --pgclirc="~/.config/pgcli/config" "$database_url" "$@"
