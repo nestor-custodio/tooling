@@ -6,14 +6,13 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [DATABASE] [-- MYCLI_OPTIONS]
+		Usage: $( script-name ) [DATABASE] [-- PGCLI_OPTIONS]
 
-		Convenience wrapper for connecting to MySQL using 'mycli'.
+		Convenience wrapper for connecting to a database via 'usql'.
 
 		The DATABASE param may be:
-		  - a MySQL connection URL (or "URL-like")
-		  - a lookup path within the VM credentials store
-		  - the name of a database within CloudSQL 'mysql' instance
+		  - a connection URL (or "URL-like")
+		  - a path under "databases/connections" in the VM credentials store
 
 		If no DATABASE is given but the 'rails-db' function is available,
 		that will be used to determine the database to connect to.
@@ -26,7 +25,7 @@ source '/home/nestor/bin/std.lib'
 		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  if 'mycli' executable not found.
+		  2  if 'usql' executable not found.
 	EOF
 
 }
@@ -73,15 +72,9 @@ if 'matches?' '://' <<< "$database"; then
 else
 	# Use the given value to query the credentials store.
 	#
-	creds "databases/${database}" | store-as database_url
-
-	# Fall back to assuming it's a database name within our cloud instance.
-	#
-	[ -n "$database_url" ] || database_url="mysql://${USER}@mysql/${database}"
+	creds "databases/connections/${database}" | store-as database_url
 fi
 
 
-mycli_exec="$( command -v mycli )"
-[ -n "$mycli_exec" ] || error-out 2 'mycli executable not found'
-
-"$mycli_exec" --myclirc="~/.config/mycli/config" "$database_url" "$@"
+command -v usql &> /dev/null || error-out 2 'usql executable not found'
+usql "$database_url" "$@"
