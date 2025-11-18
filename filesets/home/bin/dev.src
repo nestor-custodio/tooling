@@ -211,17 +211,18 @@ shopt -s lastpipe
 
 		function rails-db {
 			local database="$DATABASE_URL"
-			local db_config="${DEV_ROOT}/config/database.yml"
+			local config_file="${DEV_ROOT}/config/database.yml"
+			local primary_connection="$( yaml ".${RAILS_ENV}.primary // .${RAILS_ENV}" < "$config_file" 2> /dev/null )"
 
 			# Pull from Rails DB config, if no $DATABASE_URL was available.
 			#
-			[ -n "$database" ] || database="$( yaml ".${RAILS_ENV}.database" < "$db_config" 2> /dev/null )"
+			[ -n "$database" ] || database="$( yaml '.database' <<< "$primary_connection" 2> /dev/null )"
 			[ -n "$database" ] || return 1
 
 			# Ensure we have a URL.
 			#
 			if ! 'matches?' '://' <<< "$database"; then
-				case "$( yaml ".${RAILS_ENV}.adapter" < "$db_config" 2> /dev/null )" in
+				case "$( yaml '.adapter' <<< "$primary_connection" 2> /dev/null )" in
 					(postgresql) database="postgres://${USER}@postgres/${database}" ;;
 					(mysql     ) database="mysql://${USER}@mysql/${database}" ;;
 					(sqlite3   ) database="sqlite3://${database}" ;;
