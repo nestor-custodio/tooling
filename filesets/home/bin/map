@@ -21,10 +21,10 @@ source '/home/nestor/bin/std.lib'
 		Examples:
 
 		  # GZip target files.
-		  fd '*.big' | $( script-name ) gzip
+		  fd --glob '*.big' | $( script-name ) gzip
 
 		  # Delete all files/dirs from a list.
-		  $( script-name ) -- rm -rf < the-list.txt
+		  $( script-name ) < the-list.txt -- rm -rf
 
 
 		Exit Status:
