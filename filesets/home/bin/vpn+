@@ -18,7 +18,8 @@ source '/home/nestor/bin/std.lib'
 		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  if invalid NETWORK.
+		  2  if invalid NETWORK,
+		  3  if unavailable VPN proxy.
 	EOF
 
 }
@@ -55,15 +56,22 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-# Ensure the VPN host is running.
-#
-[ "$( gcp state vpn )" == "RUNNING" ] || gcp start vpn
-
-
 # Ensure the given NETWORK exists.
 #
 network_bins="${HOME}/vm-scripts/vpn/bin/${network}"
 [ -d "$network_bins" ] || error-out 2 "unknown NETWORK: '${network}'"
+
+
+# Ensure the VPN host is available.
+#
+gcp state vpn | store-as vpn_state
+case "$vpn_state" in
+	(RUNNING)    noop          ;;
+	(SUSPENDED)  gcp wake  vpn ;;
+	(TERMINATED) gcp start vpn ;;
+
+	*) error-out 3 "unexpected VPN proxy state: '${vpn_state}'"
+esac
 
 
 ssh -n nestor@vpn -- "${network_bins}/connect" --detach
