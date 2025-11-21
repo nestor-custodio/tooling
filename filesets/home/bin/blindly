@@ -6,15 +6,13 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) COMMAND [-- ARGS]
+		Usage: $( script-name ) [ COMMAND [-- ARGS] ]
 
 		Runs the given COMMAND (passing along any ARGS given) in the background,
 		with no HUP action and no PID reported into the console upon completion.
 
-		To facilitate piping and stream redirection, any one *whole param* that
-		conforms to a known operator (per the REDIRECTION section of Bash's man
-		page) will be interpreted as such. Note this does NOT include the '<<-'
-		operator (for here-DOCS), but DOES include '<<<' (for here-STRINGS).
+		To allow for complex scripts (multi-line items and commands with quotes,
+		pipes, and/or redirects), the script to run can also be passed via STDIN.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -55,38 +53,18 @@ source '/home/nestor/bin/std.lib'
 tempname | store-as executable
 
 
-if [ "$#" == 1 ]; then
+# Prime the runner.
+#
+cat <<-EOF > "$executable"
+	#! /bin/env bash
+	trap 'rm -f "${executable}"' EXIT
+EOF
 
-	# Single-param invocation should run unquoted, as it may
-	# be a compound command (e.g. "first < in > out | second").
-
-	cat <<-EOF > "$executable"
-		#! /bin/env bash
-		trap 'rm -f "${executable}"' EXIT
-		${1}
-	EOF
-
-else
-
-	cat <<-EOF > "$executable"
-		#! /bin/env bash
-		trap 'rm -f "${executable}"' EXIT
-		${@@Q}
-	EOF
-
-	# Unquote pipes + redirectors.
-	#
-	sed -ri -e "s# '(\|)' # \1 #g"                            \
-	        -e "s# '([0-9]?<)' # \1 #g"                       \
-	        -e "s# '([0-9]?>)' # \1 #g"                       \
-	        -e "s# '([0-9]?>>)' # \1 #g"                      \
-	        -e "s# '(&>|>&|&>>)' # \1 #g"                     \
-	        -e "s# '([0-9]?<<<)' # \1 #g"                     \
-	        -e "s# '([0-9]?<&-?|[0-9]?&>-?)' # \1 #g"         \
-	        -e "s# '([0-9]?<&[0-9]-|[0-9]?>&[0-9]-)' # \1 #g" \
-	        -e "s# '([0-9]?<>)' # \1 #g"                      \
-	        "$executable"
-
+# Drop in the given command(s).
+#
+if [ "$#" == 0 ]
+	then cat >> "$executable"
+	else echo "${@@Q}" >> "$executable"
 fi
 
 
