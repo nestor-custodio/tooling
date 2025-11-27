@@ -343,6 +343,26 @@ function peek { tee /dev/tty ;}
   function glog        { git log --color='always' "$@" | bat ;}
   function ggraph      { glog --oneline --decorate --graph "$@" ;}
 
+  # Shows the last 10 commited changes to the given file and line/range.
+  # Param is given as "FILENAME:LINE_OR_RANGE" (e.g. "file:10", "file:10-15").
+  #
+  function ghistory {
+    printf '%s\n' -- "$@" | grep -x --quiet -- '--help' && echo 'Usage: ghistory FILENAME:LINE_OR_RANGE' && return 0
+
+    local filename="${1%:*}"
+    [ -e "$filename" ] || return 1
+
+    local line_or_range="${1#*:}"
+    local line_1="${line_or_range%-*}"
+    local line_2="${line_or_range#*-}"
+    { 'numeric?' "$line_1" && 'numeric?' "$line_2" ;} || return 1
+
+    GIT_PAGER='cat' git log -w --minimal --max-count=10          \
+                            --format='format:%h | %as | %s'      \
+                            -L "${line_1},${line_2}:${filename}" \
+    | awk '/^$/ { next }; /^(diff|---|\+\+\+|@@) .*$/ { next }; /^[a-f0-9]+ / { if (NR > 1) print "" }; { print }'
+  }
+
   # Deploys to the given remote (defaults to 'production').
   # Prompts for confirmation (y/N) before pushing to target.
   #
@@ -491,10 +511,10 @@ dev_helpers="${HOME}/bin/dev.src"
 #
 export -f ... .... ..... ::                                                               \
           a break-out-of-links bw docker f fbat g gadd gblame gbranch gbranch? gcheckout  \
-          gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph ginit gitignored \
-          glog gmerge gmove gmv gpatch gpop gpull gpush grebase gremote greset gstage     \
-          gstash gstatus gtag gtrack gunchange gundelete gunstage guntrack h hbat helix k \
-          lazydocker less list list+ m mirror mkcd peek pgcli real rg shellcheck
+          gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph ghistory ginit   \
+          gitignored glog gmerge gmove gmv gpatch gpop gpull gpush grebase gremote greset \
+          gstage gstash gstatus gtag gtrack gunchange gundelete gunstage guntrack h hbat  \
+          helix k lazydocker less list list+ m mirror mkcd peek pgcli real rg shellcheck
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",

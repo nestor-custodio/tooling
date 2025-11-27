@@ -387,6 +387,7 @@ newline = "↲"
 [keys.normal."!".g]
 "b" = ":sh gblame '%{buffer_name}' -L '%{selection_line_start},%{selection_line_end}' --date='short' | ansifilter | cut -c1-110"
 "l" = ":sh glog '%{buffer_name}' | ansifilter"
+"h" = ":sh ghistory '%{buffer_name}:%{selection_line_start}-%{selection_line_end}'"
 
 
 # ---
