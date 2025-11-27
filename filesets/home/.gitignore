@@ -51,7 +51,6 @@
 /.my.cnf
 /.netrc
 /.pgpass
-/.redis-viewer.yml
 
 # Support Files.
 #
