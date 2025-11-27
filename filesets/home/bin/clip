@@ -7,8 +7,8 @@ source '/home/nestor/bin/std.lib'
 
 	cat <<-EOF | store-as usage
 		Usage: $( script-name ) --in
-		       $( script-name ) --out
-		       $( script-name ) [--pass]
+		       $( name-blanks ) --out
+		       $( name-blanks ) [--pass]
 
 		Stores or retrieves data from a makeshift "clipboard".
 
