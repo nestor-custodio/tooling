@@ -50,5 +50,5 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-drive_mount="${HOME}/drive"
-findmnt --types='fuse.rclone' "$drive_mount" &> /dev/null
+mount_point="${HOME}/drive"
+findmnt --types='fuse.rclone' "$mount_point" &> /dev/null

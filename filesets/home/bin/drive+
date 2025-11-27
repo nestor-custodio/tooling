@@ -18,7 +18,8 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid option.
+		  1  if invalid option,
+		  2  if failed to mount.
 	EOF
 
 }
@@ -56,5 +57,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-drive_mount="${HOME}/drive"
-'drive?' || { mkdir -p "$drive_mount" && rclone mount "drive:/${location}/" "$drive_mount" --daemon --vfs-cache-mode='full' ;}
+mount_point="${HOME}/drive"
+'drive?' && exit-out 0
+
+{ mkdir -p "$mount_point" && rclone mount "drive:/${location}/" "$mount_point" --daemon --vfs-cache-mode='full' ;} || error-out 2 'mount failed'

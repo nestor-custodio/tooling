@@ -52,12 +52,12 @@ source '/home/nestor/bin/std.lib'
 
 
 exit_code='0'
-drive_mount="${HOME}/drive"
+mount_point="${HOME}/drive"
 
 if 'drive?'; then
-	sync "$drive_mount"
-	fusermount -u "$drive_mount" || exit_code='2'
+	sync "$mount_point"
+	fusermount -u "$mount_point" || exit_code='2'
 fi
 
-[ -d "$drive_mount" ] && rmdir "$drive_mount" &> /dev/null
+[ -d "$mount_point" ] && rmdir "$mount_point" &> /dev/null
 exit-out "$exit_code"
