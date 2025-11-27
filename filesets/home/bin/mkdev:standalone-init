@@ -121,6 +121,7 @@ startup_log='/var/log/startup'
 			apt-get -qqy install ansifilter      \
 			                     asciinema       \
 			                     build-essential \
+			                     byobu           \
 			                     links           \
 			                     nfs-common      \
 			                     qrencode        \
