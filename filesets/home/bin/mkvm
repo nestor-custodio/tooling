@@ -103,11 +103,11 @@ source '/home/nestor/bin/std.lib'
 	LONG_OPTS="${LONG_OPTS},e2,f1,g1,n1,n2,n2d"
 	LONG_OPTS="${LONG_OPTS},micro,small,medium"
 	LONG_OPTS="${LONG_OPTS},standard-1,standard-2,standard-4,standard-8,standard-16"
-	LONG_OPTS="${LONG_OPTS},list-machine-types,machine-types"
+	LONG_OPTS="${LONG_OPTS},list-machine-types,machine-types,machine-type-list"
 
 	LONG_OPTS="${LONG_OPTS},os-release:,os:,release:"
 	LONG_OPTS="${LONG_OPTS},lts,latest"
-	LONG_OPTS="${LONG_OPTS},list-os-releases,list-os-images,list-releases,list-images,releases,images"
+	LONG_OPTS="${LONG_OPTS},list-os-releases,list-os-images,list-releases,list-images,releases,images,os-list,release-list,image-list"
 
 	LONG_OPTS="${LONG_OPTS},standalone,stand-alone,nosync,no-sync"
 
@@ -139,7 +139,7 @@ source '/home/nestor/bin/std.lib'
 				machine_type_suffix="${option#--}"
 				;;
 
-			(--list-machine-types|--machine-types)
+			(--list-machine-types|--machine-types|--machine-type-list)
 				gcloud compute machine-types list | store-as machine_types
 				function machine-type-columns { cut --characters='1-18,46-' ;}
 				head -n1 <<< "$machine_types" | machine-type-columns
@@ -160,7 +160,7 @@ source '/home/nestor/bin/std.lib'
 				os_release='latest'
 				;;
 
-			(--list-os-releases|--list-os-images|--list-releases|--list-images|--releases|--images)
+			(--list-os-releases|--list-os-images|--list-releases|--list-images|--releases|--images|--os-list|--release-list|--image-list)
 				os-releases | sed -r -e 's|^ubuntu-||' -e 's|-lts$| (lts)|' -e 's|-.*$||'
 				exit-out
 				;;

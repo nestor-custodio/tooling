@@ -86,7 +86,7 @@ fi
 
 	LONG_OPTS="${LONG_OPTS},os-release:,os:,release:"
 	LONG_OPTS="${LONG_OPTS},lts,latest"
-	LONG_OPTS="${LONG_OPTS},list-os-releases,list-os-images,list-releases,list-images,releases,images"
+	LONG_OPTS="${LONG_OPTS},list-os-releases,list-os-images,list-releases,list-images,releases,images,os-list,release-list,image-list"
 
 	set-params
 	while true; do
@@ -108,7 +108,7 @@ fi
 				os_release='latest'
 				;;
 
-			(--list-os-releases|--list-os-images|--list-releases|--list-images|--releases|--images)
+			(--list-os-releases|--list-os-images|--list-releases|--list-images|--releases|--images|--os-list|--release-list|--image-list)
 				os-releases | sed -r -e 's|^ubuntu-||' -e 's|-lts$| (lts)|' -e 's|-.*$||'
 				exit-out
 				;;
