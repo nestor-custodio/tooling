@@ -6,10 +6,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [--at MOUNT_POINT]
+		Usage: $( script-name ) [MOUNT_POINT]
 
-		Reports whether an S3 bucket has been mounted at the given location.
-		By default, reports if any bucket has been mounted at "\$DEV_ROOT/s3".
+		Reports whether the given MOUNT_POINT is active S3 mount.
+		If no MOUNT_POINT is given, the default is "~/s3".
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -27,15 +27,8 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Options -- #
 
-	# Set defaults.
-
-	mount_point="${DEV_ROOT}/s3"
-
-	# ---
-	# ---
-
 	CHAR_OPTS=''
-	LONG_OPTS='help,mount:,at:,in:,on:'
+	LONG_OPTS='help'
 
 	set-params
 	while true; do
@@ -43,18 +36,17 @@ source '/home/nestor/bin/std.lib'
 		case "$option" in
 			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
-
-
-			(--mount|--at|--in|--on)
-				mount_point="$1" && shift
-				;;
-
 		esac
 	done
 
 }
 
 { # -- Parameter Processing: Positionals -- #
+
+	mount_point="${HOME}/s3"
+	[ "$#" -ge 1 ] && mount_point="$1" && shift
+	[ -n "$mount_point" ] || error-out 1 'empty MOUNT_POINT'
+
 
 	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
 
@@ -64,4 +56,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-findmnt --source='s3fs' --mountpoint="$mount_point" &> /dev/null
+findmnt --types='fuse.rclone' "$mount_point" &> /dev/null

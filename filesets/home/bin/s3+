@@ -6,11 +6,16 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [--bucket BUCKET] [--at MOUNT_POINT] [--profile PROFILE]
+		Usage: $( script-name ) LOCATION [--onto MOUNT_POINT]
 
-		Mounts the given S3 bucket at the given location.
-		If no BUCKET is given, it will attempt to be read from "\$BUCKET".
-		The default MOUNT_POINT and PROFILE are "\$DEV_ROOT/s3" and "default".
+		Mounts an S3 LOCATION onto the given MOUNT_POINT.
+		If no MOUNT_POINT is given, the default is "~/s3".
+
+		The LOCATION may be a full 'rclone mount'-able "remote:/path" value
+		(e.g. 'aws_credentials_remote:/bucket_name/path_to_mount') or an alias
+		that translates to one. If no ':' is present in the given LOCATION, ':/'
+		will be appended; this allows for easy use of "user + bucket" aliases by
+		just the name alone (in which case the bucket *root* is mounted).
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -31,17 +36,13 @@ source '/home/nestor/bin/std.lib'
 
 	# Set defaults.
 
-	# shellcheck disable=SC2153
-	bucket="$BUCKET"
-
-	mount_point="${DEV_ROOT}/s3"
-	aws_profile='default'
+	mount_point="${HOME}/s3"
 
 	# ---
 	# ---
 
 	CHAR_OPTS=''
-	LONG_OPTS='help,bucket:,mount:,at:,in:,on:,profile:'
+	LONG_OPTS='help,onto:,at:,in:,on:'
 
 	set-params
 	while true; do
@@ -51,16 +52,8 @@ source '/home/nestor/bin/std.lib'
 			(--) break ;;  # No more options.
 
 
-			(--bucket)
-				bucket="$1" && shift
-				;;
-
-			(--mount|--at|--in|--on)
+			(--onto|--at|--in|--on)
 				mount_point="$1" && shift
-				;;
-
-			(--profile)
-				aws_profile="$1" && shift
 				;;
 
 		esac
@@ -70,6 +63,10 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
+	location="$1" && shift
+	[ -n "$location" ] || error-out 1 'empty LOCATION'
+
+
 	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
 
 }
@@ -78,14 +75,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-# Ensure s3fs.
-#
-command -v s3fs &> /dev/null || sudo apt-get -qqy install s3fs
+'has?' ':' <<< "$location" || location="${location}:/"
+'s3?' "$mount_point" && exit-out 0
 
-# Ensure we have a bucket to work with.
-#
-[ -n "$bucket" ] || error-out 1 "no BUCKET given (via --bucket) or set (via \$BUCKET)"
-
-
-mkdir -p "$mount_point"
-s3fs "$bucket" "$mount_point" -o "profile=${aws_profile}" || exit-out 2
+{ mkdir -p "$mount_point" && rclone mount "$location" "$mount_point" --daemon --vfs-cache-mode='full' --vfs-fast-fingerprint --s3-directory-markers ;} || error-out 2 'mount failed'
