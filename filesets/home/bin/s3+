@@ -25,7 +25,8 @@ source '/home/nestor/bin/std.lib'
 		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  if failed to mount.
+		  2  if invalid remote,
+		  3  if failed to mount.
 	EOF
 
 }
@@ -75,7 +76,14 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+# Param cleanup.
+#
 'has?' ':' <<< "$location" || location="${location}:/"
-'s3?' "$mount_point" && exit-out 0
 
-{ mkdir -p "$mount_point" && rclone mount "$location" "$mount_point" --daemon --vfs-cache-mode='full' --vfs-fast-fingerprint --s3-directory-markers ;} || error-out 2 'mount failed'
+'s3?' "$mount_point" && { s3- "$mount_point" || error-out 1 'MOUNT_POINT not available' ;}
+ls "$mount_point"/* &> /dev/null && error-out 1 'non-empty MOUNT_POINT'
+
+remote="${location%%:*}"
+rclone listremotes | 'has-line?' "${remote}:" || error-out 2 "unknown remote '${remote}'"
+
+{ mkdir -p "$mount_point" && rclone mount "$location" "$mount_point" --daemon --vfs-cache-mode='full' --vfs-fast-fingerprint --s3-directory-markers ;} || error-out 3 'mount failed'
