@@ -45,7 +45,7 @@ source '/home/nestor/bin/std.lib'
 
 
 		Machine Types
-		  The default machine type (if none is given) is an "n2d-standard-2".
+		  The default machine type (if none is given) is an "n4d-standard-2".
 
 		  See '$( script-name ) --list-machine-types' for a list of available types.
 		  Pricing is available at: https://cloud.google.com/compute/vm-instance-pricing
@@ -54,7 +54,7 @@ source '/home/nestor/bin/std.lib'
 		  machine type suffix: "--e2 --small" is equivalent to "--machine-type='e2-small'".
 		  When only a machine type family is given (e.g. "--e2"), the suffix is assumed to
 		  be "medium" for E2 instances and "standard-2" for all others (note this does not
-		  always yield valid machine types); when only a suffix is given, "n2d" is assumed.
+		  always yield valid machine types); when only a suffix is given, "n4d" is assumed.
 
 		  Note these shortcut options are a convenience and not all machine type families
 		  and suffixes are available for use as simple options.
@@ -102,7 +102,7 @@ source '/home/nestor/bin/std.lib'
 	dev_dir=''
 	git_repo=''
 	disk_size='12GB'
-	machine_type_family='n2d'
+	machine_type_family='n4d'
 	machine_type_suffix=''
 	os_release='latest'
 	startup_script_file="$( script-real ):init"
@@ -118,7 +118,7 @@ source '/home/nestor/bin/std.lib'
 	LONG_OPTS="${LONG_OPTS},disk-size:,disk:,hdd:"
 
 	LONG_OPTS="${LONG_OPTS},machine-type:,machine:"
-	LONG_OPTS="${LONG_OPTS},e2,f1,g1,n1,n2,n2d"
+	LONG_OPTS="${LONG_OPTS},e2,f1,g1,n1,n2,n2d,n4,n4d,c4,c4d"
 	LONG_OPTS="${LONG_OPTS},micro,small,medium"
 	LONG_OPTS="${LONG_OPTS},standard-1,standard-2,standard-4,standard-8,standard-16"
 	LONG_OPTS="${LONG_OPTS},list-machine-types,machine-types,machine-type-list"
@@ -168,7 +168,7 @@ source '/home/nestor/bin/std.lib'
 				machine_type_suffix="${machine_type#*-}"
 				;;
 
-			(--e2|--f1|--g1|--n1|--n2|--n2d)
+			(--e2|--f1|--g1|--n1|--n2|--n2d|--n4|--n4d|--c4|--c4d)
 				machine_type_family="${option#--}"
 				;;
 
@@ -290,7 +290,7 @@ gcloud compute instances create "$instance_name"                                
        --project="$( vm-project )" --zone="$( vm-zone )"                                   \
                                                                                            \
        --machine-type="${machine_type_family}-${machine_type_suffix}"                      \
-       --boot-disk-type=pd-standard --boot-disk-size="$disk_size"                          \
+       --boot-disk-type='hyperdisk-balanced' --boot-disk-size="$disk_size"                 \
        --image-project="$image_project" --image-family="$image_family"                     \
                                                                                            \
        --tags=http-server,https-server                                                     \
