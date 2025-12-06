@@ -331,8 +331,8 @@ keybinding:
   commits:
     squashDown: 's'
     renameCommit: 'r'
-    renameCommitWithEditor: 'R'
-    viewResetOptions: '<disabled>'
+    renameCommitWithEditor: '<disabled>'
+    viewResetOptions: 'R'
     markCommitAsFixup: 'f'
     createFixupCommit: '<disabled>'
     squashAboveCommits: '<disabled>'

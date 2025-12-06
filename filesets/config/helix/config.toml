@@ -294,8 +294,9 @@ newline = "↲"
 "right" = "no_op"
 
 "-" = ":hsplit"
+"[" = ":hsplit"
 "|" = ":vsplit"
-'\' = ":vsplit"
+"]" = ":vsplit"
 
 "i" = "jump_view_up"
 "k" = "jump_view_down"
@@ -315,8 +316,9 @@ newline = "↲"
 "C-v"   = "no_op"
 
 "-" = ":hsplit-new"
+"[" = ":hsplit-new"
 "|" = ":vsplit-new"
-'\' = ":vsplit-new"
+"]" = ":vsplit-new"
 
 
 [keys.normal.q]
