@@ -103,6 +103,15 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+# Allow aliases.
+#
+case "$tool_name" in
+	(helix) tool_name='hx'                ;;
+	(k    ) tool_name='heroku'            ;;
+	(sws  ) tool_name='static-web-server' ;;
+esac
+
+
 case "$tool_name" in
 
 
