@@ -23,7 +23,7 @@ source '/home/nestor/bin/std.lib'
 		  0  if OK,
 		  1  if invalid option,
 		  2  if item not usable,
-		  3  if destination not writable
+		  3  if destination not writable,
 		  4  if destination already exists.
 	EOF
 
