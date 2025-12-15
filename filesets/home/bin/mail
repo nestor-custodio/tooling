@@ -1,0 +1,67 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Opens a mail client ('aerc') connected to the local 'mailtrap' service.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if 'mailtrap' service not available,
+		  3  if unable to run mail client ('aerc').
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Ensure `mailtrap`.
+#
+mailtrap+ &> /dev/null || error-out 2 'mailtrap service unavailable'
+
+# Ensure mail client.
+#
+real aerc &> /dev/null || sudo apt install -qqy aerc || error-out 3 'unable to install mail client'
+
+# Spawn mail client in new window.
+#
+tmux new-window -- aerc
+tmux rename-window 'mail'
+tmux select-pane -T ''

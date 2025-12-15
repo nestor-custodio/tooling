@@ -1,0 +1,83 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Starts a local 'mailtrap' service.
+
+		Exposes the web UI via port 1080, SMTP via 1025, and IMAP via 1143.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Per https://github.com/dbck/docker-mailtrap ...
+#
+#
+# Available services/ports:
+#
+# - SMTP:
+#   - Insecure/StartTLS    on :25
+#   - SSL                  on :465
+#   - Submissions          on :587
+#
+# - IMAP:
+#   - Insecure/StartTLS    on :143
+#   - SSL                  on :993
+#
+# - Web UI (via Roundcube) on :80
+#
+# - Messages are also retrievable from the Web UI as JSON via "/api/inbox".
+
+'mailtrap?' || docker container run --name='mailtrap' --detach --rm \
+                                    --env 'MAILTRAP_USER=user'      \
+                                    --env 'MAILTRAP_PASSWORD=pass'  \
+                                    --publish 127.0.0.1:1080:80     \
+                                    --publish 127.0.0.1:1025:25     \
+                                    --publish 127.0.0.1:1143:143    \
+                                    dbck/mailtrap
+
+# Do not return until the service is ready for use.
+#
+while true; do timeout 0.2 nc 127.0.0.1 1025 2> /dev/null | 'has?' 220 && break; sleep 0.1s; done

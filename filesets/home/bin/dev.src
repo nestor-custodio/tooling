@@ -537,69 +537,11 @@ shopt -s lastpipe
 	set-env 'development'
 
 
-# Mail Helpers
-
-	# Per https://github.com/dbck/docker-mailtrap ...
-	#
-	#
-	# Available services/ports:
-	#
-	# - SMTP:
-	#   - Insecure/StartTLS    on :25
-	#   - SSL                  on :465
-	#   - Submissions          on :587
-	#
-	# - IMAP:
-	#   - Insecure/StartTLS    on :143
-	#   - SSL                  on :993
-	#
-	# - Web UI (via Roundcube) on :80
-	#
-	# - Messages are also retrievable from the Web UI as JSON via "/api/inbox".
-	#
-	function mailtrap? { docker ls | 'has?' mailtrap ;}
-	#
-	function mailtrap+ {
-		'mailtrap?' || docker container run --name='mailtrap' --detach --rm \
-		                                    --env 'MAILTRAP_USER=user'      \
-		                                    --env 'MAILTRAP_PASSWORD=pass'  \
-		                                    --publish 127.0.0.1:1080:80     \
-		                                    --publish 127.0.0.1:1025:25     \
-		                                    --publish 127.0.0.1:1143:143    \
-		                                    dbck/mailtrap
-
-		# Do not return until the service is ready for use.
-		#
-		while true; do timeout 0.2 nc 127.0.0.1 1025 2> /dev/null | 'has?' 220 && break; sleep 0.1s; done
-	}
-	#
-	function mailtrap- { 'mailtrap?' && docker container stop 'mailtrap' &> /dev/null; return 0 ;}
-
-	# Checks mailtrap mail.
-	#
-	function mail {
-		# We *need* an active mailtrap for this.
-		#
-		mailtrap+ &> /dev/null || return 1
-
-		# Ensure `aerc`.
-		#
-		real aerc &> /dev/null || sudo apt install -qqy aerc
-
-		# Spawn 'aerc' (in new window).
-		#
-		tmux new-window -- aerc
-		tmux rename-window 'mail'
-		tmux select-pane -T ''
-	}
-
-
 
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f @ ba bi br bx d db! db+ db- db: DB! dev development gapps gapps? gemini gemini? known-env-vars \
-          load-env mail mailtrap? mailtrap+ mailtrap- na ni node-tasks nr ns nt nx p                     \
-          pending-migrations pending-migrations? production r+ r- rails-db rails-tasks rc rd release-gem \
-          rr rs rs1 rt rubocop rubocop? rubocop+ rubocop- rx s set-env staging t testing unload-env ya   \
-          yi yr yx
+export -f @ ba bi br bx d db! db+ db- db: DB! dev development gapps gapps? gemini gemini? known-env-vars  \
+          load-env na ni node-tasks nr ns nt nx p pending-migrations pending-migrations? production r+ r- \
+          rails-db rails-tasks rc rd release-gem rr rs rs1 rt rubocop rubocop? rubocop+ rubocop- rx s     \
+          set-env staging t testing unload-env ya yi yr yx
