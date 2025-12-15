@@ -122,6 +122,7 @@ startup_log='/var/log/startup'
 			                     asciinema       \
 			                     build-essential \
 			                     byobu           \
+			                     fail2ban        \
 			                     links           \
 			                     nfs-common      \
 			                     qrencode        \
