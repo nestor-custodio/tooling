@@ -69,6 +69,12 @@ enable = false
 
 [editor.soft-wrap]
 
+# Note we're explicitly reinforcing the default 'edit.soft-wrap.enable' setting here,
+# but apparently we can't `:toggle soft-wrap.enable` without this in the config file.
+#
+# (https://github.com/helix-editor/helix/issues/6605#issuecomment-1497602060)
+#
+enable = false
 wrap-indicator = "↳ "
 
 
