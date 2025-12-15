@@ -62,7 +62,7 @@ source '/home/nestor/bin/std.lib'
 case "$engine" in
 
 	(pg|postgres|postgresql)
-		# Ensure pg_dump.
+		# Ensure `pg_dump`.
 		#
 		dpkg --get-selections | 'has?' 'postgresql-client' || sudo apt-get -qqy install postgresql-client
 

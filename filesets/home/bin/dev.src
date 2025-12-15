@@ -74,7 +74,7 @@ shopt -s lastpipe
 				local gemfile="$( nearest 'Gemfile' )"
 				local lockfile="$( nearest 'Gemfile.lock' )"
 
-				# Ensure specific ruby.
+				# Ensure specific `ruby`.
 				#
 				local ruby_version
 				if ruby_version="$( nearest --read '.ruby-version' )"; then
@@ -85,7 +85,7 @@ shopt -s lastpipe
 					     && RUBIES=("${HOME}/.rubies"/*) && chruby "$ruby_version" ;)
 				fi
 
-				# Ensure specific bundler.
+				# Ensure specific `bundler`.
 				#
 				local bundler_version
 				if [ -n "$lockfile" ]; then
@@ -336,7 +336,7 @@ shopt -s lastpipe
 			#
 			[ -x "$dev_runner" ] && { "$dev_runner" "$@"; return "$?" ;}
 
-			# Ensure Foreman and trigger a "$procfile" `start`.
+			# Ensure `foreman` and trigger a "$procfile" `start`.
 			#
 			gem list foreman -i --silent || gem install foreman
 			foreman start -f "$procfile" "$@"
@@ -364,7 +364,7 @@ shopt -s lastpipe
 		function na { npm audit "$@" ;}
 
 		function ni {
-			# Ensure specific node/npm.
+			# Ensure specific `node`/`npm`.
 			#
 			local current_version="$( node --version 2> /dev/null )"
 			local requested_version="$( nearest --read '.node-version' )"
@@ -418,7 +418,7 @@ shopt -s lastpipe
 		# ---
 
 		function yi {
-			# Ensure specific node/npm.
+			# Ensure specific `node`/`npm`.
 			#
 			local current_version="$( node --version 2> /dev/null )"
 			local requested_version="$( nearest --read '.node-version' )"
@@ -430,7 +430,7 @@ shopt -s lastpipe
 				*) 'has?' "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
 			esac
 
-			# Ensure (any) yarn.
+			# Ensure (any) `yarn`.
 			#
 			command -v yarn &> /dev/null || npm install -g yarn
 
