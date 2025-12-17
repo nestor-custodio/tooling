@@ -59,7 +59,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-ss --all --ipv4 --numeric --no-header | awk '{ print $5 }' | cut -d':' -f2 | store-as ports_in_use
+ss --all --ipv4 --numeric --no-header 2> /dev/null | awk '{ print $5 }' | cut -d':' -f2 | store-as ports_in_use
 
 # We've been given a PORT.
 #

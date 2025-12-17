@@ -63,7 +63,7 @@ source '/home/nestor/bin/std.lib'
 available-port "$port" && exit-out 0
 
 
-ss -ltnp | awk '$4 ~ '"/:${port}\$/"' { print $6 }' | grep -P --only-matching '(?<=pid=)[0-9]+' | store-as pid
+ss -ltnp 2> /dev/null | awk '$4 ~ '"/:${port}\$/"' { print $6 }' | grep -P --only-matching '(?<=pid=)[0-9]+' | store-as pid
 'numeric?' "$pid" || error-out 2 'PORT in use by another user'
 
 ps --format='comm=' "$pid" | store-as process
