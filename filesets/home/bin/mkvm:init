@@ -142,6 +142,7 @@ startup_log='/var/log/startup'
 			apt-get -qqy install cachefilesd
 			sed -ri -e 's|^ *#+ *RUN=.*$|RUN=yes|' /etc/default/cachefilesd
 			sed -ri -e 's|^ *#+ *STARTTIME=|STARTTIME=|' /etc/init.d/cachefilesd
+			sed -ri -e 's|^ *secctx|#secctx|' /etc/cachefilesd.conf
 			service cachefilesd --full-restart
 
 
