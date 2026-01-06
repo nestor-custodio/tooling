@@ -1,0 +1,157 @@
+#! /bin/env ruby
+
+# ------------- #
+# -- STD Lib -- #
+
+require 'bundler/inline'
+require 'pathname'
+
+# ----------------- #
+# -- Gem Loaders -- #
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'optimist'
+end
+
+# ------------------ #
+# -- Misc Helpers -- #
+
+SCRIPT_TIMESTAMP = Time.now.to_f
+def script_duration = (Time.now.to_f - SCRIPT_TIMESTAMP)
+
+def script_file = Pathname.new(__FILE__)
+
+def script_path = script_file.dirname
+def script_real = script_file.realpath
+def script_name = script_file.basename
+
+def file_blanks = (' ' * script_file.to_s.length)
+def path_blanks = (' ' * script_path.to_s.length)
+def real_blanks = (' ' * script_real.to_s.length)
+def name_blanks = (' ' * script_name.to_s.length)
+
+# --------------- #
+# -- Help Text -- #
+
+usage = <<~USAGE
+  Usage: #{script_name}
+
+  Reformats tabular data provided via STDIN *and intended for display* into
+  a "vertical" format, similar to what database clients' and "\G"-terminated
+  queries.
+
+  Potential GOTCHAs:
+    - this is not intended to parse or generate *structured data*
+    - this assumes the first line of input contains column headings
+    - beware of column headings that include the column delimiter char
+      (most commonly seen when a column heading has a multi-word name)
+    - this DOES NOT WORK (reliably) on input containing non-left-aligned
+      headings; piping input through 'column --table' first will sometimes
+      correct this with minimal effort
+
+
+  Mandatory arguments to long options are mandatory for short options too.
+    -i | --delimiter CHAR    Sets the (input) column delimiter.
+                             Defaults to ' ' (spaces).
+
+    -o | --separator STRING  Sets the (output) record separator (printed on
+                             its own line, between records).
+                             Defaults to '---'.
+
+    --tab-width NUM          Assume hard tabs ("\t") are set every NUM chars
+                             apart (instead of the standard 8).
+
+    --help                   Show this help text.
+
+
+  Exit Status:
+    0  if OK,
+    1  if invalid option.
+USAGE
+
+$stdout.write usage and exit if ARGV.intersect? %w[-h --help]
+
+# ----------------------------------- #
+# -- Parameter Processing: Options -- #
+
+options = Optimist.options do
+  # https://www.manageiq.org/optimist/
+
+  opt :delimiter, 'column delimiter (input)', short: :i, default: ' '
+  opt :separator, 'separator line (output)', short: :o, default: '---'
+  opt :tab_width, 'tab stop width', short: :t, default: 8, permitted: (1..)
+end
+
+# ----------------------------------------- #
+# -- Parameter Processing: Sanity Checks -- #
+
+Optimist.die :delimiter, 'must be a single character' unless options[:delimiter].length == 1
+
+# ---
+# ---
+
+# Normalizes tabs out of strings.
+#
+detabbified = lambda { |string|
+  string.to_s.chomp.split("\t").map do |segment|
+    target_length = (segment.length.to_f / options[:tab_width]).ceil * options[:tab_width]
+    segment.ljust target_length
+  end.join
+}
+
+# Normalizes whitespace-then-delimiters out of strings.
+#
+decolumnized = ->(string) { string.to_s.gsub(Regexp.new("#{Regexp.escape options[:delimiter]}*$"), '').strip }
+
+# ---
+# ---
+
+# Column preprocessing.
+
+line = detabbified[$stdin.gets]
+raise StandardError, 'unable to parse first line as header' if line.strip.empty?
+
+# Figure out where the columns begin ...
+#
+column_indices = (0...line.length).select do |index|
+  next true if index.zero? # The first column always begins at index 0.
+
+  this_char = line[index]
+  prev_char = line[index - 1]
+  (prev_char == options[:delimiter]) && (this_char != options[:delimiter])
+end
+
+# ... then transform that into an array of index ranges ...
+#
+# NOTE: column ranges include trailing delimiters. This may be a single char,
+#       multiple chars (in the case of delimiter runs), or no char at all (on the last column).
+#
+column_ranges = column_indices.zip([*column_indices[1..], 10000]).map { |(first, last)| first...last }
+
+# ... then use the column index ranges to get the names themselves.
+#
+column_names = column_ranges.map { |range| decolumnized[line[range]] }
+max_name_width = column_names.map(&:length).max
+
+# puts column_ranges.inspect
+# puts column_names.inspect
+# puts max_name_width.inspect
+# exit
+
+# ---
+
+# Data line output ...
+#
+$stdin.each_line do |line|
+  line = detabbified[line]
+  next if line.strip.empty?
+
+  column_ranges.each_with_index do |range, i|
+    name = column_names[i].ljust max_name_width
+    text = decolumnized[line[range]]
+
+    puts "#{name}: #{text}"
+  end
+  puts options[:separator] unless $stdin.eof?
+end
