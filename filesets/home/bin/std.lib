@@ -52,6 +52,12 @@ source /home/nestor/bin/set-path.src
 	}
 
 
+	# `notify`-es via 'pushover' CHANNEL, with the `script-name` as the SUBJECT.
+	# Supports both the param and the piped MESSAGE use of `notify`.
+	#
+	function notify-from-script { notify 'pushover' "$( script-name )" "$@" ;}
+
+
 # -- IO Helpers -- #
 
 
