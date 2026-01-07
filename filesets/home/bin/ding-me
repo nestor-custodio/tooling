@@ -53,4 +53,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-notify pushover "$( hostname --short ): DING!" "$( date +'%Y-%m-%d %H:%M:%S' )"
+notify pushover "$( hostname --short ): DING!" "$( date '+%Y-%m-%d %H:%M:%S' )"

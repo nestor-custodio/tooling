@@ -4,7 +4,9 @@ source /home/nestor/bin/set-path.src
 
 # ---
 
-{ # -- Misc Helpers -- #
+
+# -- Misc Helpers -- #
+
 
 	SCRIPT_TIMESTAMP="$( date '+%s.%N' )"
 	function script-duration { bc --quiet --mathlib <<< "$( date '+%s.%N' ) - ${SCRIPT_TIMESTAMP}" ;}
@@ -49,6 +51,19 @@ source /home/nestor/bin/set-path.src
 	}
 
 
+# -- IO Helpers -- #
+
+
+	TAB="$( printf '\t' )"
+
+
+	function backspace { seq "${1:-1}" | xargs -I {} printf '\b \b' ;}
+
+	function clear-line { printf '\e[2K\e[1G' ;}
+
+	# Pauses for a key press.
+	# Takes a single, optional param: the prompt to display.
+	#
 	function pause {
 		# Note this is NOT the same as `local prompt="${1:-...}"`.
 		#
@@ -62,23 +77,8 @@ source /home/nestor/bin/set-path.src
 	}
 
 
-	TAB="$( printf '\t' )"
+# -- Error Helpers -- #
 
-}
-
-# ---
-
-{ # -- Print Helpers -- #
-
-	function backspace { seq "${1:-1}" | xargs -I {} printf '\b \b' ;}
-
-	function clear-line { printf '\e[2K\e[1G' ;}
-
-}
-
-# ---
-
-{ # -- Error Helpers -- #
 
 	declare -A _pre_trap_flags
 
@@ -199,20 +199,19 @@ source /home/nestor/bin/set-path.src
 		exit "$exit_code"
 	}
 
-}
 
-# ---
+# -- Parameter Processing -- #
 
-# shellcheck disable=SC2142
-{ # -- Parameter Processing -- #
 
 	# Blind check for a '--help' param.
 	# Note this DOES NOT MODIFY THE PARAM LIST.
 	#
+	# shellcheck disable=SC2142
 	alias 'help-param?'='printf "%s\n" -- "$@" | grep -x --quiet -- "--help"'
 
 	# Modifies the param list to facilitate processing.
 	#
+	# shellcheck disable=SC2142
 	alias set-params='{
 
 		# (https://stackoverflow.com/a/29754866/4905941)
@@ -224,5 +223,3 @@ source /home/nestor/bin/set-path.src
 		eval set -- "$PARSED"
 
 	}'
-
-}
