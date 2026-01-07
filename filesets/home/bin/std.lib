@@ -9,6 +9,7 @@ source /home/nestor/bin/set-path.src
 
 
 	SCRIPT_TIMESTAMP="$( date '+%s.%N' )"
+	function script-date { date --date="@{SCRIPT_TIMESTAMP}" "+${1:-%Y-%m-%d}" ;}
 	function script-duration { bc --quiet --mathlib <<< "$( date '+%s.%N' ) - ${SCRIPT_TIMESTAMP}" ;}
 
 
