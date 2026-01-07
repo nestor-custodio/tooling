@@ -57,6 +57,11 @@ source /home/nestor/bin/set-path.src
 	TAB="$( printf '\t' )"
 
 
+	function interactive? { [ -t 0 ] ;}
+	function piped-input? { [ -p /dev/stdin ] ;}
+	function stdin-fuckery? { [ ! -t 0 ] && [ ! -p /dev/stdin ] ;}
+
+
 	function backspace { seq "${1:-1}" | xargs -I {} printf '\b \b' ;}
 
 	function clear-line { printf '\e[2K\e[1G' ;}
