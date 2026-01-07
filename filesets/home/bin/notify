@@ -7,9 +7,34 @@ source '/home/nestor/bin/std.lib'
 
 	cat <<-EOF | store-as usage
 		Usage: $( script-name ) CHANNEL [SUBJECT] MESSAGE
+		       $( name-blanks ) CHANNEL [SUBJECT] # (MESSAGE given via pipe)
 
 		Sends a message via the given delivery CHANNEL.
 		(Only available value right now is "pushover".)
+
+
+		Param Processing
+		  When sorting params, the MESSAGE takes precedence. The following list
+		  describes how available data is assigned to either SUBJECT or MESSAGE.
+
+		  - '$( script-name ) CHANNEL'
+		    This will generate an error, as no SUBJECT or MESSAGE is available.
+
+		  - '$( script-name ) CHANNEL PARAM-2'
+		    PARAM-2 is the MESSAGE; the notification will have no SUBJECT.
+
+		  - '$( script-name ) CHANNEL PARAM-2 PARAM-3'
+		    PARAM-2 is the SUBJECT; PARAM-3 is the MESSAGE
+
+		  - 'data-source | $( script-name ) CHANNEL'
+		    The 'data-source' output is the MESSAGE; the notification will have
+		    no SUBJECT.
+
+		  - 'data-source | $( script-name ) CHANNEL PARAM-2'
+		    The 'data-source' output is the MESSAGE; PARAM-2 is the MESSAGE.
+
+		  - 'data-source | $( script-name ) CHANNEL PARAM-2 PARAM-3'
+		    This will generate an error, as too many values have been given.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -49,21 +74,38 @@ source '/home/nestor/bin/std.lib'
 	subject=''
 	message=''
 
-	case "$#" in
+	if 'piped-input?'; then
+		store-as message
+		case "$#" in
 
-		2)
-			channel="$1" && shift
-			message="$1" && shift
-			;;
+			1)
+				channel="$1" && shift
+				;;
 
-		3)
-			channel="$1" && shift
-			subject="$1" && shift
-			message="$1" && shift
-			;;
+			2)
+				channel="$1" && shift
+				subject="$1" && shift
+				;;
 
-		*) error-out 1 'invalid option(s)' ;;
-	esac
+			*) error-out 1 'invalid option(s)' ;;
+		esac
+	else
+		case "$#" in
+
+			2)
+				channel="$1" && shift
+				message="$1" && shift
+				;;
+
+			3)
+				channel="$1" && shift
+				subject="$1" && shift
+				message="$1" && shift
+				;;
+
+			*) error-out 1 'invalid option(s)' ;;
+		esac
+	fi
 
 }
 
