@@ -57,7 +57,7 @@ usage = <<~USAGE
 
     -o | --separator STRING  Sets the (output) record separator (printed on
                              its own line, between records).
-                             Defaults to '---'.
+                             Defaults to '-'.
 
     --tab-width NUM          Assume hard tabs ("\t") are set every NUM chars
                              apart (instead of the standard 8).
@@ -79,7 +79,7 @@ options = Optimist.options do
   # https://www.manageiq.org/optimist/
 
   opt :delimiter, 'column delimiter (input)', short: :i, default: ' '
-  opt :separator, 'separator line (output)', short: :o, default: '---'
+  opt :separator, 'separator line (output)', short: :o, default: '-'
   opt :tab_width, 'tab stop width', short: :t, default: 8, permitted: (1..)
 end
 
@@ -87,6 +87,7 @@ end
 # -- Parameter Processing: Sanity Checks -- #
 
 Optimist.die :delimiter, 'must be a single character' unless options[:delimiter].length == 1
+Optimist.die :separator, 'must be a single character' unless options[:separator].length == 1
 
 # ---
 # ---
@@ -133,6 +134,7 @@ column_ranges = column_indices.zip([*column_indices[1..], 10000]).map { |(first,
 #
 column_names = column_ranges.map { |range| decolumnized[line[range]] }
 max_name_width = column_names.map(&:length).max
+record_separator = options[:separator] * ((max_name_width * 2) + 3)
 
 # puts column_ranges.inspect
 # puts column_names.inspect
@@ -151,7 +153,7 @@ $stdin.each_line do |line|
     name = column_names[i].ljust max_name_width
     text = decolumnized[line[range]]
 
-    puts "#{name}: #{text}"
+    puts "#{name} : #{text}"
   end
-  puts options[:separator] unless $stdin.eof?
+  puts record_separator unless $stdin.eof?
 end
