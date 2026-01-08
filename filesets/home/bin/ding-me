@@ -53,4 +53,11 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-notify pushover "$( hostname --short ): DING!" "$( date '+%Y-%m-%d %H:%M:%S' )"
+ps -p "$PPID" -o comm= | store-as name
+ps -p "$PPID" -o etimes= | store-as duration
+calc "$( timestamp ) - $( ps -p "$PPID" -o etimes= )" | store-as start_time
+
+notify 'pushover' "DING! -- ${name}" <<-EOF
+	Started: $( date --date="@${start_time}" '+%F %R' )
+	Ran For: $( elapsed --since="@${start_time}" )
+EOF
