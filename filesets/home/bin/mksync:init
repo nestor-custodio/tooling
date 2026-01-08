@@ -218,7 +218,7 @@ startup_log='/var/log/startup'
 		# Notify of init completion.
 		report 'notifying of init completion'
 
-			cat <<-EOF | read -r -d '' notification
+			notify 'pushover' "VM Ready: $( instance name )" <<-EOF
 				Hostname: $( hostname --short )
 				External: $( wan-ip )
 				Disk Use: $( df -h / --output='pcent,size,avail'                         \
@@ -228,7 +228,6 @@ startup_log='/var/log/startup'
 
 				Ready In: $( elapsed --since="@$( instance attributes/created-at )" )
 			EOF
-			notify pushover "VM Ready: $( instance name )" "$notification"
 
 
 	  echo -e "\n\n... Init complete in $( puptime )."
