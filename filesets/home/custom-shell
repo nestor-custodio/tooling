@@ -275,6 +275,16 @@ function peek { tee /dev/tty ;}
   function list+ { f --tree              "$@" ;}
 
 
+  # fc
+
+  # Easily redo/re-run history items without reaching for arrow keys.
+  #
+  # Runnable as-is (to redo the most recent command) or with a param,
+  # which will redo the most recent command prefixed by the given value.
+  #
+  function redo { fc -s "$@" ;}
+
+
   # fzf
 
   fzf_keybinding_spec="ctrl-i:up,ctrl-k:down,space:toggle,ctrl-space:toggle"
@@ -509,7 +519,7 @@ export -f ... .... ..... ::                                                     
           gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph ghistory ginit   \
           gitignored glog gmerge gmove gmv gpatch gpop gpull gpush grebase gremote greset \
           gstage gstash gstatus gtag gtrack gunchange gundelete gunstage guntrack h hbat  \
-          helix k lazydocker less list list+ m mirror mkcd peek real rg shellcheck
+          helix k lazydocker less list list+ m mirror mkcd peek real redo rg shellcheck
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",
