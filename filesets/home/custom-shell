@@ -436,11 +436,6 @@ function peek { tee /dev/tty ;}
   eval "$( dircolors )"
 
 
-  # pgcli
-
-  function pgcli { "$( real pgcli )" --pgclirc="${HOME}/.config/pgcli/config" "$@" ;}
-
-
   # rg
 
   function rg { "$( real rg )" --engine="pcre2" --color=auto --follow "$@" ;}
@@ -514,7 +509,7 @@ export -f ... .... ..... ::                                                     
           gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph ghistory ginit   \
           gitignored glog gmerge gmove gmv gpatch gpop gpull gpush grebase gremote greset \
           gstage gstash gstatus gtag gtrack gunchange gundelete gunstage guntrack h hbat  \
-          helix k lazydocker less list list+ m mirror mkcd peek pgcli real rg shellcheck
+          helix k lazydocker less list list+ m mirror mkcd peek real rg shellcheck
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",
