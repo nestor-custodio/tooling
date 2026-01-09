@@ -103,9 +103,9 @@ source '/home/nestor/bin/std.lib'
 			[ -n "$record" ] || error-out 2 'no DNS record found'
 
 			case "$response_type" in
-				(record) json "$record" '.'           ;;
-				(ip    ) json "$record" '.rrdatas[0]' ;;
-				(ttl   ) json "$record" '.ttl'        ;;
+				(record) json '.'           <<< "$record" ;;
+				(ip    ) json '.rrdatas[0]' <<< "$record" ;;
+				(ttl   ) json '.ttl'        <<< "$record" ;;
 
 				*) error-out 1 'unexpected GET param' ;;
 			esac

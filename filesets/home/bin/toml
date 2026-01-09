@@ -6,15 +6,14 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [TOML_STRING] SELECTOR
+		Usage: $( script-name ) [SELECTOR]
 
-		Runs a jq query for SELECTOR against the given TOML_STRING (or STDIN).
-		Strings are outputed "raw" (no quotes). If the given query yields a null
-		or false, the output is an empty string.
+		Runs a 'jq' query for SELECTOR against the STDIN-provided TOML data.
+		Strings are outputed "raw" (no quotes). If the given query yields a
+		null or false, the output is an empty string.
 
-		If neither a TOML_STRING nor a SELECTOR is given, input is assumed to be
-		STDIN and the SELECTOR is assumed to be ".". This means the no-param use
-		makes this a filter that pretty-prints the TOML given via STDIN as JSON.
+		If no SELECTOR is given, it is assumed to be ".", which makes this a
+		simple pretty-print filter when used with no params.
 
 		NOTE: *yq* is used only for TOML parsing; the selector runs against *jq*.
 
@@ -81,5 +80,5 @@ source '/home/nestor/bin/std.lib'
 
 if [ -n "$input" ]
 	then yq eval - --input-format='toml' --output-format='json' <<< "$input" | json "$selector"
-	else yq eval - --input-format='toml' --output-format='json' < /dev/stdin | json "$selector"
+	else yq eval - --input-format='toml' --output-format='json'              | json "$selector"
 fi

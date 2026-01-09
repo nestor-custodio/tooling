@@ -6,15 +6,14 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [JSON_STRING] SELECTOR
+		Usage: $( script-name ) [SELECTOR]
 
-		Runs a jq query for SELECTOR against the given JSON_STRING (or STDIN).
-		Strings are outputed "raw" (no quotes). If the given query yields a null
-		or false, the output is an empty string.
-		
-		If neither a JSON_STRING nor a SELECTOR is given, input is assumed to be
-		STDIN and the SELECTOR is assumed to be ".". This means the no-param use
-		makes this a filter that pretty-prints the JSON given via STDIN.
+		Runs a 'jq' query for SELECTOR against the STDIN-provided JSON data.
+		Strings are outputed "raw" (no quotes). If the given query yields a
+		null or false, the output is an empty string.
+
+		If no SELECTOR is given, it is assumed to be ".", which makes this a
+		simple pretty-print filter when used with no params.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -46,28 +45,11 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	case "$#" in
+	selector="$1" && shift
+	[ -n "$selector" ] || selector='.'
 
-		0)
-			input=''
-			selector='.'
-			;;
 
-		1)
-			input=''
-			selector="$1" && shift
-			;;
-
-		2)
-			input="$1" && shift
-			selector="$1" && shift
-			;;
-
-		*)
-			error-out 1 'invalid option(s)'
-			;;
-
-	esac
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
 
 }
 
@@ -75,7 +57,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-if [ -n "$input" ]
-	then jq -r "${selector} // \"\"" <<< "$input"
-	else jq -r "${selector} // \"\"" < /dev/stdin
-fi
+jq -r "${selector} // \"\""
