@@ -54,5 +54,5 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-sed --unbuffered -e "${header_line_count}q" < /dev/stdin
-sort "$@" < /dev/stdin
+sed --unbuffered -e "${header_line_count}q"
+sort "$@"

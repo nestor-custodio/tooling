@@ -62,4 +62,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-cat - | xargs --replace --no-run-if-empty -- "$@" "{}"
+xargs --replace --no-run-if-empty -- "$@" "{}"

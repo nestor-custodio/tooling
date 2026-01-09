@@ -52,4 +52,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-cat - | sed --unbuffered --null-data -e 's#\n*$#\n#'
+sed --unbuffered --null-data -e 's#\n*$#\n#'

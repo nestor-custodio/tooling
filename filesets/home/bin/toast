@@ -46,7 +46,7 @@ source '/home/nestor/bin/std.lib'
 	case "$#" in
 
 		0)
-			cat - | store-as text
+			store-as text
 			;;
 
 		1)

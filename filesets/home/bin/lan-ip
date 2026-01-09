@@ -51,5 +51,5 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-ip -4 -json -brief address show                                                    \
+ip -4 -json -brief address show                                                 \
 | json 'map(select(.operstate == "UP")) | map(.addr_info[0].local) | join(" / ")'

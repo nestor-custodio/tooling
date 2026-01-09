@@ -65,7 +65,7 @@ source '/home/nestor/bin/std.lib'
 
 		0)
 			tempname | store-as input_file
-			cat - > "$input_file"
+			cat > "$input_file"
 			stdin_read='1'
 			;;
 

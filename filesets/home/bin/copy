@@ -43,9 +43,9 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	case "$#" in
-	
+
 		0)
-			cat - | store-as data
+			store-as data
 			;;
 
 		1)

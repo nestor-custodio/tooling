@@ -55,4 +55,4 @@ source '/home/nestor/bin/std.lib'
 # Note we're adding 1 to the $lookup_string length
 # to properly account for the "\n" that terminates STDIN.
 #
-[ "$lookup_string" == "$( tail --bytes="$( calc "${#lookup_string} + 1" )" < /dev/stdin )" ]
+[ "$lookup_string" == "$( tail --bytes="$( calc "${#lookup_string} + 1" )" )" ]
