@@ -1,5 +1,1 @@
-relay: portal.custodio.app
-relay_serve_port: 8080
-verbose: false
-prompt_overwrite_files: true
-tui_style: rich
+public.yml
