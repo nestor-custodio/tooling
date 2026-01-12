@@ -21,6 +21,7 @@ paths=("${HOME_REFERENCE}/vm-scripts/$( hostname --short )/bin" # VM-specific ov
        "${HOME_REFERENCE}/bin"                                  # our custom tooling
        "${HOME_REFERENCE}/bin/vendor"                           # our vendor tooling
        "${HOME_REFERENCE}/.local/bin"                           # native user binaries
+       "${HOME_REFERENCE}/.gem/bin"                             # ruby binaries (for apt/snap installs)
        "${HOME_REFERENCE}/.nodes/bin"                           # node binaries
        "${HOME_REFERENCE}/.yarn/bin"                            # yarn binaries
        "/snap/bin"                                              # snap packages
