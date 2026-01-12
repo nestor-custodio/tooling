@@ -1,0 +1,22 @@
+
+inherits = "monokai_pro_spectrum"
+
+"ui.cursorline" = { bg = "base3" }
+"ui.statusline.normal" = { fg = "base8x0c", bg = "green" , modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "base8x0c", bg = "red"   , modifiers = ["bold"] }
+"ui.statusline.select" = { fg = "base8x0c", bg = "yellow", modifiers = ["bold"] }
+
+# comments, nord3 based lighter color
+"comment" = { fg = "base6" }
+
+# cursor, variables, constants, attributes, fields
+"ui.cursor.primary.normal"  = { fg = "base8x0c", bg = "green" , modifiers = ["bold"      ] }
+"ui.cursor.normal"          = { fg = "base8x0c", bg = "green" , modifiers = ["bold"      ] }
+"ui.cursor.primary.insert"  = { fg = "base8x0c", bg = "red"   , modifiers = ["bold"      ] }
+"ui.cursor.insert"          = { fg = "base8x0c", bg = "red"   , modifiers = ["bold"      ] }
+"ui.cursor.primary.select"  = { fg = "base8x0c", bg = "yellow", modifiers = ["bold"      ] }
+"ui.cursor.select"          = { fg = "base8x0c", bg = "yellow", modifiers = ["bold"      ] }
+
+[palette]
+# base colors
+"base2" = "#1C1C1C"
