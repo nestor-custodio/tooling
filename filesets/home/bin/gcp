@@ -13,7 +13,7 @@ source '/home/nestor/bin/std.lib'
 		       $( script-name ) { scp | cp } [-- OPTIONS] SOURCE TARGET
 
 		       $( script-name ) { ssh | shell | connect } [USER@]INSTANCE_NAME
-		       $( script-name ) { run | exec } [USER@]INSTANCE_NAME REMOTE_COMMAND
+		       $( script-name ) { run | exec | do } [USER@]INSTANCE_NAME REMOTE_COMMAND
 
 
 		       $( script-name ) { start | boot
@@ -192,7 +192,7 @@ source '/home/nestor/bin/std.lib'
 			gcloud compute ssh "$instance_name"
 			;;
 
-		(run|exec)
+		(run|exec|do)
 			[ "$#" -lt 2 ] && error-out 1 'an instance name and remote command are required'
 			[ "$#" -gt 2 ] && error-out 1 'too many parameters'
 
