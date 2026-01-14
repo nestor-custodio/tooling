@@ -8,8 +8,8 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name ) [INSTANCE_NAME]
 
-		Publishes a DNS 'A' record for the given compute instance (or localhost
-		if no INSTANCE_NAME is given).
+		Reports an internal IP for the given compute instance (or localhost if
+		no INSTANCE_NAME is given).
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -19,7 +19,7 @@ source '/home/nestor/bin/std.lib'
 		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  if unable to determine WAN IP.
+		  2  if unable to determine IP.
 	EOF
 
 }
@@ -66,8 +66,13 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-vm-wan-ip "$instance_name" | store-as ip
-[ -n "$ip" ] || error-out 2 'unable to determine WAN IP'
+declare -A filters
+filters[running]="(status:'running')"
+filters[by_name]="(name:'${instance_name}')"
 
+gcloud compute instances list --filter="${filters[running]} AND ${filters[by_name]}" --format='json' \
+| json '.[].networkInterfaces[].networkIP // ""'                                                     \
+| store-as ip
 
-dns set "$ip" --name="$instance_name"
+[ -n "$ip" ] || error-out 2 'unable to determine IP'
+echo "$ip"
