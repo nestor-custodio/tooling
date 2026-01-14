@@ -153,6 +153,19 @@ startup_log='/var/log/startup'
 
 			sudo --user='nestor' /bin/bash -s <<-EOF
 				source /home/nestor/bin/set-path.src
+
+				# We need 'eget' to pull other tooling.
+				#
+				mkdir /tmp/eget && cd /tmp/eget
+				curl https://zyedidia.github.io/eget.sh | bash
+				mv ./eget /home/nestor/bin/vendor/eget
+				cd && rm -rf /tmp/eget
+
+				# Remember that calling 'vendor.update!' for
+				# all tooling requires 'gh:release-version',
+				# which then needs 'gh'.
+				#
+				/home/nestor/bin/vendor/vendor.update! gh
 				/home/nestor/bin/vendor/vendor.update!
 			EOF
 
