@@ -66,9 +66,9 @@ network_bins="${HOME}/vm-scripts/vpn/bin/${network}"
 #
 gcp state vpn | store-as vpn_state
 case "$vpn_state" in
-	(RUNNING)    noop          ;;
-	(SUSPENDED)  gcp wake  vpn ;;
-	(TERMINATED) gcp start vpn ;;
+	(RUNNING)    noop       ;;
+	(SUSPENDED)  gcp up vpn ;;
+	(TERMINATED) gcp up vpn ;;
 
 	*) error-out 3 "unexpected VPN proxy state: '${vpn_state}'"
 esac

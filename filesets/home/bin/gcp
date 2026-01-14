@@ -16,10 +16,10 @@ source '/home/nestor/bin/std.lib'
 		       $( script-name ) { run | exec | do } [USER@]INSTANCE_NAME REMOTE_COMMAND
 
 
-		       $( script-name ) { start | boot
+		       $( script-name ) { up
+		       $( name-blanks )   | suspend | sleep
 		       $( name-blanks )   | restart | reboot
-		       $( name-blanks )   | stop | shutdown | kill
-		       $( name-blanks )   | suspend | sleep | resume | wake } INSTANCE_NAME
+		       $( name-blanks )   | stop | shutdown | kill } INSTANCE_NAME
 
 
 		       $( script-name ) rename INSTANCE_NAME NEW_INSTANCE_NAME
@@ -79,8 +79,8 @@ source '/home/nestor/bin/std.lib'
 
 	# ---
 
-	function instance-is-running { [ "$( instance-state "$@" )" == "RUNNING"    ] ;}
-	function instance-is-stopped { [ "$( instance-state "$@" )" == "TERMINATED" ] ;}
+	function instance-is-running { [ "$( instance-state "$@" )" == 'RUNNING'    ] ;}
+	function instance-is-stopped { [ "$( instance-state "$@" )" == 'TERMINATED' ] ;}
 
 }
 
@@ -206,12 +206,58 @@ source '/home/nestor/bin/std.lib'
 		# ---
 		# ---
 
-		(start|boot)
+		(up)
 			[ "$#" == 1 ] || error-out 1 'no instance name given'
 			instance_name="$1" && shift
 
 
-			gcloud compute instances start "$instance_name"
+			instance-state "$instance_name" | store-as state
+			case "$state" in
+
+				(RUNNING)
+					exit-out 0
+					;;
+
+				(TERMINATED)
+					echo -n 'Starting instance...'
+					gcloud compute instances start "$instance_name" &> /dev/null || error-out 3 'FAILED'
+					echo ' done.'
+					;;
+
+				(SUSPENDED)
+					echo -n 'Resuming instance...'
+					gcloud compute instances resume "$instance_name" &> /dev/null || error-out 3 'FAILED'
+					echo ' done.'
+
+					echo -n 'Updating DNS entry...'
+					sleep 2  # Instances will sometimes take a bit to fully wake and request a new external IP.
+					expose-vm "$instance_name" || error-out 3 'FAILED'
+					echo ' done.'
+					;;
+
+				*)
+					error-out 2 "unable to start/wake a '${state}' VM"
+					;;
+
+			esac
+
+			# Wait for the VM to become "connectable".
+			#
+			echo -n 'Waiting for instance to respond...'
+			vm-lan-ip "$instance_name" | store-as vm_lan_ip
+			[ -n "$vm_lan_ip" ] || error-out 3 'FAILED'
+			while true; do timeout 0.2 nc "$vm_lan_ip" 22 2> /dev/null | 'has?' SSH && break; sleep 1s; done
+			echo ' done.'
+			;;
+
+		(suspend|sleep)
+			[ "$#" == 1 ] || error-out 1 'no instance name given'
+			instance_name="$1" && shift
+
+
+			echo -n 'Suspending instance...'
+			gcloud compute instances suspend "$instance_name" &> /dev/null || error-out 3 'FAILED'
+			echo ' done.'
 			;;
 
 		(restart|reboot)
@@ -219,7 +265,15 @@ source '/home/nestor/bin/std.lib'
 			instance_name="$1" && shift
 
 
-			gcloud compute instances reset "$instance_name"
+			echo -n 'Restarting instance...'
+			gcloud compute instances reset "$instance_name" &> /dev/null || error-out 3 'FAILED'
+			echo ' done.'
+
+			echo -n 'Waiting for instance to respond...'
+			vm-lan-ip "$instance_name" | store-as vm_lan_ip
+			[ -n "$vm_lan_ip" ] || error-out 3 'FAILED'
+			while true; do timeout 0.2 nc "$vm_lan_ip" 22 2> /dev/null | 'has?' SSH && break; sleep 1s; done
+			echo ' done.'
 			;;
 
 		(stop|shutdown|kill)
@@ -227,27 +281,9 @@ source '/home/nestor/bin/std.lib'
 			instance_name="$1" && shift
 
 
-			gcloud compute instances stop "$instance_name"
-			;;
-
-		# ---
-
-		(suspend|sleep)
-			[ "$#" == 1 ] || error-out 1 'no instance name given'
-			instance_name="$1" && shift
-
-
-			gcloud compute instances suspend "$instance_name"
-			;;
-
-		(resume|wake)
-			[ "$#" == 1 ] || error-out 1 'no instance name given'
-			instance_name="$1" && shift
-
-
-			gcloud compute instances resume "$instance_name" || error-out 3 'instance failed to resume'
-			sleep 2  # Instances will sometimes take a bit to fully wake and request their new IP.
-			expose-vm "$instance_name"
+			echo -n 'Stopping instance...'
+			gcloud compute instances stop "$instance_name" &> /dev/null || error-out 3 'FAILED'
+			echo ' done.'
 			;;
 
 		# ---
@@ -268,8 +304,13 @@ source '/home/nestor/bin/std.lib'
 				instance-is-stopped "$old_instance_name" || error-out 2 'cannot rename a running instance'
 
 
-			gcloud compute instances set-name "$old_instance_name" --new-name="$new_instance_name" \
-			&& dns del --for="$old_instance_name" &> /dev/null
+			echo -n 'Renaming instance...'
+			gcloud compute instances set-name "$old_instance_name" --new-name="$new_instance_name" &> /dev/null || error-out 3 'FAILED'
+			echo ' done.'
+
+			echo -n 'Removing DNS entry...'
+			dns del --for="$old_instance_name" &> /dev/null || error-out 3 'FAILED'
+			echo ' done.'
 			;;
 
 		(scale)
@@ -296,7 +337,9 @@ source '/home/nestor/bin/std.lib'
 				instance-is-stopped "$instance_name" || error-out 2 'cannot set scaling on a running instance'
 
 
-			gcloud compute instances set-machine-type "$instance_name" --machine-type="$machine_type"
+			echo -n 'Scaling instance...'
+			gcloud compute instances set-machine-type "$instance_name" --machine-type="$machine_type" || error-out 3 'FAILED'
+			echo ' done.'
 			;;
 
 		# ---
@@ -312,11 +355,15 @@ source '/home/nestor/bin/std.lib'
 
 			# Remove DNS 'A' record.
 			#
+			echo -n 'Removing DNS entry...'
 			dns delete --for="$instance_name" &> /dev/null
+			echo ' done.'
 
 			# Delete the Instance VM.
 			#
-			yes | gcloud compute instances delete "$instance_name" --quiet
+			echo -n 'Tearing down  instance...'
+			yes | gcloud compute instances delete "$instance_name" &> /dev/null || error-out 3 'FAILED'
+			echo ' done.'
 			;;
 
 		# ---
