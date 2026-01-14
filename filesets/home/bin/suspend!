@@ -54,4 +54,4 @@ source '/home/nestor/bin/std.lib'
 echo 'Suspending in 2s.'
 echo 'Use Ctrl-C to cancel.'
 
-sleep 2 && blindly gcp suspend "$( vm-name )"
+sleep 2 && gcp suspend "$( vm-name )"

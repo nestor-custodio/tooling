@@ -93,6 +93,8 @@ source '/home/nestor/bin/std.lib'
 	all=''
 	machine_type=''
 
+	[ -n "$CLOUDSDK_COMPUTE_ZONE" ] || export CLOUDSDK_COMPUTE_ZONE="$( vm-zone )"
+
 	# --
 	# --
 
