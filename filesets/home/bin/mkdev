@@ -6,7 +6,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) INSTANCE_NAME [OPTIONS]
+		Usage: $( script-name ) INSTANCE_NAME [OPTIONS] [-- GCLOUD OPTIONS]
 
 		Creates a new GCP dev VM instance with the given name.
 
@@ -294,7 +294,7 @@ gcloud compute instances create "$instance_name"                                
        --project="$( vm-project )" --zone="$( vm-zone )"                                   \
                                                                                            \
        --machine-type="${machine_type_family}-${machine_type_suffix}"                      \
-       --boot-disk-type='hyperdisk-balanced' --boot-disk-size="$disk_size"                 \
+       --boot-disk-size="$disk_size"                                                       \
        --image-project="$image_project" --image-family="$image_family"                     \
                                                                                            \
        --tags=http-server,https-server                                                     \
@@ -305,4 +305,5 @@ gcloud compute instances create "$instance_name"                                
        --network-tier=STANDARD                                                             \
        --maintenance-policy=MIGRATE                                                        \
                                                                                            \
-       --verbosity=error
+       --verbosity=error                                                                   \
+       "$@"
