@@ -224,7 +224,7 @@ startup_log='/var/log/startup'
 			EOF
 
 
-	  echo -e "\n\n... Init complete in $( puptime )."
+		echo -e "\n\n... Init complete in $( puptime )."
 
 	}
 
