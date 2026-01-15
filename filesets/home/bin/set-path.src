@@ -26,6 +26,12 @@ paths=("${HOME_REFERENCE}/vm-scripts/$( hostname --short )/bin" # VM-specific ov
        "${HOME_REFERENCE}/.yarn/bin"                            # yarn binaries
        "/snap/bin"                                              # snap packages
        "${PATH}"                                                # native system binaries
+
+       "/usr/local/sbin"                                        # usually included in base PATH, but 'cron'
+       "/usr/local/bin"                                         # ... processes don't have that set, so we're
+       "/usr/sbin"                                              # ... including them here to keep scripts from
+       "/usr/bin"                                               # ... breaking when run as scheduled tasks
+
        "."                                                      # the current directory
        "./bin"              )                                   # the current directory's "./bin"
 

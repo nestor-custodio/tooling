@@ -1,6 +1,6 @@
 #! /bin/env bash
 shopt -s lastpipe expand_aliases
-source /home/nestor/bin/set-path.src
+source '/home/nestor/bin/set-path.src'
 
 # ---
 
