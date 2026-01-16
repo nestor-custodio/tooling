@@ -9,7 +9,8 @@ source '/home/nestor/bin/std.lib'
 		Usage: $( script-name ) [TEXT]
 
 		Displays a 'tmux' toast for the given TEXT (or STDIN).
-		The toast duration is based on the length of text to display.
+		The toast duration is based on the length of text to display, unless
+		a '--hold' flag is given, in which case the toast will last "forever".
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -27,8 +28,15 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Options -- #
 
+	# Set defaults.
+
+	hold=''
+
+	# ---
+	# ---
+
 	CHAR_OPTS=''
-	LONG_OPTS='help'
+	LONG_OPTS='help,hold'
 
 	set-params
 	while true; do
@@ -36,6 +44,11 @@ source '/home/nestor/bin/std.lib'
 		case "$option" in
 			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
+
+			(--hold)
+				hold='1'
+				;;
+
 		esac
 	done
 
@@ -77,7 +90,10 @@ calc "${text_width} + 4" | store-as width
 calc "${text_height} + 2" | store-as height
 calc "min(${height}, 30)" | store-as height
 
-calc "min(3.00, max(0.75, ${#text} * 0.05))" | store-as timeout
+if [ -n "$hold" ]
+	then timeout='999999'
+	else calc "min(3.00, max(0.75, ${#text} * 0.05))" | store-as timeout
+fi
 
 
 tmux display-popup -E                       \
