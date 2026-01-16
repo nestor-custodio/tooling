@@ -72,7 +72,9 @@ source '/home/nestor/bin/std.lib'
 #
 #       (The `tmux status` guard prevents errors if we're not in tmux.)
 #
-tmux status &> /dev/null && eval "$( tmux show-environment SSH_CONNECTION )"
+[ -n "$TMUX" ] && tmux show-environment                                 \
+	                | grep -P --only-matching '(?<=SSH_CONNECTION=)[^ ]+' \
+	                | store-as SSH_CONNECTION
 
 
 CLIENT_IP="${SSH_CONNECTION%% *}"
