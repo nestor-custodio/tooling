@@ -21,7 +21,8 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 ## Non-Session/Window/Pane Commands
 
 	## Allow arbitrary shell command execution.
-	bind-key -n M-Space command-prompt -p "#[bold] (shell command)" "run-shell \"blindly %%\""
+	bind-key -n M-Space command-prompt -p "#[bold] (blind command)" "run-shell \"blindly %%\""
+  bind-key -n M-C-Space command-prompt -p "#[bold] (toast command)" "run-shell \"%% | toast --hold\""
 
 	## Allow in-context tmux command execution.
 	bind-key -n M-x command-prompt -p "#[bold] (tmux command)" "%%"
