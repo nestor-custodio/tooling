@@ -120,6 +120,7 @@ startup_log='/var/log/startup'
 			apt-get -qq update
 			apt-get -qqy install ansifilter      \
 			                     asciinema       \
+			                     at              \
 			                     build-essential \
 			                     byobu           \
 			                     fail2ban        \
