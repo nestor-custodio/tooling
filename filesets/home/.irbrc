@@ -75,6 +75,26 @@ def indifferent_hash
 end
 
 
+def print_table(data)
+  rows = data.as_json
+  return puts('(no data)') unless data.present?
+  return puts('(unexpected type)') unless data.is_a?(Array) || data.is_a?(Hash)
+
+  if rows.all? { |row| row.is_a? Array }
+    # noop
+  elsif rows.all? { |row| row.is_a? Hash }
+    headings = rows.first.keys.map(&:to_s)
+    rows.map! { |row| row.values_at(*headings) }
+  else
+    puts '(unexpected structure)' and return
+  end
+
+  gem! :'terminal-table'
+  puts Terminal::Table.new(headings:, rows:)
+end
+alias pt print_table
+
+
 
 
 ## --- REPL APPEARANCE ---
