@@ -1,6 +1,6 @@
 #! /bin/env ruby
 # rubocop:disable Layout,Metrics
-# rubocop:disable Naming/BlockForwarding,Style/ArgumentsForwarding # For older Ruby versions.
+# rubocop:disable Naming/BlockForwarding,Style/ArgumentsForwarding
 
 
 ## --- KERNEL-LEVEL STUFF ---
