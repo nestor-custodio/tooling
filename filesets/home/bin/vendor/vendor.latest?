@@ -125,6 +125,7 @@ case "$tool_name" in
 	(csview           )               ;&
 	(delta            )               ;&
 	(duckdb           )               ;&
+	(duf              )               ;&
 	(eget             )               ;&
 	(eza              )               ;&
 	(fd               )               ;&

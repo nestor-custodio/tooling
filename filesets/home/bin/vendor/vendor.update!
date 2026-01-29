@@ -106,6 +106,7 @@ source '/home/nestor/bin/std.lib'
 			(csview           ) update-tooling --asset='gnu'                                 ;;
 			(delta            ) update-tooling --asset='gnu'                                 ;;
 			(duckdb           ) update-tooling --asset='cli' --asset='.zip'                  ;;
+			(duf              ) update-tooling --asset='.tar.gz'                             ;;
 			(eget             ) update-tooling                                               ;;
 			(eza              ) update-tooling --asset='gnu.zip'                             ;;
 			(fd               ) update-tooling --asset='gnu'                                 ;;

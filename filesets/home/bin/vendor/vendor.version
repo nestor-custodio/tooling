@@ -151,6 +151,7 @@ case "$tool_name" in
 	(csview           ) get-version                  --puller='(?<=csview ).*'               ;;
 	(delta            ) get-version                  --puller='(?<=delta ).*'                ;;
 	(duckdb           ) get-version                  --puller='(?<=v).*?(?= )'               ;;
+	(duf              ) get-version                  --puller='(?<=duf ).*?(?= )'            ;;
 	(eget             ) get-version                  --puller='(?<=eget version ).*'         ;;
 	(eza              ) get-version                  --puller='(?<=v).*(?= )'                ;;
 	(fd               ) get-version                  --puller='(?<=fd ).*'                   ;;
