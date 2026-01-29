@@ -59,7 +59,8 @@ source '/home/nestor/bin/std.lib'
 		       -e 's# +$##'              \
 		       -e 's#\b0+#0#g'           \
 		       -e 's#\b0([^0.])#\1#g'    \
-		       -e 's#\.$##'
+		       -e 's#\.$##'              \
+		       -e 's#^gping-v##'
 	}
 
 	function check-version {
@@ -129,6 +130,7 @@ case "$tool_name" in
 	(fd               )               ;&
 	(fzf              )               ;&
 	(gh               )               ;&
+	(gping            )               ;&
 	(heroku           )               ;&
 	(hostctl          )               ;&
 	(hx               )               ;&

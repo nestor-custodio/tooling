@@ -156,6 +156,7 @@ case "$tool_name" in
 	(fd               ) get-version                  --puller='(?<=fd ).*'                   ;;
 	(fzf              ) get-version                  --puller='.*(?= )'                      ;;
 	(gh               ) get-version                  --puller='(?<=gh version ).*?(?= )'     ;;
+	(gping            ) get-version                  --puller='(?<=gping ).*'                ;;
 	(heroku           ) get-version                  --puller='(?<=heroku/).*?(?= )'         ;;
 	(hostctl          ) get-version                  --puller='(?<=hostctl version ).*'      ;;
 	(hx               ) get-version                  --puller='(?<=helix ).*?(?= )'          ;;
