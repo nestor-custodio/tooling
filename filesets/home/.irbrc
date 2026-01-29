@@ -122,7 +122,7 @@ alias pt print_table
     # Enumeration.
     ruby19_syntax: false ,  # Use Ruby 1.9 hash syntax in output?
     index:         true  ,  # Display array indices?
-    sort_keys:     true  ,  # Sort hash keys?
+    sort_keys:     false ,  # Sort hash keys?
     sort_vars:     true  ,  # Sort instance variables?
     limit:         100   ,  # Array/hash element limit.
 
