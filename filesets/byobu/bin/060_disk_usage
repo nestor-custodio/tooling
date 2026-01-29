@@ -22,13 +22,18 @@ length='20'
 
 df --type='ext4' --block-size='1' --output='size,avail' --total | tail -n1 | store-as total free
 
-user=0
+# A single `du` call for both locations is faster than 2 separate calls.
+#
 user_root='/home'
-[ -d "$user_root" ] && sudo du --bytes --summarize --one-file-system "$user_root" | cut -f1 | store-as user
-
-fscache=0
 fscache_root='/var/cache/fscache'
-[ -d "$fscache_root" ] && sudo du --bytes --summarize --one-file-system "$fscache_root" | cut -f1 | store-as fscache
+#
+sudo du --bytes --summarize --one-file-system "$user_root" "$fscache_root" 2> /dev/null | store-as all_usage
+#
+grep -F "$user_root" <<< "$all_usage" | cut -f1 | store-as user
+[ -n "$user" ] || user=0
+#
+grep -F "$fscache_root" <<< "$all_usage" | cut -f1 | store-as fscache
+[ -n "$fscache" ] || fscache=0
 
 calc "${total} - (${user} + ${fscache} + ${free})" | store-as system
 
