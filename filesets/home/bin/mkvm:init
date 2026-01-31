@@ -168,7 +168,7 @@ startup_log='/var/log/startup.log'
 		report 'installing additional dependencies'
 
 			global_installers="/home/nestor/bin/installers"
-			ls "$global_installers"/*.deb &> /dev/null && apt install "$global_installers"/*.deb > /dev/null
+			apt-get -qqy install "$global_installers"/*.deb 2> /dev/null
 
 			vm_specific_installer="/home/nestor/vm-scripts/$( instance name )/init"
 			[ -e "$vm_specific_installer" ] && "$vm_specific_installer"
