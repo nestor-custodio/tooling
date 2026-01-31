@@ -1,0 +1,63 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) IP_ADDRESS
+
+		Sets a "DENY FROM" firewall rule for the given IP_ADDRESS, and records it
+		in a blacklist file for posterity.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if invalid address.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	ip_address="$1" && shift
+	[ -n "$ip_address" ] || error-out 1 'no IP_ADDRES given'
+	'matches-line?' '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}' <<< "$ip_address" || error-out 1 'invalid IP_ADDRESS'
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+sudo ufw deny from "$ip_address"
+
+blacklist_file="$( script-real ).blacklist"
+'has-line?' "$ip_address" < "$blacklist_file" || echo "$ip_address" >> "$blacklist_file"
