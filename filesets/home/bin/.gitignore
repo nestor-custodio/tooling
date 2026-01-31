@@ -4,6 +4,10 @@
 /installers/*
 !/installers/.keep
 
+# Blacklists.
+#
+ban-ip.blacklist
+
 # Job-specific orchestrators.
 #
 tps
