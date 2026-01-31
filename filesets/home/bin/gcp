@@ -361,7 +361,7 @@ source '/home/nestor/bin/std.lib'
 
 			# Delete the Instance VM.
 			#
-			echo -n 'Tearing down  instance...'
+			echo -n 'Tearing down instance...'
 			yes | gcloud compute instances delete "$instance_name" &> /dev/null || error-out 3 'FAILED'
 			echo ' done.'
 			;;
