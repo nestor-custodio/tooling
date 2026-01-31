@@ -7,8 +7,8 @@ shopt -s lastpipe
 
 PATH=".:/home/nestor/bin:/home/nestor/bin/vendor:/snap/bin:$PATH"
 
-init_log='/var/log/init'
-startup_log='/var/log/startup'
+init_log='/var/log/init.log'
+startup_log='/var/log/startup.log'
 
 
 # ---
