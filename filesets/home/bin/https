@@ -123,8 +123,8 @@ function run_caddy {
 	tempname | store-as stdout_storage
 	tempname | store-as stderr_storage
 
-	access_log='/var/log/https-access-log'
-	status_log='/var/log/https-status-log'
+	access_log='/var/log/https-access.json'
+	status_log='/var/log/https-status.json'
 
 	sudo "$( real rotate )" "$access_log" --max=5 --chmod=666
 	sudo "$( real rotate )" "$status_log" --max=5 --chmod=666
