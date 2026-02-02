@@ -108,7 +108,13 @@ function peek { tee /dev/tty ;}
 
   # at
 
+  # `after 5 minutes <<< "command"`
+  #
   function after { at now + "$@" &> /dev/null ;}
+
+  # `whenever <<< "command"`
+  #
+  function whenever { at -q &> /dev/null ;}
 
 
   # bat
