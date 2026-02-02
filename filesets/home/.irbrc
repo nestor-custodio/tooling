@@ -184,6 +184,23 @@ class Object
     return public_methods if instance_of? Object
     public_methods - Object.methods
   end
+
+  # ---
+
+  def structure
+    case self
+    when nil then :-
+    when true, false then :boolean
+    when Array then [sample].map(&:structure)
+    when Hash then transform_values(&:structure)
+
+    when Float, BigDecimal then :decimal
+    when Integer then :integer
+    when Numeric then :numeric
+
+    else self.class.name.underscore.to_sym
+    end
+  end
 end
 
 
