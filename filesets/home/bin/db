@@ -65,7 +65,7 @@ source '/home/nestor/bin/std.lib'
 
 # DATABASE param processing.
 
-if 'matches?' '://' <<< "$database"; then
+if 'has?' '://' <<< "$database"; then
 	# We'll take a URL-like as-is.
 	#
 	database_url="$database"

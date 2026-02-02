@@ -221,7 +221,7 @@ case "$os_release" in
 		;;
 
 	*)
-		'matches-line?' '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
+		'has-line?' --regex '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
 		os-releases | grep -F "${os_release//./}" | tail -n1 | store-as image_family
 		;;
 esac
