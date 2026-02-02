@@ -221,7 +221,7 @@ shopt -s lastpipe
 
 			# Ensure we have a URL.
 			#
-			if ! 'matches?' '://' <<< "$database"; then
+			if ! 'has?' '://' <<< "$database"; then
 				case "$( yaml '.adapter' <<< "$primary_connection" 2> /dev/null )" in
 					(postgresql) database="postgres://${USER}@postgres/${database}" ;;
 					(mysql     ) database="mysql://${USER}@mysql/${database}" ;;

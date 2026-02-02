@@ -46,7 +46,7 @@ source '/home/nestor/bin/std.lib'
 
 	ip_address="$1" && shift
 	[ -n "$ip_address" ] || error-out 1 'no IP_ADDRES given'
-	'matches-line?' '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}' <<< "$ip_address" || error-out 1 'invalid IP_ADDRESS'
+	'has-line?' --regex '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}' <<< "$ip_address" || error-out 1 'invalid IP_ADDRESS'
 
 
 	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
