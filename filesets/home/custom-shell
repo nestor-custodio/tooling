@@ -88,11 +88,20 @@ function mkcd { mkdir -p "$1" && cd "$1" ;}
 # Make it easier to mirror one location into another.
 #
 function mirror {
+  local usage='Usage: mirror [SOURCE] [AS]'
+  printf '%s\n' -- "$@" | grep -x --quiet -- '--help' && echo "$usage" && return 0
+
+  local source="${1%/}/" && shift
+  local destination="${1%/}" && shift
+  { [ -z "$source" ] || [ -z "$destination" ] || [ "$#" != 0 ] ;} && echo "$usage" && return 1
+
+  [ -e "$destination" ] || mkdir -p "$destination" || return 2
+
   rsync --verbose                               \
         --recursive --force                     \
         --whole-file --delete-during            \
         --links --perms --executability --times \
-        "$@"
+        "$source" "$destination"
 }
 
 
