@@ -7,9 +7,10 @@ source '/home/nestor/bin/std.lib'
 
 	cat <<-EOF | store-as usage
 		Usage: $( script-name ) URL_OR_ID
+		       $( name-blanks ) ID_WORD_1 ID_WORD_2
 
-		Takes a pastebin URL_OR_ID and dumps its contents out to STDOUT.
-		(See https://paste.c-net.org/ for more information.)
+		Takes a pastebin URL_OR_ID (or an ID as two separate words) and dumps
+		its contents out to STDOUT. (See https://paste.c-net.org/ for details.)
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -43,11 +44,28 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	url_or_id="$1" && shift
-	[ -n "$url_or_id" ] || error-out 1 'no URL_OR_ID given'
+	case "$#" in
 
+		1)
+			url_or_id="$1" && shift
+			[ -n "$url_or_id" ] || error-out 1 'no URL_OR_ID given'
+			;;
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+		2)
+			id_word_1="$1" && shift
+			[ -n "$id_word_1" ] || error-out 1 'no ID_WORD_1 given'
+
+			id_word_2="$1" && shift
+			[ -n "$id_word_2" ] || error-out 1 'no ID_WORD_2 given'
+
+			url_or_id="${id_word_1}${id_word_2}"
+			;;
+
+		*)
+			error-out 1 'invalid option(s)'
+			;;
+
+	esac
 
 }
 
