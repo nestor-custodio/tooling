@@ -58,4 +58,4 @@ source '/home/nestor/bin/std.lib'
 # (https://paste.c-net.org/)
 
 pastebin_url='https://paste.c-net.org/'
-curl -s "${pastebin_url}/${url_or_id##*/}"
+curl -s "${pastebin_url}${url_or_id##*/}"
