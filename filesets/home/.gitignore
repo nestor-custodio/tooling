@@ -32,6 +32,10 @@
 **/db/migrate/202504*
 **/db/migrate/202505*
 **/db/migrate/202506*
+**/db/migrate/202507*
+**/db/migrate/202508*
+**/db/migrate/202509*
+**/db/migrate/202510*
 
 
 # Rules for use in the "tooling" repo specifically.
