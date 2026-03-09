@@ -334,6 +334,11 @@ function peek { tee /dev/tty ;}
   export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 
+  # geol
+
+  function eol { geol product extended "$@" ;}
+
+
   # git / lazygit
 
   function g { lazygit "$@" ;}
@@ -540,7 +545,7 @@ dev_helpers="${HOME}/bin/dev.src"
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
 export -f ... .... ..... ::                                                               \
-          a after break-out-of-links bw docker f fbat g gadd gblame gbranch gbranch?      \
+          a after break-out-of-links bw docker eol f fbat g gadd gblame gbranch gbranch?  \
           gcheckout gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph        \
           ghistory ginit gitignored glog gmerge gmove gmv gpatch gpop gpull gpush grebase \
           gremote greset gstage gstash gstatus gtag gtrack gunchange gundelete gunstage   \

@@ -111,6 +111,7 @@ source '/home/nestor/bin/std.lib'
 			(eza              ) update-tooling --asset='gnu.zip'                             ;;
 			(fd               ) update-tooling --asset='gnu'                                 ;;
 			(fzf              ) update-tooling                                               ;;
+			(geol             ) update-tooling --asset='^.json'                              ;;
 			(gping            ) update-tooling --asset='gnu'                                 ;;
 			(jq               ) update-tooling --asset='amd64'                               ;;
 			(lazydocker       ) update-tooling                                               ;;

@@ -130,6 +130,7 @@ case "$tool_name" in
 	(eza              )               ;&
 	(fd               )               ;&
 	(fzf              )               ;&
+	(geol             )               ;&
 	(gh               )               ;&
 	(gping            )               ;&
 	(heroku           )               ;&
