@@ -101,11 +101,11 @@ source '/home/nestor/bin/std.lib'
 
 			(bat              ) update-tooling --asset='gnu'                                 ;;
 			(btop             ) update-tooling                                               ;;
-			(bw               ) update-tooling --asset='bw-linux' --asset='.zip' --tag='cli' ;;
+			(bw               ) update-tooling --asset='bw-linux' --asset='^arm' --tag='cli' ;;
 			(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig'             ;;
 			(csview           ) update-tooling --asset='gnu'                                 ;;
 			(delta            ) update-tooling --asset='gnu'                                 ;;
-			(duckdb           ) update-tooling --asset='cli' --asset='.zip'                  ;;
+			(duckdb           ) update-tooling --asset='cli' --asset='^musl' --asset='.zip'  ;;
 			(duf              ) update-tooling --asset='.tar.gz'                             ;;
 			(eget             ) update-tooling                                               ;;
 			(eza              ) update-tooling --asset='gnu.zip'                             ;;
