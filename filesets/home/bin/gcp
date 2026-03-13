@@ -235,6 +235,10 @@ source '/home/nestor/bin/std.lib'
 					echo ' done.'
 					;;
 
+				('')
+					error-out 2 "VM '${instance_name}' not found"
+					;;
+
 				*)
 					error-out 2 "unable to start/wake a '${state}' VM"
 					;;
