@@ -13,6 +13,8 @@ source '/home/nestor/bin/std.lib'
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
+		  --margin                  Number of "spaces" around printed code.
+		                            Even margins look best. (Default is 0.)
 
 
 		Exit Status:
@@ -26,8 +28,15 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Options -- #
 
+	# Set defaults.
+
+	margin='0'
+
+	# ---
+	# ---
+
 	CHAR_OPTS=''
-	LONG_OPTS='help'
+	LONG_OPTS='help,margin:'
 
 	set-params
 	while true; do
@@ -35,6 +44,13 @@ source '/home/nestor/bin/std.lib'
 		case "$option" in
 			(--help) exit-out "$usage" ;;
 			(--) break ;;  # No more options.
+
+
+			(--margin)
+				margin="$1" && shift
+				'numeric?' "$margin" || error-out 1 'margin must be numeric'
+				;;
+
 		esac
 	done
 
@@ -44,5 +60,36 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+# Generate the raw code.
+#
 qrencode --8bit --type=utf8 --margin=1 --output=- "$@" \
-| sed -r -e '1{ h; s|.|▄|g; s|^| |; p; x; }' -e 's|^| |' -e '${ p; z; }'
+| sed -r -e '1{ h; s|.|▄|g; p; x; }'                   \
+| store-as qr_code
+
+
+# Print the code with requested margin.
+
+if [ "$margin" == '0' ]; then
+
+  # No margin.
+
+	echo "$qr_code"
+
+else
+
+	# Add the required spaces.
+
+	side_margin="$margin"
+	side_margin_string="$( printf "%${side_margin}s" '' )"
+
+	calc "floor(${margin} / 2)" | store-as top_margin
+	calc "ceil(${margin} / 2)" | store-as bottom_margin
+
+	wc -L <<< "$qr_code" | store-as code_width
+	calc "${code_width} + (2 * ${side_margin})" | store-as full_width
+
+	seq 1 "$top_margin" | while read -r line; do printf "%${full_width}s\n" ''; done
+	sed -r -e "s|^|${side_margin_string}|" -e "s|$|${side_margin_string}|" <<< "$qr_code"
+	seq 1 "$bottom_margin" | while read -r line; do printf "%${full_width}s\n" ''; done
+
+fi

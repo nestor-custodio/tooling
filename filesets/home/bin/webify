@@ -102,8 +102,7 @@ webroot_url="https://$( hostname --short ).custodio.app/"
 echo
 echo "Serving \"${webroot}\" on:"
 echo "${webroot_url} ..."
-echo
-qr "$webroot_url"
+qr --margin='2' "$webroot_url"
 
 
 available-port | store-as port

@@ -190,7 +190,7 @@ case "$command" in
 		caddy_config="${caddy_config/\#URI_BLACKLIST#/$uri_blacklist}"
 
 		run_caddy
-		qr "https://$( hostname --short ).custodio.app/"
+		qr --margin='2' "https://$( hostname --short ).custodio.app/"
 		;;
 
 	(off|stop)
