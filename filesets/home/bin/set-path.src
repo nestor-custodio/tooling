@@ -8,7 +8,6 @@ shopt -s lastpipe
 [ -n "$_SET_PATH_CALLED" ] && return
 export _SET_PATH_CALLED='1'
 
-
 # We don't want to use `$HOME` directly
 # (in case this is sourced by/as another user).
 #
@@ -17,26 +16,36 @@ HOME_REFERENCE="$( realpath --logical "${BASH_SOURCE[0]%/*}/.." )"
 
 # Wrap the `$PATH` with our own list of sources.
 
-paths=("${HOME_REFERENCE}/vm-scripts/$( hostname --short )/bin" # VM-specific overrides
-       "${HOME_REFERENCE}/bin"                                  # our custom tooling
-       "${HOME_REFERENCE}/bin/vendor"                           # our vendor tooling
-       "${HOME_REFERENCE}/.local/bin"                           # native user binaries
-       "${HOME_REFERENCE}/.gem/bin"                             # ruby binaries (for apt/snap installs)
-       "${HOME_REFERENCE}/.nodes/bin"                           # node binaries
-       "${HOME_REFERENCE}/.yarn/bin"                            # yarn binaries
-       "/snap/bin"                                              # snap packages
-       "${PATH}"                                                # native system binaries
+paths=("${HOME_REFERENCE}/vm-scripts/$( hostname --short )/bin"  # VM-specific overrides
+       "${HOME_REFERENCE}/bin"                                   # our custom tooling
+       "${HOME_REFERENCE}/bin/vendor"                            # our vendor tooling
+       "${HOME_REFERENCE}/.local/bin"                            # native user binaries
+       "${HOME_REFERENCE}/.gem/bin"                              # ruby binaries (for apt/snap installs)
+       "${HOME_REFERENCE}/.nodes/bin"                            # node binaries
+       "${HOME_REFERENCE}/.yarn/bin"                             # yarn binaries
+       "/snap/bin"                                               # snap packages
+       "$PATH"                                                   # native system binaries
 
-       "/usr/local/sbin"                                        # usually included in base PATH, but 'cron'
-       "/usr/local/bin"                                         # ... processes don't have that set, so we're
-       "/usr/sbin"                                              # ... including them here to keep scripts from
-       "/usr/bin"                                               # ... breaking when run as scheduled tasks
+       "/usr/local/sbin"                                         # usually included in base PATH, but 'cron'
+       "/usr/local/bin"                                          # ... processes don't have that set, so we're
+       "/usr/sbin"                                               # ... including them here to keep scripts from
+       "/usr/bin"                                                # ... breaking when run as scheduled tasks
 
-       "."                                                      # the current directory
-       "./bin"              )                                   # the current directory's "./bin"
+       "."                                                       # the current directory
+       "./bin"                                                 ) # the current directory's "./bin"
 
 old_ifs="$IFS"; IFS=':'
 export PATH="${paths[*]}"
+IFS="$old_ifs"
+
+
+# Expose libraries no longer available in the repo archive.
+
+paths=("${HOME_REFERENCE}/bin/builds/libxml2-dev-2.9.14/lib"  # `hurl` needs libxml2-dev < 2.12.7
+       "${LD_LIBRARY_PATH:-/lib}"                           ) # native system lib paths
+
+old_ifs="$IFS"; IFS=':'
+export LD_LIBRARY_PATH="${paths[*]}"
 IFS="$old_ifs"
 
 

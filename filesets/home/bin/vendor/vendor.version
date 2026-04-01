@@ -161,6 +161,7 @@ case "$tool_name" in
 	(gping            ) get-version                  --puller='(?<=gping ).*'                ;;
 	(heroku           ) get-version                  --puller='(?<=heroku/).*?(?= )'         ;;
 	(hostctl          ) get-version                  --puller='(?<=hostctl version ).*'      ;;
+	(hurl             ) get-version                  --puller='(?<=hurl ).*?(?= )'           ;;
 	(hx               ) get-version                  --puller='(?<=helix ).*?(?= )'          ;;
 	(jq               ) get-version                                                          ;;
 	(lazydocker       ) get-version                  --puller='(?<=Version: ).*'             ;;
