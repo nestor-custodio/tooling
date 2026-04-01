@@ -215,11 +215,14 @@ source '/home/nestor/bin/set-path.src'
 # -- Parameter Processing -- #
 
 
-	# Blind check for a '--help' param.
-	# Note this DOES NOT MODIFY THE PARAM LIST.
+	# Blind checks for a '--help' param.
+	# Note these DO NOT MODIFY THE PARAM LIST.
 	#
 	# shellcheck disable=SC2142
 	alias 'help-param?'='printf "%s\n" -- "$@" | grep -x --quiet -- "--help"'
+	#
+	# shellcheck disable=SC2142
+	alias 'help-param-only?'='[ "$*" == "--help" ]'
 
 	# Modifies the param list to facilitate processing.
 	#

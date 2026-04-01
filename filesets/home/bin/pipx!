@@ -6,9 +6,13 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name )
+		Usage: $( script-name ) [ARGS]
 
 		Ensures 'pipx' is available.
+		If any ARGS are given, 'pipx' is then invoked with the given ARGS.
+
+		NOTE: To allow passing ARGS through to 'pipx', the '--help' flag
+		      will only output this help text when it's the *only* param given.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -16,35 +20,16 @@ source '/home/nestor/bin/std.lib'
 
 
 		Exit Status:
-		  0  if OK,
-		  1  if invalid option.
+		  0  if OK.
 	EOF
 
 }
 
 # ---
 
-{ # -- Parameter Processing: Options -- #
-
-	# Set defaults.
-
-	CHAR_OPTS=''
-	LONG_OPTS='help'
-
-	set-params
-	while true; do
-		option="$1" && shift
-		case "$option" in
-			(--help) exit-out "$usage" ;;
-			(--) break ;;  # No more options.
-		esac
-	done
-
-}
-
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	help-param-only? && { echo "$usage"; exit-out 0 ;}
 
 }
 
@@ -52,4 +37,20 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-command -V pipx &> /dev/null || sudo apt-get -qqy install pipx
+if [ "$#" == 0 ]; then
+
+	# Install 'pipx' (visibly), if needed.
+	#
+	command -V pipx &> /dev/null || sudo apt-get -qqy install pipx
+
+else
+
+	# Install 'pipx' (quietly), if needed.
+	#
+	command -V pipx &> /dev/null || sudo apt-get -qqy install pipx &> /dev/null
+
+	# Run `pipx` with the given ARGS.
+	#
+	pipx "$@"
+
+fi

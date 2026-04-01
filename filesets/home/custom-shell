@@ -483,13 +483,10 @@ function peek { tee /dev/tty ;}
 
   # posting
 
-  # Allow lazy-installing of the `posting` REST client.
-  #
   function posting {
-    if ! real posting &> /dev/null; then
-      pipx! &> /dev/null
-      pipx install posting
-    fi
+    # Ensure `posting` (via pipx).
+    #
+    real posting &> /dev/null || pipx! install posting
 
     "$( real posting )" "$@"
   }
