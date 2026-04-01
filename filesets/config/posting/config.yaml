@@ -1,0 +1,26 @@
+theme: 'flexoki'
+layout: 'vertical'
+pager: "bat --language='txt'"
+pager_json: "bat --language='json'"
+
+
+heading:
+  visible: true
+  show_host: false
+  show_version: true
+
+url_bar:
+  show_value_preview: true
+  hide_secrets_in_value_preview: true
+
+collection_browser:
+  position: 'left'
+  show_on_startup: true
+
+response:
+  prettify_json: true
+  show_size_and_time: true
+
+
+command_palette:
+  theme_preview: true
