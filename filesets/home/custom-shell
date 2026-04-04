@@ -341,7 +341,7 @@ function peek { tee /dev/tty ;}
 
   # gemini
 
-  function hey { gemini --prompt "$*" && echo ;}
+  function hey { gemini --approval-mode='plan' --prompt "$*" && echo ;}
 
 
   # git / lazygit
