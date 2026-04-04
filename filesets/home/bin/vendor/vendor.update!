@@ -46,9 +46,10 @@ source '/home/nestor/bin/std.lib'
 		# Centralize aliases.
 		#
 		case "$_tool_name" in
-			(helix) echo 'hx'                ;;
-			(k    ) echo 'heroku'            ;;
-			(sws  ) echo 'static-web-server' ;;
+			(helix   ) echo 'hx'                ;;
+			(k       ) echo 'heroku'            ;;
+			(smartcat) echo 'sc'                ;;
+			(sws     ) echo 'static-web-server' ;;
 
 			*) echo "$_tool_name" ;;
 		esac
@@ -123,6 +124,7 @@ source '/home/nestor/bin/std.lib'
 			(rclone           ) update-tooling --asset='zip'                                 ;;
 			(rg               ) update-tooling                                               ;;
 			(ruff             ) update-tooling --asset='gnu'                                 ;;
+			(sc               ) update-tooling --file='sc'                                   ;;
 			(shellcheck       ) update-tooling                                               ;;
 			(static-web-server) update-tooling --asset='gnu'                                 ;;
 			(usql             ) update-tooling --asset='^static'                             ;;

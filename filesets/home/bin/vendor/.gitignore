@@ -37,6 +37,7 @@
 /rclone
 /rg
 /ruff
+/sc
 /shellcheck
 /static-web-server
 /usql

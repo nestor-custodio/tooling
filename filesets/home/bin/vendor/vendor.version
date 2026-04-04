@@ -133,9 +133,10 @@ source '/home/nestor/bin/std.lib'
 # Allow aliases.
 #
 case "$tool_name" in
-	(helix) tool_name='hx'                ;;
-	(k    ) tool_name='heroku'            ;;
-	(sws  ) tool_name='static-web-server' ;;
+	(helix   ) tool_name='hx'                ;;
+	(k       ) tool_name='heroku'            ;;
+	(smartcat) tool_name='sc'                ;;
+	(sws     ) tool_name='static-web-server' ;;
 esac
 
 
@@ -173,6 +174,7 @@ case "$tool_name" in
 	(rclone           ) get-version --cmd='version'  --puller='(?<=rclone v).*'              ;;
 	(rg               ) get-version                  --puller='(?<=ripgrep ).*?(?= )'        ;;
 	(ruff             ) get-version                  --puller='(?<=ruff ).*'                 ;;
+	(sc               ) get-version                  --puller='(?<= )[^ ]+$'                 ;;
 	(shellcheck       ) get-version                  --puller='(?<=version: ).*'             ;;
 	(static-web-server) get-version                  --puller='(?<=Version: ).*'             ;;
 	(usql             ) get-version                  --puller='(?<=usql ).*'                 ;;
