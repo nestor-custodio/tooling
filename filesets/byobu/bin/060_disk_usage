@@ -8,9 +8,10 @@ source "$( script-path )/status_helpers.lib"
 
 # Note we're producing string output where each character is one of:
 #
-base='#[fg=green]⠿'   # (a "base" block)
-data='#[fg=yellow]⠿'  # (a "data" block)
-null='#[fg=red]⠒'     # (a "null" block)
+system_block='#[fg=red]⠿'      # (a "system data" block)
+user_block='#[fg=orange]⠿'     # (a "user data" block)
+fscache_block='#[fg=yellow]⠒'  # (an "fscache data" block)
+free_block='#[fg=green]⠒'      # (a "free space" block)
 #
 # ... with a bar of length:
 #
@@ -38,11 +39,13 @@ grep -F "$fscache_root" <<< "$all_usage" | cut -f1 | store-as fscache
 calc "${total} - (${user} + ${fscache} + ${free})" | store-as system
 
 
-calc "ceil ( ${system}              / ${total} * ${length} )" | store-as base_blocks
-calc "ceil ( (${user} + ${fscache}) / ${total} * ${length} )" | store-as data_blocks
-calc "floor( ${free}                / ${total} * ${length} )" | store-as null_blocks
+calc "ceil ( ${system}  / ${total} * ${length} )" | store-as system_blocks
+calc "ceil ( ${user}    / ${total} * ${length} )" | store-as user_blocks
+calc "ceil ( ${fscache} / ${total} * ${length} )" | store-as fscache_blocks
+calc "floor( ${free}    / ${total} * ${length} )" | store-as free_blocks
 
 
-left-piped " \uf487 %s%s%s" "$( seq "$base_blocks" | map printf "$base" 2>/dev/null )" \
-                            "$( seq "$data_blocks" | map printf "$data" 2>/dev/null )" \
-                            "$( seq "$null_blocks" | map printf "$null" 2>/dev/null )"
+left-piped " \uf487 %s%s%s%s" "$( seq "$system_blocks"  | map printf "$system_block"  2>/dev/null )" \
+                              "$( seq "$user_blocks"    | map printf "$user_block"    2>/dev/null )" \
+                              "$( seq "$fscache_blocks" | map printf "$fscache_block" 2>/dev/null )" \
+                              "$( seq "$free_blocks"    | map printf "$free_block"    2>/dev/null )"
