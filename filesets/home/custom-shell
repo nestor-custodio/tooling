@@ -193,7 +193,7 @@ function peek { tee /dev/tty ;}
   function docker {
     # Ensure `docker`.
     #
-    real docker &> /dev/null || { sudo apt install -qqy docker.io || return; echo ;}
+    real docker &> /dev/null || { sudo apt install -qqy docker.io && echo ;} || return 1
     local docker_binary="$( real docker )"
 
     # Pass empty requests through to the binary.
@@ -212,7 +212,7 @@ function peek { tee /dev/tty ;}
         # See: https://github.com/docker/buildx#manual-download
         #
         local docker_buildx_binary="${HOME}/.docker/cli-plugins/docker-buildx"
-        [ -x "$docker_buildx_binary" ] || eget --quiet 'docker/buildx' --asset='^.json' --to="$docker_buildx_binary"
+        [ -x "$docker_buildx_binary" ] || eget --quiet 'docker/buildx' --asset='^.json' --to="$docker_buildx_binary" || return 1
 
         "$docker_binary" "$subcommand" "$@"
         ;;
@@ -222,7 +222,7 @@ function peek { tee /dev/tty ;}
         # See: https://docs.docker.com/compose/install/linux/
         #
         local docker_compose_binary="${HOME}/.docker/cli-plugins/docker-compose"
-        [ -x "$docker_compose_binary" ] || eget --quiet 'docker/compose' --asset='^.json' --to="$docker_compose_binary"
+        [ -x "$docker_compose_binary" ] || eget --quiet 'docker/compose' --asset='^.json' --to="$docker_compose_binary" || return 1
 
         "$docker_binary" compose "$@"
         ;;
@@ -447,7 +447,7 @@ function peek { tee /dev/tty ;}
   function lazydocker {
     # Ensure `docker` (via our own shim, define above).
     #
-    docker version &> /dev/null
+    docker version &> /dev/null || return 1
 
     "$( real lazydocker )" "$@"
   }
@@ -486,7 +486,7 @@ function peek { tee /dev/tty ;}
   function posting {
     # Ensure `posting` (via pipx).
     #
-    real posting &> /dev/null || pipx! install posting
+    real posting &> /dev/null || pipx! install posting || return 1
 
     "$( real posting )" "$@"
   }
@@ -530,7 +530,7 @@ function peek { tee /dev/tty ;}
   function wut {
     # Ensure `wut-cli` (via pipx).
     #
-    real wut &> /dev/null || pipx! install wut-cli
+    real wut &> /dev/null || pipx! install wut-cli || return 1
 
     OPENAI_BASE_URL='https://generativelanguage.googleapis.com/v1beta/openai' \
     OPENAI_API_KEY="$( creds gemini/api-key )"                                \

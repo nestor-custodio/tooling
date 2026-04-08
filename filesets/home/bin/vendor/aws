@@ -7,7 +7,7 @@ source '/home/nestor/bin/std.lib'
 
 # Ensure the "aws-cli" snap is installed.
 #
-snap list 'aws-cli' &> /dev/null || sudo snap install 'aws-cli' --classic
+snap list 'aws-cli' &> /dev/null || sudo snap install 'aws-cli' --classic || error-out 1 "unable to install 'aws-cli' snap"
 
 # Pass the request through to the snap binary.
 #
