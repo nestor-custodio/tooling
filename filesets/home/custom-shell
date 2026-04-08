@@ -525,6 +525,20 @@ function peek { tee /dev/tty ;}
   }
 
 
+  # wut
+
+  function wut {
+    # Ensure `wut-cli` (via pipx).
+    #
+    real wut &> /dev/null || pipx! install wut-cli
+
+    OPENAI_BASE_URL='https://generativelanguage.googleapis.com/v1beta/openai' \
+    OPENAI_API_KEY="$( creds gemini/api-key )"                                \
+    OPENAI_MODEL='gemini-flash-latest'                                        \
+    "$( real wut )"
+  }
+
+
 # ---
 
 
@@ -566,7 +580,7 @@ export -f ... .... ..... ::                                                     
           ghistory ginit gitignored glog gmerge gmove gmv gpatch gpop gpull gpush grebase \
           gremote greset gstage gstash gstatus gtag gtrack gunchange gundelete gunstage   \
           guntrack h hbat helix hex hey k lazydocker less list list+ m mirror mkcd peek   \
-          posting real redo rg shellcheck
+          posting real redo rg shellcheck wut
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",
