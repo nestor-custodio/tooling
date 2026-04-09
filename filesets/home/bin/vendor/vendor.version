@@ -157,7 +157,6 @@ case "$tool_name" in
 	(eget             ) get-version                  --puller='(?<=eget version ).*'         ;;
 	(eza              ) get-version                  --puller='(?<=v).*(?= )'                ;;
 	(fd               ) get-version                  --puller='(?<=fd ).*'                   ;;
-	(fzf              ) get-version                  --puller='.*(?= )'                      ;;
 	(geol             ) get-version --cmd='version'                                          ;;
 	(gh               ) get-version                  --puller='(?<=gh version ).*?(?= )'     ;;
 	(gping            ) get-version                  --puller='(?<=gping ).*'                ;;

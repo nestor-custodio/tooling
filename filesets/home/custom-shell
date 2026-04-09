@@ -326,28 +326,6 @@ function peek { tee /dev/tty ;}
   function redo { fc -s "$@" ;}
 
 
-  # fzf
-
-  fzf_keybinding_spec="ctrl-i:up,ctrl-k:down,space:toggle,ctrl-space:toggle"
-
-  fzf_preview_command="file --brief --mime-type -- {} | 'starts-with?' 'text/' \
-                       && bat --force-colorization --line-range='1:200' -- {}  \
-                       || echo '(non-text content)'"
-
-  export FZF_DEFAULT_COMMAND="fd --hidden --exclude='.git/' --color='always'"
-  export FZF_DEFAULT_OPTS="--ansi                               \
-                           --cycle                              \
-                           --header=''                          \
-                           --info='inline'                      \
-                           --keep-right                         \
-                           --layout='reverse'                   \
-                                                                \
-                           --bind='${fzf_keybinding_spec}'      \
-                                                                \
-                           --preview-window='hidden'            \
-                           --preview=\"${fzf_preview_command}\" "
-
-
   # gcc
 
   # Colorize warnings/errors.

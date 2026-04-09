@@ -131,7 +131,6 @@ case "$tool_name" in
 	(eget             )               ;&
 	(eza              )               ;&
 	(fd               )               ;&
-	(fzf              )               ;&
 	(geol             )               ;&
 	(gh               )               ;&
 	(gping            )               ;&
