@@ -141,6 +141,7 @@ case "$tool_name" in
 	(jq               )               ;&
 	(lazydocker       )               ;&
 	(lazygit          )               ;&
+	(lazyjournal      )               ;&
 	(n                )               ;&
 	(q                )               ;&
 	(rclone           )               ;&

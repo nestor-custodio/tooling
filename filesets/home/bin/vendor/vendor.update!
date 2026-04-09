@@ -118,6 +118,7 @@ source '/home/nestor/bin/std.lib'
 			(jq               ) update-tooling --asset='amd64'                               ;;
 			(lazydocker       ) update-tooling                                               ;;
 			(lazygit          ) update-tooling                                               ;;
+			(lazyjournal      ) update-tooling                                               ;;
 			(marksman         ) update-tooling                                               ;;
 			(n                ) update-tooling --source                                      ;;
 			(q                ) update-tooling                                               ;;
