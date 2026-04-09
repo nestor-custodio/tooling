@@ -11,6 +11,7 @@
 /caddy
 /chruby-source
 /chruby-source.auto
+/croc
 /crypt
 /csview
 /delta
@@ -32,7 +33,6 @@
 /marksman
 /n
 /osc52
-/portal
 /q
 /rclone
 /rg

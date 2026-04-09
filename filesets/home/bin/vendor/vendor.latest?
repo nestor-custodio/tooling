@@ -123,6 +123,7 @@ case "$tool_name" in
 	(btop             )               ;&
 	(caddy            )               ;&
 	(chruby           )               ;&
+	(croc             )               ;&
 	(csview           )               ;&
 	(delta            )               ;&
 	(duckdb           )               ;&
@@ -142,7 +143,6 @@ case "$tool_name" in
 	(lazydocker       )               ;&
 	(lazygit          )               ;&
 	(n                )               ;&
-	(portal           )               ;&
 	(q                )               ;&
 	(rclone           )               ;&
 	(rg               )               ;&

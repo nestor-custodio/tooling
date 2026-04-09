@@ -182,6 +182,27 @@ function peek { tee /dev/tty ;}
   export CDPATH=".:${HOME}:${HOME}/docs"
 
 
+  # croc
+
+  # Dead-simple "send/receive" function pair that uses
+  # *simple passphrases* (using only 2 *commonly-used* words).
+
+  function send {
+    wordlist_url='https://raw.githubusercontent.com/bitcoin/bips/refs/heads/master/bip-0039/english.txt'
+    passphrase="$( curl --silent "$wordlist_url" | shuf -n2 | paste --serial --delimiter='-' )"
+
+    croc send --code="$passphrase" "$@"
+  }
+
+  function receive {
+    local old_ifs="$IFS"; IFS='-'
+    passphrase="$( echo "$*" )"
+    IFS="$old_ifs"
+
+    croc --yes "$passphrase"
+  }
+
+
   # docker
 
   # Make `docker` easier to use by:
@@ -582,7 +603,7 @@ export -f ... .... ..... ::                                                     
           ghistory ginit gitignored glog gmerge gmove gmv gpatch gpop gpull gpush grebase \
           gremote greset gstage gstash gstatus gtag gtrack gunchange gundelete gunstage   \
           guntrack h hbat helix hex hey k lazydocker less list list+ m mirror mkcd peek   \
-          posting real redo rg shellcheck wut
+          posting real receive redo rg send shellcheck wut
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",

@@ -104,6 +104,7 @@ source '/home/nestor/bin/std.lib'
 			(btop             ) update-tooling                                               ;;
 			(bw               ) update-tooling --asset='bw-linux' --asset='^arm' --tag='cli' ;;
 			(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig'             ;;
+			(croc             ) update-tooling --asset='Linux-64bit'                         ;;
 			(csview           ) update-tooling --asset='gnu'                                 ;;
 			(delta            ) update-tooling --asset='gnu'                                 ;;
 			(duckdb           ) update-tooling --asset='cli' --asset='^musl' --asset='.zip'  ;;
@@ -135,7 +136,6 @@ source '/home/nestor/bin/std.lib'
 
 			(hostctl          ) update-deb-tooling                               ;;
 			(gh               ) update-deb-tooling                               ;;
-			(portal           ) update-deb-tooling --asset='.deb'                ;;
 			(watchexec        ) update-deb-tooling --asset='gnu' --asset='^deb.' ;;
 
 
