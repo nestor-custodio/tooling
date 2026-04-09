@@ -485,6 +485,7 @@ function peek { tee /dev/tty ;}
 
   function posting {
     # Ensure `posting` (via pipx).
+    # See: https://github.com/darrenburns/posting
     #
     real posting &> /dev/null || pipx! install posting || return 1
 
@@ -529,6 +530,7 @@ function peek { tee /dev/tty ;}
 
   function wut {
     # Ensure `wut-cli` (via pipx).
+    # See: https://github.com/shobrook/wut
     #
     real wut &> /dev/null || pipx! install wut-cli || return 1
 
