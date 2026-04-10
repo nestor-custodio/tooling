@@ -201,6 +201,7 @@ class Object
     else self.class.name.underscore.to_sym
     end
   end
+  alias shape structure
 end
 
 
@@ -226,6 +227,17 @@ class String
 
   def is
     inquiry
+  end
+
+
+  def io(&) = (block_given? ? StringIO.open(self, &) : StringIO.new(self))
+
+  def pipe_to(*shell_command_parts)
+    require 'open3'
+    (output, status) = Open3.capture2e(*shell_command_parts, stdin_data: self)
+    raise SystemCallError, output unless status.success?
+
+    output
   end
 end
 
