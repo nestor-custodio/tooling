@@ -100,6 +100,7 @@ source '/home/nestor/bin/std.lib'
 
 			# Straight-forward `eget` pulls.
 
+			(agg              ) update-tooling --asset='gnu'                                 ;;
 			(bat              ) update-tooling --asset='gnu'                                 ;;
 			(btop             ) update-tooling                                               ;;
 			(bw               ) update-tooling --asset='bw-linux' --asset='^arm' --tag='cli' ;;

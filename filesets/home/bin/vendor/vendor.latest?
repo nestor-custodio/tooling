@@ -119,6 +119,7 @@ case "$tool_name" in
 
 	# Straight-forward checks.
 
+	(agg              )               ;&
 	(bat              )               ;&
 	(btop             )               ;&
 	(caddy            )               ;&

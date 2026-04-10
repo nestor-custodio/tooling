@@ -145,6 +145,7 @@ case "$tool_name" in
 
 	# Pullable items.
 
+	(agg              ) get-version                  --puller='(?<=agg ).*'                  ;;
 	(bat              ) get-version                  --puller='(?<=bat ).*?(?= )'            ;;
 	(btop             ) get-version                  --puller='(?<=btop version: ).*?(?=\+)' ;;
 	(bw               ) get-version                                                          ;;
