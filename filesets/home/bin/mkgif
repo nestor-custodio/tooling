@@ -1,0 +1,127 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) GIF_FILENAME [-- AGG OPTIONS]
+
+		Makes an 'asciinema' recording, then converts that into a GIF.
+
+		The asciinema recording is kept local (not uploaded to the site),
+		and used only as an intermediate step unless requested otherwise.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --keep=CAST_FILENAME      Keep the asciinema "cast" file.
+		                            (Default is "GIF_FILENAME.cast".)
+
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if asciinema failure,
+		  3  if gif conversion failure.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	keep_file=''
+
+	# ---
+	# ---
+
+	CHAR_OPTS=''
+	LONG_OPTS='help,keep::,cast::'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+
+
+			(--keep|--cast)
+				keep_file='1'
+				cast_filename="$1" && shift
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	gif_filename="$1" && shift
+	[ -n "$gif_filename" ] || error-out 1 'no GIF_FILENAME given'
+
+}
+
+# ---
+# ---
+
+
+# Ensure a filename for the asciinema recording.
+#
+if [ -n "$keep_file" ]; then
+
+	# We want to keep the asciinema file.
+
+	# Default to "GIF_FILENAME.cast" if no filename was given.
+	#
+	[ -n "$cast_filename" ] || cast_filename="${gif_filename%.gif}.cast"
+
+else
+
+	# Trash the asciinema file when we're done.
+
+	tempname | store-as cast_filename
+	set-trap 'EXIT' "rm '${cast_filename}'"
+
+fi
+
+
+# Ensure we have a NerdFont available.
+#
+fc-list : family | store-as nerdfonts
+'has?' 'Nerd Font' <<< "$nerdfonts" && nerdfont_installed='1'
+ls "${HOME}/.local/share/fonts"/*NerdFont* &> /dev/null && nerdfont_available='1'
+[ -z "$nerdfont_installed" ] && [ -n "$nerdfont_available" ] && fc-cache --force --verbose &> /dev/null && nerdfont_installed='1'
+
+
+# Record ...
+#
+echo -e "(Remember it's 'exit' or CTRL+D to stop the recording.)\n"
+asciinema rec --quiet --overwrite "$cast_filename" || exit-out 2 'error during asciinema recording'
+
+
+# ... and convert.
+#
+if [ -n "$nerdfont_installed" ]; then
+
+	# Pick a font.
+	#
+	'has?' 'SauceCodePro NFM' <<< "$nerdfonts" && font='SauceCodePro NFM'
+	[ -n "$font" ] || head -n1 <<< "$nerdfonts" | cut -f1 -d',' | store-as font
+
+else
+
+	# Set `agg`s default font.
+	#
+	font='JetBrains Mono,Fira Code,SF Mono,Menlo,Consolas,DejaVuSans Mono,Liberation Mono'
+
+fi
+echo -e "\nGenerating GIF:"
+agg --theme='monokai' --font-family="$font" --font-size='14' "$@" "$cast_filename" "$gif_filename" || exit-out 3 'error during gif conversion'
