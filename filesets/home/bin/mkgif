@@ -93,12 +93,14 @@ else
 fi
 
 
-# Ensure we have a NerdFont available.
+# Ensure we have a NerdFont available (if font processing is available).
 #
-fc-list : family | store-as nerdfonts
-'has?' 'Nerd Font' <<< "$nerdfonts" && nerdfont_installed='1'
-ls "${HOME}/.local/share/fonts"/*NerdFont* &> /dev/null && nerdfont_available='1'
-[ -z "$nerdfont_installed" ] && [ -n "$nerdfont_available" ] && fc-cache --force --verbose &> /dev/null && nerdfont_installed='1'
+if command -v fontconfig &> /dev/null || sudo apt-get -qqy install fontconfig &> /dev/null; then
+	fc-list : family | store-as nerdfonts
+	'has?' 'Nerd Font' <<< "$nerdfonts" && nerdfont_installed='1'
+	ls "${HOME}/.local/share/fonts"/*NerdFont* &> /dev/null && nerdfont_available='1'
+	[ -z "$nerdfont_installed" ] && [ -n "$nerdfont_available" ] && fc-cache --force --verbose &> /dev/null && nerdfont_installed='1'
+fi
 
 
 # Record ...
@@ -106,22 +108,21 @@ ls "${HOME}/.local/share/fonts"/*NerdFont* &> /dev/null && nerdfont_available='1
 echo -e "(Remember it's 'exit' or CTRL+D to stop the recording.)\n"
 asciinema rec --quiet --overwrite "$cast_filename" || exit-out 2 'error during asciinema recording'
 
-
 # ... and convert.
 #
 if [ -n "$nerdfont_installed" ]; then
 
 	# Pick a font.
 	#
-	'has?' 'SauceCodePro NFM' <<< "$nerdfonts" && font='SauceCodePro NFM'
-	[ -n "$font" ] || head -n1 <<< "$nerdfonts" | cut -f1 -d',' | store-as font
+	'has?' 'SauceCodePro NFM' <<< "$nerdfonts" && gif_font='SauceCodePro NFM'
+	[ -n "$gif_font" ] || head -n1 <<< "$nerdfonts" | cut -f1 -d',' | store-as font
 
 else
 
 	# Set `agg`s default font.
 	#
-	font='JetBrains Mono,Fira Code,SF Mono,Menlo,Consolas,DejaVuSans Mono,Liberation Mono'
+	gif_font='JetBrains Mono,Fira Code,SF Mono,Menlo,Consolas,DejaVuSans Mono,Liberation Mono'
 
 fi
 echo -e "\nGenerating GIF:"
-agg --theme='monokai' --font-family="$font" --font-size='14' "$@" "$cast_filename" "$gif_filename" || exit-out 3 'error during gif conversion'
+agg --theme='monokai' --font-family="$gif_font" --font-size='14' "$@" "$cast_filename" "$gif_filename" || exit-out 3 'error during gif conversion'
