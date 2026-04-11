@@ -11,9 +11,9 @@
 #   - black           - red            - green
 #   - yellow          - blue           - magenta
 #   - cyan            - white          - black
-#   - brightblack     - brightred      - brightgreen
+#   - brightblack     - brightred      - lightgreen
 #   - brightyellow    - brightblue     - brightmagenta
-#   - brightcyan      - brightwhite    - (24-bit hex, as "#abcdef")
+#   - lightcyan       - brightwhite    - (24-bit hex, as "#abcdef")
 #
 # - Available non-color attributes are:
 #   - dim         - underscore    - bold      - reverse

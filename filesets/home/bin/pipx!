@@ -41,13 +41,13 @@ if [ "$#" == 0 ]; then
 
 	# Install 'pipx' (visibly), if needed.
 	#
-	command -V pipx &> /dev/null || sudo apt-get -qqy install pipx
+	command -v pipx &> /dev/null || sudo apt-get -qqy install pipx
 
 else
 
 	# Install 'pipx' (quietly), if needed.
 	#
-	command -V pipx &> /dev/null || sudo apt-get -qqy install pipx &> /dev/null
+	command -v pipx &> /dev/null || sudo apt-get -qqy install pipx &> /dev/null
 
 	# Run `pipx` with the given ARGS.
 	#
