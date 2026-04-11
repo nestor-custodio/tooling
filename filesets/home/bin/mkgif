@@ -125,4 +125,7 @@ else
 
 fi
 echo -e "\nGenerating GIF:"
-agg --theme='monokai' --font-family="$gif_font" --font-size='14' "$@" "$cast_filename" "$gif_filename" || exit-out 3 'error during gif conversion'
+theme='1C1C1C,FFFFFF'  # background, default text color
+theme+=',000000,CC0000,4E9A06,C4A000,3465A4,75507B,06989A,D3D7CF'  # ansi KRGYBMCW
+theme+=',555753,EF2929,00BA13,FCE94F,729FCF,F200CB,00B5BD,EEEEEC'  # ansi "bright" versions of the above
+agg --theme="$theme" --font-family="$gif_font" --font-size='14' "$@" "$cast_filename" "$gif_filename" || exit-out 3 'error during gif conversion'
