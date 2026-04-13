@@ -59,7 +59,7 @@ fi
 	image_project='ubuntu-os-cloud'
 
 	function os-releases {
-		local filter='(licenses[] ~ "/'"${image_project}"'/") AND (family !~ "minimal|arm64|accelerator")'
+		local filter='(licenses[] ~ "/'"${image_project}"'/") AND (family !~ "minimal|arm64|accel")'
 		gcloud compute images list --filter="$filter" --format='value(family)' | sort
 	}
 
