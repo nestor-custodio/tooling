@@ -473,13 +473,6 @@ function peek { tee /dev/tty ;}
   }
 
 
-  # ls
-
-  # Colorize `ls` output by file class/type.
-  #
-  eval "$( dircolors )"
-
-
   # posting
 
   function posting {

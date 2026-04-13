@@ -109,3 +109,13 @@ PANE_FORMAT="#{?pane_marked,🎯 ,}#{?pane_title,#{${CLEAN_TO_COMMAND}:pane_titl
 
 set -g pane-border-status top
 set -g pane-border-format "#[fg=white,bold] ${PANE_FORMAT} #[default]"
+
+
+# -----------------------------------------------------------------------------
+# Cleanup.
+
+set-environment -gr COMMAND
+set-environment -gr CLEAN_TO_DASH
+set-environment -gr CLEAN_TO_COMMAND
+set-environment -gr WINDOW_FORMAT
+set-environment -gr PANE_FORMAT
