@@ -179,7 +179,7 @@ startup_log='/var/log/startup.log'
 		# Install additional dev tooling.
 		report 'installing additional dev tooling'
 
-			apt-get -qqy install libyaml-dev litecli postgresql-client  # Additional dev tooling.
+			apt-get -qqy install libgmp-dev libyaml-dev litecli postgresql-client  # Additional dev tooling.
 
 
 		# Prepare the dev root.
