@@ -33,6 +33,10 @@ except = [
 # Language (`[[language]]`) and Grammar (`[[grammar]]`) blocks below here.
 
 [[language]]
+name = "bash"
+shebangs = ["sh", "bash", "tmux"]
+
+[[language]]
 name = "erb"
 file-types = ["erb", "inky"]
 roots = [".ruby-version", "Gemfile", "Gemfile.lock"]
