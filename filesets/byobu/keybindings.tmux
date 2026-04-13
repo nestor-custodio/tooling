@@ -95,8 +95,10 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
 
   ## "Copy Mode" (Scroll-Back Buffer) Control
 
-    bind-key -n M-s          copy-mode
+    bind-key -n M-s          copy-mode -H
     bind-key -n M-c          capture-pane -S -32768 \; save-buffer "$BYOBU_RUN_DIR/printscreen" \; delete-buffer \; new-window -n "PRINTSCREEN" "COLORTERM='truecolor' $BYOBU_EDITOR $BYOBU_RUN_DIR/printscreen"
+
+    bind-key -T root WheelUpPane if-shell -F "#{||:#{pane_in_mode},#{mouse_any_flag}}" { send-keys -M } { copy-mode -He }
 
 
   ## "Copy Mode" (Scroll-Back Buffer) Navigation
