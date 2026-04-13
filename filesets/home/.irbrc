@@ -304,6 +304,31 @@ end
 if defined? Rails
 
 
+  ## --- IRB ENV COLORIZATON ---
+
+
+  # Mostly from Railties' "lib/rails/commands/console/irb_console.rb":
+  #
+  module Rails
+    class Console
+      class IRBConsole
+        def colorized_env
+          case Rails.env
+          when 'development'
+            IRB::Color.colorize('dev', %i[BOLD GREEN])
+          when 'test'
+            IRB::Color.colorize('test', %i[BOLD YELLOW])
+          when 'production'
+            IRB::Color.colorize('prod', %i[BOLD RED])
+          else
+            IRB::Color.colorize(Rails.env, %i[BOLD WHITE])
+          end
+        end
+      end
+    end
+  end
+
+
   ## --- MONKEYPATCHES ---
 
 
