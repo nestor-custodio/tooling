@@ -14,8 +14,10 @@ source '/home/nestor/bin/std.lib'
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
+
 		  --names                   List only variable names.
 		                            (Note this affects how REGEX is used.)
+		  --colors                  Highlights REGEX matches.
 		  --all-vars                Include "CLEAN_" vars (normally omitted.)
 		  -0 | -z | --null          End each output line with NUL, not newline.
 
@@ -33,6 +35,7 @@ source '/home/nestor/bin/std.lib'
 
 	# Set defaults.
 
+	colors=''
 	all_vars=''
 	null_separator=''
 
@@ -47,7 +50,7 @@ source '/home/nestor/bin/std.lib'
 	# ---
 
 	CHAR_OPTS='0z'
-	LONG_OPTS='help,name,names,all-vars,all,null'
+	LONG_OPTS='help,name,names,color,colors,all-vars,all,null'
 
 	set-params
 	while true; do
@@ -59,6 +62,10 @@ source '/home/nestor/bin/std.lib'
 
 			(--name|--names)
 				sed_scripts[names_only]='s|=.*'"$interim_separator_esc"'|'"$interim_separator_esc"'|g'
+				;;
+
+			(--color|--colors)
+				colors='1'
 				;;
 
 			(--all-vars|--all)
@@ -99,7 +106,8 @@ function filter_for_all_vars {
 function filter_to_regex_param {
 	if [ -z "$lookup_regex" ]
 		then cat
-		else grep -Pi $( [ -n "$null_separator" ] && echo '-z' ) "$lookup_regex"
+		else grep -Pi $( [ -n "$colors"         ] && echo '--color'     )               \
+		              $( [ -n "$null_separator" ] && echo '--null-data' ) "$lookup_regex"
 	fi
 } # function filter_to_regex_param
 
