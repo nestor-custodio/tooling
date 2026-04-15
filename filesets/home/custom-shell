@@ -140,9 +140,9 @@ function peek { tee /dev/tty ;}
   function fbat {
     printf '%s\n' -- "$@" | grep -x --quiet -- '--help' && echo 'Usage: fbat [LANGUAGE] [BAT_OPTIONS]' && return 0
 
-    local language='txt'
-    'starts-with?' -- '--' <<< "$1" || { language="$1" && shift ;}
-    bat --paging='never' --language="$language" "$@"
+    local language
+    [ -n "$1" ] && ! 'starts-with?' -- '--' <<< "$1" && language="$1" && shift
+    bat --paging='never' --language="${language:-txt}" "$@"
   }
 
   # Paging while retaining header lines is a common
