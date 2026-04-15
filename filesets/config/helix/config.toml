@@ -91,9 +91,9 @@ mode.select = "SELECT"
 
 [editor.whitespace.render]
 
-space   = "all"
-nbsp    = "all"
-tab     = "all"
+space   = "none"
+nbsp    = "none"
+tab     = "none"
 newline = "none"
 
 
