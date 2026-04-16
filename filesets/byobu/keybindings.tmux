@@ -1,37 +1,37 @@
 ## Clear All Keybindings
-source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
+source "${BYOBU_PREFIX}/share/byobu/keybindings/f-keys.tmux.disable"
 
 
 
 
 ## Set Custom Escape Sequences
 
-	## To define a new key sequence:
-	##   cat -vA  # (used to determine what the system sees in response to your keypress)
-	##   set -s user-keys[0] "[the key press as revealed via `cat`]"
-	##   set -s user-keys[1] "[the key press as revealed via `cat`]"
+  ## To define a new key sequence:
+  ##   cat -vA  # (used to determine what the system sees in response to your keypress)
+  ##   set -s user-keys[0] "[the key press as revealed via `cat`]"
+  ##   set -s user-keys[1] "[the key press as revealed via `cat`]"
 
-	## To *bind* a user-defined key sequence:
-	##   bind-key -n User0 ...
-	##   bind-key -n User1 ...
+  ## To *bind* a user-defined key sequence:
+  ##   bind-key -n User0 ...
+  ##   bind-key -n User1 ...
 
 
 
 
 ## Non-Session/Window/Pane Commands
 
-	## Allow arbitrary shell command execution.
-	bind-key -n M-Space        command-prompt -p "#[bold] (blind command)" "run-shell \"blindly %%\""
+  ## Allow arbitrary shell command execution.
+  bind-key -n M-Space        command-prompt -p "#[bold] (blind command)" "run-shell \"blindly %%\""
   bind-key -n M-C-Space      command-prompt -p "#[bold] (toast command)" "run-shell \"%% | toast --hold\""
 
-	## Allow in-context tmux command execution.
-	bind-key -n M-x            command-prompt -p "#[bold] (tmux command)" "%%"
+  ## Allow in-context tmux command execution.
+  bind-key -n M-x            command-prompt -p "#[bold] (tmux command)" "%%"
 
-	## Pop up a "scratch pad" window.
-	bind-key -n M-m            display-popup -E -w 75% -h 75%
+  ## Pop up a "scratch pad" window.
+  bind-key -n M-m            display-popup -E -w 75% -h 75%
 
-	## Reload Profile.
-	bind-key -n M-`            source $BYOBU_PREFIX/share/byobu/profiles/tmuxrc
+  ## Reload Profile.
+  bind-key -n M-`            source $BYOBU_PREFIX/share/byobu/profiles/tmuxrc
 
 
 
@@ -93,7 +93,11 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
   bind-key -n M-\'           kill-pane
 
 
-  ## "Copy Mode" (Scroll-Back Buffer) Control
+
+
+## "Copy Mode" (Scroll-Back Buffer)
+
+  ## Control
 
     bind-key -n M-s          copy-mode -H
     bind-key -n M-c          capture-pane -S -32768 \; save-buffer "$BYOBU_RUN_DIR/printscreen" \; delete-buffer \; new-window -n "PRINTSCREEN" "COLORTERM='truecolor' $BYOBU_EDITOR $BYOBU_RUN_DIR/printscreen"
@@ -101,14 +105,14 @@ source $BYOBU_PREFIX/share/byobu/keybindings/f-keys.tmux.disable
     bind-key -T root WheelUpPane if-shell -F "#{||:#{pane_in_mode},#{mouse_any_flag}}" { send-keys -M } { copy-mode -He }
 
 
-  ## "Copy Mode" (Scroll-Back Buffer) Navigation
+  ## Navigation
 
-  	## Allow arbitrary shell command execution.
-  	bind-key -T copy-mode-vi M-Space        command-prompt -p "#[bold] (blind command)" "run-shell \"blindly %%\""
+    ## Allow arbitrary shell command execution.
+    bind-key -T copy-mode-vi M-Space        command-prompt -p "#[bold] (blind command)" "run-shell \"blindly %%\""
     bind-key -T copy-mode-vi M-C-Space      command-prompt -p "#[bold] (toast command)" "run-shell \"%% | toast --hold\""
 
-  	## Allow in-context tmux command execution.
-  	bind-key -T copy-mode-vi M-x            command-prompt -p "#[bold] (tmux command)" "%%"
+    ## Allow in-context tmux command execution.
+    bind-key -T copy-mode-vi M-x            command-prompt -p "#[bold] (tmux command)" "%%"
 
     bind-key -T copy-mode-vi q              send-keys -X cancel
     bind-key -T copy-mode-vi Escape         send-keys -X cancel
