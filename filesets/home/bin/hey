@@ -1,0 +1,55 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [PROMPT]
+
+		Invokes Gemini with the given prompt, in its read-only mode and
+		from a safe location (outside of any repo or home/system directory).
+
+		The given PROMPT need not be quoted as a single string.
+		(e.g.: 'hey what time is it?')
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+# ---
+# ---
+
+
+tempname | store-as safe_dir
+mkdir "$safe_dir" && cd "$safe_dir"
+set-trap 'EXIT' "cd && rm -rf '${safe_dir}'"
+
+gemini --approval-mode='plan' --prompt "$*" && echo

@@ -338,11 +338,6 @@ function peek { tee /dev/tty ;}
   function eol { geol product extended --log-level='warn' "$@" ;}
 
 
-  # gemini
-
-  function hey { gemini --approval-mode='plan' --prompt "$*" && echo ;}
-
-
   # git / lazygit
 
   function g { lazygit "$@" ;}
@@ -588,8 +583,8 @@ export -f ... .... ..... ::                                                     
           gcheckout gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph        \
           ghistory ginit gitignored glog gmerge gmove gmv goptimize goptimize! gpatch     \
           gpop gpull gpush grebase gremote greset gstage gstash gstatus gtag gtrack       \
-          gunchange gundelete gunstage guntrack h hbat helix hex hey k lazydocker less    \
-          list list+ m mirror mkcd peek posting real receive redo rg send shellcheck wut
+          gunchange gundelete gunstage guntrack h hbat helix hex k lazydocker less list   \
+          list+ m mirror mkcd peek posting real receive redo rg send shellcheck wut
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",
