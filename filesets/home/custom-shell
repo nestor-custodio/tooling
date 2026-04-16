@@ -379,6 +379,21 @@ function peek { tee /dev/tty ;}
   function gunstage    { git reset                                  "$@" ;}
   function guntrack    { git rm -r --cached                         "$@" ;}
 
+  # Object cleanup / graph speedup helpers.
+  #
+  function goptimize {
+    echo -e 'Running minimal repo maintenance...\n---'
+    git maintenance run  "$@"
+  }
+  #
+  function goptimize! {
+    echo -e 'Running (full) garbage collection...\n---'
+    git gc --aggressive --prune='now' || return 1
+
+    echo -e '\nSpeeding up commit graph generation...\n---'
+    git commit-graph write --reachable --changed-paths || return 1
+  }
+
   function glog        { git log --color='always' "$@" | bat ;}
   function ggraph      { glog --oneline --decorate --graph "$@" ;}
 
@@ -571,10 +586,10 @@ dev_helpers="${HOME}/bin/dev.src"
 export -f ... .... ..... ::                                                               \
           a after break-out-of-links bw docker eol f fbat g gadd gblame gbranch gbranch?  \
           gcheckout gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph        \
-          ghistory ginit gitignored glog gmerge gmove gmv gpatch gpop gpull gpush grebase \
-          gremote greset gstage gstash gstatus gtag gtrack gunchange gundelete gunstage   \
-          guntrack h hbat helix hex hey k lazydocker less list list+ m mirror mkcd peek   \
-          posting real receive redo rg send shellcheck wut
+          ghistory ginit gitignored glog gmerge gmove gmv goptimize goptimize! gpatch     \
+          gpop gpull gpush grebase gremote greset gstage gstash gstatus gtag gtrack       \
+          gunchange gundelete gunstage guntrack h hbat helix hex hey k lazydocker less    \
+          list list+ m mirror mkcd peek posting real receive redo rg send shellcheck wut
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",
