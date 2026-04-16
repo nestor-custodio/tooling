@@ -85,7 +85,6 @@ source "${BYOBU_PREFIX}/share/byobu/keybindings/f-keys.tmux.disable"
   bind-key -n M-C-j          resize-pane -L
   bind-key -n M-C-l          resize-pane -R
 
-  bind-key -n M-/            choose-tree -Z
   bind-key -n M-z            resize-pane -Z
   bind-key -n M-a            set -w synchronize-panes \; run-shell "toast \"All-Pane Input: $( tmux show -w synchronize-panes | ends-with? ' on' && echo 'On' || echo 'Off' )\""
 
@@ -144,3 +143,23 @@ source "${BYOBU_PREFIX}/share/byobu/keybindings/f-keys.tmux.disable"
     bind-key -T copy-mode-vi \-             send-keys -X clear-selection
     bind-key -T copy-mode-vi Space          send-keys -X select-line
     bind-key -T copy-mode-vi c              send-keys -X copy-selection-no-clear
+
+
+
+
+## "Tree Mode" (Window List)
+
+  ## Control
+
+    bind-key -n M-/          choose-tree -Z
+
+
+  ## Navigation
+
+    bind-key -n i                           if-shell -F "#{==:#{pane_mode},tree-mode}" "send-keys Up"    "send-keys i"
+    bind-key -n k                           if-shell -F "#{==:#{pane_mode},tree-mode}" "send-keys Down"  "send-keys k"
+
+    bind-key -n j                           if-shell -F "#{==:#{pane_mode},tree-mode}" "send-keys Left"  "send-keys j"
+    bind-key -n -                           if-shell -F "#{==:#{pane_mode},tree-mode}" "send-keys M--"   "send-keys -"
+    bind-key -n l                           if-shell -F "#{==:#{pane_mode},tree-mode}" "send-keys Right" "send-keys l"
+    bind-key -n +                           if-shell -F "#{==:#{pane_mode},tree-mode}" "send-keys M-+"   "send-keys +"
