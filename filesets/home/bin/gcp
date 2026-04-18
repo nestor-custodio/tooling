@@ -200,7 +200,7 @@ source '/home/nestor/bin/std.lib'
 			remote_command="$1" && shift
 
 
-			gcloud compute ssh "$instance_name" --command="$remote_command"
+			gcloud compute ssh "$instance_name" --command="$remote_command" -- -t
 			;;
 
 		# ---
