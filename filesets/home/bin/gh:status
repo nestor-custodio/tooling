@@ -1,0 +1,74 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [COMPONENT]
+
+		Reports GitHub status for all components (or only COMPONENT, if given).
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if failed to get status.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	component="$1" && shift
+
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Get component statuses.
+# See: https://www.githubstatus.com/api
+#
+curl --silent --fail --max-time 2 'https://www.githubstatus.com/api/v2/components.json'           \
+| json '[.components[] | select(.showcase)] | map({ key: .name, value: .status }) | from_entries' \
+| store-as component_statuses
+#
+[ -n "$component_statuses" ] || exit-out 2
+
+
+# Report.
+#
+if [ -z "$component" ]; then
+	json <<< "$component_statuses"
+else
+	# Note we're only returning the status of the *first* matching component.
+	json 'to_entries | map(select(.key | test("'"$component"'"; "i")).value) | .[0]' <<< "$component_statuses"
+fi
