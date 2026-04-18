@@ -1,0 +1,20 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+source "$( script-path )/status_helpers.lib"
+
+
+gh:status | json 'to_entries | map(.value)[]' | store-as statuses
+
+case "$statuses" in
+  (*major_outage*)   color='red'    ;;
+  (*minor_outage*)   color='orange' ;;
+  (*partial_outage*) color='orange' ;;
+
+  (*)                color='green'  ;;
+esac
+
+
+left-piped " #[fg=${color}]\ue709"
