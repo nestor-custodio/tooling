@@ -6,15 +6,44 @@ source '/home/nestor/bin/std.lib'
 source "$( script-path )/status_helpers.lib"
 
 
-gh:status | json 'to_entries | map(.value)[]' | store-as statuses
+gh:status | store-as statuses
 
-case "$statuses" in
-  (*major_outage*)   color='red'    ;;
-  (*minor_outage*)   color='orange' ;;
-  (*partial_outage*) color='orange' ;;
+function component {
+  local code="$1" && shift
+  [ -n "$code" ] || return 1
 
-  (*)                color='green'  ;;
-esac
+  local lookup
+  local icon
+  local status
+
+  case "$code" in
+    (git             ) lookup='."Git Operations"' ; icon='\U000f02a2' ;;
+    (pr|prs          ) lookup='."Pull Requests"'  ; icon='\U000f04c2' ;;
+    (issue|issues    ) lookup='."Issues"'         ; icon='\ueb0c'     ;;
+    (api|apis        ) lookup='."API Requests"'   ; icon='\U000f109b' ;;
+    (webhook|webhooks) lookup='."Webhooks"'       ; icon='\U000f06e2' ;;
+    (pages           ) lookup='."Pages"'          ; icon='\U000f0219' ;;
+  esac
+
+  json "$lookup" <<< "$statuses" | store-as status
+  printf '#[fg=%s]%s' "$( color "$status" )" "$icon"
+}
+
+function color {
+  local status="$1" && shift
+  [ -n "$status" ] || return 1
+
+  case "$status" in
+    (operational         ) echo 'green'  ;;
+    (degraded_performance) echo 'yellow' ;;
+    (partial_outage      ) echo 'orange' ;;
+    (minor_outage        ) echo 'orange' ;;
+    (major_outage        ) echo 'red'    ;;
+
+    (*)                    echo 'white' ;;
+  esac
+}
 
 
-left-piped " #[fg=${color}]\ue709"
+left-piped " \ue709"
+for code in git prs issues pages; do unpiped " $( component $code )"; done

@@ -15,7 +15,7 @@ free_block='#[fg=green]⠒'      # (a "free space" block)
 #
 # ... with a bar of length:
 #
-length='20'
+length='10'
 #
 # All output here is driven by the above values. Customizing the bar length
 # and the different characters and their formatting should take nothing else.
