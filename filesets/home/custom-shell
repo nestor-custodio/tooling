@@ -534,7 +534,16 @@ function peek { tee /dev/tty ;}
     # Ensure `wut-cli` (via pipx).
     # See: https://github.com/shobrook/wut
     #
-    real wut &> /dev/null || pipx! install wut-cli || return 1
+    # Note the lazy-install must be silent (unless something goes wrong)
+    # or `wut` will unhelpfully explain that we've just installed `wut`.  🤦
+    #
+    if ! real wut &> /dev/null; then
+      local installer_output
+      if ! installer_output="$( pipx! install wut-cli 2>&1 )"; then
+        echo "$installer_output"
+        return 1
+      fi
+    fi
 
     OPENAI_BASE_URL='https://generativelanguage.googleapis.com/v1beta/openai' \
     OPENAI_API_KEY="$( creds gemini/api-key )"                                \
