@@ -196,7 +196,7 @@ function peek { tee /dev/tty ;}
 
   function receive {
     local old_ifs="$IFS"; IFS='-'
-    passphrase="$( echo "$*" )"
+    passphrase="$*"
     IFS="$old_ifs"
 
     croc --yes "$passphrase"
