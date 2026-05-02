@@ -358,6 +358,10 @@ shopt -s lastpipe
 		#
 		export HUSKY='0'
 
+		# Prevent Shakapacker from LOG/INFO-level messages.
+		#
+		export SHAKAPACKER_DEBUG='false'
+
 		# Package helpers.
 
 		function nx { npx       "$@" ;}
