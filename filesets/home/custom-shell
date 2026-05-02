@@ -181,6 +181,15 @@ function peek { tee /dev/tty ;}
   #
   export CDPATH=".:${HOME}:${HOME}/docs"
 
+  # Make it easier to return to the directory we were just in.
+  #
+  function dc {
+    [ -n "$OLDPWD" ] || { echo 'no "previous" directory' >&2 && return 1 ;}
+    [ -e "$OLDPWD" ] || { echo 'location no longer available' >&2 && return 2 ;}
+
+    cd "$OLDPWD" || return 3
+  }
+
 
   # croc
 
@@ -594,13 +603,14 @@ dev_helpers="${HOME}/bin/dev.src"
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f ... .... ..... ::                                                               \
-          a after break-out-of-links bw docker eol f fbat g gadd gblame gbranch gbranch?  \
-          gcheckout gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch ggraph        \
-          ghistory ginit gitignored glog gmerge gmove gmv goptimize goptimize! gpatch     \
-          gpop gpull gpush grebase gremote greset gstage gstash gstatus gtag gtrack       \
-          gunchange gundelete gunstage guntrack h hbat helix hex k lazydocker less list   \
-          list+ m mirror mkcd peek posting real receive redo rg send shellcheck wut
+export -f ... .... ..... ::                                                           \
+          a after break-out-of-links bw dc docker eol f fbat g gadd gblame gbranch    \
+          gbranch? gcheckout gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch  \
+          ggraph ghistory ginit gitignored glog gmerge gmove gmv goptimize goptimize! \
+          gpatch gpop gpull gpush grebase gremote greset gstage gstash gstatus gtag   \
+          gtrack gunchange gundelete gunstage guntrack h hbat helix hex k lazydocker  \
+          less list list+ m mirror mkcd peek posting real receive redo rg send        \
+          shellcheck wut
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",
