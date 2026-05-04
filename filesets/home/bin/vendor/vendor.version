@@ -165,6 +165,7 @@ case "$tool_name" in
 	(hostctl          ) get-version                  --puller='(?<=hostctl version ).*'      ;;
 	(hurl             ) get-version                  --puller='(?<=hurl ).*?(?= )'           ;;
 	(hx               ) get-version                  --puller='(?<=helix ).*?(?= )'          ;;
+	(hyperfine        ) get-version                  --puller='(?<=hyperfine ).*'            ;;
 	(jq               ) get-version                                                          ;;
 	(lazydocker       ) get-version                  --puller='(?<=Version: ).*'             ;;
 	(lazygit          ) get-version                  --puller='(?<=version=).*?(?=,)'        ;;
