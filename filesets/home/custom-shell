@@ -200,7 +200,9 @@ function peek { tee /dev/tty ;}
     wordlist_url='https://raw.githubusercontent.com/bitcoin/bips/refs/heads/master/bip-0039/english.txt'
     passphrase="$( curl --silent "$wordlist_url" | shuf -n2 | paste --serial --delimiter='-' )"
 
-    croc send --code="$passphrase" "$@"
+    # All `croc` output is on STDERR (🤦) and we want custom instruction text, so `awk` to the rescue.
+    #
+    croc send --code="$passphrase" "$@" 2> >( awk "NR==1; NR==2 { print \"Receive on target system via 'receive ${passphrase}'.\" }; NR >= 9" )
   }
 
   function receive {
