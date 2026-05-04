@@ -107,8 +107,6 @@ qr --margin='2' "$webroot_url"
 
 available-port | store-as port
 https "$https_safety" "$port" &> /dev/null
-static-web-server --config-file="${HOME}/.config/static-web-server/config.toml" \
-                  --root="$webroot" --port="$port" --compression='true'         \
-                  --directory-listing='true' --directory-listing-order='0'
+rclone serve http "$webroot" --addr="localhost:${port}" --ignore-case --read-only &> "$( logfile )"
 https stop
 echo

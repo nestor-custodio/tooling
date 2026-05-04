@@ -41,7 +41,6 @@
 /ruff
 /sc
 /shellcheck
-/static-web-server
 /usql
 /watchexec
 /yq
