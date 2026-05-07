@@ -21,7 +21,8 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid option.
+		  1  if invalid option,
+		  2  if unable to 'cd' into safe (temp) location.
 	EOF
 
 }
@@ -49,7 +50,7 @@ source '/home/nestor/bin/std.lib'
 
 
 tempname | store-as safe_dir
-mkdir "$safe_dir" && cd "$safe_dir"
+mkcd "$safe_dir" || exit-out 2
 set-trap 'EXIT' "cd && rm -rf '${safe_dir}'"
 
-gemini --approval-mode='plan' --prompt "$*" && echo
+GEMINI_CLI_TRUST_WORKSPACE='true' gemini --approval-mode='plan' --prompt "$*" && echo
