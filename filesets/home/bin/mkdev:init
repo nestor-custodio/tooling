@@ -113,6 +113,14 @@ startup_log='/var/log/startup.log'
 			# Retain the minimum possible number of old snap builds ...
 			snap set system refresh.retain=2
 
+			# Don't unban problematic IPs ...
+			mkdir -p /etc/fail2ban
+			cat <<-'EOF' > /etc/fail2ban/jail.local
+				[DEFAULT]
+				bantime = -1
+				dbpurgeage = 1y
+			EOF
+
 
 		# Install global packages.
 		report 'installing global packages'
