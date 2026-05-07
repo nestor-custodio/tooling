@@ -12,7 +12,7 @@ source '/home/nestor/bin/std.lib'
 
 		       $( script-name ) { scp | cp } [-- OPTIONS] SOURCE TARGET
 
-		       $( script-name ) { ssh | shell | connect } [USER@]INSTANCE_NAME
+		       $( script-name ) { ssh | bash | shell | connect } [USER@]INSTANCE_NAME
 		       $( script-name ) { run | exec | do } [USER@]INSTANCE_NAME REMOTE_COMMAND
 
 
@@ -178,7 +178,7 @@ source '/home/nestor/bin/std.lib'
 		# ---
 		# ---
 
-		(ssh|shell|connect)
+		(ssh|bash|shell|connect)
 			[ "$#" == 1 ] || error-out 1 'no instance name given'
 			instance_name="$1" && shift
 
@@ -189,7 +189,7 @@ source '/home/nestor/bin/std.lib'
 				is-localhost "$instance_name" && error-out 2 'cannot remote into localhost'
 
 
-			gcloud compute ssh "$instance_name"
+			gcloud compute ssh "$instance_name" --command="/bin/env _byobu_sourced='1' /bin/bash" -- -t
 			;;
 
 		(run|exec|do)
