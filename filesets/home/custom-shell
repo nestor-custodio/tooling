@@ -202,7 +202,7 @@ function peek { tee /dev/tty ;}
 
     # All `croc` output is on STDERR (🤦) and we want custom instruction text, so `awk` to the rescue.
     #
-    croc send --code="$passphrase" "$@" 2> >( awk "NR==1; NR==2 { print \"Receive on target system via 'receive ${passphrase}'.\" }; NR >= 9" )
+    CROC_SECRET="$passphrase" croc send "$@" 2> >( awk "NR==1; NR==2 { print \"Receive on target system via 'receive ${passphrase}'.\" }; NR >= 9" )
   }
 
   function receive {
@@ -210,7 +210,7 @@ function peek { tee /dev/tty ;}
     passphrase="$*"
     IFS="$old_ifs"
 
-    croc --yes "$passphrase"
+    CROC_SECRET="$passphrase" croc --yes
   }
 
 
