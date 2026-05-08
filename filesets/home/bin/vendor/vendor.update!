@@ -116,6 +116,7 @@ source '/home/nestor/bin/std.lib'
 			(gping            ) update-tooling --asset='gnu'                                 ;;
 			(hurl             ) update-tooling                                               ;;
 			(hyperfine        ) update-tooling --asset='gnu'                                 ;;
+			(jc               ) update-tooling                                               ;;
 			(jq               ) update-tooling --asset='amd64'                               ;;
 			(lazydocker       ) update-tooling                                               ;;
 			(lazygit          ) update-tooling                                               ;;

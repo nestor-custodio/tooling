@@ -139,6 +139,7 @@ case "$tool_name" in
 	(hurl             )               ;&
 	(hx               )               ;&
 	(hyperfine        )               ;&
+	(jc               )               ;&
 	(jq               )               ;&
 	(lazydocker       )               ;&
 	(lazygit          )               ;&
