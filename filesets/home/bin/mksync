@@ -74,7 +74,7 @@ fi
 	disk_size='10GB'
 	instance_name='sync'
 	machine_type_family='e2'
-	machine_type_suffix='small'
+	machine_type_suffix='micro'
 	os_release='latest'
 	startup_script_file="$( script-real ):init"
 
