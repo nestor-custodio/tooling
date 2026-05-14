@@ -15,7 +15,9 @@ source '/home/nestor/bin/std.lib'
 		  --dev                     Name of local store to clone into "\$DEV_ROOT".
 		  --repo                    URL for hosted repo to clone into "\$DEV_ROOT".
 
+		  --disk-type               Type of boot disk. (Default is "hyperdisk-balanced".)
 		  --disk-size               Size of boot disk. (Default is 12GB.)
+		  --list-disk-types         List available Compute disk types.
 
 		  --machine-type            Compute Instance machine type.
 		  --list-machine-types      List available Compute Instance machine types.
@@ -40,8 +42,15 @@ source '/home/nestor/bin/std.lib'
 		  e.g. Using the above, a --repo may be given as "--repo='nlc:env_parser'".
 
 
-		Disk Sizes
-		  Per GCP restrictions, this has a minimum value of 12GB (given as "12GB").
+		Disk Types
+		  The type of storage backing the instance boot disk. Note not all storage options
+		  are available on all machine types. Disk types most likely to be used, in order:
+		  - 'hyperdisk-balanced'
+		  - 'pd-standard'
+		  - 'pd-balanced'
+		  - 'pd-ssd'
+
+		  See '$( script-name) --list-disk-types' for a list of available types and sizes.
 
 
 		Machine Types
@@ -101,6 +110,7 @@ source '/home/nestor/bin/std.lib'
 
 	dev_dir=''
 	git_repo=''
+	disk_type='hyperdisk-balanced'
 	disk_size='12GB'
 	machine_type_family='n4d'
 	machine_type_suffix=''
@@ -115,7 +125,9 @@ source '/home/nestor/bin/std.lib'
 
 	LONG_OPTS="${LONG_OPTS},dev:,git:,repo:,git-repo:"
 
+	LONG_OPTS="${LONG_OPTS},disk-type:,hdd-type:"
 	LONG_OPTS="${LONG_OPTS},disk-size:,disk:,hdd:"
+	LONG_OPTS="${LONG_OPTS},list-disk-types,disk-types,disk-type-list"
 
 	LONG_OPTS="${LONG_OPTS},machine-type:,machine:"
 	LONG_OPTS="${LONG_OPTS},e2,f1,g1,n1,n2,n2d,n4,n4d,c4,c4d"
@@ -159,8 +171,20 @@ source '/home/nestor/bin/std.lib'
 				;;
 
 
+			(--disk-type|--hdd-type)
+				disk_type="$1" && shift
+				;;
+
 			(--disk-size|--disk|--hdd)
 				disk_size="$1" && shift
+				;;
+
+			(--list-disk-types|--disk-types|--disk-type-list)
+				gcloud compute disk-types list | store-as disk_types
+				function disk-type-columns { cut --characters='1-36,66-' ;}
+				head -n1 <<< "$disk_types" | disk-type-columns
+				grep -F "$( vm-zone )" <<< "$disk_types" | sort | disk-type-columns
+				exit-out
 				;;
 
 
@@ -294,7 +318,7 @@ gcloud compute instances create "$instance_name"                                
        --project="$( vm-project )" --zone="$( vm-zone )"                                   \
                                                                                            \
        --machine-type="${machine_type_family}-${machine_type_suffix}"                      \
-       --boot-disk-size="$disk_size"                                                       \
+       --boot-disk-type="$disk_type" --boot-disk-size="$disk_size"                         \
        --image-project="$image_project" --image-family="$image_family"                     \
                                                                                            \
        --tags=http-server,https-server                                                     \
