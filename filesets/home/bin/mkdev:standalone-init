@@ -145,6 +145,12 @@ startup_log='/var/log/startup.log'
 
 	{ # -- Stand-Alone Setup -- #
 
+		# Set up GCP zone config.
+		report 'storing GCP zone in config'
+
+			sudo --user='nestor' gcloud config set compute/zone "$( instance zone | sed -e 's|.*/||' )"
+
+
 		# Gain access to "tooling" repo.
 		report 'cloning tooling repo into "links"'
 
