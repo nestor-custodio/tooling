@@ -154,8 +154,9 @@ startup_log='/var/log/startup.log'
 			# Attach the volume.
 			report '... attaching volume'
 
+			disk="$( gcloud compute disks list --filter='labels.use:sync-storage' --format='value(name)' | head -n1 )"
 			zone="$( instance zone | sed -e 's|.*/||' )"
-			gcloud compute instances attach-disk 'sync' --disk='sync-storage' --mode='rw' --zone="$zone"
+			gcloud compute instances attach-disk 'sync' --disk="$disk" --mode='rw' --zone="$zone"
 
 
 			# Prep the nfs-kernel-server mounts.
