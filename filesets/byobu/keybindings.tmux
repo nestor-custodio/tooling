@@ -81,6 +81,7 @@ source "${BYOBU_PREFIX}/share/byobu/keybindings/f-keys.tmux.disable"
   bind-key -n M-l            select-pane -R
 
   bind-key -n M-C-i          resize-pane -U
+  bind-key -n M-Tab          resize-pane -U  # For terminals that pass < ctrl+i > as a < tab >.
   bind-key -n M-C-k          resize-pane -D
   bind-key -n M-C-j          resize-pane -L
   bind-key -n M-C-l          resize-pane -R
