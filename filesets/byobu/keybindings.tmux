@@ -30,6 +30,9 @@ source "${BYOBU_PREFIX}/share/byobu/keybindings/f-keys.tmux.disable"
   ## Pop up a "scratch pad" window.
   bind-key -n M-m            display-popup -E -w 75% -h 75%
 
+  ## Pop up a "system status" toast on status bar click.
+  bind-key -n MouseDown1StatusRight run-shell 'system-status | toast --hold'
+
   ## Reload Profile.
   bind-key -n M-`            source $BYOBU_PREFIX/share/byobu/profiles/tmuxrc
 

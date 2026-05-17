@@ -1,0 +1,151 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Reports system status in compact form.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# This is intented to be used within toasts, so be mindful to keep output limited.
+# Here's what we're shooting for:
+#
+# +---------------------------------+
+# |                                 |
+# |    CPU: 15%                    |
+# |                                 |
+# |   ⏻ Uptime: 16h 19m             |
+# |                                 |
+# |    Memory    8000 MB  100.0%   |
+# |   |                             |
+# |   ├ Used        25 MB   80.0%   |
+# |   └ Free       112 MB   55.0%   |
+# |     |                           |
+# |     ├ Cache      5 MB    1.0%   |
+# |     └ Unused    55 MB   12.0%   |
+# |                                 |
+# |    Storage   20.0 GB  100.0%   |
+# |   |                             |
+# |   ├ OS         2.1 GB   20.0%   |
+# |   ├ User       7.0 GB   50.0%   |
+# |   └ Free      11.9 GB   30.0%   |
+# |     |                           |
+# |     ├ Cache   10.0 GB   28.0%   |
+# |     └ Unused   1.9 GB    2.0%   |
+# |                                 |
+# +---------------------------------+
+
+
+# "CPU"
+
+echo " CPU: $( cat /var/opt/1s-cpu-load )%"
+echo
+
+
+# "Uptime"
+
+echo "⏻ Uptime: $( puptime )"
+echo
+
+
+# "Memory"
+
+jc free --mebi | json '.[] | select( .type == "Mem" )
+                           | "\(.total) \(.used) \(.available) \(.buff_cache) \(.free)"' \
+| read                           total     used     free          cache          unused
+
+percent_total='100.0'
+calc "${used}   / ${total} * 100" | store-as percent_used
+calc "${free}   / ${total} * 100" | store-as percent_free
+calc "${cache}  / ${total} * 100" | store-as percent_cache
+calc "${unused} / ${total} * 100" | store-as percent_unused
+
+{
+  function row() { if [ "$#" == 1 ]; then echo "$1";	else printf '%s#%d MB#%1.1f%%\n' "$1" "$2" "$3"; fi ;}
+
+  row ' Memory'   "$total"  "$percent_total"
+  row '|'
+  row '├ Used'     "$used"   "$percent_used"
+  row '└ Free'     "$free"   "$percent_free"
+  row '  |'
+  row '  ├ Cache'  "$cache"  "$percent_cache"
+  row '  └ Unused' "$unused" "$percent_unused"
+} | column --separator='#' --table --table-right='2,3' --output-separator='  '
+echo
+
+
+# "Storage"
+
+duf --json | json '.[] | select( .mount_point == "/" )
+                       | "\(.total / 1048576 | round) \(.used / 1048576 | round) \(.free / 1048576 | round)"' \
+| read                       total                       used                       unused
+
+sudo mkdir -p /var/cache/fscache
+sudo du --block-size='M' --summarize --one-file-system "$HOME" /var/cache/fscache | cut -f1 | store-as user cache
+
+calc "${used} - (${user} + ${cache})" | store-as os
+calc "${cache} + ${unused}"           | store-as free
+
+percent_total='100.0'
+calc "${os}     / ${total} * 100" | store-as percent_os
+calc "${user}   / ${total} * 100" | store-as percent_user
+calc "${free}   / ${total} * 100" | store-as percent_free
+calc "${cache}  / ${total} * 100" | store-as percent_cache
+calc "${unused} / ${total} * 100" | store-as percent_unused
+
+{
+  function row() { if [ "$#" == 1 ]; then echo "$1";	else printf '%s#%d MB#%1.1f%%\n' "$1" "$2" "$3"; fi ;}
+
+  row ' Storage'  "$total"  "$percent_total"
+  row '|'
+  row '├ OS'       "$os"     "$percent_os"
+  row '├ User'     "$user"   "$percent_user"
+  row '└ Free'     "$free"   "$percent_free"
+  row '  |'
+  row '  ├ Cache'  "$cache"  "$percent_cache"
+  row '  └ Unused' "$unused" "$percent_unused"
+} | column --separator='#' --table --table-right='2,3' --output-separator='  '
+echo
