@@ -44,6 +44,15 @@ define max (a, b) {
 
 /* ------------------------------------------------------------------------- */
 
+define round_to (x, decimal_digits) {
+	in_scale = scale;
+
+	scale = decimal_digits;
+	output = x / 1;
+
+	scale = in_scale; return output;
+}
+
 define truncate (x) {
 	in_scale = scale;
 
