@@ -51,43 +51,53 @@ source '/home/nestor/bin/std.lib'
 
 
 # This is intented to be used within toasts, so be mindful to keep output limited.
-# Here's what we're shooting for:
+# Here's what we're (roughly) shooting for:
 #
-# +---------------------------------+
-# |                                 |
-# |    CPU: 15%                    |
-# |                                 |
-# |   ⏻ Uptime: 16h 19m             |
-# |                                 |
-# |    Memory    8000 MB  100.0%   |
-# |   |                             |
-# |   ├ Used        25 MB   80.0%   |
-# |   └ Free       112 MB   55.0%   |
-# |     |                           |
-# |     ├ Cache      5 MB    1.0%   |
-# |     └ Unused    55 MB   12.0%   |
-# |                                 |
-# |    Storage   20.0 GB  100.0%   |
-# |   |                             |
-# |   ├ OS         2.1 GB   20.0%   |
-# |   ├ User       7.0 GB   50.0%   |
-# |   └ Free      11.9 GB   30.0%   |
-# |     |                           |
-# |     ├ Cache   10.0 GB   28.0%   |
-# |     └ Unused   1.9 GB    2.0%   |
-# |                                 |
-# +---------------------------------+
+# +----------------------------------+
+# |                                  |
+# |   󱇶 "hostname"                   |
+# |     n4d-standard-2 w/ https      |
+# |                                  |
+# |    CPU: 15.0% + 10.0% = 12.5%   |
+# |                                  |
+# |    Memory    8000 MB  100.0%    |
+# |   |                              |
+# |   ├ Used        25 MB   80.0%    |
+# |   └ Free       112 MB   55.0%    |
+# |     |                            |
+# |     ├ Cache      5 MB    1.0%    |
+# |     └ Unused    55 MB   12.0%    |
+# |                                  |
+# |    Storage   20.0 GB  100.0%    |
+# |   |                              |
+# |   ├ OS         2.1 GB   20.0%    |
+# |   ├ User       7.0 GB   50.0%    |
+# |   └ Free      11.9 GB   30.0%    |
+# |     |                            |
+# |     ├ Cache   10.0 GB   28.0%    |
+# |     └ Unused   1.9 GB    2.0%    |
+# |                                  |
+# +----------------------------------+
+
+
+# "GCP"
+
+echo -e "󱇶 \"$( hostname --short )\""
+echo -e "  $( instance machine-type --short )$( instance tags | 'has?' '"https-server"' && echo ' w/ https' )"
+echo
 
 
 # "CPU"
 
-echo " CPU: $( cat /var/opt/1s-cpu-load )%"
-echo
+mpstat 1 1 --dec=2 -u -P ALL -o JSON                                                   \
+| json '.sysstat.hosts[].statistics[]."cpu-load" | sort_by(.cpu) | map(100 - .idle)[]' \
+| map printf '%1.1f%%\n'                                                               \
+| store-as cpus_plus_total
 
+head -n-1 <<< "$cpus_plus_total" | head -c-1 | sed -z -r -e 's|\n| + |g' | store-as cpu_list
+tail -n1 <<< "$cpus_plus_total" | store-as cpu_total
 
-# "Uptime"
-
-echo "⏻ Uptime: $( puptime )"
+echo " CPU: ${cpu_list} = ${cpu_total}"
 echo
 
 
