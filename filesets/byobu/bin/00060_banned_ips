@@ -1,0 +1,9 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+source "$( script-path )/status_helpers.lib"
+
+
+service fail2ban status &> /dev/null && left-piped " \U000f073a #[fg=yellow]$( sudo fail2ban-client banned | tr "'" '"' | json '.[0].sshd | length' )"
