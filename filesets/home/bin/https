@@ -141,8 +141,8 @@ function run_caddy {
 	                  --config="$caddyfile" \
 	                  --adapter='caddyfile' \
 	                  --pidfile="$pidfile"  \
-	                  1> "$stdout_storage"  \
-	                  2> "$stderr_storage"
+	                  1>> "$stdout_storage" \
+	                  2>> "$stderr_storage"
 	exit_code="$?"
 	rm "$caddyfile"
 
