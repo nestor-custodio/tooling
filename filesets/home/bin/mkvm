@@ -263,6 +263,13 @@ esac
 # ---
 
 
+# Stick to the `vm-region`, but don't put all our VMs in the same zone.
+#
+gcloud compute zones list --filter="(region:'$( vm-region )') AND (status:'UP')" --format='value(name)' \
+| shuf -n1                                                                                              \
+| store-as new_vm_zone
+
+
 # Remove old instance (if any).
 #
 # Note we're not calling `gcp destroy`, as there's
@@ -275,7 +282,7 @@ yes | gcloud compute instances delete "$instance_name" --quiet &> /dev/null
 # Create the Instance VM.
 #
 gcloud compute instances create "$instance_name"                       \
-       --project="$( vm-project )" --zone="$( vm-zone )"               \
+       --project="$( vm-project )" --zone="$new_vm_zone"               \
                                                                        \
        --machine-type="${machine_type_family}-${machine_type_suffix}"  \
        --boot-disk-type="$disk_type" --boot-disk-size="$disk_size"     \
