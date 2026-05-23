@@ -6,11 +6,11 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) { vms | list-vms } [--all] [-- OPTIONS]
+		Usage: $( script-name ) { vms | list-vms } [--all] [-- GCLOUD_OPTIONS]
 		       $( name-blanks ) vm INSTANCE_NAME
 		       $( name-blanks ) state INSTANCE_NAME
 
-		       $( script-name ) { scp | cp } [-- OPTIONS] SOURCE TARGET
+		       $( script-name ) { scp | cp } [-- GCLOUD_OPTIONS] SOURCE TARGET
 
 		       $( script-name ) { ssh | bash | shell | connect } [USER@]INSTANCE_NAME
 		       $( script-name ) { run | exec | do } [USER@]INSTANCE_NAME REMOTE_COMMAND

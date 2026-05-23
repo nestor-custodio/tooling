@@ -6,7 +6,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [--FILE_ENCODING] [--raw] QUERY [-- Q OPTIONS]
+		Usage: $( script-name ) [--FILE_ENCODING] [--raw] QUERY [-- Q_OPTIONS]
 		       $( name-blanks ) [--FILE_ENCODING] --fields[=DATAFILE]
 
 		No-thoughts CSV query runner (via 'q').

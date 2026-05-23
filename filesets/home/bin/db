@@ -6,7 +6,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [DATABASE] [-- PGCLI_OPTIONS]
+		Usage: $( script-name ) [DATABASE] [-- USQL_OPTIONS]
 
 		Convenience wrapper for connecting to a database via 'usql'.
 

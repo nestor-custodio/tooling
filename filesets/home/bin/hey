@@ -8,11 +8,11 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name ) [PROMPT]
 
-		Invokes Gemini with the given prompt, in its read-only mode and
+		Invokes Gemini with the given PROMPT, in its read-only mode and
 		from a safe location (outside of any repo or home/system directory).
 
 		The given PROMPT need not be quoted as a single string.
-		(e.g.: 'hey what time is it?')
+		(e.g.: '$( script-name ) what time is it?')
 
 
 		Mandatory arguments to long options are mandatory for short options too.
