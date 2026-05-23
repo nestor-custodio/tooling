@@ -566,8 +566,9 @@ function peek { tee /dev/tty ;}
     OPENAI_BASE_URL='https://generativelanguage.googleapis.com/v1beta/openai' \
     OPENAI_API_KEY="$( creds gemini/api-key )"                                \
     OPENAI_MODEL='gemini-flash-latest'                                        \
-    "$( real wut )"
+    "$( real wut )" "$@"
   }
+  function wut? { wut "$@" ;}
 
 
 # ---
@@ -612,7 +613,7 @@ export -f ... .... ..... ::                                                     
           gpatch gpop gpull gpush grebase gremote greset gstage gstash gstatus gtag   \
           gtrack gunchange gundelete gunstage guntrack h hbat helix hex k lazydocker  \
           less list list+ m mirror mkcd peek posting real receive redo rg send        \
-          shellcheck wut
+          shellcheck wut wut?
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",

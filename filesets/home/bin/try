@@ -6,13 +6,11 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [PROMPT]
+		Usage: $( script-name ) PROMPT [-- SC_OPTIONS]
 
-		Invokes Gemini with the given prompt, in its read-only mode and
-		from a safe location (outside of any repo or home/system directory).
-
-		The given PROMPT need not be quoted as a single string.
-		(e.g.: 'hey what time is it?')
+		Wrapper for SmartCat ('sc') that starts a new "conversation" with the
+		given PROMPT (which need not be quoted as a single string).
+		(e.g.: '$( script-name ) making this more legible < file.sh')
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -21,8 +19,7 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid option,
-		  2  if unable to 'cd' into safe location.
+		  1  if invalid option.
 	EOF
 
 }
@@ -49,6 +46,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-mkcd "/tmp/$( script-name )" || exit-out 2
-
-gemini --approval-mode='plan' --skip-trust --prompt "$*" 2>/dev/null && echo
+sc "$( script-name ) $*"
