@@ -72,7 +72,7 @@ if 'numeric?' "$port_or_range"; then
 # We've been given a RANGE.
 #
 elif 'has-line?' --regex '\d+-\d+' <<< "$port_or_range"; then
-	shuf -n1 --input-range="$port_or_range" | while read -r port; do
+	shuf --input-range="$port_or_range" | while read -r port; do
 		'has-line?' "$port" <<< "$ports_in_use" || exit-out 0 "$port"
 	done
 
