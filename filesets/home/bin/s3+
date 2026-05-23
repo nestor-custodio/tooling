@@ -20,6 +20,7 @@ source '/home/nestor/bin/std.lib'
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
+		  --no-cache                Disable VFS caching to facilitate streaming.
 
 
 		Exit Status:
@@ -38,12 +39,16 @@ source '/home/nestor/bin/std.lib'
 	# Set defaults.
 
 	mount_point="${HOME}/s3"
+	no_cache=''
 
 	# ---
 	# ---
 
 	CHAR_OPTS=''
-	LONG_OPTS='help,onto:,at:,in:,on:'
+	LONG_OPTS='help'
+
+	LONG_OPTS="${LONG_OPTS},onto:,at:,in:,on:"
+	LONG_OPTS="${LONG_OPTS},no-cache,nocache,stream,streaming"
 
 	set-params
 	while true; do
@@ -55,6 +60,10 @@ source '/home/nestor/bin/std.lib'
 
 			(--onto|--at|--in|--on)
 				mount_point="$1" && shift
+				;;
+
+			(--no-cache|--nocache|--stream|--streaming)
+				no_cache='1'
 				;;
 
 		esac
@@ -86,4 +95,7 @@ ls "$mount_point"/* &> /dev/null && error-out 1 'non-empty MOUNT_POINT'
 remote="${location%%:*}"
 rclone listremotes | 'has-line?' "${remote}:" || error-out 2 "unknown remote '${remote}'"
 
-{ mkdir -p "$mount_point" && rclone mount "$location" "$mount_point" --daemon --vfs-cache-mode='full' --vfs-fast-fingerprint --s3-directory-markers ;} || error-out 3 'mount failed'
+if [ -n "$no_cache" ]
+	then { mkdir -p "$mount_point" && rclone mount "$location" "$mount_point" --daemon --vfs-cache-mode='off'                         --s3-directory-markers ;} || error-out 3 'mount failed'
+	else { mkdir -p "$mount_point" && rclone mount "$location" "$mount_point" --daemon --vfs-cache-mode='full' --vfs-fast-fingerprint --s3-directory-markers ;} || error-out 3 'mount failed'
+fi
