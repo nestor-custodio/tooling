@@ -311,13 +311,6 @@ esac
 # ---
 
 
-# Stick to the `vm-region`, but don't put all our VMs in the same zone.
-#
-gcloud compute zones list --filter="(region:'$( vm-region )') AND (status:'UP')" --format='value(name)' \
-| shuf -n1                                                                                              \
-| store-as new_vm_zone
-
-
 # Remove old instance (if any).
 #
 # Note we're not calling `gcp destroy`, as there's
@@ -327,22 +320,68 @@ gcloud compute zones list --filter="(region:'$( vm-region )') AND (status:'UP')"
 yes | gcloud compute instances delete "$instance_name" --quiet &> /dev/null
 
 
-# Create the Instance VM.
+# NOTE: GCP provides no way to check for resource availability in a given zone (or at all, really), so we
+#       have to try the 'instances create' until it doesn't fail (for "ZONE_RESOURCE_POOL_EXHAUSTED", anyway).
 #
-gcloud compute instances create "$instance_name"                                           \
-       --project="$( vm-project )" --zone="$new_vm_zone"                                   \
-                                                                                           \
-       --machine-type="${machine_type_family}-${machine_type_suffix}"                      \
-       --boot-disk-type="$disk_type" --boot-disk-size="$disk_size"                         \
-       --image-project="$image_project" --image-family="$image_family"                     \
-                                                                                           \
-       --tags=http-server,https-server                                                     \
-       --metadata="created-at=${SCRIPT_TIMESTAMP},dev-dir=${dev_dir},git-repo=${git_repo}" \
-       --metadata-from-file "startup-script=${startup_script_file}"                        \
-                                                                                           \
-       --scopes=cloud-platform                                                             \
-       --network-tier=STANDARD                                                             \
-       --maintenance-policy=MIGRATE                                                        \
-                                                                                           \
-       --verbosity=error                                                                   \
-       "$@"
+gcloud compute zones list --filter="(region:'$( vm-region )') AND (status:'UP')" --format='value(name)' \
+| shuf | while read -r instance_zone; do
+
+	tempname | store-as stdout
+	tempname | store-as stderr
+
+	# Create the Instance VM.
+	#
+	gcloud compute instances create "$instance_name"                                           \
+	       --project="$( vm-project )" --zone="$instance_zone"                                 \
+	                                                                                           \
+	       --machine-type="${machine_type_family}-${machine_type_suffix}"                      \
+	       --boot-disk-type="$disk_type" --boot-disk-size="$disk_size"                         \
+	       --image-project="$image_project" --image-family="$image_family"                     \
+	                                                                                           \
+	       --tags=http-server,https-server                                                     \
+	       --metadata="created-at=${SCRIPT_TIMESTAMP},dev-dir=${dev_dir},git-repo=${git_repo}" \
+	       --metadata-from-file "startup-script=${startup_script_file}"                        \
+	                                                                                           \
+	       --scopes='cloud-platform'                                                           \
+	       --network-tier='STANDARD'                                                           \
+	       --maintenance-policy='MIGRATE'                                                      \
+	                                                                                           \
+	       --verbosity='error'                                                                 \
+	       "$@"                                                                                \
+	1> "$stdout" 2> "$stderr"
+
+	# Check for failure.
+	#
+	exit_code="$?"
+	if [ "$exit_code" == 0 ]; then
+
+		# Success! Dump output, clean up, and bail.
+		#
+		cat "$stdout"
+		rm "$stdout" "$stderr"
+
+		exit-out
+
+	else
+
+		# Bail *if the failure was NOT due to resource exhaustion*.
+		#
+		if ! cat "$stdout" "$stderr" | 'has?' 'ZONE_RESOURCE_POOL_EXHAUSTED'; then
+			cat "$stdout"
+			cat "$stderr" 1>&2
+			rm "$stdout" "$stderr"
+
+			exit-out "$exit_code"
+		fi
+
+	fi
+
+done
+
+# If we're here, we failed due to resource exhaustion in every available zone.
+#
+cat "$stdout"
+cat "$stderr" 1>&2
+rm "$stdout" "$stderr"
+
+exit-out "$exit_code"
