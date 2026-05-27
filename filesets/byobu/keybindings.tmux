@@ -64,7 +64,7 @@ source "${BYOBU_PREFIX}/share/byobu/keybindings/f-keys.tmux.disable"
   bind-key -n M-C-o          swap-window -t +1 \; select-window -t +1
 
   bind-key -n M-C-r          command-prompt -p "#[bold] (rename-window)" "rename-window '%%'"
-  bind-key -n M-BSpace       confirm-before -p "#[bold] Close Window (And All Panes)?" kill-window
+  bind-key -n M-\"           confirm-before -p "#[bold] Close Window (And All Panes)?" kill-window
 
 
 
