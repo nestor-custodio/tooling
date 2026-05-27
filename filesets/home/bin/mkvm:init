@@ -159,7 +159,7 @@ startup_log='/var/log/startup.log'
 		report 'setting up NFS mount for "links"'
 
 			cat <<-'EOF' >> /etc/fstab
-				sync:/links /home/nestor/links nfs _netdev,auto,fg,fsc 0 0
+				sync:/links /home/nestor/links nfs _netdev,auto,fg,fsc,noatime 0 0
 			EOF
 
 			sudo --user='nestor' mkdir /home/nestor/links && mount -a
