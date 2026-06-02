@@ -89,6 +89,20 @@ function ..... { cd ../../../.. ;}
 function mkcd { mkdir -p "$1" && cd "$1" ;}
 
 
+# Helpers for re-running commands until successful.
+#
+function !! {
+  local backoff='1'
+  'integer?' "$1" && backoff="$1" && shift
+
+  until "$@"; do sleep "$backoff"; done
+}
+#
+function !0 { '!!' 0 "$@" ;}
+function !1 { '!!' 1 "$@" ;}
+function !5 { '!!' 5 "$@" ;}
+
+
 # Make it easier to mirror one location into another.
 #
 function mirror {
@@ -610,7 +624,7 @@ dev_helpers="${HOME}/bin/dev.src"
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f ... .... .....                                                              \
+export -f ... .... ..... !! !0 !1 !5                                                  \
           a after break-out-of-links bw dc docker e eol f fbat g gadd gblame gbranch  \
           gbranch? gcheckout gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch  \
           ggraph ghistory ginit gitignored glog gmerge gmove gmv goptimize goptimize! \
