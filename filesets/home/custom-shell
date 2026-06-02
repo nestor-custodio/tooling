@@ -565,7 +565,7 @@ function peek { tee /dev/tty ;}
 
     OPENAI_BASE_URL='https://generativelanguage.googleapis.com/v1beta/openai' \
     OPENAI_API_KEY="$( creds gemini/api-key )"                                \
-    OPENAI_MODEL='gemini-flash-latest'                                        \
+    OPENAI_MODEL='gemini-3.1-flash-lite'                                      \
     "$( real wut )" "$@"
   }
   function wut? { wut "$@" ;}
