@@ -52,7 +52,7 @@ export LC_COLLATE='en_US.UTF-8'
 #
 export EDITOR="$( real hx )"
 function helix { "$EDITOR" "$@" ;}
-function ::    { "$EDITOR" "$@" ;}
+function e     { "$EDITOR" "$@" ;}
 
 
 # Surface web content via our own `browser` helper.
@@ -606,8 +606,8 @@ dev_helpers="${HOME}/bin/dev.src"
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f ... .... ..... ::                                                           \
-          a after break-out-of-links bw dc docker eol f fbat g gadd gblame gbranch    \
+export -f ... .... .....                                                              \
+          a after break-out-of-links bw dc docker e eol f fbat g gadd gblame gbranch  \
           gbranch? gcheckout gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch  \
           ggraph ghistory ginit gitignored glog gmerge gmove gmv goptimize goptimize! \
           gpatch gpop gpull gpush grebase gremote greset gstage gstash gstatus gtag   \
