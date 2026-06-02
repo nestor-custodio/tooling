@@ -14,6 +14,10 @@ shopt -s autocd checkwinsize globstar interactive_comments lastpipe no_empty_cmd
 #
 set +H # Disable history expansion ("!" usage).
 shopt -s histappend # Append to the history file.
+#
+export HISTCONTROL='ignorespace:ignoredups'
+export HISTFILESIZE='20'
+export HISTSIZE='20'
 
 
 # Check for window changes and update $LINES/$COLUMNS as needed.
