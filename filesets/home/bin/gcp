@@ -219,27 +219,27 @@ source '/home/nestor/bin/std.lib'
 
 				(TERMINATED)
 					echo -n 'Starting instance...'
-					gcloud compute instances start "$instance_name" --zone="$( instance-zone )" &> /dev/null || error-out 3 'FAILED'
+					gcloud compute instances start "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
 					echo ' done.'
 					;;
 
 				(SUSPENDED)
 					echo -n 'Resuming instance...'
-					gcloud compute instances resume "$instance_name" --zone="$( instance-zone )" &> /dev/null || error-out 3 'FAILED'
+					gcloud compute instances resume "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
 					echo ' done.'
 
 					echo -n 'Updating DNS entry...'
 					sleep 2  # Instances will sometimes take a bit to fully wake and request a new external IP.
-					expose-vm "$instance_name" || error-out 3 'FAILED'
+					expose-vm "$instance_name" || exit-out 3 ' FAILED'
 					echo ' done.'
 					;;
 
 				('')
-					error-out 2 "VM '${instance_name}' not found"
+					exit-out 2 "VM '${instance_name}' not found"
 					;;
 
 				*)
-					error-out 2 "unable to start/wake a '${state}' VM"
+					exit-out 2 "unable to start/wake a '${state}' VM"
 					;;
 
 			esac
@@ -248,7 +248,7 @@ source '/home/nestor/bin/std.lib'
 			#
 			echo -n 'Waiting for instance to respond...'
 			vm-lan-ip "$instance_name" | store-as vm_lan_ip
-			[ -n "$vm_lan_ip" ] || error-out 3 'FAILED'
+			[ -n "$vm_lan_ip" ] || exit-out 3 ' FAILED'
 			while true; do timeout 0.2 nc "$vm_lan_ip" 22 2> /dev/null | 'has?' SSH && break; sleep 1s; done
 			echo ' done.'
 			;;
@@ -259,7 +259,7 @@ source '/home/nestor/bin/std.lib'
 
 
 			echo -n 'Suspending instance...'
-			gcloud compute instances suspend "$instance_name" --zone="$( instance-zone )" &> /dev/null || error-out 3 'FAILED'
+			gcloud compute instances suspend "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
 			echo ' done.'
 			;;
 
@@ -269,12 +269,12 @@ source '/home/nestor/bin/std.lib'
 
 
 			echo -n 'Restarting instance...'
-			gcloud compute instances reset "$instance_name" --zone="$( instance-zone )" &> /dev/null || error-out 3 'FAILED'
+			gcloud compute instances reset "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
 			echo ' done.'
 
 			echo -n 'Waiting for instance to respond...'
 			vm-lan-ip "$instance_name" | store-as vm_lan_ip
-			[ -n "$vm_lan_ip" ] || error-out 3 'FAILED'
+			[ -n "$vm_lan_ip" ] || exit-out 3 ' FAILED'
 			while true; do timeout 0.2 nc "$vm_lan_ip" 22 2> /dev/null | 'has?' SSH && break; sleep 1s; done
 			echo ' done.'
 			;;
@@ -285,7 +285,7 @@ source '/home/nestor/bin/std.lib'
 
 
 			echo -n 'Stopping instance...'
-			gcloud compute instances stop "$instance_name" --zone="$( instance-zone )" &> /dev/null || error-out 3 'FAILED'
+			gcloud compute instances stop "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
 			echo ' done.'
 			;;
 
@@ -304,15 +304,15 @@ source '/home/nestor/bin/std.lib'
 
 				# Check that instance in question is currently *stopped*.
 				#
-				is-stopped "$old_instance_name" || error-out 2 'cannot rename a running instance'
+				is-stopped "$old_instance_name" || exit-out 2 'cannot rename a running instance'
 
 
 			echo -n 'Renaming instance...'
-			gcloud compute instances set-name "$old_instance_name" --new-name="$new_instance_name" --zone="$( instance-zone )" &> /dev/null || error-out 3 'FAILED'
+			gcloud compute instances set-name "$old_instance_name" --new-name="$new_instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
 			echo ' done.'
 
 			echo -n 'Removing DNS entry...'
-			dns del --for="$old_instance_name" &> /dev/null || error-out 3 'FAILED'
+			dns del --for="$old_instance_name" &> /dev/null || exit-out 3 ' FAILED'
 			echo ' done.'
 			;;
 
@@ -337,11 +337,11 @@ source '/home/nestor/bin/std.lib'
 
 				# Check that instance in question is currently *stopped*.
 				#
-				is-stopped "$instance_name" || error-out 2 'cannot set scaling on a running instance'
+				is-stopped "$instance_name" || exit-out 2 'cannot set scaling on a running instance'
 
 
 			echo -n 'Scaling instance...'
-			gcloud compute instances set-machine-type "$instance_name" --machine-type="$machine_type" --zone="$( instance-zone )" || error-out 3 'FAILED'
+			gcloud compute instances set-machine-type "$instance_name" --machine-type="$machine_type" --zone="$( instance-zone )" || exit-out 3 ' FAILED'
 			echo ' done.'
 			;;
 
@@ -365,7 +365,7 @@ source '/home/nestor/bin/std.lib'
 			# Delete the Instance VM.
 			#
 			echo -n 'Tearing down instance...'
-			yes | gcloud compute instances delete "$instance_name" --zone="$( instance-zone )" &> /dev/null || error-out 3 'FAILED'
+			yes | gcloud compute instances delete "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
 			echo ' done.'
 			;;
 
