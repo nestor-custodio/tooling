@@ -1,0 +1,66 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Starts a local, dockerized MariaDB container.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  if unable to create persistent storage.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) exit-out "$usage" ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Bail if already running.
+#
+'mariadb?' && exit-out 0
+
+
+export ROOTPASS="$( creds databases/logins/mariadb/root )"
+export USERNAME="$USER"
+export PASSWORD="$( creds databases/logins/mariadb/"$USER" )"
+export DATABASE="$USER"
+export DB_STORE="${HOME}/mariadb"
+
+mkdir -p "$DB_STORE" || exit-out 2
+docker compose --file='mariadb:docker-compose.yaml' up --detach

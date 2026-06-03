@@ -1,0 +1,29 @@
+# Docker Compose for MariaDB Community Server
+services:
+
+  mariadb:
+
+    container_name: mariadb
+    image         : mariadb:lts
+    restart       : always
+
+    environment:
+      MARIADB_ROOT_PASSWORD: '${ROOTPASS}'
+      MARIADB_DATABASE     : '${DATABASE}'
+      MARIADB_USER         : '${USERNAME}'
+      MARIADB_PASSWORD     : '${PASSWORD}'
+
+    ports:
+      - '3306:3306'
+    networks:
+      - 'mariadb_net'
+
+    volumes:
+      - type  : 'bind'
+        source: '${DB_STORE}'
+        target: '/var/lib/mysql'
+
+
+networks:
+  mariadb_net:
+    driver: bridge
