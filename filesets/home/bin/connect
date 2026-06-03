@@ -10,7 +10,7 @@ source '/home/nestor/bin/std.lib'
 
 		Sets up *the creation of an SSH tunnel* between the given local PORT and
 		the remote HOST:PORT, through the given CONNECTOR service. If a username
-		is required for the CONNECTOR serrvice, it should be part of the param:
+		is required for the CONNECTOR service, it should be part of the param:
 
 		  $( script-name ) --my 1234 --to remote:4321 --through user@ssh-server
 

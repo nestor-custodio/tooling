@@ -51,4 +51,4 @@ source '/home/nestor/bin/std.lib'
 
 mkcd "/tmp/$( script-name )" || exit-out 2
 
-gemini --approval-mode='plan' --skip-trust --prompt "$*" 2>/dev/null && echo
+gemini --approval-mode='plan' --skip-trust --prompt "$*" 2> /dev/null && echo
