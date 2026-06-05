@@ -188,7 +188,7 @@ source '/home/nestor/bin/std.lib'
 				instance-is-localhost && error-out 2 'cannot remote into localhost'
 
 
-			gcloud compute ssh "$instance_name" --command="/bin/env _byobu_sourced='1' /bin/bash" --zone="$( instance-zone )" -- -t
+			gcloud compute ssh "$instance_name" --command="/bin/env _byobu_sourced='1' /bin/bash" --zone="$( instance-zone )" -- -q -t
 			;;
 
 		(run|exec|do)
@@ -199,7 +199,7 @@ source '/home/nestor/bin/std.lib'
 			remote_command="$1" && shift
 
 
-			gcloud compute ssh "$instance_name" --command="$remote_command" --zone="$( instance-zone )" -- -t
+			gcloud compute ssh "$instance_name" --command="$remote_command" --zone="$( instance-zone )" -- -q -t
 			;;
 
 		# ---
