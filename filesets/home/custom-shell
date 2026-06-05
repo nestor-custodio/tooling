@@ -476,9 +476,9 @@ function peek { tee /dev/tty ;}
   export DISABLE_TELEMETRY='true'
 
 
-  # hexdump
+  # hexyl
 
-  function hex { hexdump --canonical "$@" ;}
+  function hex { hexyl --border='none' "$@" | bat ;}
 
 
   # jq

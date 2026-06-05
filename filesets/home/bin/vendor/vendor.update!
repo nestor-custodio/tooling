@@ -114,6 +114,7 @@ source '/home/nestor/bin/std.lib'
 			(fd               ) update-tooling --asset='gnu'                                 ;;
 			(geol             ) update-tooling --asset='^.json'                              ;;
 			(gping            ) update-tooling --asset='gnu'                                 ;;
+			(hexyl            ) update-tooling --asset='gnu'                                 ;;
 			(hurl             ) update-tooling                                               ;;
 			(hyperfine        ) update-tooling --asset='gnu'                                 ;;
 			(jc               ) update-tooling                                               ;;
