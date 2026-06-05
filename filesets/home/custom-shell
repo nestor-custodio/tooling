@@ -279,12 +279,13 @@ function peek { tee /dev/tty ;}
 
       # Aliases.
 
-      (c ) "$docker_binary" container    "$@" ;;
-      (i ) "$docker_binary" image        "$@" ;;
-      (n ) "$docker_binary" network      "$@" ;;
-      (v ) "$docker_binary" volume       "$@" ;;
+      (c    ) "$docker_binary" container    "$@" ;;
+      (i    ) "$docker_binary" image        "$@" ;;
+      (n    ) "$docker_binary" network      "$@" ;;
+      (v    ) "$docker_binary" volume       "$@" ;;
 
-      (ls) "$docker_binary" container ls "$@" ;;
+      (ls   ) "$docker_binary" container ls "$@" ;;
+      (prune) "$docker_binary" system prune "$@" ;;
 
       # Interactive console.
       #
