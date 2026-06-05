@@ -171,7 +171,7 @@ startup_log='/var/log/startup.log'
 		report 'setting the firewall rules'
 
 			ufw allow from any to any port ssh
-			ufw allow from 10.128.0.0/20 to any port nfs
+			ufw allow from 10.128.0.0/9 to any port nfs
 			ufw --force enable
 
 
@@ -180,7 +180,7 @@ startup_log='/var/log/startup.log'
 
 			apt-get -qqy install nfs-kernel-server
 
-			echo "${sync_data_root} 10.0.0.0/8(fsid=0,rw,async,no_subtree_check)" >> /etc/exports && exportfs -a
+			echo "${sync_data_root} 10.128.0.0/9(fsid=0,rw,async,no_subtree_check)" >> /etc/exports && exportfs -a
 			service nfs-kernel-server start
 
 	}
