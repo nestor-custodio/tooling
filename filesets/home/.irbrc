@@ -16,7 +16,7 @@ Object.constants
 def Ruby.repl_engine
   @repl_engine ||= begin
     engine = ([$PROGRAM_NAME] & %w[irb pry]).pop
-    engine ||= defined?(Pry) ? 'pry' : 'irb'
+    engine ||= defined?(Pry) && !Pry.current.empty? ? 'pry' : 'irb'
 
     engine.freeze
   end
