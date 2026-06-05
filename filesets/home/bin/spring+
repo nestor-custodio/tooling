@@ -8,8 +8,7 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name )
 
-		Reports on the presence of *any* running Spring server.
-		(The server found may not necessarily be a shell-detached one.)
+		Starts a Ruby Spring server that outlives its spawning shell.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -17,8 +16,10 @@ source '/home/nestor/bin/std.lib'
 
 
 		Exit Status:
-		  0  if service is running,
-		  1  if service is not running (or invalid option).
+		  0  if OK,
+		  1  if invalid option,
+		  2  if unable to run spring,
+		  3  if command not invoked from valid location.
 	EOF
 
 }
@@ -51,5 +52,12 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-command -v spring &> /dev/null || exit-out 1
-spring status | head -n1 | sed -e 's|:$|.|' | tee /dev/stderr | 'has?' 'is running'
+pwd | 'starts-with?' "$DEV_ROOT" || error-out 3 "not currently within '${DEV_ROOT}'"
+cd "$DEV_ROOT"
+
+command -v spring &> /dev/null || gem install spring || error-out 2 "unable to find (or set up) 'spring'"
+spring stop &> /dev/null
+
+spring_log='/var/log/spring.log'
+sudo "$( real rotate )" "$spring_log" --max=5 --chmod=666
+nohup spring server &> "$spring_log" &
