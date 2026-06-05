@@ -16,8 +16,8 @@ source '/home/nestor/bin/std.lib'
 
 
 		Exit Status:
-		  0  if service is running,
-		  1  if service is not running (or invalid option).
+		  0  if instance exists,
+		  1  if instance does not exist (or invalid option).
 	EOF
 
 }
