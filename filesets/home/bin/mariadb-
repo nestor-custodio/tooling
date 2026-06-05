@@ -50,9 +50,21 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-# Bail if already not running.
+# Bail if not already running.
 #
 'mariadb?' || exit-out 0
 
 
-docker compose --file='mariadb:docker-compose.yaml' down 2> /dev/null
+if [ "$( instance name )" == 'mariadb' ]; then
+
+	# We're *on* the 'mariadb' instance = stop the service.
+	#
+	docker compose --file="$( script-real ).yaml" down 2> /dev/null
+
+else
+
+	# We're on a MariaDB consumer = stop the 'mariadb' instance.
+	#
+	gcp shutdown mariadb
+
+fi

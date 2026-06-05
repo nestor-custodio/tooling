@@ -6,6 +6,7 @@ services:
     container_name: mariadb
     image         : mariadb:lts
     restart       : always
+    user          : '${DB_STORE_UID}:${DB_STORE_GID}'
 
     environment:
       MARIADB_ROOT_PASSWORD: '${ROOTPASS}'

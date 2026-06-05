@@ -8,7 +8,7 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name )
 
-		Reports on the status of the 'mariadb' container.
+		Reports on the status of the 'mariadb' service.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -16,8 +16,8 @@ source '/home/nestor/bin/std.lib'
 
 
 		Exit Status:
-		  0  if OK,
-		  1  if invalid option.
+		  0  if service is running,
+		  1  if service is not running (or invalid option).
 	EOF
 
 }
@@ -50,4 +50,22 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-docker container ls --all --filter='name=mariadb' --filter='status=running' --format='json' | lines &> /dev/null
+# Command to run *on* the 'mariadb' instance.
+#
+local_service_check="docker container ls --all --filter='name=mariadb' --filter='status=running' --format='json'"
+
+
+if [ "$( instance name )" == 'mariadb' ]; then
+
+	# We're *on* the 'mariadb' instance.
+	#
+	eval "$local_service_check" | lines &> /dev/null
+
+else
+
+	# We need to *ask* the 'mariadb' instance.
+	#
+	[ "$( gcp state mariadb )" == 'RUNNING' ] || exit-out 1
+	gcp run mariadb "$local_service_check" | lines &> /dev/null
+
+fi

@@ -56,11 +56,28 @@ source '/home/nestor/bin/std.lib'
 'mariadb?' && exit-out 0
 
 
-export ROOTPASS="$( creds databases/logins/mariadb/root )"
-export USERNAME="$USER"
-export PASSWORD="$( creds databases/logins/mariadb/"$USER" )"
-export DATABASE="$USER"
-export DB_STORE="${HOME}/mariadb"
+if [ "$( instance name )" == 'mariadb' ]; then
 
-mkdir -p "$DB_STORE" || exit-out 2
-docker compose --file='mariadb:docker-compose.yaml' up --detach
+	# We're *on* the 'mariadb' instance = stop the service.
+
+	export ROOTPASS="$( creds databases/logins/mariadb/root )"
+	export USERNAME="$USER"
+	export PASSWORD="$( creds databases/logins/mariadb/"$USER" )"
+	export DATABASE="$USER"
+
+	export DB_STORE="${HOME}/database/data"
+	export DB_STORE_UID="$( id -u )"
+	export DB_STORE_GID="$( id -g )"
+
+
+	mkdir -p "$DB_STORE" || exit-out 2
+	docker compose --file="$( script-real ).yaml" up --detach
+
+else
+
+	# We're on a MariaDB consumer = start the 'mariadb' instance + service.
+	#
+	[ "$( gcp state mariadb )" == 'RUNNING' ] || gcp up mariadb
+	gcp run mariadb mariadb+
+
+fi
