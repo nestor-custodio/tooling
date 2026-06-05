@@ -25,6 +25,7 @@
 #--map-syntax ".ignore:Git Ignore"
 
 --ignored-suffix='.local'
+--map-syntax='*.log.*:log'
 --tabs=2
 --theme='Monokai Extended'
 --style='numbers,changes,rule,snip'
