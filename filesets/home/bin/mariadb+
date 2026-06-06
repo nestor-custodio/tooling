@@ -81,3 +81,10 @@ else
 	gcp run mariadb mariadb+
 
 fi
+
+
+# Wait for it to become "connectable".
+#
+echo -n 'Waiting for MariaDB service to respond...'
+while true; do nc mariadb 3306 <<< "" 2> /dev/null | 'has?' 'MariaDB' && break; sleep 0.5s; done
+echo ' done.'
