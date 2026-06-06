@@ -249,7 +249,7 @@ source '/home/nestor/bin/std.lib'
 			echo -n 'Waiting for instance to respond...'
 			vm-lan-ip "$instance_name" | store-as vm_lan_ip
 			[ -n "$vm_lan_ip" ] || exit-out 3 ' FAILED'
-			while true; do timeout 0.2 nc "$vm_lan_ip" 22 2> /dev/null | 'has?' SSH && break; sleep 1s; done
+			while true; do nc "$vm_lan_ip" 22 <<< "" 2> /dev/null | 'has?' SSH && break; sleep 0.5s; done
 			echo ' done.'
 			;;
 
@@ -275,7 +275,7 @@ source '/home/nestor/bin/std.lib'
 			echo -n 'Waiting for instance to respond...'
 			vm-lan-ip "$instance_name" | store-as vm_lan_ip
 			[ -n "$vm_lan_ip" ] || exit-out 3 ' FAILED'
-			while true; do timeout 0.2 nc "$vm_lan_ip" 22 2> /dev/null | 'has?' SSH && break; sleep 1s; done
+			while true; do nc "$vm_lan_ip" 22 <<< "" 2> /dev/null | 'has?' SSH && break; sleep 0.5s; done
 			echo ' done.'
 			;;
 

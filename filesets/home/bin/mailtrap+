@@ -80,4 +80,4 @@ source '/home/nestor/bin/std.lib'
 
 # Do not return until the service is ready for use.
 #
-while true; do timeout 0.2 nc 127.0.0.1 1025 2> /dev/null | 'has?' 220 && break; sleep 0.1s; done
+while true; do nc 127.0.0.1 1025 <<< "" 2> /dev/null | 'has?' 220 && break; sleep 0.1s; done
