@@ -62,5 +62,5 @@ network_bins="${HOME}/vm-scripts/vpn/bin/${network}"
 [ -d "$network_bins" ] || error-out 2 "unknown NETWORK: '${network}'"
 
 
-gcp up vpn || error-out 3 'unavailable VPN proxy'
+!! gcp up vpn || error-out 3 'unavailable VPN proxy'
 ssh -n nestor@vpn -- "${network_bins}/connect" --detach

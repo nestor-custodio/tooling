@@ -77,7 +77,7 @@ else
 
 	# We're on a MariaDB consumer = start the 'mariadb' instance + service.
 	#
-	[ "$( gcp state mariadb )" == 'RUNNING' ] || gcp up mariadb
+	[ "$( gcp state mariadb )" == 'RUNNING' ] || !! gcp up mariadb
 	gcp run mariadb mariadb+
 
 fi
