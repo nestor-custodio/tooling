@@ -50,4 +50,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-docker ls | 'has?' mailtrap
+docker ls | 'has?' 'mailtrap'
