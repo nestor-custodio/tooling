@@ -64,6 +64,8 @@ available-port "$port" && exit 0
 
 
 ss -ltnp 2> /dev/null | awk '$4 ~ '"/:${port}\$/"' { print $6 }' | grep -P --only-matching '(?<=pid=)[0-9]+' | store-as pid
+
+[ -n "$pid" ] || user-error 2 'not a listening PORT'
 'numeric?' "$pid" || user-error 2 'PORT in use by another user'
 
 ps --format='comm=' "$pid" | store-as process
