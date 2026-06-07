@@ -81,12 +81,14 @@ source '/home/nestor/bin/std.lib'
 
 		# ---
 
+		tempname | store-as deb_file
 		tempname | store-as extract_dir
 		mkdir -p "$extract_dir"
-		eget --quiet "$( github-repo )" --asset='.deb' "$@" --to='/dev/stdout' | dpkg --extract '/dev/stdin' "$extract_dir"
-		mv "${extract_dir}/usr/bin/$( tool-name )" "$( executable )" &> /dev/null || non-user-error 2 'unable to fetch/find binary'
+		eget --quiet "$( github-repo )" --asset='.deb' "$@" --to="$deb_file" || non-user-error 2 'unable to fetch binary'
+		dpkg --extract "$deb_file" "$extract_dir" || non-user-error 2 'unable to extract binary'
+		mv "${extract_dir}/usr/bin/$( tool-name )" "$( executable )" &> /dev/null || non-user-error 2 'unable to extract binary'
 		chmod 755 "$( executable )"
-		rm -rf "$extract_dir"
+		rm -rf "$deb_file" "$extract_dir"
 
 	}
 
