@@ -44,7 +44,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
@@ -60,10 +60,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	metadata_key="$1" && shift
-	[ -n "$metadata_key" ] || error-out 1 'no METADATA_KEY given'
+	[ -n "$metadata_key" ] || user-error 1 'no METADATA_KEY given'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -79,7 +79,7 @@ function fetch {
 	#
 	local gcp_metadata_api='http://metadata.google.internal/computeMetadata/v1'
 
-	set-trap ERR 'exit-out 2'
+	set-trap ERR 'non-user-error 2'
 	curl "${gcp_metadata_api}/${metadata_key}" --silent --header 'Metadata-Flavor: Google' --fail | clean
 	clear-trap ERR
 }

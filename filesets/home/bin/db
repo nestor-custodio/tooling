@@ -41,7 +41,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -52,10 +52,10 @@ source '/home/nestor/bin/std.lib'
 
 	database="$1" && shift
 	[ -z "$database" ] && command -v rails-db > /dev/null && database="$( rails-db )"
-	[ -n "$database" ] || error-out 1 'no DATABASE given or available via ENV or Rails config'
+	[ -n "$database" ] || user-error 1 'no DATABASE given or available via ENV or Rails config'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -76,5 +76,5 @@ else
 fi
 
 
-command -v usql &> /dev/null || error-out 2 'usql executable not found'
+command -v usql &> /dev/null || non-user-error 2 'usql executable not found'
 usql "$database_url" "$@"

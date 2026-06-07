@@ -39,7 +39,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -50,11 +50,11 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-output="$( calc -- "$@" 2> /dev/null )" || error-out 2 'invalid expression'
+output="$( calc -- "$@" 2> /dev/null )" || user-error 2 'invalid expression'
 
 case "$output" in
-	0) exit-out 1 ;;
-	1) exit-out 0 ;;
+	0) exit 1 ;;
+	1) exit 0 ;;
 
-	*) error-out 2 'non-boolean result' ;;
+	*) user-error 2 'non-boolean result' ;;
 esac

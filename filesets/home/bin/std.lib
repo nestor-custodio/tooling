@@ -46,7 +46,7 @@ source '/home/nestor/bin/set-path.src'
 			sudo touch                      "$filename" \
 			&& sudo chmod 666               "$filename" \
 			&& sudo chown "${USER}:${USER}" "$filename"
-		} || error-out 99 'unable to create logfile'
+		} || non-user-error 99 'unable to create logfile'
 
 		echo "$filename"
 	}
@@ -56,6 +56,14 @@ source '/home/nestor/bin/set-path.src'
 	# Supports both the param and the piped MESSAGE use of `notify`.
 	#
 	function notify-from-script { notify 'pushover' "$( script-name )" "$@" ;}
+
+
+	# Prints "usage" text and exits.
+	#
+	# This used to be generated via `exit-out "$usage"`, but when that became
+	# `non-user-error "$usage"`, the call became misleadingly named.
+	#
+	function help-and-exit { echo "$usage"; exit 0 ;}
 
 
 # -- IO Helpers -- #
@@ -139,56 +147,18 @@ source '/home/nestor/bin/set-path.src'
 
 	# ---
 
-	# Prints a "clean" message (as given) to STDOUT, then exits.
-	# Good for output that's part of a non-0 exit but not an "error".
+	# Prints an error message -- with caller context and additional help text -- to STDERR, then exits.
 	#
-	function exit-out {
-		local exit_code='0'
-		local exit_message=''
-
-		case "$#" in
-			0)
-				;;
-
-			1)
-				local single_param="$1" && shift
-				if [ -z "${single_param//[0-9]/}" ]
-					then exit_code="$single_param"
-					else exit_message="$single_param"
-				fi
-				;;
-
-			2)
-				exit_code="$1" && shift
-				exit_message="$1" && shift
-				;;
-
-			*)
-				error-out 'improper use of "exit-out"'
-				;;
-		esac
-
-
-		[ -n "$exit_message" ] && echo "$exit_message"
-		exit "$exit_code"
-	}
-
-
-	# Prints an "error" message (with additional formatting) to STDERR, then exits.
-	#
-	function error-out {
-		local exit_code='1'
+	function user-error {
+		local exit_code=''
 		local error_message='unspecified error'
 
 		case "$#" in
-			0)
-				;;
-
 			1)
 				local single_param="$1" && shift
 				if [ -z "${single_param//[0-9]/}" ]
 					then exit_code="$single_param"
-					else error_message="$single_param"
+					else non-user-error 99 'improperly reported error'
 				fi
 				;;
 
@@ -198,7 +168,7 @@ source '/home/nestor/bin/set-path.src'
 				;;
 
 			*)
-				error_message='improperly reported error'
+				non-user-error 99 'improperly reported error'
 				;;
 		esac
 
@@ -208,6 +178,40 @@ source '/home/nestor/bin/set-path.src'
 			Try '$( script-name ) --help' for more information.
 		EOF
 
+		exit "$exit_code"
+	}
+
+
+	# Prints an (optional) error message -- as given -- to STDOUT, then exits.
+	#
+	# NOTE: Scripts that report a boolean state should not `non-user-error` that value out.
+	#       That exit value is not an *error*, and should be generated via `exit 0` / `exit 1`.
+	#
+	function non-user-error {
+		local exit_code=''
+		local error_message='unspecified error'
+
+		case "$#" in
+			1)
+				local single_param="$1" && shift
+				if [ -z "${single_param//[0-9]/}" ]
+					then exit_code="$single_param"
+					else non-user-error 99 'improperly reported error'
+				fi
+				;;
+
+			2)
+				exit_code="$1" && shift
+				error_message="$1" && shift
+				;;
+
+			*)
+				non-user-error 99 'improperly reported error'
+				;;
+		esac
+
+
+		[ -n "$error_message" ] && echo "$error_message"
 		exit "$exit_code"
 	}
 
@@ -234,7 +238,7 @@ source '/home/nestor/bin/set-path.src'
 		# This param preprocessing code expects that both
 		# CHAR_OPTS and LONG_OPTS have already been set, per the above.
 
-		PARSED="$( getopt -o "$CHAR_OPTS" -l "$LONG_OPTS" -- "$@" 2> /dev/null )" || error-out "invalid option(s)"
+		PARSED="$( getopt -o "$CHAR_OPTS" -l "$LONG_OPTS" -- "$@" 2> /dev/null )" || user-error 1 "invalid option(s)"
 		eval set -- "$PARSED"
 
 	}'

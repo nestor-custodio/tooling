@@ -35,7 +35,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -48,21 +48,21 @@ source '/home/nestor/bin/std.lib'
 
 		1)
 			url_or_id="$1" && shift
-			[ -n "$url_or_id" ] || error-out 1 'no URL_OR_ID given'
+			[ -n "$url_or_id" ] || user-error 1 'no URL_OR_ID given'
 			;;
 
 		2)
 			id_word_1="$1" && shift
-			[ -n "$id_word_1" ] || error-out 1 'no ID_WORD_1 given'
+			[ -n "$id_word_1" ] || user-error 1 'no ID_WORD_1 given'
 
 			id_word_2="$1" && shift
-			[ -n "$id_word_2" ] || error-out 1 'no ID_WORD_2 given'
+			[ -n "$id_word_2" ] || user-error 1 'no ID_WORD_2 given'
 
 			url_or_id="${id_word_1}${id_word_2}"
 			;;
 
 		*)
-			error-out 1 'invalid option(s)'
+			user-error 1 'invalid option(s)'
 			;;
 
 	esac

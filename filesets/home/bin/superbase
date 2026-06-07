@@ -35,7 +35,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -45,10 +45,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	file="$1" && shift
-	[ -n "$file" ] || error-out 1 'no FILE given'
+	[ -n "$file" ] || user-error 1 'no FILE given'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -57,6 +57,6 @@ source '/home/nestor/bin/std.lib'
 
 
 basename "$file" | store-as file
-'has-line?' --regex '\.*' <<< "$file" && error-out 2 'invalid FILE given'
+'has-line?' --regex '\.*' <<< "$file" && user-error 2 'invalid FILE given'
 
 sed -r -e 's|^(\.?[^.]+).*$|\1|' <<< "$file"

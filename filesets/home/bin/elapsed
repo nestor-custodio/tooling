@@ -62,7 +62,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
@@ -112,7 +112,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -131,8 +131,8 @@ sec_per_s='       1'
 timestamp "$date_1" 2> /dev/null | store-as date_1_timestamp
 timestamp "$date_2" 2> /dev/null | store-as date_2_timestamp
 
-[ -n "$date_1_timestamp" ] || error-out 2 'invalid date(s)'
-[ -n "$date_2_timestamp" ] || error-out 2 'invalid date(s)'
+[ -n "$date_1_timestamp" ] || user-error 2 'invalid date(s)'
+[ -n "$date_2_timestamp" ] || user-error 2 'invalid date(s)'
 
 calc "truncate(abs( ${date_2_timestamp} - ${date_1_timestamp} ))" | store-as delta
 

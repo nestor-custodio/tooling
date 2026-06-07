@@ -36,7 +36,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -46,13 +46,13 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	file_1="$1" && shift
-	[ -n "$file_1" ] || error-out 1 '2 files required'
+	[ -n "$file_1" ] || user-error 1 '2 files required'
 
 	file_2="$1" && shift
-	[ -n "$file_2" ] || error-out 1 '2 files required'
+	[ -n "$file_2" ] || user-error 1 '2 files required'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -62,8 +62,8 @@ source '/home/nestor/bin/std.lib'
 
 # Make sure the files exist.
 
-[ -e "$file_1" ] || error-out 2 "file not found: '${file_1}'"
-[ -e "$file_2" ] || error-out 2 "file not found: '${file_2}'"
+[ -e "$file_1" ] || user-error 2 "file not found: '${file_1}'"
+[ -e "$file_2" ] || user-error 2 "file not found: '${file_2}'"
 
 
 # Make sure file locations are writable.
@@ -74,13 +74,13 @@ dirname "$file_2" | store-as dir_2
 TMPDIR="$dir_1" tempname | store-as temp_1
 TMPDIR="$dir_2" tempname | store-as temp_2
 
-[ -w "$dir_1" ] || error-out 3 'write access denied'
-[ -w "$dir_2" ] || error-out 3 'write access denied'
+[ -w "$dir_1" ] || non-user-error 3 'write access denied'
+[ -w "$dir_2" ] || non-user-error 3 'write access denied'
 
 
 # Swap the files.
 
-mv "$file_1" "$temp_1" || {                                                   error-out 4 'swap not allowed' ;}
-mv "$file_2" "$temp_2" || { mv "$temp_1" "$file_1" ;                          error-out 4 'swap not allowed' ;}
-mv "$temp_1" "$file_2" || { mv "$temp_1" "$file_1" ; mv "$temp_2" "$file_2" ; error-out 4 'swap not allowed' ;}
-mv "$temp_2" "$file_1" || { mv "$file_2" "$file_1" ; mv "$temp_2" "$file_2" ; error-out 4 'swap not allowed' ;}
+mv "$file_1" "$temp_1" || {                                                   non-user-error 4 'swap not allowed' ;}
+mv "$file_2" "$temp_2" || { mv "$temp_1" "$file_1" ;                          non-user-error 4 'swap not allowed' ;}
+mv "$temp_1" "$file_2" || { mv "$temp_1" "$file_1" ; mv "$temp_2" "$file_2" ; non-user-error 4 'swap not allowed' ;}
+mv "$temp_2" "$file_1" || { mv "$file_2" "$file_1" ; mv "$temp_2" "$file_2" ; non-user-error 4 'swap not allowed' ;}

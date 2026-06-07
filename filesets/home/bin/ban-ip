@@ -35,7 +35,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -45,11 +45,11 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	ip_address="$1" && shift
-	[ -n "$ip_address" ] || error-out 1 'no IP_ADDRES given'
-	'has-line?' --regex '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}' <<< "$ip_address" || error-out 1 'invalid IP_ADDRESS'
+	[ -n "$ip_address" ] || user-error 1 'no IP_ADDRES given'
+	'has-line?' --regex '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}' <<< "$ip_address" || user-error 1 'invalid IP_ADDRESS'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 

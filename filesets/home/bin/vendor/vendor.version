@@ -81,7 +81,7 @@ source '/home/nestor/bin/std.lib'
 
 		{ # -- Parameter Processing: Positionals -- #
 
-			[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+			[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 		}
 
@@ -91,7 +91,7 @@ source '/home/nestor/bin/std.lib'
 
 		local executable="$( script-path )/${tool_name}"
 
-		command -v "$executable" &> /dev/null || error-out 2 'binary not found'
+		command -v "$executable" &> /dev/null || user-error 2 'binary not found'
 		"$executable" "$cmd" 2>&1 | ansifilter | grep -P --only-matching "$puller" | head -n1 | normalized
 
 	}
@@ -109,7 +109,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -119,10 +119,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	tool_name="$1" && shift
-	[ -n "$tool_name" ] || error-out 1 'no TOOL_NAME given'
+	[ -n "$tool_name" ] || user-error 1 'no TOOL_NAME given'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -193,7 +193,7 @@ case "$tool_name" in
 		;;
 
 	(chruby)
-		source "$( script-path )/chruby-source" &> /dev/null || error-out 2 'binary not found'
+		source "$( script-path )/chruby-source" &> /dev/null || non-user-error 2 'binary not found'
 		echo "$CHRUBY_VERSION"
 		;;
 
@@ -204,7 +204,7 @@ case "$tool_name" in
 		;;
 
 	(ruby-install)
-		ruby-install &> /dev/null || error-out 2 'binary not found'
+		ruby-install &> /dev/null || non-user-error 2 'binary not found'
 		get-version --puller='(?<=ruby-install: ).*'
 		;;
 
@@ -212,6 +212,6 @@ case "$tool_name" in
 	# Unknown tooling.
 
 	*)
-		error-out 1 "unknown tool '${tool_name}'"
+		user-error 1 "unknown tool '${tool_name}'"
 		;;
 esac

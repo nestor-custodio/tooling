@@ -35,7 +35,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -45,10 +45,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	network="$1" && shift
-	[ -n "$network" ] || error-out 1 'no NETWORK given'
+	[ -n "$network" ] || user-error 1 'no NETWORK given'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -59,8 +59,8 @@ source '/home/nestor/bin/std.lib'
 # Ensure the given NETWORK exists.
 #
 network_bins="${HOME}/vm-scripts/vpn/bin/${network}"
-[ -d "$network_bins" ] || error-out 2 "unknown NETWORK: '${network}'"
+[ -d "$network_bins" ] || user-error 2 "unknown NETWORK: '${network}'"
 
 
-!! gcp up vpn || error-out 3 'unavailable VPN proxy'
+!! gcp up vpn || non-user-error 3 'unavailable VPN proxy'
 ssh -n nestor@vpn -- "${network_bins}/connect" --detach

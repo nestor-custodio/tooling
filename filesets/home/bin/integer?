@@ -38,4 +38,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-[ "$*" -eq "$*" ] 2> /dev/null || exit-out 1
+[ "$*" -eq "$*" ] 2> /dev/null || exit 1

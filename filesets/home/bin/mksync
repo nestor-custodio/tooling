@@ -92,7 +92,7 @@ fi
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
@@ -110,7 +110,7 @@ fi
 
 			(--list-os-releases|--list-os-images|--list-releases|--list-images|--releases|--images|--os-list|--release-list|--image-list)
 				os-releases | sed -r -e 's|^ubuntu-||' -e 's|-lts$| (lts)|' -e 's|-.*$||'
-				exit-out
+				exit 0
 				;;
 
 		esac
@@ -120,7 +120,7 @@ fi
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -130,7 +130,7 @@ fi
 
 # This can't run ON the sync instance.
 #
-[ "$instance_name" == "$( vm-name )" ] && error-out 2 'cannot replace current instance'
+[ "$instance_name" == "$( vm-name )" ] && user-error 2 'cannot replace current instance'
 
 
 # ---
@@ -148,11 +148,11 @@ case "$os_release" in
 		;;
 
 	*)
-		'has-line?' --regex '[0-9]{4}' <<< "${os_release//./}" || error-out 1 'invalid os release number'
+		'has-line?' --regex '[0-9]{4}' <<< "${os_release//./}" || user-error 1 'invalid os release number'
 		os-releases | grep -F "${os_release//./}" | tail -n1 | store-as image_family
 		;;
 esac
-[ -n "$image_family" ] || error-out 1 'requested os release not found'
+[ -n "$image_family" ] || user-error 1 'requested os release not found'
 
 
 # ---

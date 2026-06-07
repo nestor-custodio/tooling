@@ -38,7 +38,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -51,7 +51,7 @@ source '/home/nestor/bin/std.lib'
 	[ -n "$port_or_range" ] || port_or_range='3001-3999'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -65,21 +65,24 @@ ss --all --ipv4 --numeric --no-header 2> /dev/null | awk '{ print $5 }' | cut -d
 #
 if 'numeric?' "$port_or_range"; then
 	if 'has-line?' "$port_or_range" <<< "$ports_in_use"
-		then exit-out 1
-		else exit-out 0
+		then exit 1
+		else exit 0
 	fi
 
 # We've been given a RANGE.
 #
 elif 'has-line?' --regex '\d+-\d+' <<< "$port_or_range"; then
 	shuf --input-range="$port_or_range" | while read -r port; do
-		'has-line?' "$port" <<< "$ports_in_use" || exit-out 0 "$port"
+		if ! 'has-line?' "$port" <<< "$ports_in_use"; then
+			echo "$port"
+			exit 0
+		fi
 	done
 
-	exit-out 2
+	non-user-error 2
 
 # Unexpected param formatting.
 #
 else
-	error-out 1 'unexpected param formatting'
+	user-error 1 'unexpected param formatting'
 fi

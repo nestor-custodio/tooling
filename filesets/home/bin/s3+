@@ -54,7 +54,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
@@ -74,10 +74,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	location="$1" && shift
-	[ -n "$location" ] || error-out 1 'empty LOCATION'
+	[ -n "$location" ] || user-error 1 'empty LOCATION'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -89,13 +89,13 @@ source '/home/nestor/bin/std.lib'
 #
 'has?' ':' <<< "$location" || location="${location}:/"
 
-'s3?' "$mount_point" && { s3- "$mount_point" || error-out 1 'MOUNT_POINT not available' ;}
-ls "$mount_point"/* &> /dev/null && error-out 1 'non-empty MOUNT_POINT'
+'s3?' "$mount_point" && { s3- "$mount_point" || user-error 1 'MOUNT_POINT not available' ;}
+ls "$mount_point"/* &> /dev/null && user-error 1 'non-empty MOUNT_POINT'
 
 remote="${location%%:*}"
-rclone listremotes | 'has-line?' "${remote}:" || error-out 2 "unknown remote '${remote}'"
+rclone listremotes | 'has-line?' "${remote}:" || user-error 2 "unknown remote '${remote}'"
 
 if [ -n "$no_cache" ]
-	then { mkdir -p "$mount_point" && rclone mount "$location" "$mount_point" --daemon --vfs-cache-mode='off'                         --s3-directory-markers ;} || error-out 3 'mount failed'
-	else { mkdir -p "$mount_point" && rclone mount "$location" "$mount_point" --daemon --vfs-cache-mode='full' --vfs-fast-fingerprint --s3-directory-markers ;} || error-out 3 'mount failed'
+	then { mkdir -p "$mount_point" && rclone mount "$location" "$mount_point" --daemon --vfs-cache-mode='off'                         --s3-directory-markers ;} || non-user-error 3 'mount failed'
+	else { mkdir -p "$mount_point" && rclone mount "$location" "$mount_point" --daemon --vfs-cache-mode='full' --vfs-fast-fingerprint --s3-directory-markers ;} || non-user-error 3 'mount failed'
 fi

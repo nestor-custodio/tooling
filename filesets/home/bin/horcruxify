@@ -46,13 +46,13 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
 			(-n|--count|--parts)
 				part_count="$1" && shift
-				'integer?' "$part_count" || error-out 1 "non-integer PART_COUNT: '${part_count}'"
+				'integer?' "$part_count" || user-error 1 "non-integer PART_COUNT: '${part_count}'"
 				;;
 
 		esac
@@ -62,7 +62,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] && error-out 1 'no FILE(s) given'
+	[ "$#" == 0 ] && user-error 1 'no FILE(s) given'
 
 }
 

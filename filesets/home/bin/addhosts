@@ -43,7 +43,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -53,10 +53,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	hostfile_reference="$1" && shift
-	[ -n "$hostfile_reference" ] || error-out 1 'no hostfile name given'
+	[ -n "$hostfile_reference" ] || user-error 1 'no hostfile name given'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -67,8 +67,8 @@ source '/home/nestor/bin/std.lib'
 hostfile_store="${HOME}/hostfiles"
 
 hostfile="${hostfile_store}/${hostfile_reference}"
-[ -e "$hostfile" ] || error-out 2 'HOSTFILE not found'
-[ -f "$hostfile" ] || error-out 2 'HOSTFILE is not a file'
-[ -r "$hostfile" ] || error-out 2 'HOSTFILE is not accessible'
+[ -e "$hostfile" ] || user-error 2 'HOSTFILE not found'
+[ -f "$hostfile" ] || user-error 2 'HOSTFILE is not a file'
+[ -r "$hostfile" ] || user-error 2 'HOSTFILE is not accessible'
 
 hostctl add "$( superbase "$hostfile" )" --from="$hostfile"

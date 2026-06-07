@@ -89,7 +89,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
@@ -98,7 +98,7 @@ source '/home/nestor/bin/std.lib'
 
 				datafile="$1" && shift
 				[ -n "$datafile" ] || datafile='-'
-				[ "$datafile" == '-' ] || [ -r "$datafile" ] || error-out 2 'DATAFILE not readable'
+				[ "$datafile" == '-' ] || [ -r "$datafile" ] || user-error 2 'DATAFILE not readable'
 
 				# shellcheck disable=SC2016
 				q -d',' -H "SELECT * FROM ${datafile}" -A 2> /dev/null \
@@ -108,7 +108,7 @@ source '/home/nestor/bin/std.lib'
 				| q -p "SELECT c1 as name, c2 as type FROM -" -b -O -T \
 				| bat --language='tsv'
 
-				exit-out
+				exit 0
 				;;
 
 
@@ -117,8 +117,8 @@ source '/home/nestor/bin/std.lib'
 
 			(--delimiter|--delimiters)
 				delimiter="$1" && shift
-				[ -n "$delimiter" ] || error-out 1 'no delimiter CHAR given'
-				[ "${#delimiter}" == 1 ] || error-out 1 'delimiter CHAR must be a single character'
+				[ -n "$delimiter" ] || user-error 1 'no delimiter CHAR given'
+				[ "${#delimiter}" == 1 ] || user-error 1 'delimiter CHAR must be a single character'
 
 				delimiter_in="$delimiter"
 				delimiter_out="$delimiter"
@@ -126,16 +126,16 @@ source '/home/nestor/bin/std.lib'
 
 			(--delimiter-in|--in)
 				delimiter="$1" && shift
-				[ -n "$delimiter" ] || error-out 1 'no delimiter-in CHAR given'
-				[ "${#delimiter}" == 1 ] || error-out 1 'delimiter-in CHAR must be a single character'
+				[ -n "$delimiter" ] || user-error 1 'no delimiter-in CHAR given'
+				[ "${#delimiter}" == 1 ] || user-error 1 'delimiter-in CHAR must be a single character'
 
 				delimiter_in="$delimiter"
 				;;
 
 			(--delimiter-out|--out)
 				delimiter="$1" && shift
-				[ -n "$delimiter" ] || error-out 1 'no delimiter-out CHAR given'
-				[ "${#delimiter}" == 1 ] || error-out 1 'delimiter-out CHAR must be a single character'
+				[ -n "$delimiter" ] || user-error 1 'no delimiter-out CHAR given'
+				[ "${#delimiter}" == 1 ] || user-error 1 'delimiter-out CHAR must be a single character'
 
 				delimiter_out="$delimiter"
 				;;
@@ -158,7 +158,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	query_param="$1" && shift
-	[ -n "$query_param" ] || error-out 1 'no QUERY given'
+	[ -n "$query_param" ] || user-error 1 'no QUERY given'
 
 }
 

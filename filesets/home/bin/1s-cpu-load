@@ -35,7 +35,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -44,7 +44,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -52,7 +52,7 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-[ "$( id -u )" == 0 ] || error-out 2 'command must run as root'
+[ "$( id -u )" == 0 ] || user-error 2 'command must run as root'
 
 
 output_file="/var/opt/$( script-name )"

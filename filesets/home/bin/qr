@@ -42,13 +42,13 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
 			(--margin)
 				margin="$1" && shift
-				'numeric?' "$margin" || error-out 1 'margin must be numeric'
+				'numeric?' "$margin" || user-error 1 'margin must be numeric'
 				;;
 
 		esac

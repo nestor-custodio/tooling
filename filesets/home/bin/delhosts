@@ -42,7 +42,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -52,10 +52,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	profile_or_hostfile_reference="$1" && shift
-	[ -n "$profile_or_hostfile_reference" ] || error-out 1 'no profile name given'
+	[ -n "$profile_or_hostfile_reference" ] || user-error 1 'no profile name given'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 

@@ -34,7 +34,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -43,7 +43,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -51,5 +51,5 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-command -v spring &> /dev/null || exit-out 1
+command -v spring &> /dev/null || exit 1
 spring status | head -n1 | sed -e 's|:$|.|' | tee /dev/stderr | 'has?' 'is running'

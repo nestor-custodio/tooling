@@ -104,7 +104,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
@@ -139,7 +139,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" != 0 ] || error-out 1 'no command given'
+	[ "$#" != 0 ] || user-error 1 'no command given'
 
 
 	command="$1" && shift
@@ -154,14 +154,14 @@ source '/home/nestor/bin/std.lib'
 			;;
 
 		(vm)
-			[ "$#" == 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || user-error 1 'no instance name given'
 			instance_name="$1" && shift
 
 			gcloud compute instances list --filter="(name:'${instance_name}')" "$@"
 			;;
 
 		(state|status)
-			[ "$#" == 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || user-error 1 'no instance name given'
 			instance_name="$1" && shift
 
 			instance-state
@@ -178,22 +178,22 @@ source '/home/nestor/bin/std.lib'
 		# ---
 
 		(ssh|bash|shell|connect)
-			[ "$#" == 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || user-error 1 'no instance name given'
 			instance_name="$1" && shift
 
 			# Run sanity checks.
 
 				# Check for current-instance request.
 				#
-				instance-is-localhost && error-out 2 'cannot remote into localhost'
+				instance-is-localhost && user-error 2 'cannot remote into localhost'
 
 
 			gcloud compute ssh "$instance_name" --command="/bin/env _byobu_sourced='1' /bin/bash" --zone="$( instance-zone )" -- -q -t
 			;;
 
 		(run|exec|do)
-			[ "$#" -lt 2 ] && error-out 1 'an instance name and remote command are required'
-			[ "$#" -gt 2 ] && error-out 1 'too many parameters'
+			[ "$#" -lt 2 ] && user-error 1 'an instance name and remote command are required'
+			[ "$#" -gt 2 ] && user-error 1 'too many parameters'
 
 			instance_name="$1" && shift
 			remote_command="$1" && shift
@@ -206,7 +206,7 @@ source '/home/nestor/bin/std.lib'
 		# ---
 
 		(up)
-			[ "$#" == 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || user-error 1 'no instance name given'
 			instance_name="$1" && shift
 
 
@@ -214,32 +214,32 @@ source '/home/nestor/bin/std.lib'
 			case "$state" in
 
 				(RUNNING)
-					exit-out 0
+					exit 0
 					;;
 
 				(TERMINATED)
 					echo -n 'Starting instance...'
-					gcloud compute instances start "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
+					gcloud compute instances start "$instance_name" --zone="$( instance-zone )" &> /dev/null || non-user-error 3 ' FAILED'
 					echo ' done.'
 					;;
 
 				(SUSPENDED)
 					echo -n 'Resuming instance...'
-					gcloud compute instances resume "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
+					gcloud compute instances resume "$instance_name" --zone="$( instance-zone )" &> /dev/null || non-user-error 3 ' FAILED'
 					echo ' done.'
 
 					echo -n 'Updating DNS entry...'
 					sleep 2  # Instances will sometimes take a bit to fully wake and request a new external IP.
-					expose-vm "$instance_name" || exit-out 3 ' FAILED'
+					expose-vm "$instance_name" || non-user-error 3 ' FAILED'
 					echo ' done.'
 					;;
 
 				('')
-					exit-out 2 "VM '${instance_name}' not found"
+					user-error 2 "VM '${instance_name}' not found"
 					;;
 
 				*)
-					exit-out 2 "unable to start/wake a '${state}' VM"
+					user-error 2 "unable to start/wake a '${state}' VM"
 					;;
 
 			esac
@@ -248,44 +248,44 @@ source '/home/nestor/bin/std.lib'
 			#
 			echo -n 'Waiting for instance to respond...'
 			vm-lan-ip "$instance_name" | store-as vm_lan_ip
-			[ -n "$vm_lan_ip" ] || exit-out 3 ' FAILED'
+			[ -n "$vm_lan_ip" ] || non-user-error 3 ' FAILED'
 			while true; do nc "$vm_lan_ip" 22 <<< "" 2> /dev/null | 'has?' 'SSH' && break; sleep 0.5s; done
 			echo ' done.'
 			;;
 
 		(suspend|sleep)
-			[ "$#" == 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || user-error 1 'no instance name given'
 			instance_name="$1" && shift
 
 
 			echo -n 'Suspending instance...'
-			gcloud compute instances suspend "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
+			gcloud compute instances suspend "$instance_name" --zone="$( instance-zone )" &> /dev/null || non-user-error 3 ' FAILED'
 			echo ' done.'
 			;;
 
 		(restart|reboot)
-			[ "$#" == 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || user-error 1 'no instance name given'
 			instance_name="$1" && shift
 
 
 			echo -n 'Restarting instance...'
-			gcloud compute instances reset "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
+			gcloud compute instances reset "$instance_name" --zone="$( instance-zone )" &> /dev/null || non-user-error 3 ' FAILED'
 			echo ' done.'
 
 			echo -n 'Waiting for instance to respond...'
 			vm-lan-ip "$instance_name" | store-as vm_lan_ip
-			[ -n "$vm_lan_ip" ] || exit-out 3 ' FAILED'
+			[ -n "$vm_lan_ip" ] || non-user-error 3 ' FAILED'
 			while true; do nc "$vm_lan_ip" 22 <<< "" 2> /dev/null | 'has?' 'SSH' && break; sleep 0.5s; done
 			echo ' done.'
 			;;
 
 		(stop|shutdown|kill)
-			[ "$#" == 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || user-error 1 'no instance name given'
 			instance_name="$1" && shift
 
 
 			echo -n 'Stopping instance...'
-			gcloud compute instances stop "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
+			gcloud compute instances stop "$instance_name" --zone="$( instance-zone )" &> /dev/null || non-user-error 3 ' FAILED'
 			echo ' done.'
 			;;
 
@@ -293,8 +293,8 @@ source '/home/nestor/bin/std.lib'
 		# ---
 
 		(rename)
-			[ "$#" -lt 2 ] && error-out 1 'old and new instance names are required'
-			[ "$#" -gt 2 ] && error-out 1 'too many parameters'
+			[ "$#" -lt 2 ] && user-error 1 'old and new instance names are required'
+			[ "$#" -gt 2 ] && user-error 1 'too many parameters'
 
 			old_instance_name="$1" && shift
 			new_instance_name="$1" && shift
@@ -304,23 +304,23 @@ source '/home/nestor/bin/std.lib'
 
 				# Check that instance in question is currently *stopped*.
 				#
-				is-stopped "$old_instance_name" || exit-out 2 'cannot rename a running instance'
+				is-stopped "$old_instance_name" || user-error 2 'cannot rename a running instance'
 
 
 			echo -n 'Renaming instance...'
-			gcloud compute instances set-name "$old_instance_name" --new-name="$new_instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
+			gcloud compute instances set-name "$old_instance_name" --new-name="$new_instance_name" --zone="$( instance-zone )" &> /dev/null || non-user-error 3 ' FAILED'
 			echo ' done.'
 
 			echo -n 'Removing DNS entry...'
-			dns del --for="$old_instance_name" &> /dev/null || exit-out 3 ' FAILED'
+			dns del --for="$old_instance_name" &> /dev/null || non-user-error 3 ' FAILED'
 			echo ' done.'
 			;;
 
 		(scale)
-			[ "$#" == 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || user-error 1 'no instance name given'
 			instance_name="$1" && shift
 
-			[ -n "$machine_type" ] || error-out 1 'no machine type given'
+			[ -n "$machine_type" ] || user-error 1 'no machine type given'
 
 
 			# Run sanity checks.
@@ -329,26 +329,26 @@ source '/home/nestor/bin/std.lib'
 				#
 				gcloud compute machine-types list --zones="$( instance-zone )" \
 				                                  --format='value(name)'       \
-				| 'has-line?' "$machine_type" &> /dev/null || error-out 1 'invalid machine type'
+				| 'has-line?' "$machine_type" &> /dev/null || user-error 1 'invalid machine type'
 
 				# This is a noop if the requested machine type is already set.
 				#
-				[ "$machine_type" == "$( instance-machine-type )" ] && exit-out 0
+				[ "$machine_type" == "$( instance-machine-type )" ] && exit 0
 
 				# Check that instance in question is currently *stopped*.
 				#
-				is-stopped "$instance_name" || exit-out 2 'cannot set scaling on a running instance'
+				is-stopped "$instance_name" || user-error 2 'cannot set scaling on a running instance'
 
 
 			echo -n 'Scaling instance...'
-			gcloud compute instances set-machine-type "$instance_name" --machine-type="$machine_type" --zone="$( instance-zone )" || exit-out 3 ' FAILED'
+			gcloud compute instances set-machine-type "$instance_name" --machine-type="$machine_type" --zone="$( instance-zone )" || non-user-error 3 ' FAILED'
 			echo ' done.'
 			;;
 
 		# ---
 
 		(destroy|delete|trash)
-			[ "$#" == 1 ] || error-out 1 'no instance name given'
+			[ "$#" == 1 ] || user-error 1 'no instance name given'
 			instance_name="$1" && shift
 
 
@@ -365,7 +365,7 @@ source '/home/nestor/bin/std.lib'
 			# Delete the Instance VM.
 			#
 			echo -n 'Tearing down instance...'
-			yes | gcloud compute instances delete "$instance_name" --zone="$( instance-zone )" &> /dev/null || exit-out 3 ' FAILED'
+			yes | gcloud compute instances delete "$instance_name" --zone="$( instance-zone )" &> /dev/null || non-user-error 3 ' FAILED'
 			echo ' done.'
 			;;
 

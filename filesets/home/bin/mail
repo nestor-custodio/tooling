@@ -35,7 +35,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -44,7 +44,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -54,11 +54,11 @@ source '/home/nestor/bin/std.lib'
 
 # Ensure `mailtrap`.
 #
-mailtrap+ &> /dev/null || error-out 2 'mailtrap service unavailable'
+mailtrap+ &> /dev/null || non-user-error 2 'mailtrap service unavailable'
 
 # Ensure mail client.
 #
-real aerc &> /dev/null || sudo apt install -qqy aerc || error-out 3 'unable to install mail client'
+real aerc &> /dev/null || sudo apt install -qqy aerc || non-user-error 3 'unable to install mail client'
 
 # Spawn mail client in new window.
 #

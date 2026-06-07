@@ -34,7 +34,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -44,12 +44,12 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	language="$1" && shift
-	[ -n "$language" ] || error-out 1 'no LANGUAGE given'
+	[ -n "$language" ] || user-error 1 'no LANGUAGE given'
 
 	filename="$1" && shift
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -98,5 +98,5 @@ case "$language" in
 		fi
 		;;
 
-	*) error-out 1 'unexpected LANGUAGE' ;;
+	*) user-error 1 'unexpected LANGUAGE' ;;
 esac

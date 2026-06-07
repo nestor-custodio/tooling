@@ -46,7 +46,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
@@ -65,7 +65,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] && error-out 1 'no filename(s) given'
+	[ "$#" == 0 ] && user-error 1 'no filename(s) given'
 
 }
 
@@ -75,7 +75,7 @@ source '/home/nestor/bin/std.lib'
 
 # Sanity check: --quiet and --read are mutually exclusive.
 #
-[ -n "$quiet" ] && [ -n "$read" ] && error-out 1 'cannot specify both --quiet and --read'
+[ -n "$quiet" ] && [ -n "$read" ] && user-error 1 'cannot specify both --quiet and --read'
 
 
 pwd | sed -r -e 's|/?$|/|' | store-as dir
@@ -84,13 +84,17 @@ while [ -n "$dir" ]; do
 	for filename in "$@"; do
 		sed -r -e 's|/+|/|g' <<< "${dir}/${filename}" | store-as full_path
 		[ -e "$full_path" ] || continue
-		
-		[ -n "$quiet" ] && exit-out
-		[ -n "$read" ] && exec cat "$full_path"
-		exit-out 0 "$full_path"
+
+		[ -n "$quiet" ] && exit 0
+
+		if [ -n "$read" ]
+			then cat "$full_path"
+			else echo "$full_path"
+		fi
+		exit 0
 	done
 
 	sed -r -e 's|[^/]*/$||' <<< "$dir" | store-as dir
 done
 
-exit-out 2
+non-user-error 2

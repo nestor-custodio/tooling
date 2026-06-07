@@ -67,7 +67,10 @@ source '/home/nestor/bin/std.lib'
 		vendor.version "$tool_name" 2> /dev/null | store-as local_version
 		gh:release-version "$( github-repo )" | normalized | store-as release_version
 
-		[ "$local_version" == "$release_version" ] || exit-out 2 "${local_version:-(?)} ➜ ${release_version}"
+		if [ "$local_version" != "$release_version" ]; then
+			echo "${local_version:-(?)}  ${release_version}"
+			exit 2
+		fi
 	}
 
 }
@@ -83,7 +86,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -93,10 +96,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	tool_name="$1" && shift
-	[ -n "$tool_name" ] || error-out 1 'no TOOL_NAME given'
+	[ -n "$tool_name" ] || user-error 1 'no TOOL_NAME given'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -170,19 +173,25 @@ case "$tool_name" in
 		| grep -P --only-matching '(?<=cli-v)[[:print:]]+'        \
 		| sort --version-sort | tail -n1 | store-as release_version
 
-		[ "$local_version" == "$release_version" ] || exit-out 2 "${local_version:-(?)} ➜ ${release_version}"
+		if [ "$local_version" != "$release_version" ];then
+			echo "${local_version:-(?)}  ${release_version}"
+			exit 2
+		fi
 		;;
 
 	(crypt   ) ;&  # These tools provide no versioning info,
 	(osc52   ) ;&  # or their Github release tags just do not match
 	(marksman)     # the reported version numbers in any parseable way.
-		command -V "$tool_name" &> /dev/null || exit-out 2 "(?) ➜ (release)"
+		if ! command -v "$tool_name" &> /dev/null; then
+			echo "(?)  (release)"
+			exit 2
+		fi
 		;;
 
 
 	# Unknown tooling.
 
 	*)
-		error-out 1 "unknown tool '${tool_name}'"
+		user-error 1 "unknown tool '${tool_name}'"
 		;;
 esac

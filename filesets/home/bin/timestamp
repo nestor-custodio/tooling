@@ -46,7 +46,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
@@ -63,10 +63,10 @@ source '/home/nestor/bin/std.lib'
 
 	target_date='now'
 	[ "$#" != 0 ] && target_date="$1" && shift
-	[ -n "$target_date" ] || error-out 1 'invalid options(s)'
+	[ -n "$target_date" ] || user-error 1 'invalid options(s)'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -74,4 +74,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-date --date="$target_date" "$format_template" 2> /dev/null || error-out 2 'invalid date'
+date --date="$target_date" "$format_template" 2> /dev/null || user-error 2 'invalid date'

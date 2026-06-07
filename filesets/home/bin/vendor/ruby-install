@@ -8,7 +8,7 @@ source '/home/nestor/bin/std.lib'
 # Verify runtime is available.
 #
 executable="$( script-path )/ruby-install-runtime/bin/ruby-install"
-[ -e "$executable" ] || exit-out 1
+[ -e "$executable" ] || non-user-error 1
 
 
 # Pass the given command through to the runtime.

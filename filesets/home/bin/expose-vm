@@ -35,7 +35,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -55,7 +55,7 @@ source '/home/nestor/bin/std.lib'
 			;;
 
 		*)
-			error-out 1 'invalid option(s)'
+			user-error 1 'invalid option(s)'
 			;;
 
 	esac
@@ -67,7 +67,7 @@ source '/home/nestor/bin/std.lib'
 
 
 vm-wan-ip "$instance_name" | store-as ip
-[ -n "$ip" ] || error-out 2 'unable to determine WAN IP'
+[ -n "$ip" ] || non-user-error 2 'unable to determine WAN IP'
 
 
 dns set "$ip" --name="$instance_name"

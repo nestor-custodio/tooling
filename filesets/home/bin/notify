@@ -61,7 +61,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -87,7 +87,7 @@ source '/home/nestor/bin/std.lib'
 				subject="$1" && shift
 				;;
 
-			*) error-out 1 'invalid option(s)' ;;
+			*) user-error 1 'invalid option(s)' ;;
 		esac
 	else
 		case "$#" in
@@ -103,7 +103,7 @@ source '/home/nestor/bin/std.lib'
 				message="$1" && shift
 				;;
 
-			*) error-out 1 'invalid option(s)' ;;
+			*) user-error 1 'invalid option(s)' ;;
 		esac
 	fi
 
@@ -132,5 +132,5 @@ case "$channel" in
 		| json '.status' | 'has-line?' '1' &> /dev/null
 		;;
 
-	*) error-out 2 "unknown CHANNEL: '${channel}'" ;;
+	*) user-error 2 "unknown CHANNEL: '${channel}'" ;;
 esac

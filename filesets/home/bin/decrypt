@@ -46,7 +46,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
@@ -71,13 +71,13 @@ source '/home/nestor/bin/std.lib'
 
 		1)
 			input_file="$1" && shift
-			[ -e "$input_file" ] || error-out 2 'FILE not found'
-			[ -f "$input_file" ] || error-out 2 'FILE is not a file'
-			[ -r "$input_file" ] || error-out 2 'FILE is not accessible'
+			[ -e "$input_file" ] || user-error 2 'FILE not found'
+			[ -f "$input_file" ] || user-error 2 'FILE is not a file'
+			[ -r "$input_file" ] || user-error 2 'FILE is not accessible'
 			;;
 
 		*)
-			error-out 1 'invalid option(s)'
+			user-error 1 'invalid option(s)'
 			;;
 
 	esac
@@ -89,7 +89,7 @@ source '/home/nestor/bin/std.lib'
 
 
 tempname | store-as output_file
-crypt -d -p "$password" -i "$input_file" -o "$output_file" &> /dev/null || error-out 3 'unable to decrypt cyphertext'
+crypt -d -p "$password" -i "$input_file" -o "$output_file" &> /dev/null || non-user-error 3 'unable to decrypt cyphertext'
 cat "$output_file"
 
 [ -n "$stdin_read" ] && rm "$input_file"

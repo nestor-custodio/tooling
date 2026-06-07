@@ -34,7 +34,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -44,7 +44,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	lookup_string="$*" && shift
-	[ -n "$lookup_string" ] || error-out 1 'no lOOKUP_STRING given'
+	[ -n "$lookup_string" ] || user-error 1 'no lOOKUP_STRING given'
 
 }
 

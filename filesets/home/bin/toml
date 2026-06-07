@@ -40,7 +40,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -67,7 +67,7 @@ source '/home/nestor/bin/std.lib'
 			;;
 
 		*)
-			error-out 1 'invalid option(s)'
+			user-error 1 'invalid option(s)'
 			;;
 
 	esac

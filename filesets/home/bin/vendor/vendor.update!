@@ -68,7 +68,7 @@ source '/home/nestor/bin/std.lib'
 
 		# ---
 
-		eget --quiet "$( github-repo )" "$@" --to="$( executable )" || error-out 2
+		eget --quiet "$( github-repo )" "$@" --to="$( executable )" || non-user-error 2
 		chmod 755 "$( executable )"
 
 	}
@@ -84,7 +84,7 @@ source '/home/nestor/bin/std.lib'
 		tempname | store-as extract_dir
 		mkdir -p "$extract_dir"
 		eget --quiet "$( github-repo )" --asset='.deb' "$@" --to='/dev/stdout' | dpkg --extract '/dev/stdin' "$extract_dir"
-		mv "${extract_dir}/usr/bin/$( tool-name )" "$( executable )" &> /dev/null || error-out 2 'unable to fetch/find binary'
+		mv "${extract_dir}/usr/bin/$( tool-name )" "$( executable )" &> /dev/null || non-user-error 2 'unable to fetch/find binary'
 		chmod 755 "$( executable )"
 		rm -rf "$extract_dir"
 
@@ -156,7 +156,7 @@ source '/home/nestor/bin/std.lib'
 				;;
 
 			(crypt)
-				curl "$( executable-url )" --silent --location > "$( executable )" || error-out 2 'unable to fetch release'
+				curl "$( executable-url )" --silent --location > "$( executable )" || non-user-error 2 'unable to fetch release'
 				chmod 755 "$( executable )"
 				;;
 
@@ -165,7 +165,7 @@ source '/home/nestor/bin/std.lib'
 				mkdir -p "$target" && rm -rf "${target:?}"/*
 
 				curl "$( executable-url )" --silent --location \
-				| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
+				| tar --gzip --extract --strip-components=1 --directory="$target" || non-user-error 2 'unable to fetch/extract release'
 				;;
 
 			(hx)
@@ -187,7 +187,7 @@ source '/home/nestor/bin/std.lib'
 				;;
 
 			(osc52)
-				curl "$( executable-url )?format=TEXT" --silent --location | base64 --decode > "$( executable )" || error-out 2 'unable to fetch release'
+				curl "$( executable-url )?format=TEXT" --silent --location | base64 --decode > "$( executable )" || non-user-error 2 'unable to fetch release'
 				chmod 755 "$( executable )"
 				;;
 
@@ -196,14 +196,14 @@ source '/home/nestor/bin/std.lib'
 				mkdir -p "$target" && rm -rf "${target:?}"/*
 
 				eget --quiet "$( github-repo )" --download-only --source --to='/dev/stdout' \
-				| tar --gzip --extract --strip-components=1 --directory="$target" || error-out 2 'unable to fetch/extract release'
+				| tar --gzip --extract --strip-components=1 --directory="$target" || non-user-error 2 'unable to fetch/extract release'
 				;;
 
 
 			# Unknown tooling.
 
 			*)
-				error-out 1 "unknown tool '$( tool-name )'"
+				user-error 1 "unknown tool '$( tool-name )'"
 				;;
 		esac
 
@@ -229,7 +229,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 			(--check|--checks|--checks-only)
@@ -250,7 +250,7 @@ if [ -n "$checks_only" ]; then
 
 	# Sanity check: --checks-only and tool names are mutually exclusive.
 	#
-	[ "$#" == 0 ] || error-out 1 'cannot specify both a TOOL_NAME and --checks-only'
+	[ "$#" == 0 ] || user-error 1 'cannot specify both a TOOL_NAME and --checks-only'
 
 
 	all-tools | while read -r tool_name; do
@@ -263,7 +263,7 @@ if [ -n "$checks_only" ]; then
 		backspace 3 && echo "$update_report"
 	done
 
-	exit-out
+	exit 0
 fi
 
 

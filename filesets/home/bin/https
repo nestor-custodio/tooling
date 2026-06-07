@@ -43,7 +43,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -79,7 +79,7 @@ source '/home/nestor/bin/std.lib'
 			;;
 
 		*)
-			error-out 1 'too many arguments'
+			user-error 1 'too many arguments'
 			;;
 
 	esac
@@ -98,7 +98,7 @@ source '/home/nestor/bin/std.lib'
 		# Binding is a PORT.
 		binding="localhost:${binding}"
 	else
-		error-out 1 "unrecognizable binding: '${binding}'"
+		user-error 1 "unrecognizable binding: '${binding}'"
 	fi
 
 }
@@ -155,7 +155,7 @@ function run_caddy {
 		rm "$stderr_storage"
 		rm "$stdout_storage"
 
-		exit-out "$exit_code"
+		non-user-error "$exit_code"
 	else
 		rm "$stderr_storage"
 		rm "$stdout_storage"
@@ -198,7 +198,7 @@ case "$command" in
 		;;
 
 	*)
-		error-out 1 "unknown command: '${command}'"
+		user-error 1 "unknown command: '${command}'"
 		;;
 
 esac

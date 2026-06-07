@@ -29,7 +29,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	help-param-only? && { echo "$usage"; exit-out 0 ;}
+	help-param-only? && help-and-exit
 
 }
 

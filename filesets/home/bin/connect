@@ -59,7 +59,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
@@ -82,7 +82,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -92,13 +92,13 @@ source '/home/nestor/bin/std.lib'
 
 # Sanity checks ...
 
-'numeric?' "$local_port" || error-out 1 'non-numeric PORT'
+'numeric?' "$local_port" || user-error 1 'non-numeric PORT'
 
-[ -n "$remote_host_port" ] || error-out 1 'no HOST:PORT given'
-'has-line?' --regex '[^:]+:[0-9]+' <<< "$remote_host_port" || error-out 1 'malformed HOST:PORT'
+[ -n "$remote_host_port" ] || user-error 1 'no HOST:PORT given'
+'has-line?' --regex '[^:]+:[0-9]+' <<< "$remote_host_port" || user-error 1 'malformed HOST:PORT'
 
-[ -n "$connector_service" ] || error-out 1 'no CONNECTOR given'
+[ -n "$connector_service" ] || user-error 1 'no CONNECTOR given'
 
 
-available-port "$local_port" || error-out 2 'PORT already in use'
-ssh -f -T -N -L "${local_port}:${remote_host_port}" "$connector_service" || error-out 2 'failed to set up SSH tunnel'
+available-port "$local_port" || non-user-error 2 'PORT already in use'
+ssh -f -T -N -L "${local_port}:${remote_host_port}" "$connector_service" || non-user-error 2 'failed to set up SSH tunnel'

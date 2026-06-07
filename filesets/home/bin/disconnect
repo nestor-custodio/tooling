@@ -37,7 +37,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -47,10 +47,10 @@ source '/home/nestor/bin/std.lib'
 { # -- Parameter Processing: Positionals -- #
 
 	port="$1" && shift
-	'numeric?' "$port" || error-out 1 'non-numeric PORT'
+	'numeric?' "$port" || user-error 1 'non-numeric PORT'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -60,13 +60,13 @@ source '/home/nestor/bin/std.lib'
 
 # Simpleton case: port not in use.
 #
-available-port "$port" && exit-out 0
+available-port "$port" && exit 0
 
 
 ss -ltnp 2> /dev/null | awk '$4 ~ '"/:${port}\$/"' { print $6 }' | grep -P --only-matching '(?<=pid=)[0-9]+' | store-as pid
-'numeric?' "$pid" || error-out 2 'PORT in use by another user'
+'numeric?' "$pid" || user-error 2 'PORT in use by another user'
 
 ps --format='comm=' "$pid" | store-as process
-'has-line?' --regex 'ssh|nc|socat' <<< "$process" || error-out 2 'non-ssh/nc/socat PORT'
+'has-line?' --regex 'ssh|nc|socat' <<< "$process" || user-error 2 'non-ssh/nc/socat PORT'
 
-kill "$pid" || error-out 3 'unable to release PORT'
+kill "$pid" || non-user-error 3 'unable to release PORT'

@@ -38,4 +38,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-'has-line?' --regex -- '-?\d+(\.\d+)?' <<< "$*" || exit-out 1
+'has-line?' --regex -- '-?\d+(\.\d+)?' <<< "$*" || exit 1

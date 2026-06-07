@@ -48,7 +48,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
@@ -63,7 +63,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] && error-out 1 'insufficient parameters'
+	[ "$#" == 0 ] && user-error 1 'insufficient parameters'
 
 
 	# ---
@@ -96,26 +96,26 @@ source '/home/nestor/bin/std.lib'
 			response_type='record'
 
 			[ "$#" == 1 ] && response_type="$1" && shift
-			[ "$#" == 0 ] || error-out 1 'too many parameters'
+			[ "$#" == 0 ] || user-error 1 'too many parameters'
 
 
 			record-for "$domain_name" | store-as record
-			[ -n "$record" ] || error-out 2 'no DNS record found'
+			[ -n "$record" ] || non-user-error 2 'no DNS record found'
 
 			case "$response_type" in
 				(record) json '.'           <<< "$record" ;;
 				(ip    ) json '.rrdatas[0]' <<< "$record" ;;
 				(ttl   ) json '.ttl'        <<< "$record" ;;
 
-				*) error-out 1 'unexpected GET param' ;;
+				*) user-error 1 'unexpected GET param' ;;
 			esac
 			;;
 
 
 		(set|update)
 
-			[ "$#" -lt 1 ] && error-out 1 'no new IP given'
-			[ "$#" -gt 1 ] && error-out 1 'too many parameters'
+			[ "$#" -lt 1 ] && user-error 1 'no new IP given'
+			[ "$#" -gt 1 ] && user-error 1 'too many parameters'
 
 			new_ip="$1" && shift
 			new_ttl='60'
@@ -129,14 +129,14 @@ source '/home/nestor/bin/std.lib'
 
 		(del|delete)
 
-			[ "$#" == 0 ] || error-out 1 'too many parameters'
+			[ "$#" == 0 ] || user-error 1 'too many parameters'
 
 			[ -n "$( record-for "$domain_name" )" ] && dns delete "$domain_name" --type='A' &> /dev/null
 			;;
 
 
 		*)
-			error-out 1 'invalid option(s)'
+			user-error 1 'invalid option(s)'
 			;;
 
 	esac

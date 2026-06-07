@@ -64,16 +64,16 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 
 
 			(--time|--timer|--every)
-				[ -n "$wait_type" ] && error-out 1 'cannot wait on both time and files'
+				[ -n "$wait_type" ] && user-error 1 'cannot wait on both time and files'
 				time_spec="$1" && shift
 				wait_type='time'
 
-				'has-line?' --regex '[0-9]*\.?[0-9]+[smh]?' <<< "$time_spec" || error-out 1 "unparseable TIME_SPEC: '${time_spec}'"
+				'has-line?' --regex '[0-9]*\.?[0-9]+[smh]?' <<< "$time_spec" || user-error 1 "unparseable TIME_SPEC: '${time_spec}'"
 				tr -d 'smh'  <<< "$time_spec" | store-as duration
 				tr -d '0-9.' <<< "$time_spec" | store-as duration_unit
 
@@ -85,7 +85,7 @@ source '/home/nestor/bin/std.lib'
 				;;
 
 			(--file|--files|--fs|--watch)
-				[ -n "$wait_type" ] && error-out 1 'cannot wait on both time and files'
+				[ -n "$wait_type" ] && user-error 1 'cannot wait on both time and files'
 				extensions="$1" && shift
 				wait_type='files'
 				;;
@@ -101,7 +101,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] && error-out 1 'no COMMAND given'
+	[ "$#" == 0 ] && user-error 1 'no COMMAND given'
 
 }
 
@@ -127,5 +127,5 @@ case "$wait_type" in
 		watchexec --debounce='500ms' --restart --quiet --shell='/bin/env bash' $args "$@"
 		;;
 
-	*) error-out 1 'must specify one of --time or --files' ;;
+	*) user-error 1 'must specify one of --time or --files' ;;
 esac

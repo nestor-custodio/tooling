@@ -36,7 +36,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -47,10 +47,10 @@ source '/home/nestor/bin/std.lib'
 
 	location='Development'
 	[ "$#" -ge 1 ] && location="$1" && shift
-	[ -n "$location" ] || error-out 1 'empty LOCATION'
+	[ -n "$location" ] || user-error 1 'empty LOCATION'
 
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -60,7 +60,7 @@ source '/home/nestor/bin/std.lib'
 
 mount_point="${HOME}/drive"
 
-'drive?' && { drive- || error-out 1 'mount point not available' ;}
-ls "$mount_point"/* &> /dev/null && error-out 2 'non-empty mount point'
+'drive?' && { drive- || non-user-error 1 'mount point not available' ;}
+ls "$mount_point"/* &> /dev/null && user-error 2 'non-empty mount point'
 
-{ mkdir -p "$mount_point" && rclone mount "drive:/${location}/" "$mount_point" --daemon --vfs-cache-mode='full' ;} || error-out 3 'mount failed'
+{ mkdir -p "$mount_point" && rclone mount "drive:/${location}/" "$mount_point" --daemon --vfs-cache-mode='full' ;} || non-user-error 3 'mount failed'

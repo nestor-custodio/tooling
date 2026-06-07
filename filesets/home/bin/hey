@@ -38,7 +38,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -49,6 +49,6 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-mkcd "/tmp/$( script-name )" || exit-out 2
+mkcd "/tmp/$( script-name )" || non-user-error 2
 
 gemini --approval-mode='plan' --skip-trust --prompt "$*" 2> /dev/null && echo

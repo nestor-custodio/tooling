@@ -34,7 +34,7 @@ source '/home/nestor/bin/std.lib'
 	while true; do
 		option="$1" && shift
 		case "$option" in
-			(--help) exit-out "$usage" ;;
+			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
 		esac
 	done
@@ -43,7 +43,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
-	[ "$#" == 0 ] || error-out 1 'invalid option(s)'
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
 }
 
@@ -60,4 +60,4 @@ source '/home/nestor/bin/std.lib'
 # is "too clean for GNU-compatible tooling" (i.e. does not end on a "\n").
 
 for i in {1..5}; { curl 'https://api.ipify.org/' --silent --max-time 1 && echo && exit ;}
-error-out 2 'no response from ipify.org'
+non-user-error 2 'no response from ipify.org'
