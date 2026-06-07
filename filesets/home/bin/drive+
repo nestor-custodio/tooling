@@ -60,7 +60,7 @@ source '/home/nestor/bin/std.lib'
 
 mount_point="${HOME}/drive"
 
-'drive?' && { drive- || non-user-error 1 'mount point not available' ;}
+drive- || non-user-error 1 'mount point not available'
 ls "$mount_point"/* &> /dev/null && user-error 2 'non-empty mount point'
 
 { mkdir -p "$mount_point" && rclone mount "drive:/${location}/" "$mount_point" --daemon --vfs-cache-mode='full' ;} || non-user-error 3 'mount failed'

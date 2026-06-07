@@ -18,7 +18,8 @@ source '/home/nestor/bin/std.lib'
 		Exit Status:
 		  0  if OK,
 		  1  if invalid option,
-		  2  if failed to unmount.
+		  2  if failed to unmount,
+		  3  if failed to clean up.
 	EOF
 
 }
@@ -51,13 +52,12 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-exit_code='0'
 mount_point="${HOME}/drive"
 
 if 'drive?'; then
 	sync "$mount_point"
-	fusermount -u "$mount_point" || exit_code='2'
+	fusermount -u "$mount_point" || non-user-error 2
 fi
 
-[ -d "$mount_point" ] && rmdir "$mount_point" &> /dev/null
-non-user-error "$exit_code"
+[ -d "$mount_point" ] && { rmdir "$mount_point" &> /dev/null || non-user-error 3 ;}
+exit 0
