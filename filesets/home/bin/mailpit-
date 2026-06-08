@@ -8,7 +8,7 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name )
 
-		Stops the 'mailtrap' service.
+		Stops the 'mailpit' service.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -50,5 +50,5 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-'mailtrap?' || exit 0
-docker container stop 'mailtrap' &> /dev/null
+'mailpit?' || exit 0
+pkill --exact mailpit --signal='SIGINT'

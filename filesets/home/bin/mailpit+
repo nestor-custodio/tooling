@@ -1,0 +1,63 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name )
+
+		Starts a local 'mailpit' service, with web UI rooted on "/mailpit".
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	CHAR_OPTS=''
+	LONG_OPTS='help'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) help-and-exit ;;
+			(--) break ;;  # No more options.
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+# Bail if already running.
+#
+'mailpit?' && exit 0
+
+
+blindly <<-'EOF'
+	log='/var/log/mailpit.log'
+	sudo "$( real rotate )" "$log" --max=2 --chmod=666
+
+	mailpit --webroot='mailpit' --verbose --log-file="$log"
+EOF

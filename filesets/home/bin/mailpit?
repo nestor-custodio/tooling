@@ -8,7 +8,7 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name )
 
-		Reports on the status of the 'mailtrap' service.
+		Reports on the status of the 'mailpit' service.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -50,4 +50,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-docker ls | 'has?' 'mailtrap'
+pgrep --exact mailpit &> /dev/null

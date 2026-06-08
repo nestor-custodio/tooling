@@ -18,6 +18,8 @@
 
 
 	respond "/ping" "pong"
+	reverse_proxy "/mailpit" "localhost:8025"
+	reverse_proxy "/mailpit/*" "localhost:8025"
 	reverse_proxy "{$BINDING}"
 
 	log {
