@@ -148,6 +148,7 @@ case "$tool_name" in
 	(lazydocker       )               ;&
 	(lazygit          )               ;&
 	(lazyjournal      )               ;&
+	(mailpit          )               ;&
 	(n                )               ;&
 	(q                )               ;&
 	(rclone           )               ;&

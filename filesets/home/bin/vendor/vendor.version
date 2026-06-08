@@ -171,6 +171,7 @@ case "$tool_name" in
 	(lazydocker       ) get-version                  --puller='(?<=Version: ).*'             ;;
 	(lazygit          ) get-version                  --puller='(?<=version=).*?(?=,)'        ;;
 	(lazyjournal      ) get-version                                                          ;;
+	(mailpit          ) get-version --cmd='version'  --puller='(?<=mailpit v).*?(?= )'       ;;
 	(marksman         ) get-version                  --puller='.*(?=-)'                      ;;
 	(n                ) get-version                                                          ;;
 	(q                ) get-version                  --puller='(?<=q version ).*'            ;;
