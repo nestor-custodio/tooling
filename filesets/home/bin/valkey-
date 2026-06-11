@@ -50,5 +50,5 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-'valkey?' &> /dev/null && yes | gcloud alpha memorystore instances delete 'valkey' --location="$( vm-region )" --async --quiet
+'valkey?' &> /dev/null && yes | gcloud memorystore instances delete 'valkey' --location="$( vm-region )" --async --quiet
 delhost valkey &> /dev/null

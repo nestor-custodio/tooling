@@ -59,7 +59,7 @@ source '/home/nestor/bin/std.lib'
 
 
 filter='(name ~ "/instances/valkey$")'
-gcloud alpha memorystore instances list --location="$( vm-region )" --filter="$filter" --format='json' 2> /dev/null | json '.[0]' | store-as instance_data
+gcloud memorystore instances list --location="$( vm-region )" --filter="$filter" --format='json' 2> /dev/null | json '.[0]' | store-as instance_data
 
 [ -n "$instance_data" ] || exit 1
 echo "$instance_data"
