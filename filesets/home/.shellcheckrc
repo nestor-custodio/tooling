@@ -9,6 +9,7 @@ external-sources=true
 
 # Disable problem rules.
 #
+disable=SC1035 # Allow `!!` (defined in "~/custom-shell") without complaints.
 disable=SC1071 # Don't complain about scripts targetting shells not supported by Shellcheck.
 disable=SC1090 # Allow `source`ing from variables.
 disable=SC1091 # Allow `source`ing from files across filesystem boundaries.
