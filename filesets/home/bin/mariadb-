@@ -8,7 +8,8 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name )
 
-		Stops the 'mariadb' container.
+		On MariaDB VM: stops the 'mariadb' container.
+		On all other VMs: shuts down the MariaDB VM.
 
 
 		Mandatory arguments to long options are mandatory for short options too.

@@ -8,7 +8,8 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name )
 
-		Starts a local, dockerized MariaDB container.
+		On MariaDB VM: starts a local, dockerized MariaDB container.
+		On all other VMs: ensures the MariaDB VM is up and starts its container.
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -78,6 +79,7 @@ else
 	# We're on a MariaDB consumer = start the 'mariadb' instance + service.
 	#
 	[ "$( gcp state mariadb )" == 'RUNNING' ] || !! gcp up mariadb
+
 	gcp run mariadb mariadb+
 
 fi
