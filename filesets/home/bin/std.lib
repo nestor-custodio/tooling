@@ -69,7 +69,8 @@ source '/home/nestor/bin/set-path.src'
 # -- IO Helpers -- #
 
 
-	TAB="$( printf '\t' )"
+	TAB=$'\t'
+	NEWLINE=$'\n'
 
 
 	function interactive? { [ -t 0 ] ;}
