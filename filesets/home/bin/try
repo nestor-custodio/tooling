@@ -12,6 +12,8 @@ source '/home/nestor/bin/std.lib'
 		given PROMPT (which need not be quoted as a single string).
 		(e.g.: '$( script-name ) making this more legible < file.sh')
 
+		Issue follow-up prompts with 'kbut' to continue the "conversation".
+
 
 		Mandatory arguments to long options are mandatory for short options too.
 		  --help                    Show this help text.
