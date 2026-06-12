@@ -77,8 +77,8 @@ end
 
 def print_table(data)
   rows = data.as_json
-  return puts('(no data)') unless data.present?
-  return puts('(unexpected type)') unless data.is_a?(Array) || data.is_a?(Hash)
+  return puts('(no data)') unless rows.present?
+  return puts('(unexpected type)') unless rows.is_a?(Array) || rows.is_a?(Hash)
 
   if rows.all? { |row| row.is_a? Array }
     # noop
@@ -364,17 +364,6 @@ if defined? Rails
   end
 
 
-  ## --- MIGRATION MANAGEMENT ---
-
-
-  def lazy_migrate
-    gem! :lazy_migrate
-    LazyMigrate.run
-  end
-
-  alias db! lazy_migrate
-
-
   ## --- FACTORYBOT HELPERS ---
 
 
@@ -391,6 +380,19 @@ if defined? Rails
     def create(model, *args)
       FactoryBot.create model, *args
     end
+
+  end
+
+
+  ## --- GOODJOB CONFIG ---
+
+
+  if defined? GoodJob
+
+    # Have GoodJob write into its own log.
+    #
+    GoodJob.logger = Logger.new(Rails.root / 'log' / 'good_job.log')
+    GoodJob.logger << "\n"
 
   end
 
