@@ -27,8 +27,8 @@ source "${BYOBU_PREFIX}/share/byobu/keybindings/f-keys.tmux.disable"
   ## Allow in-context tmux command execution.
   bind-key -n M-x            command-prompt -p "#[bold] (tmux command)" "%%"
 
-  ## Pop up a "scratch pad" window.
-  bind-key -n M-m            display-popup -E -w 75% -h 75%
+  ## Toggle a "scratch pad" window.
+  bind-key -n M-m            if-shell -F "#{==:#{session_name},popup}" "detach-client" "display-popup -E -w 75% -h 75% \"tmux new-session -A -s popup \\\"tmux set detach-on-destroy on \\\\; set status-left '' \\\\; set status-right ''; exec bash\\\" &> /dev/null\""
 
   ## Pop up a "system status" toast on status bar click.
   bind-key -n MouseDown1StatusRight run-shell 'system-status | toast --hold'
