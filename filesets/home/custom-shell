@@ -82,6 +82,8 @@ function break-out-of-links {
 
 # Filesystem navigation niceties.
 #
+function -     { cd -           ;}
+#
 function ...   { cd ../..       ;}
 function ....  { cd ../../..    ;}
 function ..... { cd ../../../.. ;}
@@ -198,15 +200,6 @@ function peek { tee /dev/tty ;}
   # Make it easier to `cd` into common locations.
   #
   export CDPATH=".:${HOME}:${HOME}/docs"
-
-  # Make it easier to return to the directory we were just in.
-  #
-  function dc {
-    [ -n "$OLDPWD" ] || { echo 'no "previous" directory' >&2 && return 1 ;}
-    [ -e "$OLDPWD" ] || { echo 'location no longer available' >&2 && return 2 ;}
-
-    cd "$OLDPWD" || return 3
-  }
 
 
   # croc
@@ -625,8 +618,8 @@ dev_helpers="${HOME}/bin/dev.src"
 
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
-export -f ... .... ..... !! !0 !1 !5                                                  \
-          a after break-out-of-links bw dc docker e eol f fbat g gadd gblame gbranch  \
+export -f -- - ... .... ..... !! !0 !1 !5                                             \
+          a after break-out-of-links bw docker e eol f fbat g gadd gblame gbranch     \
           gbranch? gcheckout gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch  \
           ggraph ghistory ginit gitignored glog gmerge gmove gmv goptimize goptimize! \
           gpatch gpop gpull gpush grebase gremote greset gstage gstash gstatus gtag   \
