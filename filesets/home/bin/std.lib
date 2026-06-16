@@ -190,7 +190,7 @@ source '/home/nestor/bin/set-path.src'
 	#
 	function non-user-error {
 		local exit_code=''
-		local error_message='unspecified error'
+		local error_message=''
 
 		case "$#" in
 			1)
@@ -212,7 +212,7 @@ source '/home/nestor/bin/set-path.src'
 		esac
 
 
-		[ -n "$error_message" ] && echo "$error_message"
+		[ -n "$error_message" ] && echo "$error_message" >& 2
 		exit "$exit_code"
 	}
 
