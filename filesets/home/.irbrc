@@ -75,7 +75,14 @@ def indifferent_hash
 end
 
 
-def print_table(data)
+def print_table(data, border: :unicode_round)
+  # Available "border" values are:
+  # - :ascii
+  # - :markdown
+  # - :unicode
+  # - :unicode_round
+  # - :unicode_thick_edge
+
   rows = data.as_json
   return puts('(no data)') unless rows.present?
   return puts('(unexpected type)') unless rows.is_a?(Array) || rows.is_a?(Hash)
@@ -90,7 +97,7 @@ def print_table(data)
   end
 
   gem! :'terminal-table'
-  puts Terminal::Table.new(headings:, rows:)
+  puts Terminal::Table.new headings:, rows:, style: { border: }
 end
 alias pt print_table
 
