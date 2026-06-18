@@ -97,6 +97,14 @@ source '/home/nestor/bin/std.lib'
 	function update {
 
 		set-tool "$1" && shift
+
+		# Don't update tools that have been held
+		# (indicated by the presence of a "*.hold" file).
+		#
+		[ -e "$( executable ).hold" ] && return 1
+
+		# Proceed with update.
+		#
 		case "$( tool-name )" in
 
 			# Straight-forward `eget` pulls.
