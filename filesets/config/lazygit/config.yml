@@ -28,6 +28,7 @@ gui:
   skipStashWarning: true
   skipNoStagedFilesWarning: false
   skipRewordInEditorWarning: true
+  skipSwitchWorktreeOnCheckoutWarning: false
 
   sidePanelWidth: 0.3333
   expandFocusedSidePanel: true
@@ -46,8 +47,27 @@ gui:
       - 'bold'
     inactiveBorderColor:
       - 'white'
+    searchingActiveBorderColor:
+      - 'cyan'
+      - 'bold'
     optionsTextColor:
       - 'cyan'
+    selectedLineBgColor:
+      - 'blue'
+    inactiveViewSelectedLineBgColor:
+      - 'bold'
+    cherryPickedCommitFgColor:
+      - 'blue'
+    cherryPickedCommitBgColor:
+      - 'cyan'
+    markedBaseCommitFgColor:
+      - 'blue'
+    markedBaseCommitBgColor:
+      - 'yellow'
+    unstagedChangesColor:
+      - 'red'
+    defaultFgColor:
+      - 'default'
 
   commitLength:
     show: true
@@ -55,11 +75,14 @@ gui:
   showListFooter: false
   showFileTree: true
   showRootItemInFileTree: true
+  fileTreeSortOrder: 'foldersFirst'
+  fileTreeSortCaseSensitive: true
   showNumstatInFilesView: false
   showRandomTip: false
   showCommandLog: false
   showBottomLine: false
   showPanelJumps: false
+  showIcons: true
   nerdFontsVersion: '3'
   showFileIcons: true
   commitAuthorShortLength: 2
@@ -73,6 +96,8 @@ gui:
   border: 'rounded'
   animateExplosion: true
   portraitMode: 'auto'
+  portraitModeAutoMaxWidth: 84
+  portraitModeAutoMinHeight: 46
   filterMode: 'fuzzy'
 
   spinner:
@@ -175,11 +200,7 @@ promptToReturnFromSubprocess: false
 # ---
 
 
-# List of allowed keybindings at:
-# https://github.com/jesseduffield/lazygit/blob/master/docs/keybindings/Custom_Keybindings.md
-#
-#
-# Summary is:
+# Allowed keybindings:
 #
 # [ all stand-alone key presses (a-z, A-Z, 0-9, and symbols) ]
 #
@@ -187,12 +208,9 @@ promptToReturnFromSubprocess: false
 # <insert> / <delete> / <home> / <end> / <pgup> / <pgdown>
 # <up> / <down> / <left> / <right>
 # <esc> / <tab> / <enter> / <space> / <backspace>
-# <diabled>
+# <disabled>
 #
-# <c-space> / <c-/>
-# <c-a> / <c-b> / <c-c> / <c-d> / <c-e> / <c-f> / <c-g> / <c-j> / <c-k> / <c-l> / <c-n>
-# <c-o> / <c-p> / <c-q> / <c-r> / <c-s> / <c-t> / <c-u> / <c-v> / <c-w> / <c-x> / <c-y> / <c-z>
-# <c-4> / <c-5> / <c-6> / <c-8>
+# <[ctrl+][shift+]{one of the above}>
 #
 #
 keybinding:
@@ -200,7 +218,7 @@ keybinding:
   universal:
     quit: 'q'
     quit-alt1: '<disabled>'
-    suspendApp: '<c-z>'
+    suspendApp: '<ctrl+z>'
     return: '<esc>'
     quitWithoutChangingDirectory: '<disabled>'
     togglePanel: '<tab>'
@@ -258,18 +276,19 @@ keybinding:
     createRebaseOptionsMenu: '!'
     pushFiles: 'P'
     pullFiles: 'p'
-    refresh: '<c-r>'
+    refresh: '<ctrl+r>'
     createPatchOptionsMenu: '<disabled>'
     nextTab: 'o'
     prevTab: 'u'
     nextScreenMode: '='
     prevScreenMode: '-'
+    cyclePagers: '<disabled>'
     undo: 'z'
     redo: 'y'
     filteringMenu: '?'
     diffingMenu: '<disabled>'
     diffingMenu-alt: '<disabled>'
-    copyToClipboard: '<c-c>'
+    copyToClipboard: '<ctrl+c>'
     openRecentRepos: '<disabled>'
     submitEditorText: '<enter>'
     extrasMenu: '@'
@@ -284,6 +303,7 @@ keybinding:
     checkForUpdate: '<disabled>'
     recentRepos: '<disabled>'
     allBranchesLogGraph: '<disabled>'
+    allBranchesLogGraphReverse: '<disabled>'
 
   files:
     commitChanges: 'c'
@@ -309,6 +329,7 @@ keybinding:
   branches:
     createPullRequest: '<disabled>'
     viewPullRequestOptions: 'g'
+    openPullRequestInBrowser: '<disabled>'
     copyPullRequestURL: '<disabled>'
     checkoutBranchByName: 'c'
     forceCheckoutBranch: '<disabled>'
@@ -323,6 +344,7 @@ keybinding:
     pushTag: 'T'
     setUpstream: 'u'
     fetchRemote: 'f'
+    addForkRemote: '<disabled>'
     sortOrder: '<disabled>'
 
   worktrees:
@@ -334,10 +356,11 @@ keybinding:
     renameCommitWithEditor: '<disabled>'
     viewResetOptions: 'R'
     markCommitAsFixup: 'f'
+    setFixupMessage: '<disabled>'
     createFixupCommit: '<disabled>'
     squashAboveCommits: '<disabled>'
-    moveDownCommit: '<c-k>'
-    moveUpCommit: '<tab>' # <-- really a mapping to '<c-i>'
+    moveDownCommit: '<ctrl+k>'
+    moveUpCommit: '<tab>' # <-- really a mapping to '<ctrl+i>'
     amendToCommit: 'a'
     resetCommitAuthor: '<disabled>'
     pickCommit: 'p'
@@ -351,6 +374,7 @@ keybinding:
     copyCommitAttributeToClipboard: '<disabled>'
     openLogMenu: '<disabled>'
     openInBrowser: '<disabled>'
+    openPullRequestInBrowser: '<disabled>'
     viewBisectOptions: '<disabled>'
     startInteractiveRebase: 'i'
     selectCommitsOfCurrentBranch: '*'
