@@ -64,7 +64,7 @@ shopt -s lastpipe
 			# ---
 
 			function ba {
-				gem list bundler-audit --installed || gem install bundler-audit &> /dev/null
+				{ gem list bundler-audit --installed || gem install bundler-audit ;} &> /dev/null
 				bundle-audit check --update "$@"
 			}
 
