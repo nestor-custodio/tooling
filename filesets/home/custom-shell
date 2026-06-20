@@ -358,7 +358,7 @@ function peek { tee /dev/tty ;}
 
   # geol
 
-  function eol { geol product extended --log-level='warn' "$@" ;}
+  function eol { geol product extended --log-level='warn' "$@" 2> /dev/null ;}
 
 
   # git / lazygit
