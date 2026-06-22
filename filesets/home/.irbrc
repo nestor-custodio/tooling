@@ -412,27 +412,54 @@ if defined? Rails
   end
 
 
-  def db?
-    User.take
-    true
-  rescue StandardError
-    false
+  def db?(model = ApplicationRecord)
+    connection(model).active?
   end
 
-  def connection
-    ApplicationRecord.connection
+  def connection(model = ApplicationRecord)
+    model.connection
   end
 
-  def reconnect!
-    connection.reconnect! unless connection.active?
-    connection.clear_cache!
+  def reconnect!(model = ApplicationRecord)
+    connection(model).reconnect! unless connection(model).active?
+    connection(model).clear_cache!
   end
 
-  def clear_cache!
-    connection.clear_cache!
+  def clear_cache!(model = ApplicationRecord)
+    connection(model).clear_cache!
   end
   alias clear_db_cache! clear_cache!
 
+  def transaction(model = ApplicationRecord, &)
+    connection(model).transaction(&)
+  end
+
+  # This is intended to effectively be equal to a 'rails db:reset',
+  # but runnable mid-session and without requiring a full disconnect.
+  #
+  def wipe_db!(model = ApplicationRecord, seedfile: Rails.root.join('db', 'seeds'))
+    # Wipe tables.
+    #
+    connection(model).tables
+                     .grep_v(%r{ar_internal_metadata|schema_migrations})
+                     .each { connection(model).delete %(TRUNCATE "#{it}" CASCADE) }
+
+    # Invalidate instances.
+    #
+    require 'objspace'
+    ObjectSpace.each_object(ApplicationRecord) do |record|
+      record.instance_variable_set :@attributes, {}
+      record.instance_variable_set :@readonly, true
+      record.instance_variable_set :@destroyed, true
+    end
+
+    # Re-seed the database.
+    #
+    return unless seedfile.present?
+    require_relative seedfile rescue nil
+
+    nil
+  end
 
   def any(model_or_collection)
     model_or_collection.find model_or_collection.ids.sample
