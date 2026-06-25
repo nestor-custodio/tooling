@@ -513,13 +513,24 @@ function peek { tee /dev/tty ;}
   }
 
 
+  # pipx
+
+  function pipx {
+    # Ensure `pipx`.
+    #
+    real pipx &> /dev/null || { sudo apt install -qqy pipx && echo ;} || return 1
+
+    "$( real pipx )" "$@"
+  }
+
+
   # posting
 
   function posting {
     # Ensure `posting` (via pipx).
     # See: https://github.com/darrenburns/posting
     #
-    real posting &> /dev/null || pipx! install posting || return 1
+    real posting &> /dev/null || pipx install posting || return 1
 
     "$( real posting )" "$@"
   }
@@ -569,7 +580,7 @@ function peek { tee /dev/tty ;}
     #
     if ! real wut &> /dev/null; then
       local installer_output
-      if ! installer_output="$( pipx! install wut-cli 2>&1 )"; then
+      if ! installer_output="$( pipx install wut-cli 2>&1 )"; then
         echo "$installer_output"
         return 1
       fi
@@ -624,7 +635,7 @@ export -f -- - ... .... ..... !! !0 !1 !5                                       
           ggraph ghistory ginit gitignored glog gmerge gmove gmv goptimize goptimize! \
           gpatch gpop gpull gpush grebase gremote greset gstage gstash gstatus gtag   \
           gtrack gunchange gundelete gunstage guntrack h hbat helix hex k lazydocker  \
-          less list list+ m mirror mkcd peek posting real receive redo rg send        \
+          less list list+ m mirror mkcd peek pipx posting real receive redo rg send   \
           shellcheck wut wut?
 
 
