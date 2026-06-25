@@ -51,5 +51,12 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+pwd | 'starts-with?' "$DEV_ROOT" || user-error 3 "not currently within '${DEV_ROOT}'"
+cd "$DEV_ROOT"
+
 command -v spring &> /dev/null || exit 1
-spring status | head -n1 | sed -e 's|:$|.|' | tee /dev/stderr | 'has?' 'is running'
+
+spring status | store-as status
+echo "$status" &> /dev/stderr
+
+'has?' 'is running' <<< "$status"

@@ -50,5 +50,8 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+pwd | 'starts-with?' "$DEV_ROOT" || user-error 3 "not currently within '${DEV_ROOT}'"
+cd "$DEV_ROOT"
+
 command -v spring &> /dev/null || exit 0
 spring stop &> /dev/null
