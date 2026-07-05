@@ -33,6 +33,13 @@ gui:
   sidePanelWidth: 0.3333
   expandFocusedSidePanel: true
   expandedSidePanelWeight: 2
+  shrinkSidePanelsToContent: true
+  sidePanels:
+    - ['status']
+    - ['files', 'worktrees']
+    - ['branches', 'remotes']
+    - ['commits', 'tags', 'reflog']
+    - ['stash']
   mainPanelSplitMode: 'flexible'
   enlargedSideViewLocation: 'top'
   wrapLinesInStagingView: false
@@ -119,13 +126,7 @@ gui:
   statusPanelView: 'allBranchesLog'
   switchToFilesAfterStashPop: true
   switchToFilesAfterStashApply: true
-  switchTabsWithPanelJumpKeys: true
-
-
-os:
-
-  editPreset: 'helix'
-  copyToClipboardCmd: 'copy {{text}}'
+  switchTabsWithPanelJumpKeys: false
 
 
 git:
@@ -153,6 +154,7 @@ git:
   skipHookPrefix: 'WIP'
   autoFetch: true
   autoRefresh: true
+  autoDetectExternalChanges: true
   autoForwardBranches: 'onlyMainBranches'
   fetchAll: false
   autoStageResolvedConflicts: true
@@ -178,6 +180,10 @@ git:
   truncateCopiedCommitHashesTo: 12
 
 
+worktree:
+  defaultPath: ''
+
+
 update:
   method: 'never'
   days: 14
@@ -186,10 +192,28 @@ update:
 refresher:
   refreshInterval: 10
   fetchInterval: 60
+  externalChangeCheckInterval: 10
 
 
 confirmOnQuit: false
 quitOnTopLevelReturn: false
+
+
+os:
+
+  edit: ''
+  editAtLine: ''
+  editAtLineAndWait: ''
+  editInTerminal: false
+  openDirInEditor: ''
+  editPreset: 'helix'
+  open: ''
+  openLink: ''
+  copyToClipboardCmd: 'copy {{text}}'
+  readFromClipboardCmd: ''
+  shellFunctionsFile: ''
+
+
 disableStartupPopups: true
 customCommands: []
 services: {}
@@ -213,156 +237,163 @@ promptToReturnFromSubprocess: false
 # <[ctrl+][shift+]{one of the above}>
 #
 #
+# Keybindings may also be defined as an array of the above, including an empty array in lieu of `<disabled>`.
+#
+#
 keybinding:
 
   universal:
+    quit-alt1: []            # Droppable once https://github.com/jesseduffield/lazygit/issues/5763
+    prevItem-alt: []         # is resolved.
+    nextItem-alt: []         #
+    gotoTop-alt: []          #
+    gotoBottom-alt: []       #
+    prevBlock-alt: []        #
+    nextBlock-alt: []        #
+    prevBlock-alt2: []       #
+    nextBlock-alt2: []       #
+    confirmInEditor-alt: []  #
+    scrollUpMain-alt1: []    #
+    scrollDownMain-alt1: []  #
+    scrollUpMain-alt2: []    #
+    scrollDownMain-alt2: []  #
+    diffingMenu-alt: []      #
+
     quit: 'q'
-    quit-alt1: '<disabled>'
     suspendApp: '<ctrl+z>'
     return: '<esc>'
-    quitWithoutChangingDirectory: '<disabled>'
+    quitWithoutChangingDirectory: []
     togglePanel: '<tab>'
     prevItem: 'i'
     nextItem: 'k'
-    prevItem-alt: '<disabled>'
-    nextItem-alt: '<disabled>'
     prevPage: 'I'
     nextPage: 'K'
     scrollLeft: 'j'
     scrollRight: 'l'
     gotoTop: '['
     gotoBottom: ']'
-    gotoTop-alt: '<disabled>'
-    gotoBottom-alt: '<disabled>'
-    toggleRangeSelect: '.'
-    rangeSelectDown: '<disabled>'
-    rangeSelectUp: '<disabled>'
-    prevBlock: '<disabled>'
-    nextBlock: '<disabled>'
-    prevBlock-alt: '<disabled>'
-    nextBlock-alt: '<disabled>'
-    nextBlock-alt2: '<disabled>'
-    prevBlock-alt2: '<disabled>'
+    toggleRangeSelect: ':'
+    rangeSelectDown: []
+    rangeSelectUp: []
+    prevBlock: []
+    nextBlock: []
     jumpToBlock:
       - '1'
       - '2'
       - '3'
       - '4'
       - '5'
-    focusMainView: '6'
+    focusMainView: 'm'
     nextMatch: 'n'
     prevMatch: 'N'
     startSearch: '/'
-    optionMenu: 'm'
-    optionMenu-alt1: '<disabled>'
+    moveWordLeft: []
+    moveWordRight: []
+    backspaceWord: []
+    forwardDeleteWord: []
+    optionMenu: '?'
     select: '<enter>'
     goInto: '<space>'
     confirm: '<enter>'
     confirmMenu: '<enter>'
     confirmSuggestion: '<enter>'
-    confirmInEditor: '<disabled>'
-    confirmInEditor-alt: '<disabled>'
+    confirmInEditor: []
     remove: 'd'
     new: 'n'
+    newWorktree: []
     edit: 'e'
-    openFile: '<disabled>'
+    openFile: []
     scrollUpMain: '<up>'
     scrollDownMain: '<down>'
-    scrollUpMain-alt1: '<disabled>'
-    scrollDownMain-alt1: '<disabled>'
-    scrollUpMain-alt2: '<disabled>'
-    scrollDownMain-alt2: '<disabled>'
-    executeShellCommand: '<disabled>'
+    executeShellCommand: []
     createRebaseOptionsMenu: '!'
     pushFiles: 'P'
     pullFiles: 'p'
     refresh: '<ctrl+r>'
-    createPatchOptionsMenu: '<disabled>'
+    createPatchOptionsMenu: []
     nextTab: 'o'
     prevTab: 'u'
     nextScreenMode: '='
     prevScreenMode: '-'
-    cyclePagers: '<disabled>'
+    cyclePagers: []
+    cyclePagersReverse: []
     undo: 'z'
     redo: 'y'
-    filteringMenu: '?'
-    diffingMenu: '<disabled>'
-    diffingMenu-alt: '<disabled>'
+    filteringMenu: 'h'
+    diffingMenu: []
     copyToClipboard: '<ctrl+c>'
-    openRecentRepos: '<disabled>'
+    openRecentRepos: []
     submitEditorText: '<enter>'
     extrasMenu: '@'
-    toggleWhitespaceInDiffView: '<disabled>'
+    toggleWhitespaceInDiffView: 'W'
     increaseContextInDiffView: '}'
     decreaseContextInDiffView: '{'
-    increaseRenameSimilarityThreshold: '<disabled>'
-    decreaseRenameSimilarityThreshold: '<disabled>'
-    openDiffTool: '<disabled>'
+    increaseRenameSimilarityThreshold: []
+    decreaseRenameSimilarityThreshold: []
+    openDiffTool: []
+    editConfig: []
 
   status:
-    checkForUpdate: '<disabled>'
-    recentRepos: '<disabled>'
-    allBranchesLogGraph: '<disabled>'
-    allBranchesLogGraphReverse: '<disabled>'
+    checkForUpdate: []
+    recentRepos: []
+    allBranchesLogGraph: []
+    allBranchesLogGraphReverse: []
 
   files:
     commitChanges: 'c'
-    commitChangesWithoutHook: '<disabled>'
+    commitChangesWithoutHook: []
     amendLastCommit: 'a'
     commitChangesWithEditor: 'C'
-    findBaseCommitForFixup: 'b'
-    confirmDiscard: '<disabled>'
+    findBaseCommitForFixup: []
+    confirmDiscard: []
     ignoreFile: 'x'
-    refreshFiles: '<disabled>'
-    stashAllChanges: 'S'
+    refreshFiles: []
+    stashAllChanges: []
     viewStashOptions: 's'
     toggleStagedAll: '*'
     viewResetOptions: 'r'
-    fetch: '<disabled>'
+    fetch: []
     toggleTreeView: 't'
-    openMergeOptions: '<disabled>'
+    openMergeOptions: []
     openStatusFilter: 'f'
-    copyFileInfoToClipboard: '<disabled>'
+    copyFileInfoToClipboard: '<ctrl+c>'
     collapseAll: '-'
     expandAll: '+'
 
   branches:
-    createPullRequest: '<disabled>'
+    createPullRequest: []
     viewPullRequestOptions: 'g'
-    openPullRequestInBrowser: '<disabled>'
-    copyPullRequestURL: '<disabled>'
+    openPullRequestInBrowser: []
+    copyPullRequestURL: []
     checkoutBranchByName: 'c'
-    forceCheckoutBranch: '<disabled>'
-    checkoutPreviousBranch: '<disabled>'
+    forceCheckoutBranch: []
+    checkoutPreviousBranch: []
     rebaseBranch: 'R'
     renameBranch: 'r'
-    mergeIntoCurrentBranch: '<disabled>'
-    moveCommitsToNewBranch: '<disabled>'
-    viewGitFlowOptions: '<disabled>'
-    fastForward: 'f'
+    mergeIntoCurrentBranch: []
+    moveCommitsToNewBranch: []
+    viewGitFlowOptions: []
+    fastForward: []
     createTag: 't'
     pushTag: 'T'
     setUpstream: 'u'
     fetchRemote: 'f'
-    addForkRemote: '<disabled>'
-    sortOrder: '<disabled>'
-
-  worktrees:
-    viewWorktreeOptions: '<disabled>'
+    addForkRemote: []
+    sortOrder: []
 
   commits:
     squashDown: 's'
     renameCommit: 'r'
-    renameCommitWithEditor: '<disabled>'
-    viewResetOptions: 'R'
+    renameCommitWithEditor: []
+    viewResetOptions: []
     markCommitAsFixup: 'f'
-    setFixupMessage: '<disabled>'
-    createFixupCommit: '<disabled>'
-    squashAboveCommits: '<disabled>'
+    setFixupMessage: []
+    createFixupCommit: []
+    squashAboveCommits: []
     moveDownCommit: '<ctrl+k>'
     moveUpCommit: '<tab>' # <-- really a mapping to '<ctrl+i>'
     amendToCommit: 'a'
-    resetCommitAuthor: '<disabled>'
+    resetCommitAuthor: []
     pickCommit: 'p'
     revertCommit: 'x'
     cherryPickCopy: 'c'
@@ -371,18 +402,18 @@ keybinding:
     tagCommit: 't'
     checkoutCommit: '<enter>'
     resetCherryPick: '<esc>'
-    copyCommitAttributeToClipboard: '<disabled>'
-    openLogMenu: '<disabled>'
-    openInBrowser: '<disabled>'
-    openPullRequestInBrowser: '<disabled>'
-    viewBisectOptions: '<disabled>'
+    copyCommitAttributeToClipboard: '<ctrl+c>'
+    openLogMenu: []
+    openInBrowser: []
+    openPullRequestInBrowser: []
+    viewBisectOptions: []
     startInteractiveRebase: 'i'
     selectCommitsOfCurrentBranch: '*'
 
   amendAttribute:
-    resetAuthor: '<disabled>'
-    setAuthor: '<disabled>'
-    addCoAuthor: '<disabled>'
+    resetAuthor: []
+    setAuthor: []
+    addCoAuthor: []
 
   stash:
     popStash: 'p'
@@ -392,14 +423,16 @@ keybinding:
     checkoutCommitFile: '<enter>'
 
   main:
+    prevHunk: 'i'
+    nextHunk: 'k'
     toggleSelectHunk: 'g'
     pickBothHunks: 'b'
     editSelectHunk: 'e'
 
   submodules:
-    init: '<disabled>'
-    update: '<disabled>'
-    bulkMenu: '<disabled>'
+    init: []
+    update: []
+    bulkMenu: []
 
   commitMessage:
-    commitMenu: '<disabled>'
+    commitMenu: []
