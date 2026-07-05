@@ -218,9 +218,9 @@ startup_log='/var/log/startup.log'
 
 				# Clone the given git_repo if needed.
 
-				[ -n "$git_repo" ] && ! [ -d "${DEV_ROOT}/.git" ] && {
-					report '... cloning repo (--no-checkout) into dev root'
-					sudo --user='nestor' git clone "$git_repo" "$DEV_ROOT" --no-checkout
+				[ -n "$git_repo" ] && ! [ -d "${DEV_ROOT}/.git" ] && ! [ -d "${DEV_ROOT}/.repo" ] && {
+					report '... cloning repo (--bare) into dev root'
+					sudo --user='nestor' git clone "$git_repo" "$DEV_ROOT" --bare
 				}
 
 			}

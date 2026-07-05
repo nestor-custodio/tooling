@@ -391,11 +391,24 @@ function peek { tee /dev/tty ;}
   function gstash      { git stash                                  "$@" ;}
   function gstatus     { git status --short --branch --ahead-behind "$@" ;}
   function gtag        { git tag                                    "$@" ;}
+  function gtree       { git worktree                               "$@" ;}
+  function gtree+      { git worktree add                           "$@" ;}
+  function gtree-      { git worktree remove                        "$@" ;}
   function gtrack      { git add                                    "$@" ;}
   function gunchange   { git checkout HEAD                          "$@" ;}
   function gundelete   { git checkout HEAD                          "$@" ;}
   function gunstage    { git reset                                  "$@" ;}
   function guntrack    { git rm -r --cached                         "$@" ;}
+
+  # Report nearest git root location.
+  # When within a worktree, the worktree root is reported.
+  #
+  function groot {
+    local nearest_dot_git="$( nearest .git )"
+    [ -n "$nearest_dot_git" ] || return 1
+
+    dirname "$nearest_dot_git"
+  }
 
   # Object cleanup / graph speedup helpers.
   #
@@ -633,10 +646,10 @@ export -f -- - ... .... ..... !! !0 !1 !5                                       
           a after break-out-of-links bw docker e eol f fbat g gadd gblame gbranch     \
           gbranch? gcheckout gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch  \
           ggraph ghistory ginit gitignored glog gmerge gmove gmv goptimize goptimize! \
-          gpatch gpop gpull gpush grebase gremote greset gstage gstash gstatus gtag   \
-          gtrack gunchange gundelete gunstage guntrack h hbat helix hex k lazydocker  \
-          less list list+ m mirror mkcd peek pipx posting real receive redo rg send   \
-          shellcheck wut wut?
+          gpatch gpop gpull gpush grebase gremote greset groot gstage gstash gstatus  \
+          gtag gtrack gtree gtree+ gtree- gunchange gundelete gunstage guntrack h     \
+          hbat helix hex k lazydocker less list list+ m mirror mkcd peek pipx posting \
+          real receive redo rg send shellcheck wut wut?
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",

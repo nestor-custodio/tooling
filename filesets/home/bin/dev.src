@@ -137,11 +137,13 @@ shopt -s lastpipe
 
 				cd "$DEV_ROOT" || return 2
 
+				cd "$( groot )" || return 3
+
 				gem_name="$( superbase ./*.gemspec )"
-				[ -n "$gem_name" ] || return 3
+				[ -n "$gem_name" ] || return 4
 
 				repo_id="$( gh repo set-default --view 2> /dev/null )"
-				[ -n "$repo_id" ] || return 4
+				[ -n "$repo_id" ] || return 5
 
 				old_version="$( gh:release-version "$repo_id" 2> /dev/null )"
 				[ -n "$old_version" ] || old_version='0.0.0'
@@ -170,7 +172,7 @@ shopt -s lastpipe
 				else
 					printf "Last release was '%s'.\nPublish new release as:" "$old_version"
 					read -r -p ' ' new_version
-					[ -n "$new_version" ] || return 5
+					[ -n "$new_version" ] || return 6
 				fi
 
 
@@ -211,7 +213,7 @@ shopt -s lastpipe
 
 		function rails-db {
 			local database="$DATABASE_URL"
-			local config_file="${DEV_ROOT}/config/database.yml"
+			local config_file="$( groot )/config/database.yml"
 			local primary_connection="$( yaml ".${RAILS_ENV}.primary // .${RAILS_ENV}" < "$config_file" 2> /dev/null )"
 
 			# Pull from Rails DB config, if no $DATABASE_URL was available.
@@ -235,7 +237,7 @@ shopt -s lastpipe
 		}
 
 		function pending-migrations {
-			local migration_files="$( ls -1 "${DEV_ROOT}/db/migrate"/[0-9]*_*.rb 2> /dev/null | sed -r -e 's|^.*/([0-9]+)_[^/]+\.rb$|\1|' )"
+			local migration_files="$( ls -1 "$( groot )/db/migrate"/[0-9]*_*.rb 2> /dev/null | sed -r -e 's|^.*/([0-9]+)_[^/]+\.rb$|\1|' )"
 
 			local sql=()
 			sql+=('CREATE TEMPORARY TABLE files (name TEXT)')
@@ -321,8 +323,8 @@ shopt -s lastpipe
 		# ---
 
 		function rs {
-			local procfile="${DEV_ROOT}/Procfile.dev"
-			local dev_runner="${DEV_ROOT}/bin/dev"
+			local procfile="$( groot )/Procfile.dev"
+			local dev_runner="$( groot )/bin/dev"
 
 			# Run any pending migrations.
 			#
@@ -513,7 +515,7 @@ shopt -s lastpipe
 		[ -n "$env_name" ] && env_list+=(".env.${env_name}")
 		                      env_list+=('.env.local')
 		[ -n "$env_name" ] && env_list+=(".env.${env_name}.local")
-		for env_file in "${env_list[@]}"; do source "${DEV_ROOT}/${env_file}" 2> /dev/null; done
+		for env_file in "${env_list[@]}"; do source "$( groot )/${env_file}" 2> /dev/null; done
 	}
 
 	function unload-env {

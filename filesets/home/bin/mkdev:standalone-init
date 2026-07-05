@@ -207,8 +207,8 @@ startup_log='/var/log/startup.log'
 
 			# Set up the dev store.
 			[ -n "$git_repo" ] && {
-				report '... cloning repo (--no-checkout) into dev root'
-				sudo --user='nestor' git clone "$git_repo" "$DEV_ROOT"
+				report '... cloning repo (--bare) into dev root'
+				sudo --user='nestor' git clone "$git_repo" "$DEV_ROOT" --bare
 			}
 
 	}
