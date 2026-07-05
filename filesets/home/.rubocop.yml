@@ -74,3 +74,6 @@ Style/RescueModifier:
 Style/StringLiterals:
   # Check for use of ' vs ".
   ConsistentQuotesInMultiline: true
+  Exclude:
+    - 'db/**/schema.rb'
+    - 'db/**/*_schema.rb'
