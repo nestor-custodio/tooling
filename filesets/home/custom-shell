@@ -400,6 +400,31 @@ function peek { tee /dev/tty ;}
   function gunstage    { git reset                                  "$@" ;}
   function guntrack    { git rm -r --cached                         "$@" ;}
 
+  # Like `git clone`, but for bare repos, generating our preferred structure.
+  #
+  # If the given DESTINATION ends with ".git", we clone directly into it as-is;
+  # otherwise we clone into "${DESTINATION}/.git" so worktrees can be written directly into "$DESTINATION".
+  #
+  function gbare {
+    printf '%s\n' -- "$@" | grep -x --quiet -- '--help' && echo 'Usage: gbare REPO [DESTINATION]' && return 0
+
+    local repo="$1" && shift
+    [ -n "$repo" ] || return 1
+
+    local destination="$1" && shift
+    [ -n "$destination" ] || destination="$( sed -r -e 's|^.*/||' -e 's|\.git$||' <<< "$repo" )"
+
+    local git_dir
+    if 'ends-with?' '.git' <<< "$destination"
+      then git_dir="$destination"
+      else git_dir="${destination}/.git"
+    fi
+
+    mkdir -p "$git_dir" || return 2
+    git clone --bare "$repo" "$git_dir" || return 3
+    git config --file="$git_dir/config" remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' || return 4
+  }
+
   # Report nearest git root location.
   # When within a worktree, the worktree root is reported.
   #
@@ -643,13 +668,13 @@ dev_helpers="${HOME}/bin/dev.src"
 # Ensure all of the above-defined functions are usable in subshells as well.
 #
 export -f -- - ... .... ..... !! !0 !1 !5                                             \
-          a after break-out-of-links bw docker e eol f fbat g gadd gblame gbranch     \
-          gbranch? gcheckout gcherrypick gclone gcommit gconfig gdeploy gdiff gfetch  \
-          ggraph ghistory ginit gitignored glog gmerge gmove gmv goptimize goptimize! \
-          gpatch gpop gpull gpush grebase gremote greset groot gstage gstash gstatus  \
-          gtag gtrack gtree gtree+ gtree- gunchange gundelete gunstage guntrack h     \
-          hbat helix hex k lazydocker less list list+ m mirror mkcd peek pipx posting \
-          real receive redo rg send shellcheck wut wut?
+          a after break-out-of-links bw docker e eol f fbat g gadd gbare gblame       \
+          gbranch gbranch? gcheckout gcherrypick gclone gcommit gconfig gdeploy gdiff \
+          gfetch ggraph ghistory ginit gitignored glog gmerge gmove gmv goptimize     \
+          goptimize! gpatch gpop gpull gpush grebase gremote greset groot gstage      \
+          gstash gstatus gtag gtrack gtree gtree+ gtree- gunchange gundelete gunstage \
+          guntrack h hbat helix hex k lazydocker less list list+ m mirror mkcd peek   \
+          pipx posting real receive redo rg send shellcheck wut wut?
 
 
 # New windows/panes opened from within a symlinked location will show up within "~/links",

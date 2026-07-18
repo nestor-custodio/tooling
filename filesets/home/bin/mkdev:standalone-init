@@ -208,7 +208,14 @@ startup_log='/var/log/startup.log'
 			# Set up the dev store.
 			[ -n "$git_repo" ] && {
 				report '... cloning repo (--bare) into dev root'
-				sudo --user='nestor' git clone "$git_repo" "$DEV_ROOT" --bare
+				sudo --user='nestor' /bin/bash -s <<-EOF
+					cd "$DEV_ROOT"
+					git clone --bare "$git_repo" ./.git
+					git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+
+					branch="\$(git branch --show-current)"
+					git worktree add "\$branch" "\$branch"
+				EOF
 			}
 
 	}

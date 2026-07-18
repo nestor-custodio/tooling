@@ -218,9 +218,16 @@ startup_log='/var/log/startup.log'
 
 				# Clone the given git_repo if needed.
 
-				[ -n "$git_repo" ] && ! [ -d "${DEV_ROOT}/.git" ] && ! [ -d "${DEV_ROOT}/.repo" ] && {
+				[ -n "$git_repo" ] && ! [ -d "${DEV_ROOT}/.git" ] && {
 					report '... cloning repo (--bare) into dev root'
-					sudo --user='nestor' git clone "$git_repo" "$DEV_ROOT" --bare
+					sudo --user='nestor' /bin/bash -s <<-EOF
+						cd "$DEV_ROOT"
+						git clone --bare "$git_repo" ./.git
+						git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+
+						branch="\$(git branch --show-current)"
+						git worktree add "\$branch" "\$branch"
+					EOF
 				}
 
 			}
