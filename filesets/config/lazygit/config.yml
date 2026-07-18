@@ -34,11 +34,15 @@ gui:
   expandFocusedSidePanel: true
   expandedSidePanelWeight: 2
   shrinkSidePanelsToContent: true
+
+  # Panels:
+  #   status / files / worktrees / branches
+  #   remotes / commits / tags / reflog / stash
+  #
   sidePanels:
-    - ['status']
-    - ['files', 'worktrees']
-    - ['branches', 'remotes']
-    - ['commits', 'tags', 'reflog']
+    - ['worktrees', 'branches', 'remotes']
+    - ['files']
+    - ['commits', 'tags']
     - ['stash']
   mainPanelSplitMode: 'flexible'
   enlargedSideViewLocation: 'top'
@@ -300,7 +304,7 @@ keybinding:
     confirmInEditor: []
     remove: 'd'
     new: 'n'
-    newWorktree: []
+    newWorktree: 'w'
     edit: 'e'
     openFile: []
     scrollUpMain: '<up>'
@@ -376,7 +380,7 @@ keybinding:
     fastForward: []
     createTag: 't'
     pushTag: 'T'
-    setUpstream: 'u'
+    setUpstream: 'U'
     fetchRemote: 'f'
     addForkRemote: []
     sortOrder: []
