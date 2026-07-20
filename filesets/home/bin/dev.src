@@ -5,7 +5,13 @@ shopt -s lastpipe
 
 # Navigation helpers.
 
-	function dev { cd "$DEV_ROOT" ;}
+	function dev {
+		cd "$DEV_ROOT" || return 1
+
+		[ "$#" == 0 ] && return 0
+		cd "$( fd --fixed-strings "$1" --type='dir' --max-depth='1' | head -n1 )" 2> /dev/null || return 2
+	}
+
 	function dev? { pwd | 'starts-with?' "$DEV_ROOT" ;}
 
 
