@@ -42,8 +42,39 @@ shopt -s lastpipe
 
 { # -- Informational Commands -- #
 
-	# Report nearest git root location.
-	# When within a worktree, the worktree root is reported.
+	# Predicates.
+	#
+	function grepo? { nearest .git &> /dev/null || return 1                         ;}
+	function gtree? { [ "$( file-class "$( nearest .git )" 2> /dev/null )" == 'r' ] ;}
+
+	# Reports the repo root.
+	#
+	function grepo {
+		local nearest_dot_git="$( nearest .git )"
+		[ -n "$nearest_dot_git" ] || return 1
+
+		case "$( file-class "$nearest_dot_git" )" in
+			(d)
+				dirname "$nearest_dot_git"
+				;;
+
+			(r)
+				local tree_source="$( yaml .gitdir < "$nearest_dot_git" )"
+				[ -n "$tree_source" ] || return 2
+
+				local repo_source="$( cat "${tree_source}/commondir" )"
+				[ -n "$repo_source" ] || return 3
+
+				realpath "${tree_source}/${repo_source}" | sed -r -e 's|/(\.git)?$||'
+				;;
+
+			(*) return 2
+		esac
+	}
+
+	# Reports the "root".
+	# For plain repos, this is the repo root.
+	# For worktrees, this is the worktree root.
 	#
 	function groot {
 		local nearest_dot_git="$( nearest .git )"
@@ -51,10 +82,6 @@ shopt -s lastpipe
 
 		dirname "$nearest_dot_git"
 	}
-
-	function gbranch? { git branch --show-current "$@"                                ;}
-	function grepo?   { nearest .git &> /dev/null || return 1                         ;}
-	function gtree?   { [ "$( file-class "$( nearest .git )" 2> /dev/null )" == 'r' ] ;}
 
 	# ---
 
@@ -82,6 +109,10 @@ shopt -s lastpipe
 	}
 
 	# ---
+
+	# Reports the currently checked out branch.
+	#
+	function gbranch? { git branch --show-current "$@" ;}
 
 	# Lists all .gitignore'd files/directories.
 	# Accounts for all applicable .gitignore's, including the global file,
@@ -174,5 +205,6 @@ shopt -s lastpipe
 export -f gadd gbare gblame gbranch gbranch? gcheckout gcherrypick gclone       \
           gcommit gconfig gdeploy gdiff gfetch ggraph ghistory ginit gitignored \
           glog gmerge gmove gmv goptimize goptimize! gpatch gpop gpull gpush    \
-          grebase gremote grepo? greset groot gstage gstash gstatus gtag gtrack \
-          gtree gtree+ gtree- gtree? gunchange gundelete gunstage guntrack
+          grebase gremote grepo grepo? greset groot gstage gstash gstatus gtag  \
+          gtrack gtree gtree+ gtree- gtree? gunchange gundelete gunstage        \
+          guntrack
