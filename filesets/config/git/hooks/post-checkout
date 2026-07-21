@@ -1,0 +1,39 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+# From `man githooks`:
+#
+# The hook is given three parameters: the ref of the previous HEAD, the ref of
+# the new HEAD (which may or may not have changed), and a flag indicating
+# whether the checkout was a branch checkout (changing branches, flag=1) or a
+# file checkout (retrieving a file from the index, flag=0). This hook cannot
+# affect the outcome of git switch or git checkout, other than that the hook’s
+# exit status becomes the exit status of these two commands.
+#
+#
+# NOTE: this is called from within the checked out worktree (e.g. `pwd` is the
+#       worktree root.
+
+old_head="$1" && shift
+new_head="$1" && shift
+checkout_flag="$1" && shift
+
+if [ "$checkout_flag" == 0 ]
+	then checkout_type='file'
+	else checkout_type='branch'
+fi
+
+# ---
+
+# Symlink items in the repo's ".globals" over into worktrees.
+#
+if [ "$checkout_type" == 'branch' ] && 'gtree?'; then
+  globals_dir="$( grepo )/.globals"
+	ls -1 -A --literal "$globals_dir" 2> /dev/null | while read -r name; do
+	  source="${globals_dir}/${name}"
+	  target="./${name}"
+	  [ -e "$target" ] || ln -sT "$source" "$target"
+	done
+fi
