@@ -217,6 +217,8 @@ function peek { tee /dev/tty ;}
   }
 
   function receive {
+    printf '%s\n' -- "$@" | grep -x --quiet -- '--help' && echo 'Usage: receive [PASSPHRASE]' && return 0
+
     local old_ifs="$IFS"; IFS='-'
     passphrase="$*"
     IFS="$old_ifs"
