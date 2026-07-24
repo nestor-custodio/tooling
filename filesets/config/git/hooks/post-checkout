@@ -31,13 +31,6 @@ fi
 #
 if [ "$checkout_type" == 'branch' ] && 'gtree?'; then
 
-	# Run the (one-time) worktree init script, if any.
-	#
-	if 'match-line?' '0+' <<< "$old_head"; then
-		init="$( grepo )/.init"
-		[ -x "$init" ] && "$init"
-	fi
-
 	# Symlink the repo's "shared" items over into the worktree.
 	#
 	globals_dir="$( grepo )/.shared"
@@ -46,5 +39,12 @@ if [ "$checkout_type" == 'branch' ] && 'gtree?'; then
 		target="./${name}"
 		[ -e "$target" ] || ln -sT "$source" "$target"
 	done
+
+	# Run the (one-time) worktree init script (if any), once the "shared" symlinks are in place.
+	#
+	if 'match-line?' '0+' <<< "$old_head"; then
+		init="$( grepo )/.init"
+		[ -x "$init" ] && "$init"
+	fi
 
 fi
