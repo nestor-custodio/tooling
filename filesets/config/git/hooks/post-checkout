@@ -27,10 +27,10 @@ fi
 
 # ---
 
-# Symlink items in the repo's ".globals" over into worktrees.
+# Symlink the repo's "shared" items over into the worktree.
 #
 if [ "$checkout_type" == 'branch' ] && 'gtree?'; then
-  globals_dir="$( grepo )/.globals"
+  globals_dir="$( grepo )/.shared"
 	ls -1 -A --literal "$globals_dir" 2> /dev/null | while read -r name; do
 	  source="${globals_dir}/${name}"
 	  target="./${name}"
