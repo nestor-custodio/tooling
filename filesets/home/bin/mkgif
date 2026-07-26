@@ -115,7 +115,7 @@ if [ -n "$nerdfont_installed" ]; then
 	# Pick a font.
 	#
 	'has?' 'SauceCodePro NFM' <<< "$nerdfonts" && gif_font='SauceCodePro NFM'
-	[ -n "$gif_font" ] || head -n1 <<< "$nerdfonts" | cut -f1 -d',' | store-as font
+	[ -n "$gif_font" ] || head -n1 <<< "$nerdfonts" | cut -f1 -d',' | store-as gif_font
 
 else
 
