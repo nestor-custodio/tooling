@@ -35,9 +35,13 @@ source '/home/nestor/bin/std.lib'
 		  Values to --repo may be a repo URL (e.g. "https://github.com/user/repo") or a
 		  clone source ("https://github.com/user/repo.git", "git@github.com:user/repo.git").
 
+		  The following prefixes are expanded to their respective service stores:
+		  - "github:"   => "git@github.com:*.git"
+		  - "codeberg:" => "git@codeberg.org:*.git"
+
 		  The following prefixes are expanded to their respective user repo stores:
-		  - "nlc:" => "git@github.com:nestor-custodio"
-		  - "tps:" => "git@github.com:tulsaschoolsdata"
+		  - "nlc:" => "git@github.com:nestor-custodio/*.git"
+		  - "tps:" => "git@github.com:tulsaschoolsdata/*.git"
 
 		  e.g. Using the above, a --repo may be given as "--repo='nlc:env_parser'".
 
@@ -158,10 +162,17 @@ source '/home/nestor/bin/std.lib'
 			(--git|--repo|--git-repo)
 				git_repo="$1" && shift
 
+				# Substitute service shortcuts.
+				#
+				case "$git_repo" in
+					(github:*)   git_repo="${git_repo/#github:/git@github.com:}.git"     ;;
+					(codeberg:*) git_repo="${git_repo/#codeberg:/git@codeberg.org:}.git" ;;
+				esac
+
 				# Substitute account shortcuts.
 				#
 				case "$git_repo" in
-					(nlc:*) git_repo="${git_repo/#nlc:/git@github.com:nestor-custodio/}.git" ;;
+					(nlc:*) git_repo="${git_repo/#nlc:/git@github.com:nestor-custodio/}.git"  ;;
 					(tps:*) git_repo="${git_repo/#tps:/git@github.com:tulsaschoolsdata/}.git" ;;
 				esac
 
