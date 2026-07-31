@@ -158,6 +158,7 @@ case "$tool_name" in
 	(sc               )               ;&
 	(shellcheck       )               ;&
 	(usql             )               ;&
+	(vex              )               ;&
 	(watchexec        )               ;&
 	(yq               ) check-version ;;
 

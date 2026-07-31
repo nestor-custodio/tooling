@@ -181,6 +181,7 @@ case "$tool_name" in
 	(sc               ) get-version                  --puller='(?<= )[^ ]+$'                 ;;
 	(shellcheck       ) get-version                  --puller='(?<=version: ).*'             ;;
 	(usql             ) get-version                  --puller='(?<=usql ).*'                 ;;
+	(vex              ) get-version                  --puller='(?<=vex version ).*'          ;;
 	(watchexec        ) get-version                  --puller='(?<=release: ).*'             ;;
 	(yq               ) get-version                  --puller='(?<=version v).*'             ;;
 

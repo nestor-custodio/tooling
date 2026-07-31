@@ -142,6 +142,7 @@ source '/home/nestor/bin/std.lib'
 			(sc               ) update-tooling --file='sc'                                   ;;
 			(shellcheck       ) update-tooling                                               ;;
 			(usql             ) update-tooling --asset='^static'                             ;;
+			(vex              ) update-tooling --asset='vex'                                 ;;
 			(yq               ) update-tooling --asset='^.tar.gz'                            ;;
 
 

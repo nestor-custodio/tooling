@@ -1,3 +1,7 @@
+# Repos.
+#
+/vex-repo/
+
 # Runtimes.
 #
 /heroku-runtime/
@@ -45,6 +49,7 @@
 /sc
 /shellcheck
 /usql
+/vex
 /watchexec
 /yq
 
