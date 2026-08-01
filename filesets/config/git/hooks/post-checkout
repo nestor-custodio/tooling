@@ -44,7 +44,13 @@ if [ "$checkout_type" == 'branch' ] && 'gtree?'; then
 	#
 	if 'match-line?' '0+' <<< "$old_head"; then
 		init="$( grepo )/.init"
-		[ -x "$init" ] && "$init"
+
+		# Structured as an `if` block (instead of a `[ -x "$init" ] && ...`)
+		# so we don't generate a non-0 exit if the init script doesn't exist.
+		#
+		if [ -x "$init" ]; then
+			"$init"
+		fi
 	fi
 
 fi
