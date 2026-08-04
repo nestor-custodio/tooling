@@ -136,11 +136,11 @@ gui:
 git:
 
 
-  pagers:
-    - colorArg: 'always'
-      pager: "delta --true-color='never' --dark --line-numbers --line-numbers-left-format='{nm:^4}:' --hunk-header-style='syntax' --paging='never'"
-      externalDiffCommand: ''
-      useExternalDiffGitConfig: false
+  diffRenderers:
+    - name: 'delta'
+      type: 'stdinFilter'
+      command: "delta --true-color='never' --dark --line-numbers --line-numbers-left-format='{nm:^4}:' --hunk-header-style='syntax' --paging='never'"
+      colorArg: 'always'
   commit:
     signOff: false
     autoWrapCommitMessage: true
@@ -319,8 +319,8 @@ keybinding:
     prevTab: 'u'
     nextScreenMode: '='
     prevScreenMode: '-'
-    cyclePagers: []
-    cyclePagersReverse: []
+    cycleDiffRenderers: []
+    cycleDiffRenderersReverse: []
     undo: 'z'
     redo: 'y'
     filteringMenu: 'h'
