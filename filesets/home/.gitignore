@@ -3,6 +3,7 @@
 **/:*
 **/node_modules/
 **/.helix/
+**/.ruby-lsp/
 **/.solargraph.yml
 
 # Allow local overrides.

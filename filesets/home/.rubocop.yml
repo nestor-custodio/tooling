@@ -4,6 +4,7 @@ AllCops:
     - '*.local.*'
     - '*.local/**/*'
     - '.git/**/*'
+    - '.ruby-lsp/**/*'
     - 'log/**/*'
     - 'node_modules/**/*'
     - 'tmp/**/*'
