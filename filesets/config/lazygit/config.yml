@@ -276,7 +276,7 @@ keybinding:
     scrollRight: 'l'
     gotoTop: '['
     gotoBottom: ']'
-    toggleRangeSelect: ':'
+    toggleRangeSelect: ';'
     rangeSelectDown: []
     rangeSelectUp: []
     prevBlock: []
@@ -304,7 +304,7 @@ keybinding:
     confirmInEditor: []
     remove: 'd'
     new: 'n'
-    newWorktree: 'w'
+    newWorktree: 'N'
     edit: 'e'
     openFile: []
     scrollUpMain: '<up>'
@@ -329,7 +329,7 @@ keybinding:
     openRecentRepos: []
     submitEditorText: '<enter>'
     extrasMenu: '@'
-    toggleWhitespaceInDiffView: 'W'
+    toggleWhitespaceInDiffView: 'w'
     increaseContextInDiffView: '}'
     decreaseContextInDiffView: '{'
     increaseRenameSimilarityThreshold: []
