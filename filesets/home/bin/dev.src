@@ -193,7 +193,8 @@ shopt -s lastpipe
 
 				# Commit changes ...
 
-				gcommit -am "version: release v${new_version}"
+				gadd ./*
+				gcommit -m "chore: release v${new_version}"
 				gpush
 
 
