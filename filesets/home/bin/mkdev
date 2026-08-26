@@ -274,8 +274,9 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-# We can't replace the current instance.
+# We can't replace the current instance (or the 'sync' instance).
 #
+[ "$instance_name" == 'sync' ] && user-error 1 'INSTANCE_NAME "sync" is reserved'
 [ "$instance_name" == "$( vm-name )" ] && user-error 1 'invalid INSTANCE_NAME given'
 
 
