@@ -59,7 +59,8 @@ max-diagnostics = 2
 
 [editor.lsp]
 
-snippets = false
+auto-signature-help = false
+snippets            = false
 
 
 [editor.smart-tab]
