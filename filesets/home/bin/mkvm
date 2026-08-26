@@ -265,11 +265,7 @@ esac
 
 # Remove old instance (if any).
 #
-# Note we're not calling `gcp destroy`, as there's
-# no need to clean up DNS entries for the existing VM when
-# we're about to create a new VM that'll set its DNS on init.
-#
-yes | gcloud compute instances delete "$instance_name" --quiet &> /dev/null
+gcp destroy "$instance_name" &> /dev/null
 
 
 # NOTE: GCP provides no way to check for resource availability in a given zone (or at all, really), so we
