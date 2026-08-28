@@ -30,6 +30,7 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Positionals -- #
 
+	# shellcheck disable=SC2211
 	help-param? && echo "$usage" >&2
 
 }

@@ -105,7 +105,7 @@ echo
 
 jc free --mebi | json '.[] | select( .type == "Mem" )
                            | "\(.total) \(.used) \(.available) \(.buff_cache) \(.free)"' \
-| read                           total     used     free          cache          unused
+| read -r                        total     used     free          cache          unused
 
 percent_total='100.0'
 calc "${used}   / ${total} * 100" | store-as percent_used
@@ -131,7 +131,7 @@ echo
 
 duf --json | json '.[] | select( .mount_point == "/" )
                        | "\(.total / 1048576 | round) \(.used / 1048576 | round) \(.free / 1048576 | round)"' \
-| read                       total                       used                       unused
+| read -r                    total                       used                       unused
 
 sudo mkdir -p /var/cache/fscache
 sudo du --block-size='M' --summarize --one-file-system "$HOME" /var/cache/fscache | cut -f1 | store-as user cache

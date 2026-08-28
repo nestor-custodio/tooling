@@ -82,16 +82,16 @@ source '/home/nestor/bin/std.lib'
 #
 total_parts='1'
 declare -a part_data
-while read data_line; do
+while read -r data_line; do
 	[ -n "$data_line" ] || continue
 
-	sed -r -e 's|^.*:0*([0-9]+)/0*([0-9]+) # (.*)$|\1 \2 \3|' <<< "$data_line" | read part_number total_parts part_content
+	sed -r -e 's|^.*:0*([0-9]+)/0*([0-9]+) # (.*)$|\1 \2 \3|' <<< "$data_line" | read -r part_number total_parts part_content
 	part_data["$part_number"]="$part_content"
 done <<< "$data"
 
 # Verify completeness.
 #
-if ! calc? "${total_parts} == ${#part_data[@]}"; then
+if ! 'calc?' "${total_parts} == ${#part_data[@]}"; then
 	non-user-error 2 "incomplete data: ${total_parts} part(s) expected; ${#part_data[@]} given"
 fi
 

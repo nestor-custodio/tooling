@@ -32,6 +32,7 @@ source '/home/nestor/bin/std.lib'
 
 	[ "$#" == 0 ] && user-error 1 'no string(s) given'
 
+	# shellcheck disable=SC2211
 	help-param? && echo "$usage" >&2
 
 }
