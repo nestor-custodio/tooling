@@ -1,0 +1,135 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) --severity=SEVERITY
+
+		Starts an isolated session *in-pane* with a visual "severity" indicator.
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	severity='l'
+
+	# ---
+	# ---
+
+	CHAR_OPTS=''
+	LONG_OPTS='help,severity:'
+
+	LONG_OPTS="${LONG_OPTS},low,development"
+	LONG_OPTS="${LONG_OPTS},mid,medium,staging"
+	LONG_OPTS="${LONG_OPTS},high,unsafe,production"
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) help-and-exit ;;
+			(--) break ;;  # No more options.
+
+
+			(--severity)
+				severity="$1" && shift
+				case "${severity:0:1}" in
+					(l|d  ) severity='l' ;;
+					(m|s  ) severity='m' ;;
+					(h|u|p) severity='h' ;;
+
+					*) user-error 1 'unexpected SEVERITY'
+				esac
+				;;
+
+			(--low|--safe|--development)
+				severity='l'
+				;;
+
+			(--mid|--medium|--staging)
+				severity='m'
+				;;
+
+			(--high|--unsfe|--production)
+				severity='h'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+case "$severity" in
+	(l) severity_color='#00ffff' ; host_pane_title='LOW-SEVERITY SHELL'    ;;
+	(m) severity_color='#ffff00' ; host_pane_title='MEDIUM-SEVERITY SHELL' ;;
+	(h) severity_color='#ff0000' ; host_pane_title='HIGH-SEVERITY SHELL'   ;;
+
+	*)
+		user-error 1 'unexpected SEVERITY'
+esac
+
+
+cat <<-EOF | store-as host_setup
+	# Set the host pane title.
+	#
+	tmux set set-titles-string '${host_pane_title}'
+EOF
+
+cat <<-EOF | store-as session_setup
+	# Don't show a status bar.
+	#
+	tmux set status off
+
+	# Don't print a pane title.
+	#
+	tmux set pane-border-format ''
+
+	# Set the pane titlebar color.
+	#
+	tmux set pane-active-border-style 'fg=${severity_color}'
+
+	# Don't leave the session lingering once the host pane goes away.
+	#
+	tmux set destroy-unattached on
+
+	# Don't try to load a different session once this one goes away.
+	# (This leads to recursively trying to display the current session within smaller and smaller panes.)
+	#
+	tmux set detach-on-destroy on
+EOF
+
+cat <<-EOF | store-as host_reset
+	# Clear the host pane title.
+	#
+	tmux set set-titles-string ''
+EOF
+
+
+TMUX='' tmux new-session "${host_setup} ; ${session_setup} ; bash ; ${host_reset}" &> /dev/null
