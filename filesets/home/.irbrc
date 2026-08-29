@@ -325,6 +325,8 @@ if defined? Rails
             IRB::Color.colorize('dev', %i[BOLD GREEN])
           when 'test'
             IRB::Color.colorize('test', %i[BOLD YELLOW])
+          when 'staging'
+            IRB::Color.colorize('test', %i[BOLD MAGENTA])
           when 'production'
             IRB::Color.colorize('prod', %i[BOLD RED])
           else
