@@ -6,9 +6,18 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) --severity=SEVERITY
+		Usage: $( script-name ) [COLOR]
 
-		Starts an isolated session *in-pane* with a visual "severity" indicator.
+		Starts an isolated session *in-pane* with a colored indicator.
+		The default COLOR is 'cyan'.
+
+		Available COLOR values are:
+		- black      - blue       - brown
+		- cyan       - gray       - green
+		- grey       - lime       - magenta
+		- maroon     - orange     - purple
+		- red        - silver     - white
+		- yellow     - (24-bit hex, as "#abcdef")
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -26,19 +35,8 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Options -- #
 
-	# Set defaults.
-
-	severity='l'
-
-	# ---
-	# ---
-
 	CHAR_OPTS=''
-	LONG_OPTS='help,severity:'
-
-	LONG_OPTS="${LONG_OPTS},low,development"
-	LONG_OPTS="${LONG_OPTS},mid,medium,staging"
-	LONG_OPTS="${LONG_OPTS},high,unsafe,production"
+	LONG_OPTS='help'
 
 	set-params
 	while true; do
@@ -46,37 +44,35 @@ source '/home/nestor/bin/std.lib'
 		case "$option" in
 			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
-
-
-			(--severity)
-				severity="$1" && shift
-				case "${severity:0:1}" in
-					(l|d  ) severity='l' ;;
-					(m|s  ) severity='m' ;;
-					(h|u|p) severity='h' ;;
-
-					*) user-error 1 'unexpected SEVERITY'
-				esac
-				;;
-
-			(--low|--safe|--development)
-				severity='l'
-				;;
-
-			(--mid|--medium|--staging)
-				severity='m'
-				;;
-
-			(--high|--unsfe|--production)
-				severity='h'
-				;;
-
 		esac
 	done
 
 }
 
 { # -- Parameter Processing: Positionals -- #
+
+	color="$1" && shift
+	case "$color" in
+		(''     ) color='#00ffff' ;;
+		(black  ) color='#000000' ;;
+		(blue   ) color='#0000ff' ;;
+		(brown  ) color='#800000' ;;
+		(cyan   ) color='#00ffff' ;;
+		(gray   ) color='#808080' ;;
+		(green  ) color='#008000' ;;
+		(grey   ) color='#808080' ;;
+		(lime   ) color='#00ff00' ;;
+		(magenta) color='#800080' ;;
+		(maroon ) color='#800000' ;;
+		(orange ) color='#808000' ;;
+		(purple ) color='#800080' ;;
+		(red    ) color='#ff0000' ;;
+		(silver ) color='#c0c0c0' ;;
+		(white  ) color='#ffffff' ;;
+		(yellow ) color='#ffff00' ;;
+
+		*) [ "${color:0:1}" == '#' ] || user-error 1 'invalid option(s)' ;;
+	esac
 
 	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
 
@@ -86,20 +82,10 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-case "$severity" in
-	(l) severity_color='#00ffff' ; host_pane_title='LOW-SEVERITY SHELL'    ;;
-	(m) severity_color='#ffff00' ; host_pane_title='MEDIUM-SEVERITY SHELL' ;;
-	(h) severity_color='#ff0000' ; host_pane_title='HIGH-SEVERITY SHELL'   ;;
-
-	*)
-		user-error 1 'unexpected SEVERITY'
-esac
-
-
 cat <<-EOF | store-as host_setup
 	# Set the host pane title.
 	#
-	tmux set set-titles-string '${host_pane_title}'
+	tmux set set-titles-string ''
 EOF
 
 cat <<-EOF | store-as session_setup
@@ -113,7 +99,7 @@ cat <<-EOF | store-as session_setup
 
 	# Set the pane titlebar color.
 	#
-	tmux set pane-active-border-style 'fg=${severity_color}'
+	tmux set pane-active-border-style 'fg=${color}'
 
 	# Don't leave the session lingering once the host pane goes away.
 	#
