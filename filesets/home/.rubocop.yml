@@ -14,8 +14,12 @@ AllCops:
 
 Layout/HashAlignment:
   # Align the elements of a hash literal if they span more than one line.
-  EnforcedHashRocketStyle: table
-  EnforcedColonStyle: table
+  SupportedHashRocketStyles:
+    - key
+    - table
+  SupportedColonStyles:
+    - key
+    - table
 
 
 Lint/DuplicateBranch:
