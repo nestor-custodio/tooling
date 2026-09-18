@@ -189,6 +189,11 @@ shopt -s lastpipe
 		mkdir -p "$git_dir" || return 2
 		git clone --bare "$repo" "$git_dir" || return 3
 		git config --file="$git_dir/config" remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' || return 4
+
+		local shared_dir="${destination}/.shared"
+		local worktree_init="${destination}/.init"
+		[ -d "$shared_dir" ] || mkdir -p "$shared_dir" || return 4
+		[ -x "$worktree_init" ] || ln -sT "$( real noop )" "$worktree_init" || return 5
 	}
 
 
