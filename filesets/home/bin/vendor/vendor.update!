@@ -141,7 +141,6 @@ source '/home/nestor/bin/std.lib'
 			(ruff             ) update-tooling --asset='gnu'                                 ;;
 			(sc               ) update-tooling --file='sc'                                   ;;
 			(shellcheck       ) update-tooling                                               ;;
-			(usql             ) update-tooling --asset='^static'                             ;;
 			(vex              ) update-tooling --asset='vex'                                 ;;
 			(yq               ) update-tooling --asset='^.tar.gz'                            ;;
 
@@ -209,6 +208,15 @@ source '/home/nestor/bin/std.lib'
 
 				eget --quiet "$( github-repo )" --download-only --source --to='/dev/stdout' \
 				| tar --gzip --extract --strip-components=1 --directory="$target" || non-user-error 2 'unable to fetch/extract release'
+				;;
+
+			(usql)
+				tempname | store-as extract_file
+				eget --quiet "$( github-repo )" --asset='static' --download-only --to='/dev/stdout' \
+				| tar --bzip2 --extract --to-stdout 'usql_static' > "$extract_file" || non-user-error 2 'unable to fetch/extract release'
+
+				mv "$extract_file" "$( executable )"
+				chmod 755 "$( executable )"
 				;;
 
 
