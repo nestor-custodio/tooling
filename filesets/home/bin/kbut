@@ -9,7 +9,7 @@ source '/home/nestor/bin/std.lib'
 		Usage: $( script-name ) PROMPT [-- SC_OPTIONS]
 
 		Wrapper for SmartCat ('sc') that continues a "conversation" with the
-		given PROMPT (which need not be quoted as a single string).
+		given PROMPT (which need not be quoted as a single string), if any.
 		(e.g.: '$( script-name ) rename the variables to be shorter')
 
 
