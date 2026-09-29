@@ -234,6 +234,11 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
+# 'e2'-class instances only support 'pd'-type disks.
+#
+[ "$machine_type_prefix" == 'e2' ] && [ "${disk_type%%-*}" != 'pd' ] && disk_type='pd-standard'
+
+
 # Set the default machine type suffix, if necessary.
 #
 [ -z "$machine_type_suffix" ] && case "$machine_type_family" in
