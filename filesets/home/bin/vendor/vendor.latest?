@@ -112,6 +112,8 @@ source '/home/nestor/bin/std.lib'
 case "$tool_name" in
 	(helix   ) tool_name='hx'     ;;
 	(k       ) tool_name='heroku' ;;
+	(osc-52  ) tool_name='osc52'  ;;
+	(osc-777 ) tool_name='osc777' ;;
 	(smartcat) tool_name='sc'     ;;
 esac
 

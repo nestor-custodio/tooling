@@ -48,6 +48,8 @@ source '/home/nestor/bin/std.lib'
 		case "$_tool_name" in
 			(helix   ) echo 'hx'     ;;
 			(k       ) echo 'heroku' ;;
+			(osc-52  ) echo 'osc52'  ;;
+			(osc-777 ) echo 'osc777' ;;
 			(smartcat) echo 'sc'     ;;
 
 			*) echo "$_tool_name" ;;
