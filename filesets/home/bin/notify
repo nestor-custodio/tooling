@@ -10,7 +10,9 @@ source '/home/nestor/bin/std.lib'
 		       $( name-blanks ) CHANNEL [SUBJECT] # (MESSAGE given via pipe)
 
 		Sends a message via the given delivery CHANNEL.
-		(Only available value right now is "pushover".)
+		Available channels are:
+		- "host": a native desktop notification on the host system (via OSC-777)
+		- "pushover": a PushOver notification (see: https://pushover.net)
 
 
 		Param Processing
@@ -31,7 +33,7 @@ source '/home/nestor/bin/std.lib'
 		    no SUBJECT.
 
 		  - 'data-source | $( script-name ) CHANNEL PARAM-2'
-		    The 'data-source' output is the MESSAGE; PARAM-2 is the MESSAGE.
+		    The 'data-source' output is the MESSAGE; PARAM-2 is the SUBJECT.
 
 		  - 'data-source | $( script-name ) CHANNEL PARAM-2 PARAM-3'
 		    This will generate an error, as too many values have been given.
@@ -114,6 +116,25 @@ source '/home/nestor/bin/std.lib'
 
 
 case "$channel" in
+
+	(host)
+		# Sanitize the payload and enforce sensible limits.
+		#
+		ansifilter <<< "$subject" | head -c50  | store-as subject
+		ansifilter <<< "$message" | head -c200 | store-as message
+
+		# OSC-777 prohibits semicolons in the payload.
+		#
+		subject="${subject//;/...}"
+		message="${message//;/...}"
+
+		# Newlines aren't always preserved by the OS.
+		#
+		subject="${subject//$NEWLINE/  ||  }"
+		message="${message//$NEWLINE/  ||  }"
+
+		osc-777 "$subject" "$message"
+		;;
 
 	(pushover)
 		# Fetch keys.
