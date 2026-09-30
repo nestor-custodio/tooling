@@ -3,8 +3,7 @@ AllCops:
   Exclude:
     - '*.local.*'
     - '*.local/**/*'
-    - '.git/**/*'
-    - '.ruby-lsp/**/*'
+    - '.?*/**/*'
     - 'log/**/*'
     - 'node_modules/**/*'
     - 'tmp/**/*'
@@ -14,18 +13,23 @@ AllCops:
 
 Layout/HashAlignment:
   # Align the elements of a hash literal if they span more than one line.
-  SupportedHashRocketStyles:
-    - key
-    - table
-  SupportedColonStyles:
-    - key
-    - table
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
 
 
 Lint/DuplicateBranch:
   # Checks that there are no repeated bodies within `if/unless`, `case-when` and `rescue` constructs.
   Enabled: false
 
+
+Metrics/AbcSize:
+  # Checks that the ABC size of methods is not higher than the configured maximum.
+  Max: 20
+
+Metrics/BlockLength:
+  # Avoid long blocks with many lines.
+  Exclude:
+    - 'spec/**/*'
 
 Metrics/CyclomaticComplexity:
   # A complexity metric that is strongly correlated to the number of test cases needed to validate a method.
@@ -35,14 +39,6 @@ Metrics/MethodLength:
   # Avoid methods longer than 25 lines of code.
   Max: 25
 
-
-Style/AsciiComments:
-  # Use only ASCII symbols in comments.
-  #
-  # NLC: We're allowing non-breaking spaces (' '), as they're needed to prevent
-  #      browsers from collapsing multiple spaces in documentation code blocks.
-  AllowedChars:
-    - ' '
 
 Style/Documentation:
   # Document classes and non-namespace modules.
