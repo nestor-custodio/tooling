@@ -397,7 +397,7 @@ shopt -s lastpipe
 			# Install packages (as quietly as possible, if invoked as just `ni`).
 			#
 			if [ "$#" == 0 ]
-				then npm install --ignore-scripts | head --lines=-2
+				then npm install --ignore-scripts | head -n-2
 				else npm install "$@"
 			fi
 

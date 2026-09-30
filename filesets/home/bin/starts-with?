@@ -52,4 +52,4 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-[ "$lookup_string" == "$( head --bytes="${#lookup_string}" )" ]
+[ "$lookup_string" == "$( head -c"${#lookup_string}" )" ]
