@@ -190,7 +190,7 @@ case "$tool_name" in
 
 	(crypt)
 		# This tool provides no versioning info. 🤷.
-		# Last update was back in 2020-11-24, however.
+		# Last updated on 2020-11-24 (as of 2025-01-04).
 		echo '0'
 		;;
 
@@ -201,7 +201,13 @@ case "$tool_name" in
 
 	(osc52)
 		# This tool provides no versioning info. 🤷.
-		# Last update was back in 2023-05-11, however.
+		# Last updated on 2021-01-24 (as of 2026-09-30).
+		echo '0'
+		;;
+
+	(osc777)
+		# This tool provides no versioning info. 🤷.
+		# Last updated on 2018-09-20 (as of 2026-09-30).
 		echo '0'
 		;;
 

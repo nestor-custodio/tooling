@@ -183,7 +183,8 @@ case "$tool_name" in
 
 	(crypt   ) ;&  # These tools provide no versioning info,
 	(osc52   ) ;&  # or their Github release tags just do not match
-	(marksman)     # the reported version numbers in any parseable way.
+	(osc777  ) ;&  # the reported version numbers in any parseable way.
+	(marksman)
 		if ! command -v "$tool_name" &> /dev/null; then
 			echo "(?)  (release)"
 			exit 2

@@ -202,6 +202,11 @@ source '/home/nestor/bin/std.lib'
 				chmod 755 "$( executable )"
 				;;
 
+			(osc777)
+				curl "$( executable-url )?format=TEXT" --silent --location | base64 --decode > "$( executable )" || non-user-error 2 'unable to fetch release'
+				chmod 755 "$( executable )"
+				;;
+
 			(ruby-install)
 				target="${HOME}/bin/vendor/ruby-install-runtime"
 				mkdir -p "$target" && rm -rf "${target:?}"/*
