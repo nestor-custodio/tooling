@@ -6,7 +6,7 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [{ --next | --fails }] [-- RUNNER_OPTIONS]
+		Usage: $( script-name ) [-- RUNNER_OPTIONS]
 
 		Run all relevant TDD tooling for the project:
 		- Supports Ruby RSpec and Minitest suites, along with Selenium tests.
@@ -16,8 +16,14 @@ source '/home/nestor/bin/std.lib'
 
 
 		Mandatory arguments to long options are mandatory for short options too.
+		  --on-completion           'notify' channel to report test completion,
+		                            regardless of outcome.
+		  --on-fail                 'notify' channel to report test completion,
+		                            only in the case of failures.
+
 		  --fails                   Rerun only previously-failed tests.
 		  --next                    Stop on the next failure.
+
 		  --help                    Show this help text.
 
 
@@ -34,6 +40,9 @@ source '/home/nestor/bin/std.lib'
 
 	# Set default.
 
+	notify_on=''
+	notify_channel=''
+
 	declare -A next
 	declare -A fails
 
@@ -41,7 +50,11 @@ source '/home/nestor/bin/std.lib'
 	# ---
 
 	CHAR_OPTS=''
-	LONG_OPTS='help,next,stop,fail,fails,failures'
+	LONG_OPTS='help'
+
+	LONG_OPTS="${LONG_OPTS},next,stop"
+	LONG_OPTS="${LONG_OPTS},fail,fails,failures"
+	LONG_OPTS="${LONG_OPTS},on-completion:,on-failure:"
 
 	set-params
 	while true; do
@@ -51,12 +64,23 @@ source '/home/nestor/bin/std.lib'
 			(--) break ;;  # No more options.
 
 
+			(--on-completion)
+				notify_on='completion'
+				notify_channel="$1" && shift
+				;;
+
+			(--on-failure)
+				notify_on='failure'
+				notify_channel="$1" && shift
+				;;
+
+
 			(--next|--stop)
-				next=( [rspec]='--next-failure' [js]='--bail' )
+				next=( [rspec]='--next-failure' [javascript]='--bail' )
 				;;
 
 			(--fail|--fails|--failures)
-				fails=( [rspec]='--only-failures' [js]='--onlyFailures' )
+				fails=( [rspec]='--only-failures' [javascript]='--onlyFailures' )
 				;;
 
 		esac
@@ -65,6 +89,14 @@ source '/home/nestor/bin/std.lib'
 }
 
 # ---
+# ---
+
+
+# Global Behaviours
+
+declare -A exit_codes
+
+
 # ---
 
 
@@ -90,6 +122,7 @@ source '/home/nestor/bin/std.lib'
 			[ -n "${next[rspec]}"  ] && opts+=("${next[rspec]}")
 			[ -n "${fails[rspec]}" ] && opts+=("${fails[rspec]}")
 			tdd.rspec "${opts[@]}"
+			exit_codes[rspec]="$?"
 		fi
 
 		if [ -n "$minitest" ]; then
@@ -97,6 +130,7 @@ source '/home/nestor/bin/std.lib'
 			[ -n "${next[minitest]}"  ] && opts+=("${next[minitest]}")
 			[ -n "${fails[minitest]}" ] && opts+=("${fails[minitest]}")
 			tdd.minitest "${opts[@]}"
+			exit_codes[minitest]="$?"
 		fi
 
 
@@ -115,13 +149,65 @@ source '/home/nestor/bin/std.lib'
 
 		if [ -n "$javascript" ]; then
 			opts=("$@")
-			[ -n "${next[js]}"  ] && opts+=("${next[js]}")
-			[ -n "${fails[js]}" ] && opts+=("${fails[js]}")
+			[ -n "${next[javascript]}"  ] && opts+=("${next[javascript]}")
+			[ -n "${fails[javascript]}" ] && opts+=("${fails[javascript]}")
 			tdd.javascript "${opts[@]}"
+			exit_codes[javascript]="$?"
 		fi
 
 
 # ---
 
 
-'calc?' "$( script-duration) <= 300" || ding-me
+# Always notify on completion if the test suite takes long to complete.
+# If we weren't given a channel when called, it's safest to use 'pushover'
+# since those notifications aren't ephemeral and can be checked from anywhere.
+#
+if 'calc?' "$( script-duration) >= 300"; then
+	notify_on='completion'
+	[ -n "$notify_channel" ] || notify_channel='pushover'
+fi
+
+
+# Determine our exit code.
+#
+tr ' ' "\n" <<< "0 ${exit_codes[*]}" \
+| sort --reverse --numeric-sort      \
+| head -n1                           \
+| store-as max_exit_code
+
+# Set the notification subject.
+#
+if [ "$max_exit_code" == 0 ]
+	then subject="$( script-name ): Success"
+	else subject="$( script-name ): Failure"
+fi
+
+# Build the notification message.
+#
+messages=()
+for test_type in "${!exit_codes[@]}"; do
+	exit_code="${exit_codes["$test_type"]}"
+
+	if [ "$exit_code" == 0 ]
+		then messages+=("${test_type}: 🗹")
+		else messages+=("${test_type}: 🗷")
+	fi
+done
+
+
+# Send requested notification, if any.
+#
+old_ifs="$IFS"; IFS="$NEWLINE"
+case "$notify_on" in
+
+	(completion)
+		notify "$notify_channel" "$subject" "${messages[@]}"
+		;;
+
+	(failure)
+		[ "$max_exit_code" != 0 ] && notify "$notify_channel" "$subject" "${messages[@]}"
+		;;
+
+esac
+IFS="$old_ifs"
