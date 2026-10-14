@@ -180,8 +180,10 @@ startup_log='/var/log/startup.log'
 				# all tooling requires 'gh:release-version',
 				# which then needs 'gh'.
 				#
-				/home/nestor/bin/vendor/vendor.update! gh
-				/home/nestor/bin/vendor/vendor.update!
+				vendor.update! gh
+				creds github/gh_token | gh auth login --with-token
+				#
+				vendor.update!
 			EOF
 
 	}
