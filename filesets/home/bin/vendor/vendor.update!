@@ -135,15 +135,15 @@ source '/home/nestor/bin/std.lib'
 			(lazygit          ) update-tooling                                               ;;
 			(lazyjournal      ) update-tooling                                               ;;
 			(mailpit          ) update-tooling                                               ;;
-			(marksman         ) update-tooling                                               ;;
+			(marksman         ) update-tooling --asset='^musl'                               ;;
 			(n                ) update-tooling --source                                      ;;
 			(q                ) update-tooling                                               ;;
 			(rclone           ) update-tooling --asset='zip'                                 ;;
 			(rg               ) update-tooling                                               ;;
 			(ruff             ) update-tooling --asset='gnu'                                 ;;
 			(sc               ) update-tooling --file='sc'                                   ;;
-			(shellcheck       ) update-tooling                                               ;;
-			(vex              ) update-tooling --asset='vex'                                 ;;
+			(shellcheck       ) update-tooling --asset='.tar.gz'                             ;;
+			(vex              ) update-tooling --file='vex'                                  ;;
 			(yq               ) update-tooling --asset='^.tar.gz'                            ;;
 
 
