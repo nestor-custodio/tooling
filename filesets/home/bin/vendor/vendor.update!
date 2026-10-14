@@ -196,7 +196,7 @@ source '/home/nestor/bin/std.lib'
 				# Actually install newer release.
 				#
 				update-tooling
-				hx.setup!
+				hx.setup! 2> /dev/null
 				;;
 
 			(osc52)

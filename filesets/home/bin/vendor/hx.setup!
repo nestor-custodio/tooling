@@ -8,8 +8,8 @@ source '/home/nestor/bin/std.lib'
 	cat <<-EOF | store-as usage
 		Usage: $( script-name )
 
-		Sets up the Helix runtime for the latest release,
-		then builds grammars and sets up LSPs (via 'hx.lsp!').
+		Sets up the Helix runtime for the latest release.
+		(Note this *does not* build grammars or install LSPs.)
 
 		This should be run whenever we upgrade our 'hx' binary to a new release.
 
@@ -70,7 +70,3 @@ eget "$hx_repo" --source --file='runtime' --to="$hx_config"
 # Make our custom theme visible within the runtime.
 #
 ln -sT "${hx_config}/theme.toml" "${hx_runtime}/themes/custom.toml"
-
-# Build grammars and set up any LSPs not already installed.
-#
-hx.lsp!
