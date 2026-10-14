@@ -28,10 +28,9 @@ source '/home/nestor/bin/std.lib'
 { # -- Utility Functions -- #
 
 	function normalized {
-		sed -r -e 's#^ +##'              \
-		       -e 's# +$##'              \
-		       -e 's#\b0+#0#g'           \
-		       -e 's#\b0([^0.])#\1#g'    \
+		sed -r -e 's#^ +##'    \
+		       -e 's# +$##'    \
+		       -e 's#\b0+#0#g' \
 		       -e 's#\.$##'
 	}
 
