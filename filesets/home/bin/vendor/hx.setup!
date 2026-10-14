@@ -69,4 +69,4 @@ eget "$hx_repo" --source --file='runtime' --to="$hx_config"
 
 # Make our custom theme visible within the runtime.
 #
-ln -sT "${hx_config}/theme.toml" "${hx_runtime}/themes/custom.toml"
+ln -sT "${hx_config}/custom-theme.toml" "${hx_runtime}/themes/custom.toml"
