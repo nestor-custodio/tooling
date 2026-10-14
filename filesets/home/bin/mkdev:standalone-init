@@ -249,7 +249,7 @@ startup_log='/var/log/startup.log'
 		# Notify of init completion.
 		report 'notifying of init completion'
 
-			notify 'pushover' "VM Ready: $( instance name )" <<-EOF
+			notify 'pushover' "Stand-Alone Dev VM Ready: $( instance name )" <<-EOF
 				Hostname: $( hostname --short )
 				External: $( wan-ip )
 				Disk Use: $( df -h / --output='pcent,size,avail'                         \
