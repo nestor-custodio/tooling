@@ -119,7 +119,7 @@ source '/home/nestor/bin/std.lib'
 			(croc             ) update-tooling --asset='Linux-64bit'                         ;;
 			(csview           ) update-tooling --asset='gnu'                                 ;;
 			(delta            ) update-tooling --asset='gnu'                                 ;;
-			(duckdb           ) update-tooling --asset='cli' --asset='^musl' --asset='.zip'  ;;
+			(duckdb           ) update-tooling --asset='cli' --asset='^musl'                 ;;
 			(duf              ) update-tooling --asset='.tar.gz'                             ;;
 			(eget             ) update-tooling                                               ;;
 			(eza              ) update-tooling --asset='gnu.zip'                             ;;
