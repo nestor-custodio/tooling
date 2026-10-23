@@ -127,7 +127,6 @@ case "$tool_name" in
 	(bat              )               ;&
 	(btop             )               ;&
 	(caddy            )               ;&
-	(chruby           )               ;&
 	(croc             )               ;&
 	(csview           )               ;&
 	(delta            )               ;&
@@ -155,7 +154,6 @@ case "$tool_name" in
 	(q                )               ;&
 	(rclone           )               ;&
 	(rg               )               ;&
-	(ruby-install     )               ;&
 	(ruff             )               ;&
 	(sc               )               ;&
 	(shellcheck       )               ;&

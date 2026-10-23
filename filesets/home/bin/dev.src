@@ -26,8 +26,8 @@ shopt -s lastpipe
 
 		# Executable management.
 		#
-		source "${HOME}/bin/vendor/chruby-source"
-		source "${HOME}/bin/vendor/chruby-source.auto"
+		export RV_UPDATE_MODE='none'
+		eval "$( rv shell init bash )"
 
 		# Linting/Style tooling.
 		#
@@ -84,12 +84,9 @@ shopt -s lastpipe
 				# Ensure specific `ruby`.
 				#
 				local ruby_version
-				if ruby_version="$( nearest --read '.ruby-version' )"; then
-					ruby --version 2> /dev/null | 'has?' "$ruby_version"              \
-					|| chruby "$ruby_version"                                         \
-					|| ( set -o pipefail                                              \
-					     && ruby-install "$ruby_version" 2> /dev/null | grep -F '>>>' \
-					     && RUBIES=("${HOME}/.rubies"/*) && chruby "$ruby_version" ;)
+				if ruby_version="$( rv ruby pin --resolved 2> /dev/null | awk '{ print $NF }' )"; then
+					ruby --version 2> /dev/null | 'has?' "$ruby_version"                     \
+					|| rv ruby install "$ruby_version" | grep -Piv 'archive .* already exists'
 				fi
 
 				# Ensure specific `bundler`.

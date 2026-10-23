@@ -195,11 +195,6 @@ case "$tool_name" in
 		echo '0'
 		;;
 
-	(chruby)
-		source "$( script-path )/chruby-source" &> /dev/null || non-user-error 2 'binary not found'
-		echo "$CHRUBY_VERSION"
-		;;
-
 	(osc52)
 		# This tool provides no versioning info. 🤷.
 		# Last updated on 2021-01-24 (as of 2026-09-30).
@@ -210,11 +205,6 @@ case "$tool_name" in
 		# This tool provides no versioning info. 🤷.
 		# Last updated on 2018-09-20 (as of 2026-09-30).
 		echo '0'
-		;;
-
-	(ruby-install)
-		ruby-install &> /dev/null || non-user-error 2 'binary not found'
-		get-version --puller='(?<=ruby-install: ).*'
 		;;
 
 

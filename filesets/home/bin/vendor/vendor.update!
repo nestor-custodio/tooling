@@ -156,18 +156,6 @@ source '/home/nestor/bin/std.lib'
 
 			# Items requiring special handling.
 
-			(chruby)
-				tempname | store-as extract_dir
-				mkdir -p "$extract_dir"
-				eget --quiet "$( github-repo )" --source --file='chruby' --all --to="$extract_dir"
-
-				patch --quiet "${extract_dir}/chruby/chruby.sh" "${HOME}/bin/vendor/chruby-source:patch"      --output="${HOME}/bin/vendor/chruby-source"
-				patch --quiet "${extract_dir}/chruby/auto.sh"   "${HOME}/bin/vendor/chruby-source.auto:patch" --output="${HOME}/bin/vendor/chruby-source.auto"
-				chmod 644 "${HOME}/bin/vendor/chruby-source"*
-
-				rm -rf "$extract_dir"
-				;;
-
 			(crypt)
 				curl "$( executable-url )" --silent --location > "$( executable )" || non-user-error 2 'unable to fetch release'
 				chmod 755 "$( executable )"
@@ -207,14 +195,6 @@ source '/home/nestor/bin/std.lib'
 			(osc777)
 				curl "$( executable-url )?format=TEXT" --silent --location | base64 --decode > "$( executable )" || non-user-error 2 'unable to fetch release'
 				chmod 755 "$( executable )"
-				;;
-
-			(ruby-install)
-				target="${HOME}/bin/vendor/ruby-install-runtime"
-				mkdir -p "$target" && rm -rf "${target:?}"/*
-
-				eget --quiet "$( github-repo )" --download-only --source --to='/dev/stdout' \
-				| tar --gzip --extract --strip-components=1 --directory="$target" || non-user-error 2 'unable to fetch/extract release'
 				;;
 
 			(usql)
