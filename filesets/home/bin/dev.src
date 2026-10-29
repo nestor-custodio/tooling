@@ -378,13 +378,13 @@ shopt -s lastpipe
 			# Ensure specific `node`/`npm`.
 			#
 			local current_version="$( node --version 2> /dev/null )"
-			local requested_version="$( nearest --read '.node-version' )"
+			local requested_version="$( nearest --read '.node-version' '.nvmrc' )"
 			case "$requested_version" in
 				(lts) [ "$current_version" == "v$( n --lts )" ] || n lts ;;
 				(latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
 				(''|node) [ -n "$current_version" ] || n lts ;;
 
-				*) 'has?' "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
+				*) 'starts-with?' "${requested_version#v}" <<< "${current_version#v}" || n install "$requested_version" ;;
 			esac
 
 			# Bail if there's nothing to do.
@@ -431,15 +431,7 @@ shopt -s lastpipe
 		function yi {
 			# Ensure specific `node`/`npm`.
 			#
-			local current_version="$( node --version 2> /dev/null )"
-			local requested_version="$( nearest --read '.node-version' )"
-			case "$requested_version" in
-				(lts) [ "$current_version" == "v$( n --lts )" ] || n lts ;;
-				(latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
-				(''|node) [ -n "$current_version" ] || n lts ;;
-
-				*) 'has?' "$requested_version" <<< "$current_version" || n install "$requested_version" ;;
-			esac
+			ni
 
 			# Ensure (any) `yarn`.
 			#
