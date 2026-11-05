@@ -204,6 +204,10 @@ function peek { tee /dev/tty ;}
 
   # croc
 
+  # Prevent `croc` from checking for newer releases during send/receive.
+  #
+  export CROC_NO_UPDATE_CHECK='1'
+
   # Dead-simple "send/receive" function pair that uses
   # *simple passphrases* (using only 2 *commonly-used* words).
 
