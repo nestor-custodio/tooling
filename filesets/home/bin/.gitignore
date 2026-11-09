@@ -4,6 +4,10 @@
 /installers/*
 !/installers/.keep
 
+/vendor/*
+!/vendor/*.repo
+!/vendor/vendor.*
+
 # Blacklists.
 #
 ban-ip.blacklist
