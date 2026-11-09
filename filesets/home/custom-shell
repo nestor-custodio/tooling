@@ -355,6 +355,13 @@ function peek { tee /dev/tty ;}
   function redo { fc -s "$@" ;}
 
 
+  # fd
+
+  # Ensuring you can find a hidden/ignored file takes too many flags.
+  #
+  function fd+ { fd --hidden --no-ignore "$@" ;}
+
+
   # gcc
 
   # Colorize warnings/errors.
