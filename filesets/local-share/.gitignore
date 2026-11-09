@@ -1,5 +1,6 @@
 /fonts/*
 !/fonts/.keep
 
+/gh/extensions/gh-dash/gh-dash
 /heroku/
 /rv/
