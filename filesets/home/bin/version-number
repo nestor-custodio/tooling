@@ -1,0 +1,76 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [ --major | --minor | --patch ]
+
+		Returns a sanitized version number of the given specificity.
+		('--patch' is assumed by default.)
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	segments='2'
+
+	# ---
+	# ---
+
+	CHAR_OPTS=''
+	LONG_OPTS='help,major,minor,patch'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) help-and-exit ;;
+			(--) break ;;  # No more options.
+
+
+			(--major)
+				segments='0'
+				;;
+
+			(--minor)
+				segments='1'
+				;;
+
+			(--patch)
+				segments='2'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+sed -r -e 's|^[^0-9]*||' -e 's|[^0-9.].*||' \
+| grep -P --only-matching "^[0-9]+(\\.[0-9]+){0,${segments}}"
