@@ -85,7 +85,7 @@ shopt -s lastpipe
 				#
 				local ruby_version
 				if ruby_version="$( rv ruby pin --resolved 2> /dev/null | awk '{ print $NF }' )"; then
-					ruby --version 2> /dev/null | 'has?' "$ruby_version"                     \
+					ruby --version 2> /dev/null | version-number | 'starts-with?' "$ruby_version" \
 					|| rv ruby install "$ruby_version" | grep -Piv 'archive .* already exists'
 				fi
 
@@ -377,14 +377,46 @@ shopt -s lastpipe
 		function ni {
 			# Ensure specific `node`/`npm`.
 			#
-			local current_version="$( node --version 2> /dev/null )"
+			local current_patch="$( node --version 2> /dev/null | version-number --patch )"
+			local current_minor="$( version-number --minor <<< "$current_patch" )"
+			local current_major="$( version-number --major <<< "$current_patch" )"
+			#
 			local requested_version="$( nearest --read '.node-version' '.nvmrc' )"
 			case "$requested_version" in
-				(lts) [ "$current_version" == "v$( n --lts )" ] || n lts ;;
-				(latest) [ "$current_version" == "v$( n --latest )" ] || n latest ;;
-				(''|node) [ -n "$current_version" ] || n lts ;;
 
-				*) 'starts-with?' "${requested_version#v}" <<< "${current_version#v}" || n install "$requested_version" ;;
+				(''|node|lts)
+					local lts_minor="$( n --lts | version-number --minor )"
+					if [ "$current_minor" != "$lts_minor" ]; then
+						local best_local_version="$( n ls | version-number | grep -P "^${lts_minor//./\\.}\\b" | tail -n1 )"
+						if [ -n "$best_local_version" ]
+							then n install "$best_local_version"
+							else n lts
+						fi
+					fi
+					;;
+
+				(latest)
+					local latest_minor="$( n --latest | version-number --minor )"
+					if [ "$current_minor" != "$latest_minor" ]; then
+						local best_local_version="$( n ls | version-number | grep -P "^${latest_minor//./\\.}\\b" | tail -n1 )"
+						if [ -n "$best_local_version" ]
+							then n install "$best_local_version"
+							else n latest
+						fi
+					fi
+					;;
+
+				*)
+					requested_version="$( version-number --patch <<< "$requested_version" )"
+					if ! 'starts-with?' "$requested_version" <<< "$current_patch"; then
+						local best_local_version="$( n ls | version-number | grep -P "^${requested_version//./\\.}\\b" | tail -n1 )"
+						if [ -n "$best_local_version" ]
+							then n install "$best_local_version"
+							else n install "$requested_version"
+						fi
+					fi
+				;;
+
 			esac
 
 			# Bail if there's nothing to do.
