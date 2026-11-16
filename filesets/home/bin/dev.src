@@ -85,7 +85,7 @@ shopt -s lastpipe
 				#
 				local ruby_version
 				if ruby_version="$( nearest --read '.ruby-version' )"; then
-					ruby --version 2> /dev/null | version-number | 'starts-with?' "$ruby_version" \
+					ruby --version 2> /dev/null | semver | 'starts-with?' "$ruby_version" \
 					|| rv ruby install "$ruby_version" | grep -Piv 'archive .* already exists'
 				fi
 
@@ -377,17 +377,17 @@ shopt -s lastpipe
 		function ni {
 			# Ensure specific `node`/`npm`.
 			#
-			local current_patch="$( node --version 2> /dev/null | version-number --patch )"
-			local current_minor="$( version-number --minor <<< "$current_patch" )"
-			local current_major="$( version-number --major <<< "$current_patch" )"
+			local current_patch="$( node --version 2> /dev/null | semver --patch )"
+			local current_minor="$( semver --minor <<< "$current_patch" )"
+			local current_major="$( semver --major <<< "$current_patch" )"
 			#
 			local requested_version="$( nearest --read '.node-version' '.nvmrc' )"
 			case "$requested_version" in
 
 				(''|node|lts)
-					local lts_minor="$( n --lts | version-number --minor )"
+					local lts_minor="$( n --lts | semver --minor )"
 					if [ "$current_minor" != "$lts_minor" ]; then
-						local best_local_version="$( n ls | version-number | grep -P "^${lts_minor//./\\.}\\b" | tail -n1 )"
+						local best_local_version="$( n ls | semver | grep -P "^${lts_minor//./\\.}\\b" | tail -n1 )"
 						if [ -n "$best_local_version" ]
 							then n install "$best_local_version"
 							else n lts
@@ -396,9 +396,9 @@ shopt -s lastpipe
 					;;
 
 				(latest)
-					local latest_minor="$( n --latest | version-number --minor )"
+					local latest_minor="$( n --latest | semver --minor )"
 					if [ "$current_minor" != "$latest_minor" ]; then
-						local best_local_version="$( n ls | version-number | grep -P "^${latest_minor//./\\.}\\b" | tail -n1 )"
+						local best_local_version="$( n ls | semver | grep -P "^${latest_minor//./\\.}\\b" | tail -n1 )"
 						if [ -n "$best_local_version" ]
 							then n install "$best_local_version"
 							else n latest
@@ -407,9 +407,9 @@ shopt -s lastpipe
 					;;
 
 				*)
-					requested_version="$( version-number --patch <<< "$requested_version" )"
+					requested_version="$( semver --patch <<< "$requested_version" )"
 					if ! 'starts-with?' "$requested_version" <<< "$current_patch"; then
-						local best_local_version="$( n ls | version-number | grep -P "^${requested_version//./\\.}\\b" | tail -n1 )"
+						local best_local_version="$( n ls | semver | grep -P "^${requested_version//./\\.}\\b" | tail -n1 )"
 						if [ -n "$best_local_version" ]
 							then n install "$best_local_version"
 							else n install "$requested_version"

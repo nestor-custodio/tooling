@@ -54,18 +54,9 @@ source '/home/nestor/bin/std.lib'
 
 	# ---
 
-	function normalized {
-		sed -r -e 's#^ +##'              \
-		       -e 's# +$##'              \
-		       -e 's#\b0+#0#g'           \
-		       -e 's#\b0([^0.])#\1#g'    \
-		       -e 's#\.$##'              \
-		       -e 's#^gping-v##'
-	}
-
 	function check-version {
 		vendor.version "$tool_name" 2> /dev/null | store-as local_version
-		gh:release-version "$( github-repo )" | normalized | store-as release_version
+		gh:release-version "$( github-repo )" | version-number | store-as release_version
 
 		if [ "$local_version" != "$release_version" ]; then
 			echo "${local_version:-(?)}  ${release_version}"

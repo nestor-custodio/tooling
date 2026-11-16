@@ -27,13 +27,6 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Utility Functions -- #
 
-	function normalized {
-		sed -r -e 's#^ +##'    \
-		       -e 's# +$##'    \
-		       -e 's#\b0+#0#g' \
-		       -e 's#\.$##'
-	}
-
 	function get-version {
 
 		# --cmd            The option/command that causes the tool to report its version.
@@ -91,7 +84,7 @@ source '/home/nestor/bin/std.lib'
 		local executable="$( script-path )/${tool_name}"
 
 		command -v "$executable" &> /dev/null || user-error 2 'binary not found'
-		"$executable" "$cmd" 2>&1 | ansifilter | grep -P --only-matching "$puller" | head -n1 | normalized
+		"$executable" "$cmd" 2>&1 | ansifilter | grep -P --only-matching "$puller" | head -n1 | version-number
 
 	}
 
