@@ -1,0 +1,87 @@
+#! /bin/env bash
+source '/home/nestor/bin/std.lib'
+
+# ---
+
+{ # -- Help Text -- #
+
+	cat <<-EOF | store-as usage
+		Usage: $( script-name ) [ --major | --minor | --patch ]
+
+		Returns a sanitized version number of the given specificity.
+		Metadata is always dropped. ('--patch' is assumed by default.)
+
+
+		Mandatory arguments to long options are mandatory for short options too.
+		  --help                    Show this help text.
+
+
+		Exit Status:
+		  0  if OK,
+		  1  if invalid option,
+		  2  no version string found.
+	EOF
+
+}
+
+# ---
+
+{ # -- Parameter Processing: Options -- #
+
+	# Set defaults.
+
+	segments='3'
+
+	# ---
+	# ---
+
+	CHAR_OPTS=''
+	LONG_OPTS='help,major,minor,patch'
+
+	set-params
+	while true; do
+		option="$1" && shift
+		case "$option" in
+			(--help) help-and-exit ;;
+			(--) break ;;  # No more options.
+
+
+			(--major)
+				segments='1'
+				;;
+
+			(--minor)
+				segments='2'
+				;;
+
+			(--patch)
+				segments='3'
+				;;
+
+		esac
+	done
+
+}
+
+{ # -- Parameter Processing: Positionals -- #
+
+	[ "$#" == 0 ] || user-error 1 'invalid option(s)'
+
+}
+
+# ---
+# ---
+
+
+sed -r -e 's|^[^0-9]*||'      \
+       -e 's|[^0-9.].*$||'    \
+       -e 's|\b0+|0|g'        \
+       -e 's|\b0([^0.])|\1|g' \
+       -e 's|\.$||'           \
+| grep -P '.'                 \
+| head -n1                    \
+| cut -d'.' -f"1-${segments}" \
+| store-as version_number
+
+[ -n "$version_number" ] || exit 2
+echo "$version_number"

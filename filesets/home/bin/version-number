@@ -6,10 +6,12 @@ source '/home/nestor/bin/std.lib'
 { # -- Help Text -- #
 
 	cat <<-EOF | store-as usage
-		Usage: $( script-name ) [ --major | --minor | --patch ]
+		Usage: $( script-name )
 
-		Returns a sanitized version number of the given specificity.
-		('--patch' is assumed by default.)
+		Returns a sanitized version number for the given string.
+
+		Intended for use with version strings that may be semver *or* calver
+		and the format is not known ahead of time (or no specificify is needed).
 
 
 		Mandatory arguments to long options are mandatory for short options too.
@@ -18,7 +20,8 @@ source '/home/nestor/bin/std.lib'
 
 		Exit Status:
 		  0  if OK,
-		  1  if invalid option.
+		  1  if invalid option,
+		  2  no version string found.
 	EOF
 
 }
@@ -27,15 +30,8 @@ source '/home/nestor/bin/std.lib'
 
 { # -- Parameter Processing: Options -- #
 
-	# Set defaults.
-
-	segments='2'
-
-	# ---
-	# ---
-
 	CHAR_OPTS=''
-	LONG_OPTS='help,major,minor,patch'
+	LONG_OPTS='help'
 
 	set-params
 	while true; do
@@ -43,20 +39,6 @@ source '/home/nestor/bin/std.lib'
 		case "$option" in
 			(--help) help-and-exit ;;
 			(--) break ;;  # No more options.
-
-
-			(--major)
-				segments='0'
-				;;
-
-			(--minor)
-				segments='1'
-				;;
-
-			(--patch)
-				segments='2'
-				;;
-
 		esac
 	done
 
@@ -72,5 +54,8 @@ source '/home/nestor/bin/std.lib'
 # ---
 
 
-sed -r -e 's|^[^0-9]*||' -e 's|[^0-9.].*||' \
-| grep -P --only-matching "^[0-9]+(\\.[0-9]+){0,${segments}}"
+cat | store-as input_string
+
+calver <<< "$input_string" && exit 0
+semver <<< "$input_string" && exit 0
+exit 2
