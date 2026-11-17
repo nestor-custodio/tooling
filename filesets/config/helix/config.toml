@@ -274,6 +274,10 @@ newline = "↲"
 "space" = "align_view_center"
 
 
+[keys.normal."space".x]
+"!"     = [":sh rm '%{buffer_name}'", ":buffer-close!"]
+
+
 [keys.normal."space".w]
 "f"     = "no_op"
 "F"     = "no_op"
