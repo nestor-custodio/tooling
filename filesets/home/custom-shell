@@ -359,7 +359,7 @@ function peek { tee /dev/tty ;}
 
   # Ensuring you can find a hidden/ignored file takes too many flags.
   #
-  function fd+ { fd --hidden --no-ignore "$@" ;}
+  function fd+ { fd --follow --hidden --no-ignore "$@" ;}
 
 
   # gcc
