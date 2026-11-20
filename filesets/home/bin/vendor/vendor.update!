@@ -111,41 +111,41 @@ source '/home/nestor/bin/std.lib'
 
 			# Straight-forward `eget` pulls.
 
-			(agg              ) update-tooling --asset='gnu'                                 ;;
-			(bat              ) update-tooling --asset='gnu'                                 ;;
-			(btop             ) update-tooling                                               ;;
-			(bw               ) update-tooling --asset='bw-linux' --asset='^arm' --tag='cli' ;;
-			(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig'             ;;
-			(croc             ) update-tooling --asset='Linux-64bit'                         ;;
-			(csview           ) update-tooling --asset='gnu'                                 ;;
-			(delta            ) update-tooling --asset='gnu'                                 ;;
-			(duckdb           ) update-tooling --asset='cli' --asset='^musl'                 ;;
-			(duf              ) update-tooling --asset='.tar.gz'                             ;;
-			(eget             ) update-tooling                                               ;;
-			(eza              ) update-tooling --asset='gnu.zip'                             ;;
-			(fd               ) update-tooling --asset='gnu'                                 ;;
-			(geol             ) update-tooling --asset='^.json'                              ;;
-			(gping            ) update-tooling --asset='gnu'                                 ;;
-			(hexyl            ) update-tooling --asset='gnu'                                 ;;
-			(hurl             ) update-tooling                                               ;;
-			(hyperfine        ) update-tooling --asset='gnu'                                 ;;
-			(jc               ) update-tooling                                               ;;
-			(jq               ) update-tooling --asset='amd64'                               ;;
-			(lazydocker       ) update-tooling                                               ;;
-			(lazygit          ) update-tooling                                               ;;
-			(lazyjournal      ) update-tooling                                               ;;
-			(mailpit          ) update-tooling                                               ;;
-			(marksman         ) update-tooling --asset='^musl'                               ;;
-			(n                ) update-tooling --source                                      ;;
-			(q                ) update-tooling                                               ;;
-			(rclone           ) update-tooling --asset='zip'                                 ;;
-			(rg               ) update-tooling                                               ;;
-			(ruff             ) update-tooling --asset='gnu'                                 ;;
-			(rv               ) update-tooling --asset='gnu'                                 ;;
-			(sc               ) update-tooling --file='sc'                                   ;;
-			(shellcheck       ) update-tooling --asset='.tar.gz'                             ;;
-			(vex              ) update-tooling --file='vex'                                  ;;
-			(yq               ) update-tooling --asset='^.tar.gz'                            ;;
+			(agg              ) update-tooling --asset='gnu'                                ;;
+			(bat              ) update-tooling --asset='gnu'                                ;;
+			(btop             ) update-tooling                                              ;;
+			(bw               ) update-tooling --asset='bw-bit-' --asset='^arm' --tag='cli' ;;
+			(caddy            ) update-tooling --asset='.tar.gz' --asset='^.sig'            ;;
+			(croc             ) update-tooling --asset='Linux-64bit'                        ;;
+			(csview           ) update-tooling --asset='gnu'                                ;;
+			(delta            ) update-tooling --asset='gnu'                                ;;
+			(duckdb           ) update-tooling --asset='cli' --asset='^musl'                ;;
+			(duf              ) update-tooling --asset='.tar.gz'                            ;;
+			(eget             ) update-tooling                                              ;;
+			(eza              ) update-tooling --asset='gnu.zip'                            ;;
+			(fd               ) update-tooling --asset='gnu'                                ;;
+			(geol             ) update-tooling --asset='^.json'                             ;;
+			(gping            ) update-tooling --asset='gnu'                                ;;
+			(hexyl            ) update-tooling --asset='gnu'                                ;;
+			(hurl             ) update-tooling                                              ;;
+			(hyperfine        ) update-tooling --asset='gnu'                                ;;
+			(jc               ) update-tooling                                              ;;
+			(jq               ) update-tooling --asset='amd64'                              ;;
+			(lazydocker       ) update-tooling                                              ;;
+			(lazygit          ) update-tooling                                              ;;
+			(lazyjournal      ) update-tooling                                              ;;
+			(mailpit          ) update-tooling                                              ;;
+			(marksman         ) update-tooling --asset='^musl'                              ;;
+			(n                ) update-tooling --source                                     ;;
+			(q                ) update-tooling                                              ;;
+			(rclone           ) update-tooling --asset='zip'                                ;;
+			(rg               ) update-tooling                                              ;;
+			(ruff             ) update-tooling --asset='gnu'                                ;;
+			(rv               ) update-tooling --asset='gnu'                                ;;
+			(sc               ) update-tooling --file='sc'                                  ;;
+			(shellcheck       ) update-tooling --asset='.tar.gz'                            ;;
+			(vex              ) update-tooling --file='vex'                                 ;;
+			(yq               ) update-tooling --asset='^.tar.gz'                           ;;
 
 
 			# Items available as a DEB package.
